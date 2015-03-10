@@ -189,8 +189,7 @@ public abstract class AbstractPayment {
         paymentHistoryItemDto.setDate(new Date(timestamp));
         if (type.equals(PaymentDetailsType.FIRST)) {
             paymentHistoryItemDto.setDescription("1");
-        }
-        else {
+        } else {
             paymentHistoryItemDto.setDescription("2");
         }
         paymentHistoryItemDto.setDuration(period.getDuration());

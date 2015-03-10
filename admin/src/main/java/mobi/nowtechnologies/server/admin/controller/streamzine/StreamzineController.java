@@ -138,13 +138,13 @@ public class StreamzineController {
     }
 
     @RequestMapping(value = "/streamzine/pages/list", method = RequestMethod.GET)
-    public ModelAndView getPages() {
-        return new ModelAndView().addObject("pages", mobileApplicationPagesService.getPages());
+    public ModelAndView getPages(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl) {
+        return new ModelAndView().addObject("pages", mobileApplicationPagesService.getPages(communityRewriteUrl));
     }
 
     @RequestMapping(value = "/streamzine/actions/list", method = RequestMethod.GET)
-    public ModelAndView getActions() {
-        return new ModelAndView().addObject("actions", mobileApplicationPagesService.getActions());
+    public ModelAndView getActions(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl) {
+        return new ModelAndView().addObject("actions", mobileApplicationPagesService.getActions(communityRewriteUrl));
     }
 
     @RequestMapping(value = "/streamzine/upload/image", method = RequestMethod.POST)
@@ -182,8 +182,7 @@ public class StreamzineController {
         if (publishDate.before(new Date()) || streamzineUpdateService.get(publishDate, community) != null) {
             redirectAttributes.addFlashAttribute("notValidDate", publishDate);
             return redirectToMainPage(publishDate);
-        }
-        else {
+        } else {
             Update update = streamzineUpdateService.create(publishDate, community);
             return new ModelAndView("redirect:/streamzine/edit/" + update.getId());
         }
@@ -214,8 +213,7 @@ public class StreamzineController {
         Update update = streamzineUpdateService.get(id);
         if (!update.canEdit()) {
             redirectAttributes.addFlashAttribute("notValidPublishedDate", publishDate);
-        }
-        else {
+        } else {
             streamzineUpdateService.delete(id);
         }
         return redirectToMainPage(publishDate);
@@ -284,8 +282,7 @@ public class StreamzineController {
     private List<User> findUsers(String searchWords, String excludedUserNames, String communityRewriteUrl) {
         if (!StringUtils.isEmpty(excludedUserNames)) {
             return userRepository.findByUserNameAndCommunity(escapeSearchWord(searchWords), communityRewriteUrl, Lists.newArrayList(excludedUserNames.split("#")), PAGE_REQUEST_50);
-        }
-        else {
+        } else {
             return userRepository.findByUserNameAndCommunity(escapeSearchWord(searchWords), communityRewriteUrl, PAGE_REQUEST_50);
         }
     }

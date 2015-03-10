@@ -27,8 +27,7 @@ public class PromotionAsm {
         final List<PromotionDto> promotionDtos;
         if (promotions.isEmpty()) {
             promotionDtos = Collections.EMPTY_LIST;
-        }
-        else {
+        } else {
             promotionDtos = new ArrayList<PromotionDto>(promotions.size());
             for (Promotion promotion : promotions) {
                 promotionDtos.add(toPromotionDto(promotion));

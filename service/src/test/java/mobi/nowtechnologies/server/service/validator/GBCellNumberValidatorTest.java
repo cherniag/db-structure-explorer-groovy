@@ -4,8 +4,6 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.runners.*;
 
-import junit.framework.Assert;
-
 /**
  * User: Alexsandr_Kolpakov Date: 9/27/13 Time: 5:30 PM
  */

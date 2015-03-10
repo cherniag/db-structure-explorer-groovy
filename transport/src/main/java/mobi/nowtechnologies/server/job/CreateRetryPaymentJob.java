@@ -29,11 +29,9 @@ public class CreateRetryPaymentJob {
                 executor.execute(pendingPayment);
             }
             LOGGER.info("[DONE] Retry Payment job has been finished with {} pending payment(s) added to queue", createRetryPayments.size());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error while running Retry Payment job. {}", e);
-        }
-        finally {
+        } finally {
             LogUtils.removeClassNameMDC();
         }
     }

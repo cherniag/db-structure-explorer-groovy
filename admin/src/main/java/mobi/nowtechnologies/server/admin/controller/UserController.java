@@ -107,8 +107,7 @@ public class UserController extends AbstractCommonController {
 
             user = userService.updateUser(userDto);
             modelAndView = new ModelAndView("redirect:/users?q=" + user.getUserName());
-        }
-        else {
+        } else {
             modelAndView = getEditUserModelAndView(userDto);
             httpServletResponse.setStatus(HttpStatus.SC_BAD_REQUEST);
         }

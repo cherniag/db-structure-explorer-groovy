@@ -37,8 +37,7 @@ public class FugaParser extends DDEXParser {
                 tracks.putAll(result);
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Ingest failed " + e.getMessage());
         }
         return tracks;
@@ -68,14 +67,11 @@ public class FugaParser extends DDEXParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else {
+            } else {
                 File xml = getXmlFile(folder);
                 if (xml != null && xml.exists()) {
                     deliveryComplete = true;
@@ -112,8 +108,7 @@ public class FugaParser extends DDEXParser {
         String id = release.getChild("ReleaseId").getChildText("ProprietaryId");
         if (id != null && !"".equals(id)) {
             track.productCode = id;
-        }
-        else {
+        } else {
             track.productCode = ISRC;
         }
         track.isrc = ISRC;
@@ -132,12 +127,10 @@ public class FugaParser extends DDEXParser {
             if (track.isrc == null || "".equals(track.isrc)) {
                 LOGGER.info("Album for " + type + " (no ISRC)");
                 return true;
-            }
-            else {
+            } else {
                 LOGGER.info("Track for " + type + " " + track.isrc);
             }
-        }
-        else if ("Album".equals(type) || "SingleResourceRelease".equals(type)) {
+        } else if ("Album".equals(type) || "SingleResourceRelease".equals(type)) {
             LOGGER.info("Album for " + type);
             return true;
         }

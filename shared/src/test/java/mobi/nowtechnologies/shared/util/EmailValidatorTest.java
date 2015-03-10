@@ -12,8 +12,7 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.*;
 import org.junit.runners.Parameterized.*;
-
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Titov Mykhaylo (titov)

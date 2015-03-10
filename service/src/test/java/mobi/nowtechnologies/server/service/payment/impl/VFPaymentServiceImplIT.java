@@ -34,8 +34,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import static junit.framework.Assert.assertEquals;
-
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/smpp.xml"})

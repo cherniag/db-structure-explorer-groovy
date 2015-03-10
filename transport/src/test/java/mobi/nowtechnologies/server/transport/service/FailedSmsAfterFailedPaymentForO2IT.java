@@ -35,8 +35,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import static org.junit.Assert.*;
 
-import junit.framework.Assert;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy(
     {@ContextConfiguration(locations = {"classpath:transport-root-test.xml", "classpath:post-service-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})

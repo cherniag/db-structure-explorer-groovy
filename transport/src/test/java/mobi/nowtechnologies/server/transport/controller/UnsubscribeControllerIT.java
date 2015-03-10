@@ -61,8 +61,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
         try {
             PHONE_NUMBER_XPATHEXPRESSION = xPath.compile("//member[contains(name,'MSISDN') or contains(name,'*MSISDN*') or contains(key,'MSISDN') or contains(key,'*MSISDN*')]/value");
             OPERATOR_XPATHEXPRESSION = xPath.compile("//member[contains(name,'NETWORK') or contains(name,'*NETWORK*') or contains(key,'NETWORK') or contains(key,'*NETWORK*')]/value");
-        }
-        catch (XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             throw new RuntimeException(e);
         }
     }

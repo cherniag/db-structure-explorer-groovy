@@ -79,8 +79,7 @@ public class UnsubscribeController extends CommonController {
 
         if (result.hasErrors()) {
             modelAndView.addObject("result", "fail");
-        }
-        else {
+        } else {
             userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
             modelAndView.addObject("result", "successful");
         }
@@ -96,8 +95,7 @@ public class UnsubscribeController extends CommonController {
             modelAndView.addObject("result", "fail");
             modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
             return modelAndView;
-        }
-        else {
+        } else {
             userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
             ModelAndView modelAndView = new ModelAndView(scopePrefix + "/redirectAfterUnsubscribe");
             modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);

@@ -129,8 +129,7 @@ public class TrackController extends AbstractCommonController {
                     LOGGER.debug("Track dto result is : {}", trackDto);
                     LOGGER.info("Finish WebAsyncTask: pulling track with id {}", trackId);
                     return trackDto;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOGGER.error("Error while pulling track with ID [{}] : {}", trackId, e.getMessage(), e);
                     return null;
                 }

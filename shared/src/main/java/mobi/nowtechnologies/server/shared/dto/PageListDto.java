@@ -87,8 +87,7 @@ public class PageListDto<T> {
             if (other.list != null) {
                 return false;
             }
-        }
-        else if (!list.equals(other.list)) {
+        } else if (!list.equals(other.list)) {
             return false;
         }
         if (page != other.page) {

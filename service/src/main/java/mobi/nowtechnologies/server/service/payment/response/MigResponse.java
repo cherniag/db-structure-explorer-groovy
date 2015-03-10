@@ -21,8 +21,7 @@ public class MigResponse extends PaymentSystemResponse implements SMSResponse {
         if (response.getMessage().startsWith(SUCCESSFUL_RESPONSE_START)) {
             isSuccessful = true;
             parseResponse(response.getMessage());
-        }
-        else {
+        } else {
             descriptionError = getMessage();
         }
     }
@@ -61,8 +60,7 @@ public class MigResponse extends PaymentSystemResponse implements SMSResponse {
             String[] sections = message.split(" ", 3);
             Gson gson = new Gson();
             jsonResonpse = gson.fromJson(sections[2].replaceAll(" ", ", "), MigSuccessfulResponse.class);
-        }
-        catch (JsonSyntaxException ex) {
+        } catch (JsonSyntaxException ex) {
             LOGGER.warn("Problem while getting external tx id from MIG response {}", message);
         }
     }

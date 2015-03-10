@@ -76,8 +76,7 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
                 String deviceFolderName;
                 if (isMobile) {
                     deviceFolderName = MOBILE_FOLDER_NAME;
-                }
-                else {
+                } else {
                     deviceFolderName = WWW_FOLDER_NAME;
                 }
 

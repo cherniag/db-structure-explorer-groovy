@@ -66,8 +66,7 @@ public class CustomRuntimeGlue extends RuntimeGlue {
             // filter by method and feature path
             return filterByMethodAndFeaturePath(featurePath, matches);
 
-        }
-        finally {
+        } finally {
             tracker.storeStepKeyword(step, i18n);
         }
     }
@@ -136,8 +135,7 @@ public class CustomRuntimeGlue extends RuntimeGlue {
         final String className = packageName + "." + normalizedName;
         try {
             return Class.forName(className);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not restore class for path: " + featurePath + ", should be: [" + className + "]");
         }
     }

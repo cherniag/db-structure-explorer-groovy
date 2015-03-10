@@ -22,8 +22,7 @@ public class AutoOptInRuleService extends ConfigurationAwareService<AutoOptInRul
         LOGGER.info("Rule result {}", ruleResult);
         if (ruleResult.isSuccessful()) {
             return ruleResult.getResult();
-        }
-        else {
+        } else {
             return user.isSubjectToAutoOptIn();
         }
     }

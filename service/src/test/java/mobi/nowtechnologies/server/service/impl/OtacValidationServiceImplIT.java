@@ -16,8 +16,7 @@ import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * User: Titov Mykhaylo (titov) 30.09.13 17:20

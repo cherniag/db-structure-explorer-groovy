@@ -67,8 +67,7 @@ public class NewsAsm {
         final MessageType messageType = message.getMessageType();
         if (NEWS.equals(messageType)) {
             newsDetailDto.setI(message.getPosition());
-        }
-        else {
+        } else {
             newsDetailDto.setI(message.getId());
         }
         newsDetailDto.setMessageFrequence(message.getFrequence());

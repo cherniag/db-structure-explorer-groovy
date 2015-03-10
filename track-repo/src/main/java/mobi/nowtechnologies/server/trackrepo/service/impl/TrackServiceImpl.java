@@ -20,14 +20,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
 import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
@@ -42,10 +39,6 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
 import com.google.common.collect.Lists;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,13 +58,7 @@ public class TrackServiceImpl implements TrackService {
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER = java.util.logging.Logger.getLogger("BrightcoveLog");
     protected TrackRepository trackRepository;
     private CloudFileService cloudFileService;
-    private Resource encodeScript;
     private Resource itunesScript;
-    private Resource publishDir;
-    private Resource neroHome;
-    private Resource workDir;
-    private Resource classpath;
-    private Resource privateKey;
     private String srcPullContainer;
     private String destPullContainer;
     private String brightcoveWriteToken;
@@ -90,26 +77,8 @@ public class TrackServiceImpl implements TrackService {
     }
 
     public void init() throws Exception {
-        if (encodeScript == null || !encodeScript.exists()) {
-            throw new IllegalArgumentException("There is no resource under the following context property trackRepo.encode.script");
-        }
         if (itunesScript == null || !itunesScript.exists()) {
             throw new IllegalArgumentException("There is no resource under the following context property trackRepo.itunes.script");
-        }
-        if (privateKey == null || !privateKey.exists()) {
-            throw new IllegalArgumentException("There is no resource under the following context property trackRepo.encode.privkey");
-        }
-        if (publishDir == null || !publishDir.exists()) {
-            throw new IllegalArgumentException("There is no folder under the following context property trackRepo.pull.publish");
-        }
-        if (neroHome == null || !neroHome.exists()) {
-            throw new IllegalArgumentException("There is no folder under the following context  property trackRepo.encode.nero.home");
-        }
-        if (workDir == null || !workDir.exists()) {
-            throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.workdir");
-        }
-        if (classpath == null || !classpath.exists()) {
-            throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.classpath");
         }
 
         brightcoveWriteService = new WriteApi(BRIGHTCOVE_LOGGER);
@@ -149,9 +118,8 @@ public class TrackServiceImpl implements TrackService {
 
             LOGGER.info("Track {} is encoded", trackId);
             return track;
-        }
-        catch (Exception e) {
-            LOGGER.error("Cannot encode track {} files or create zip package: {}", trackId, e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Cannot encode track {} files or create zip package", trackId, e);
 
             track.setStatus(TrackStatus.NONE);
             track.setResolution(AudioResolution.RATE_ORIGINAL);
@@ -182,8 +150,7 @@ public class TrackServiceImpl implements TrackService {
             pull(track);
 
             track.setStatus(TrackStatus.PUBLISHED);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception while pulling track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             track.setStatus(oldStatus);
         }
@@ -211,12 +178,9 @@ public class TrackServiceImpl implements TrackService {
             //upload video on brightcove if it exists
             createVideo(track);
 
-            moveFiles(workDir.getFile(), publishDir.getFile());
-
             track.setPublishDate(new Date());
             trackRepository.save(track);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot pull encoded track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             throw new RuntimeException("Cannot pull encoded track.");
         }
@@ -253,8 +217,7 @@ public class TrackServiceImpl implements TrackService {
             if (query != null && !query.isEmpty()) {
                 pagelist = trackRepository.find("%" + query + "%", page);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
@@ -273,45 +236,13 @@ public class TrackServiceImpl implements TrackService {
             if (searchTrackCriteria != null) {
                 page = trackRepository.find(searchTrackCriteria, pageable);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
 
         LOGGER.debug("output find(searchTrackDto, page): [{}]", new Object[] {page});
         return page;
-    }
-
-    private void moveFiles(File srcDir, File destDir) {
-        LOGGER.info("Start moving files from {} to {}", srcDir, destDir);
-        String destPath = destDir.getAbsolutePath();
-        Collection<File> moveDirs = FileUtils.listFilesAndDirs(srcDir, new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
-        Iterator<File> i = moveDirs.iterator();
-        i.next();
-        i.remove();
-        i.next();
-        i.remove();
-
-        for (File dir : moveDirs) {
-            String dirName = dir.getName();
-            Collection<File> moveFiles = FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, null);
-            for (File file : moveFiles) {
-                File newDestSubDir = new File(destPath + File.separator + dirName);
-
-                File destFile = new File(newDestSubDir, file.getName());
-                FileUtils.deleteQuietly(destFile);
-
-                try {
-                    LOGGER.debug("Trying to move file {} to {}", file, newDestSubDir);
-                    FileUtils.moveFileToDirectory(file, newDestSubDir, true);
-                }
-                catch (IOException e) {
-                    LOGGER.error("Could not move file {} to {} : {}", file, newDestSubDir, e.getMessage(), e);
-                }
-            }
-        }
-
     }
 
     protected AssetFile createVideo(Track track) throws BrightcoveException {
@@ -373,13 +304,12 @@ public class TrackServiceImpl implements TrackService {
         video.setTags(tags);
 
 
-        Long videoId = null;
+        Long videoId;
         try {
             videoId =
                 brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
             LOGGER.info("Create video with referenceId=[{}] and id=[{}]", new Object[] {video.getReferenceId(), videoId});
-        }
-        catch (MediaApiException e) {
+        } catch (MediaApiException e) {
             String error = e.getResponseMessage();
             if (error.equals("Reference ID " + video.getReferenceId() + " is already in use")) {
                 brightcoveWriteService.DeleteVideo(brightcoveWriteToken, video.getId(), video.getReferenceId(), true, true);
@@ -387,8 +317,7 @@ public class TrackServiceImpl implements TrackService {
                 videoId = brightcoveWriteService
                     .CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
                 LOGGER.info("This video is new. Video with referenceId=[{}] doesn't exist", video.getReferenceId());
-            }
-            else {
+            } else {
                 throw e;
             }
         }
@@ -401,8 +330,7 @@ public class TrackServiceImpl implements TrackService {
                 status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
                 try {
                     Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
@@ -419,15 +347,13 @@ public class TrackServiceImpl implements TrackService {
         command.setCommand(itunesScript);
         try {
             return command.executeCommand(artist, title);
-        }
-        catch (Exception e) {
-            LOGGER.error("ERROR", e);
+        } catch (Exception e) {
+            LOGGER.warn("Can't get iTunes url for [{}] artist and [{}] title", artist, title, e);
             return null;
         }
     }
 
     String getAmazonUrl(String isrc) {
-
         try {
 
             DOMSource response = restTemplate.getForObject(sevenDigitalApiUrl, DOMSource.class, isrc, sevenDigitalApiKey);
@@ -442,17 +368,14 @@ public class TrackServiceImpl implements TrackService {
 
             if (StringUtils.isBlank(trackId)) {
                 trackId = "";
-            }
-            else {
+            } else {
                 trackId = "#t" + trackId;
             }
 
             return "https://m.7digital.com/GB/releases/" + releaseId + trackId + "?partner=3734";
 
-        }
-        catch (Exception e) {
-
-            LOGGER.error("GET_AMAZON_URL error_msg[{}] for isrc=" + isrc, e);
+        } catch (Exception e) {
+            LOGGER.warn("Can't get amazonUrl for track with isrc={}", isrc, e);
             return null;
         }
     }
@@ -462,32 +385,8 @@ public class TrackServiceImpl implements TrackService {
         this.trackRepository = trackRepository;
     }
 
-    public void setEncodeScript(Resource encodeScript) {
-        this.encodeScript = encodeScript;
-    }
-
     public void setItunesScript(Resource itunesScript) {
         this.itunesScript = itunesScript;
-    }
-
-    public void setPublishDir(Resource publishDir) {
-        this.publishDir = publishDir;
-    }
-
-    public void setNeroHome(Resource neroHome) {
-        this.neroHome = neroHome;
-    }
-
-    public void setWorkDir(Resource workDir) {
-        this.workDir = workDir;
-    }
-
-    public void setClasspath(Resource classpath) {
-        this.classpath = classpath;
-    }
-
-    public void setPrivateKey(Resource privateKey) {
-        this.privateKey = privateKey;
     }
 
     public void setSrcPullContainer(String srcPullContainer) {

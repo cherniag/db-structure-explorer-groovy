@@ -45,8 +45,7 @@ public class ITunesServiceImpl implements ITunesService {
             logger.info("ITunes confirmed that encoded receipt [{}] is valid by result [{}]", actualReceipt, result);
             iTunesPaymentService.createSubmittedPayment(user, actualReceipt, result, iTunesPaymentService);
             logger.info("Finish processing ITunes subscription");
-        }
-        else {
+        } else {
             logger.warn("ITunes rejected the encoded receipt [{}], result: [{}]", actualReceipt, result);
         }
     }
@@ -55,8 +54,7 @@ public class ITunesServiceImpl implements ITunesService {
         String base64EncodedAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
         if (base64EncodedAppStoreReceipt != null && transactionReceipt == null) {
             return base64EncodedAppStoreReceipt;
-        }
-        else {
+        } else {
             return transactionReceipt;
         }
     }

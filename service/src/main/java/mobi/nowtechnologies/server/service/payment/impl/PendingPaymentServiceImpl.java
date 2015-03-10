@@ -63,12 +63,10 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
             if (shouldNotPayIfOneTimePaymentPolicy(user)) {
                 LOGGER.info("Unsubscribe user {} because of one time payment policy {}", user.getId(), user.getCurrentPaymentDetails().getPaymentPolicy().getId());
                 userService.unsubscribeUser(user, "One time payment policy");
-            }
-            else if (user.isInvalidPaymentPolicy()) {
+            } else if (user.isInvalidPaymentPolicy()) {
                 LOGGER.info("Creating pending payment was failed for user {}, because current paymentPolicy of this user is invalid user and needs to unsubscribe him", user.getUserName());
                 userService.unsubscribeUser(user.getId(), new UnsubscribeDto().withReason("Payment Policy is invalid for user"));
-            }
-            else {
+            } else {
                 LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());
                 PendingPayment pendingPayment = createPendingPayment(user, REGULAR);
                 pendingPayment = pendingPaymentRepository.save(pendingPayment);
@@ -170,8 +168,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 
         if (0 == user.getLastSuccessfulPaymentTimeMillis() && pendingPayment.getType() != PaymentDetailsType.PAYMENT) {
             pendingPayment.setType(PaymentDetailsType.FIRST);
-        }
-        else {
+        } else {
             pendingPayment.setType(type);
         }
         return pendingPayment;

@@ -44,8 +44,7 @@ public class SubscriptionInfoAsm {
     public PaymentPolicyDto getCurrentPaymentPolicy(User user) {
         if (user.hasActivePaymentDetails()) {
             return new PaymentPolicyDto(user.getCurrentPaymentDetails().getPaymentPolicy());
-        }
-        else if (hasITunesSubscription(user)) {
+        } else if (hasITunesSubscription(user)) {
             PaymentPolicy currentPaymentPolicy = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
             if (currentPaymentPolicy != null) {
                 return new PaymentPolicyDto(currentPaymentPolicy);
@@ -74,8 +73,7 @@ public class SubscriptionInfoAsm {
             return ITUNES_SUBSCRIPTION.equals(user.getLastSubscribedPaymentSystem()) &&
                    (user.getCurrentPaymentDetails() == null || user.getCurrentPaymentDetails().isDeactivated()) &&
                    user.getNextSubPaymentAsDate().after(timeService.now());
-        }
-        else {
+        } else {
             return user.getCurrentPaymentDetails() != null && user.getCurrentPaymentDetails().isActivated();
         }
     }

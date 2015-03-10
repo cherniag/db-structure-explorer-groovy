@@ -24,12 +24,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.junit.*;
 import org.springframework.test.web.servlet.ResultActions;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

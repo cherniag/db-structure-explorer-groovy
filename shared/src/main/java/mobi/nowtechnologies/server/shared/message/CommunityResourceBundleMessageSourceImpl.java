@@ -44,8 +44,7 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
         try {
             String message = getMessage(community, code, null, null);
             return doConvertToDate(message);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return defaults;
         }
     }
@@ -58,8 +57,7 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
             Assert.hasText(message);
 
             return doConvertToDate(message);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -68,8 +66,7 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     public boolean readBoolean(String community, String code, boolean defaults) {
         try {
             return parseBoolean(trim(getMessage(community, code, null, String.valueOf(defaults), null)));
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             return defaults;
         }
@@ -84,8 +81,7 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     public int readInt(String community, String code, int defaultValue, Locale locale) {
         try {
             return parseInt(trim(getMessage(community, code, null, locale)));
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return defaultValue;
         }
     }

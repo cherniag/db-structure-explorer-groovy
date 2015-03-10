@@ -39,8 +39,7 @@ public class FileController extends AbstractCommonController {
             while ((read = input.read(buffer)) > 0) {
                 output.write(buffer, 0, read);
             }
-        }
-        else {
+        } else {
             // Write partial range.
             input.seek(start);
             long toRead = length;
@@ -48,8 +47,7 @@ public class FileController extends AbstractCommonController {
             while ((read = input.read(buffer)) > 0) {
                 if ((toRead -= read) > 0) {
                     output.write(buffer, 0, read);
-                }
-                else {
+                } else {
                     output.write(buffer, 0, (int) toRead + read);
                     break;
                 }
@@ -75,8 +73,7 @@ public class FileController extends AbstractCommonController {
                                  AssetFileDto.toFileType(file.getType()).getMime();
 
             stream(respFile, contentType, req, resp);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Can't send file", e);
         }
     }
@@ -98,11 +95,9 @@ public class FileController extends AbstractCommonController {
             try {
                 in = new RandomAccessFile(file, "r");
                 copy(in, resp.getOutputStream(), start, contentLength);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 LOGGER.error("Can't send file", e);
-            }
-            finally {
+            } finally {
                 IOUtils.closeQuietly(in);
                 IOUtils.closeQuietly(out);
             }
@@ -120,8 +115,7 @@ public class FileController extends AbstractCommonController {
         if (rangeValue.startsWith("-")) {
             end = fileLength - 1;
             start = fileLength - 1 - Long.parseLong(rangeValue.substring(1));
-        }
-        else {
+        } else {
             String[] range = rangeValue.split("-");
             start = Long.parseLong(range[0]);
             end = range.length > 1 ?

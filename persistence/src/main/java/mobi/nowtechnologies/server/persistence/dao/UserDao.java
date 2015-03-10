@@ -41,11 +41,9 @@ public class UserDao extends JpaDaoSupport {
         int size = list.size();
         if (size == 0) {
             return null;
-        }
-        else if (size == 1) {
+        } else if (size == 1) {
             return (User) list.get(0);
-        }
-        else {
+        } else {
             throw new PersistenceException(MessageFormat.format("There are {0} users with userName [{1}] and communityName [{2}]", size, userName, communityName));
         }
     }
@@ -57,11 +55,9 @@ public class UserDao extends JpaDaoSupport {
         int size = list.size();
         if (size == 0) {
             return null;
-        }
-        else if (size == 1) {
+        } else if (size == 1) {
             return (User) list.get(0);
-        }
-        else {
+        } else {
             throw new PersistenceException(MessageFormat.format("There are {0} facebookIds [{1}] in community [{2}]", size, facebookId, communityName));
         }
     }

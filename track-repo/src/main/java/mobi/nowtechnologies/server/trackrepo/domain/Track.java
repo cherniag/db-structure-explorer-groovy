@@ -535,6 +535,10 @@ public class Track extends AbstractEntity {
         return this;
     }
 
+    public boolean isVideo() {
+        return getFile(AssetFile.FileType.VIDEO) != null;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString()).append("ingestor", ingestor).append("isrc", isrc).append("title", title).append("artist", artist)

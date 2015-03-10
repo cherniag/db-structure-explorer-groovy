@@ -120,8 +120,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     protected T newPSMSPaymentDetails() {
         try {
             return paymentDetailsClass.newInstance();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException(e.getMessage());
         }

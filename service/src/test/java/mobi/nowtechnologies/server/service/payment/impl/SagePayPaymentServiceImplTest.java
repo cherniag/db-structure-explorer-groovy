@@ -30,8 +30,6 @@ import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import static org.mockito.Matchers.*;
 
-import junit.framework.Assert;
-
 public class SagePayPaymentServiceImplTest {
 
     private SagePayPaymentServiceImpl service;

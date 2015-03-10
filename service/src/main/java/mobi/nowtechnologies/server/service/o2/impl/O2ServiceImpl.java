@@ -45,12 +45,10 @@ public class O2ServiceImpl implements O2Service {
         try {
             data = getSubscriberDataInternal(originalPhoneNumber);
             return data;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("Can't get subscriber data " + originalPhoneNumber, ex);
             throw new RuntimeException(ex);
-        }
-        finally {
+        } finally {
             ProfileLoggingAspect.logThirdPartyRequest(beforeExecutionTimeNano, error, originalPhoneNumber, data, "getSubscriberProfile");
         }
     }
@@ -85,8 +83,7 @@ public class O2ServiceImpl implements O2Service {
                 if (data.isTariff4G()) {
                     data.setDirectOrIndirect4GChannel(isPostPayDirectChannel(digitOnlyPhoneNumber));
                 }
-            }
-            else {
+            } else {
                 prePayPopulate4G(digitOnlyPhoneNumber, data);
             }
         }
@@ -106,8 +103,7 @@ public class O2ServiceImpl implements O2Service {
         boolean subscribedTo4G = false;
         if (resultsProcessor.isPostPayContract4G(postPayContract)) {
             subscribedTo4G = true;
-        }
-        else {
+        } else {
             GetCurrentBoltonsResponse boltons = o2TariffService.getManagePostpayCurrentBoltons(digitOnlyPhoneNumber);
             if (resultsProcessor.isPostPay4GBoltonPresent(boltons)) {
                 subscribedTo4G = true;

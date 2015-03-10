@@ -42,8 +42,7 @@ public class MailService {
             message.setText(MailTemplateProcessor.processTemplateString(body, model));
             message.setSentDate(new Date());
             mailSender.send(message);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String msg = e.getMessage();
             msg = msg + (e.getCause() != null ?
                          ": " + e.getCause().getMessage() :

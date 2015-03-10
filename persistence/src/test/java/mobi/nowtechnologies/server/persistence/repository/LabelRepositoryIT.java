@@ -7,8 +7,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by Oleg Artomov on 7/22/2014.

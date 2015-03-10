@@ -127,8 +127,7 @@ public class AdminDetailsServiceImpl extends JdbcDaoImpl {
 
         if (adminUserDetailsList.isEmpty()) {
             throw new UsernameNotFoundException("Couldn't find user with userName [{" + userName + "}]");
-        }
-        else {
+        } else {
             adminUserDetails = adminUserDetailsList.get(0);
         }
 

@@ -8,6 +8,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -33,6 +35,7 @@ public class PostService {
 
         BasicResponse response = new BasicResponse();
         DefaultHttpClient httpclient = new DefaultHttpClient();
+        httpclient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
 
         HttpPost post = new HttpPost(url);
 
@@ -56,17 +59,14 @@ public class PostService {
             try {
                 httpEntity.writeTo(byteArrayOutputStream);
                 response.setMessage(new String(byteArrayOutputStream.toByteArray()));
-            }
-            finally {
+            } finally {
                 EntityUtils.consume(httpEntity);
                 byteArrayOutputStream.close();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new IllegalStateException("post failed", e);
-        }
-        finally {
+        } finally {
             httpclient.getConnectionManager().shutdown();
         }
         return response;

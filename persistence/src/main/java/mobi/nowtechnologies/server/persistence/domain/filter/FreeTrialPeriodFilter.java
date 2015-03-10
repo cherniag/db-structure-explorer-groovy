@@ -53,8 +53,7 @@ public class FreeTrialPeriodFilter extends AbstractFilter {
                 }
                 if (sinceFreeTrialMillis >= activeSinceTrialStartTimestampMillisParam && tillFreeTrialMillis >= activeTillTrialEndTimestampMillisParam) {
                     filtrate = true;
-                }
-                else {
+                } else {
                     filtrate = false;
                     break;
                 }

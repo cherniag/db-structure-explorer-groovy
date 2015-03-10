@@ -32,8 +32,7 @@ public class SubscriptionStateFactory {
 
         if (paySubscription && !(user.isOnFreeTrial())) {
             state.setPaySubscription(true);
-        }
-        else {
+        } else {
             state.setFreeTrial(true);
 
             if (!user.isOnFreeTrial()) {
@@ -67,8 +66,7 @@ public class SubscriptionStateFactory {
 
         if (state.isFreeTrial()) {
             state.setNextBillingDate(new Date(user.getFreeTrialExpiredMillis()));
-        }
-        else {
+        } else {
             state.setNextBillingDate(Utils.getDateFromInt(user.getNextSubPayment()));
         }
         state.setDaysToNextBillingDate(calculateDaysTillNextBilling(state.getNextBillingDate()));

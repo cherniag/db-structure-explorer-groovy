@@ -26,8 +26,7 @@ public class SubmittedPaymentAsm {
         final List<SubmittedPaymentDto> submittedPaymentDtos;
         if (submittedPayments.isEmpty()) {
             submittedPaymentDtos = Collections.<SubmittedPaymentDto>emptyList();
-        }
-        else {
+        } else {
             submittedPaymentDtos = new ArrayList<SubmittedPaymentDto>(submittedPayments.size());
             for (SubmittedPayment submittedPayment : submittedPayments) {
                 submittedPaymentDtos.add(toSubmittedPaymentDto(submittedPayment));

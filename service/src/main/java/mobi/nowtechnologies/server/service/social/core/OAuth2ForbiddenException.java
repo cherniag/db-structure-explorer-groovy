@@ -19,10 +19,6 @@ public class OAuth2ForbiddenException extends ServiceException {
         return new OAuth2ForbiddenException(SocialErrorCodes.INVALID_FACEBOOK_USER_ID);
     }
 
-    public static OAuth2ForbiddenException emptyFacebookEmail() {
-        return new OAuth2ForbiddenException(SocialErrorCodes.EMPTY_FACEBOOK_EMAIL);
-    }
-
     public static OAuth2ForbiddenException invalidGooglePlusToken() {
         return new OAuth2ForbiddenException(SocialErrorCodes.INVALID_GOOGLE_PLUS_TOKEN);
     }

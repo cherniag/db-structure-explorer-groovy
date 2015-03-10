@@ -9,8 +9,6 @@ import org.apache.http.NameValuePair;
 
 import org.junit.*;
 
-import junit.framework.Assert;
-
 public class SagePayRequestTest {
 
     @Test

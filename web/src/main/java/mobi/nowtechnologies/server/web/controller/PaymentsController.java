@@ -196,8 +196,7 @@ public class PaymentsController extends CommonController {
         final ModelAndView modelAndView;
         if (paymentDetailsByPaymentDto == null || !paymentDetailsByPaymentDto.isActivated()) {
             modelAndView = new ModelAndView("redirect:account.html");
-        }
-        else {
+        } else {
             modelAndView = new ModelAndView(scopePrefix + "/one_click_subscription_successful");
             modelAndView.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
         }
@@ -250,12 +249,10 @@ public class PaymentsController extends CommonController {
             }
 
             paymentsNoteMsg = getFirstSutableMessage(locale, codes);
-        }
-        else {
+        } else {
             if (user.isIOsNonO2ITunesSubscribedUser()) {
                 paymentsNoteMsg = message(msgCodeBase + ".not.o2.inapp.subs", null, locale);
-            }
-            else {
+            } else {
                 paymentsNoteMsg = message(msgCodeBase, null, locale);
             }
         }

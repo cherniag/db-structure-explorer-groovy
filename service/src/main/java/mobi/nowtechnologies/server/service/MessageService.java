@@ -106,8 +106,7 @@ public class MessageService {
         List<Message> messages;
         if (withBanners) {
             messages = messageRepository.findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis);
-        }
-        else {
+        } else {
             messages = messageRepository.findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis, getBannerTypes());
         }
 
@@ -146,8 +145,7 @@ public class MessageService {
         final List<Message> messages;
         if (choosedPublishDate != null) {
             messages = messageRepository.findByCommunityAndMessageTypesAndPublishTimeMillis(community, messageTypes, choosedPublishDate.getTime());
-        }
-        else {
+        } else {
             messages = messageRepository.findByCommunityAndMessageTypes(community, messageTypes);
         }
 
@@ -184,13 +182,11 @@ public class MessageService {
         Integer position;
         if (message.getId() != null) {
             position = messageDto.getPosition();
-        }
-        else {
+        } else {
             position = messageRepository.findMaxPosition(community, messageDto.getMessageType(), publishTimeMillis);
             if (position != null) {
                 position++;
-            }
-            else {
+            } else {
                 position = 1;
             }
         }
@@ -199,8 +195,7 @@ public class MessageService {
         final Set<AbstractFilterWithCtiteria> filterWithCtiteria;
         if (filterDtos != null) {
             filterWithCtiteria = filterService.find(filterDtos);
-        }
-        else {
+        } else {
             filterWithCtiteria = Collections.EMPTY_SET;
         }
 
@@ -297,13 +292,11 @@ public class MessageService {
         Integer position;
         if (message.getId() != null) {
             position = newsItemDto.getPosition();
-        }
-        else {
+        } else {
             position = messageRepository.findMaxPosition(community, MessageType.NEWS, publishTimeMillis);
             if (position != null) {
                 position++;
-            }
-            else {
+            } else {
                 position = 1;
             }
         }
@@ -312,8 +305,7 @@ public class MessageService {
         final Set<AbstractFilterWithCtiteria> filterWithCtiteria;
         if (filterDtos != null) {
             filterWithCtiteria = filterService.find(filterDtos);
-        }
-        else {
+        } else {
             filterWithCtiteria = Collections.EMPTY_SET;
         }
 
@@ -410,8 +402,7 @@ public class MessageService {
         final List<Message> messages;
         if (nearestLatestPublishTimeMillis != null) {
             messages = messageRepository.getActualNews(community, nearestLatestPublishTimeMillis);
-        }
-        else {
+        } else {
             messages = Collections.EMPTY_LIST;
         }
         LOGGER.debug("Done selecting actual news with messages=[{}]", messages);
@@ -501,8 +492,7 @@ public class MessageService {
         Integer position = messageRepository.findMaxPosition(community, MessageType.AD, 0L);
         if (position != null) {
             position++;
-        }
-        else {
+        } else {
             position = 1;
         }
 
@@ -518,8 +508,7 @@ public class MessageService {
             message.setImageFileName(null);
 
             message = messageRepository.save(message);
-        }
-        else if (multipartFile != null && !multipartFile.isEmpty()) {
+        } else if (multipartFile != null && !multipartFile.isEmpty()) {
             String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
 
             message.setImageFileName(imageFileName);
@@ -527,8 +516,7 @@ public class MessageService {
             message = messageRepository.save(message);
 
             cloudFileService.uploadFile(multipartFile, message.getImageFileName());
-        }
-        else {
+        } else {
             message = messageRepository.save(message);
         }
 
@@ -551,16 +539,14 @@ public class MessageService {
             message.setImageFileName(null);
 
             message = messageRepository.save(message);
-        }
-        else if (multipartFile != null && !multipartFile.isEmpty()) {
+        } else if (multipartFile != null && !multipartFile.isEmpty()) {
             String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
 
             message.setImageFileName(imageFileName);
             message = messageRepository.save(message);
 
             cloudFileService.uploadFile(multipartFile, message.getImageFileName());
-        }
-        else {
+        } else {
             message = messageRepository.save(message);
         }
 
@@ -571,8 +557,7 @@ public class MessageService {
         final Set<AbstractFilterWithCtiteria> filterWithCtiteria;
         if (filterDtos != null) {
             filterWithCtiteria = filterService.find(filterDtos);
-        }
-        else {
+        } else {
             filterWithCtiteria = Collections.<AbstractFilterWithCtiteria>emptySet();
         }
         return filterWithCtiteria;

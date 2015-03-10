@@ -39,8 +39,7 @@ public class CiParser extends DDEXParser {
                 }
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Ingest failed " + e.getMessage());
         }
         return tracks;
@@ -70,14 +69,11 @@ public class CiParser extends DDEXParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else {
+            } else {
                 if (file.getName().startsWith("BatchComplete_")) {
                     deliveryComplete = true;
                 }

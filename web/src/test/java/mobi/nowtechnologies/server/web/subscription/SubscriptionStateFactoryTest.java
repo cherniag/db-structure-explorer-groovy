@@ -19,8 +19,6 @@ import org.joda.time.Period;
 
 import org.junit.*;
 
-import junit.framework.Assert;
-
 @SuppressWarnings("deprecation")
 public class SubscriptionStateFactoryTest {
 

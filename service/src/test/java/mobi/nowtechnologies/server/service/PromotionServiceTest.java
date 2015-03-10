@@ -704,8 +704,7 @@ public class PromotionServiceTest {
                     assertThat(accountLog.getTransactionType(), is(PROMOTION_BY_PROMO_CODE_APPLIED));
                     assertThat(accountLog.getPromoCode(), is(promotion.getPromoCode().getCode()));
                     count = 1;
-                }
-                else {
+                } else {
                     assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance() + (int) promotion.getFreeWeeks() - count));
                     assertThat(accountLog.getTransactionType(), is(SUBSCRIPTION_CHARGE));
                     count++;

@@ -32,13 +32,11 @@ public class ThrottlingServiceImpl implements ThrottlingService {
             MDC.put("device", deviceUID);
             if (handle(request, userName, community)) {
                 LOGGER.info("accepting");
-            }
-            else {
+            } else {
                 LOGGER.info("throttling");
                 throw new ThrottlingException(userName, community);
             }
-        }
-        finally {
+        } finally {
             MDC.remove("device");
         }
     }
@@ -57,13 +55,11 @@ public class ThrottlingServiceImpl implements ThrottlingService {
                     }
                     reject = true;
                     i++;
-                }
-                while (i < maxRequests);
+                } while (i < maxRequests);
                 if (reject) {
                     return false;
                 }
-            }
-            finally {
+            } finally {
 
             }
         }
@@ -81,8 +77,7 @@ public class ThrottlingServiceImpl implements ThrottlingService {
             };
             try {
                 mutator.cas("thread" + i, "INCOME", getCacheExpirationTime(), m);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getLocalizedMessage(), e);
             }
             return true;

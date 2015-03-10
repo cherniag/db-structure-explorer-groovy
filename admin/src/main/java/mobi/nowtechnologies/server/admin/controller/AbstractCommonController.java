@@ -58,8 +58,7 @@ public abstract class AbstractCommonController implements MessageSourceAware {
         final String message = messageSource.getMessage(errorCode, null, locale);
         if (serviceException instanceof ExternalServiceException) {
             modelAndView.addObject("external_error", message);
-        }
-        else {
+        } else {
             modelAndView.addObject("internal_error", message);
         }
 

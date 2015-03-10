@@ -15,8 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by Oleg Artomov on 10/3/2014.

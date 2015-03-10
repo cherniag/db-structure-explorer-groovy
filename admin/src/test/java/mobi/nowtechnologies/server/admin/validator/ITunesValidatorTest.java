@@ -137,8 +137,7 @@ public class ITunesValidatorTest {
         }
         if (resultError != null) {
             assertArrayEquals(resultError.getArguments(), new Object[] {"0"});
-        }
-        else {
+        } else {
             fail();
         }
     }

@@ -101,8 +101,7 @@ public class AccountController extends CommonController {
         ModelAndView modelAndView;
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("change_account");
-        }
-        else {
+        } else {
             int userId = getUserId();
 
             accountDto = userService.saveAccountDetails(accountDto, userId);

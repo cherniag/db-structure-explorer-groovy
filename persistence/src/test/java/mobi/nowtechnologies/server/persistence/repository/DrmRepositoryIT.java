@@ -5,8 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Drm;
 import javax.annotation.Resource;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 /**

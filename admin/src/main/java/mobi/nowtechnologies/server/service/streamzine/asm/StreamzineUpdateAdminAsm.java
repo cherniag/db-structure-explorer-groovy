@@ -172,8 +172,7 @@ public class StreamzineUpdateAdminAsm {
                 dto.setFirst(blockDto);
                 dto.setSecond(blockDtos.get(++i));
                 dtos.add(dto);
-            }
-            else {
+            } else {
                 dtos.add(blockDto);
             }
         }
@@ -292,8 +291,7 @@ public class StreamzineUpdateAdminAsm {
 
         if (filenameAlias == null) {
             return null;
-        }
-        else {
+        } else {
             FileNameAliasDto dto = new FileNameAliasDto();
             dto.setAlias(filenameAlias.getAlias());
             dto.setId(filenameAlias.getId());
@@ -320,8 +318,7 @@ public class StreamzineUpdateAdminAsm {
         final String action = i.getAction();
         if (action == null) {
             return new DeepLinkInfoService.ApplicationPageData(i.getUrl());
-        }
-        else {
+        } else {
             return new DeepLinkInfoService.ApplicationPageData(i.getUrl(), action);
         }
     }

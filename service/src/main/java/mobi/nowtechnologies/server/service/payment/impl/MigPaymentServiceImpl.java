@@ -77,8 +77,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 
                 if (MIG_DELIVERED.equals(status)) {
                     response = MigResponse.successfulMigResponse();
-                }
-                else {
+                } else {
                     response = MigResponse.failMigResponse(
                         "Pending payment with internalTxId ".concat(messageId).concat(" was not delivered to user cause: ").concat(descriptionError).concat(" Status code ").concat(status));
                 }
@@ -86,16 +85,13 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
                 if (null != pendingPayment && null != response) {
                     return super.commitPayment(pendingPayment, response);
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("MIG response for free sms {} ", messageId);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception while committing MIG payment", e);
             return null;
-        }
-        finally {
+        } finally {
             LogUtils.removePaymentMDC();
         }
         LOGGER.warn("Couldn't find PendingPayment with internalTxId  {} in MIG callback.", messageId);

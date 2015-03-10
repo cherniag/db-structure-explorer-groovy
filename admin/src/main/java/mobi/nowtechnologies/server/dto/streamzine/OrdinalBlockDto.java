@@ -215,8 +215,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     public String getValuePlayerType() {
         if (key.equals(MusicType.PLAYLIST.name())) {
             return new PlaylistData(value).getPlayerTypeString();
-        }
-        else if (key.equals(MusicType.TRACK.name())) {
+        } else if (key.equals(MusicType.TRACK.name())) {
             return new TrackData(value).getPlayerTypeString();
         }
         return null;

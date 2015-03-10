@@ -31,8 +31,7 @@ public class Scheduler {
         long executeInterval = 0;
         try {
             executeInterval = Long.valueOf(nextExecution);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ServiceException(String.format("Invalid number format [%s] for property [%s] - can't schedule task [%s]", nextExecution, messageCode, task));
         }
         return executeInterval;

@@ -126,8 +126,7 @@ public class PaymentsPage {
         if (paymentDetails != null) {
             if (PaymentDetails.PAYPAL_TYPE.equalsIgnoreCase(paymentDetails.getPaymentType())) {
                 paymentType = "paypal";
-            }
-            else if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equalsIgnoreCase(paymentDetails.getPaymentType())) {
+            } else if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equalsIgnoreCase(paymentDetails.getPaymentType())) {
                 paymentType = "creditcard";
             }
         }

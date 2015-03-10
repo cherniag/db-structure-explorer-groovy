@@ -30,8 +30,7 @@ public class ListValueWrapperDeserializer extends JsonDeserializer<ListValueWrap
                     return Integer.parseInt(input.asText());
                 }
             });
-        }
-        else {
+        } else {
             wrapper.value = node.asText();
         }
         return wrapper;

@@ -86,8 +86,7 @@ public class OfferService {
         final Set<AbstractFilterWithCtiteria> filterWithCtiteria;
         if (filterDtos != null) {
             filterWithCtiteria = filterService.find(filterDtos);
-        }
-        else {
+        } else {
             filterWithCtiteria = Collections.EMPTY_SET;
         }
 
@@ -95,8 +94,7 @@ public class OfferService {
         final List<Item> items;
         if (itemIds != null) {
             items = itemRepository.findByIds(itemIds);
-        }
-        else {
+        } else {
             items = Collections.EMPTY_LIST;
         }
 

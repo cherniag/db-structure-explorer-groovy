@@ -76,12 +76,10 @@ public class ServiceConfigController extends CommonController {
 
             LOGGER.info("SERVICE_CONFIG response [{}]", dto);
             return dto;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, null, null, ex);
             LOGGER.info("SERVICE_CONFIG finished");
         }
@@ -117,8 +115,7 @@ public class ServiceConfigController extends CommonController {
             }
 
             return message;
-        }
-        else {
+        } else {
             return null;
         }
     }

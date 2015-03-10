@@ -3,15 +3,18 @@ package mobi.nowtechnologies.server.service.streamzine;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
+import com.google.common.base.Splitter;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 public class MobileApplicationPagesService {
 
+    private static final String VALUES_DELIMITER = ",";
     private File pages;
     private File actions;
 
@@ -20,25 +23,32 @@ public class MobileApplicationPagesService {
         this.actions = actions;
     }
 
-    public Set<String> getActions() {
-        return getValues(actions);
+    public Set<String> getActions(String communityUrl) {
+        return getValues(actions, communityUrl);
     }
 
-    public Set<String> getPages() {
-        return getValues(pages);
+    public Set<String> getPages(String communityUrl) {
+        return getValues(pages, communityUrl);
     }
 
-    private Set<String> getValues(File file) {
-        if (file == null || file.isDirectory() || !file.exists()) {
+    private Set<String> getValues(File file, String communityUrl) {
+        if (file == null || file.isDirectory() || !file.exists() || communityUrl == null) {
             return Collections.emptySet();
         }
 
         try {
-            List<String> lines = Files.readLines(file, Charsets.UTF_8);
-            return Sets.newTreeSet(lines);
-        }
-        catch (IOException e) {
+            Properties properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(file));
+            String value = properties.getProperty(communityUrl);
+            if (value == null || value.isEmpty()) {
+                return Collections.emptySet();
+            }
+            return toSet(value);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Set<String> toSet(String value) {
+        return new TreeSet<>(Splitter.on(VALUES_DELIMITER).omitEmptyStrings().trimResults().splitToList(value));
     }
 }

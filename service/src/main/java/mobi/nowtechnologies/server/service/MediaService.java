@@ -136,8 +136,7 @@ public class MediaService {
 
         if (excludedIds != null && !excludedIds.isEmpty()) {
             return mediaRepository.findMediaByChartAndPublishTimeAndSearchWord(chart.getI(), latestPublishDate, excludedIds, searchWordsLike, PAGE_REQUEST_50);
-        }
-        else {
+        } else {
             return mediaRepository.findMediaByChartAndPublishTimeAndSearchWord(chart.getI(), latestPublishDate, searchWordsLike, PAGE_REQUEST_50);
         }
     }

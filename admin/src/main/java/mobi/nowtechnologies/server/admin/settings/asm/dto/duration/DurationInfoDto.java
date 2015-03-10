@@ -30,8 +30,7 @@ public class DurationInfoDto {
     public Duration toDuration() {
         if (amount <= 0 || durationUnit == null) {
             return Duration.noPeriod();
-        }
-        else {
+        } else {
             return Duration.forPeriod(amount, durationUnit);
         }
     }
@@ -40,8 +39,7 @@ public class DurationInfoDto {
         if (duration.containsPeriod()) {
             amount = duration.getAmount();
             durationUnit = duration.getUnit();
-        }
-        else {
+        } else {
             amount = 0;
             durationUnit = null;
         }

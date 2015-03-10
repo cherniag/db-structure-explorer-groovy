@@ -47,6 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.slf4j.Logger;
@@ -64,6 +67,7 @@ public class IngestServiceImpl implements IngestService {
     private TrackRepository trackRepository;
     private IngestionLogRepository ingestionLogRepository;
     private IParserFactory parserFactory;
+    private ExecutorService executorService;
 
     public void setTrackRepository(TrackRepository trackRepository) {
         this.trackRepository = trackRepository;
@@ -77,6 +81,9 @@ public class IngestServiceImpl implements IngestService {
         this.parserFactory = parserFactory;
     }
 
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     @Override
     public IngestWizardData getDrops(String... ingestors) throws Exception {
@@ -94,7 +101,6 @@ public class IngestServiceImpl implements IngestService {
             ingObjs.addAll(Arrays.asList(Ingestors.values()));
         }
 
-
         result.setDropdata(getDropsData(ingObjs));
         return result;
     }
@@ -103,24 +109,42 @@ public class IngestServiceImpl implements IngestService {
         DropsData drops = new DropsData();
         drops.setDrops(new ArrayList<Drop>());
 
-        for (Ingestors ingestor : ingestors) {
-            LOGGER.info("Getting drops for [{}]", ingestor);
-            IParser parser = parserFactory.getParser(ingestor);
+        Set<Callable<List<Drop>>> callables = new HashSet<>();
 
-            List<DropData> parserDrops = parser.getDrops(false);
-            if (parserDrops != null && parserDrops.size() > 0) {
-                for (DropData drop : parserDrops) {
-                    DropsData.Drop data = drops.new Drop();
-                    data.setName(drop.name);
-                    data.setParser(parser);
-                    data.setIngestor(ingestor);
-                    data.setDrop(drop);
-                    drops.getDrops().add(data);
-                }
-            }
+        for (final Ingestors ingestor : ingestors) {
+            callables.add(getParsedDropsCallable(ingestor));
+        }
+
+        for (Future<List<Drop>> future : executorService.invokeAll(callables)) {
+            drops.getDrops().addAll(future.get());
         }
 
         return drops;
+    }
+
+    private Callable<List<Drop>> getParsedDropsCallable(final Ingestors ingestor) {
+        return new Callable<List<Drop>>() {
+            @Override
+            public List<Drop> call() throws Exception {
+                LOGGER.info("Getting drops for [{}]", ingestor);
+                List<Drop> result = new ArrayList<Drop>();
+                IParser parser = parserFactory.getParser(ingestor);
+
+                List<DropData> parserDrops = parser.getDrops(false);
+                if (parserDrops != null && parserDrops.size() > 0) {
+                    for (DropData drop : parserDrops) {
+                        DropsData.Drop data = new DropsData().new Drop();
+                        data.setName(drop.name);
+                        data.setParser(parser);
+                        data.setIngestor(ingestor);
+                        data.setDrop(drop);
+                        result.add(data);
+                    }
+                }
+
+                return result;
+            }
+        };
     }
 
     @Override
@@ -185,8 +209,7 @@ public class IngestServiceImpl implements IngestService {
                     }
                     track = new Track();
                     track.setIngestionDate(new Date());
-                }
-                else {
+                } else {
                     track.setIngestionUpdateDate(new Date());
                 }
                 track.setTitle(value.title);
@@ -225,8 +248,7 @@ public class IngestServiceImpl implements IngestService {
                 }
 
                 trackRepository.save(track);
-            }
-            else if (value.type == Type.DELETE) {
+            } else if (value.type == Type.DELETE) {
                 LOGGER.info("DELETE " + value.productId);
                 Track track = trackRepository.findByProductCode((String) value.productId);
                 if (track != null) {
@@ -291,8 +313,7 @@ public class IngestServiceImpl implements IngestService {
                     dataTrack.productCode = track.getProductCode();
                     data.getData().add(dataTrack);
                     command.setSize(command.getSize() + 1);
-                }
-                else {
+                } else {
                     command.setSize(command.getSize() + 1);
                     LOGGER.info("Checking Track in cn [ISRC:{}, productCode:{}, ingestor: {}]", value.isrc, value.productCode, drop.getIngestor());
                     Track track = trackRepository.findByKey(value.isrc, value.productCode, parserFactory.getName(drop.getIngestor()));
@@ -306,8 +327,7 @@ public class IngestServiceImpl implements IngestService {
                             continue; // Skip empty insert
                         }
                         dataTrack.exists = false;
-                    }
-                    else {
+                    } else {
                         dataTrack.exists = true;
                     }
 
@@ -350,8 +370,7 @@ public class IngestServiceImpl implements IngestService {
             }
 
             ingestDataBuffer.put(suid, data);
-        }
-        else {
+        } else {
             IngestWizardData suData = removeAfterGet ?
                                       ingestDataBuffer.remove(data.getSuid()) :
                                       ingestDataBuffer.get(data.getSuid());
@@ -389,8 +408,7 @@ public class IngestServiceImpl implements IngestService {
             if (result) {
                 if (territoryCodes.length() > 0) {
                     territoryCodes.append(", ");
-                }
-                else {
+                } else {
                     releaseDate = territoryData.startdate;
                     label = territoryData.label;
                 }
@@ -573,8 +591,7 @@ public class IngestServiceImpl implements IngestService {
 
             Transport.send(message);
             LOGGER.info("E-mail was successfully send to Takedown@musicqubed.com");
-        }
-        catch (MessagingException e) {
+        } catch (MessagingException e) {
             LOGGER.info("Mail sending failed: " + e.getMessage());
             LOGGER.info("Cause: " + e.getCause());
         }
@@ -605,4 +622,7 @@ public class IngestServiceImpl implements IngestService {
         return result;
     }
 
+    public void destroy() {
+        executorService.shutdownNow();
+    }
 }

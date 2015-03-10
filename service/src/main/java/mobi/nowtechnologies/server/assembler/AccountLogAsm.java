@@ -28,8 +28,7 @@ public class AccountLogAsm {
         final List<AccountLogDto> accountLogDtos;
         if (accountLogs.isEmpty()) {
             accountLogDtos = Collections.<AccountLogDto>emptyList();
-        }
-        else {
+        } else {
             accountLogDtos = new ArrayList<AccountLogDto>(accountLogs.size());
             for (AccountLog accountLog : accountLogs) {
                 accountLogDtos.add(toAccountLogDto(accountLog));
@@ -53,8 +52,7 @@ public class AccountLogAsm {
             gateway = submittedPayment.getPaymentSystem();
             internalTxId = submittedPayment.getInternalTxId();
             //subWeeks = submittedPayment.getSubweeks();
-        }
-        else {
+        } else {
             gateway = null;
             internalTxId = null;
             //			if (media != null){
@@ -68,18 +66,15 @@ public class AccountLogAsm {
         if (accountLog.getTransactionType().equals(TransactionType.TRACK_PURCHASE) || accountLog.getTransactionType().equals(TransactionType.SUBSCRIPTION_CHARGE)) {
             amount = 1;
             amountCurrency = "WEEKS";
-        }
-        else if (accountLog.getTransactionType().equals(TransactionType.CARD_TOP_UP) || accountLog.getTransactionType().equals(TransactionType.REFUND)) {
+        } else if (accountLog.getTransactionType().equals(TransactionType.CARD_TOP_UP) || accountLog.getTransactionType().equals(TransactionType.REFUND)) {
             if (submittedPayment != null) {
                 amount = submittedPayment.getAmount().intValue();
                 amountCurrency = submittedPayment.getCurrencyISO();
-            }
-            else {
+            } else {
                 amount = null;
                 amountCurrency = null;
             }
-        }
-        else {
+        } else {
             amount = null;
             amountCurrency = null;
         }

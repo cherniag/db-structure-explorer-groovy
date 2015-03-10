@@ -22,8 +22,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import junit.framework.Assert;
-
 /**
  * Created with IntelliJ IDEA. User: Alexsandr_Kolpakov Date: 10/2/13 Time: 3:47 PM To change this template use File | Settings | File Templates.
  */

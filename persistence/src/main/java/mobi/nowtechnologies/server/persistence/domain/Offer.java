@@ -126,8 +126,7 @@ public class Offer {
                     mediaList.add((Media) item);
                 }
             }
-        }
-        else {
+        } else {
             mediaList = Collections.EMPTY_LIST;
         }
 

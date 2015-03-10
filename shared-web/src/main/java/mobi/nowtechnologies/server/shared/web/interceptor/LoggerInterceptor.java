@@ -89,8 +89,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -130,8 +129,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                 if (ex == null && externalErrorObject == null && internalErrorObject == null && (bindingResult == null || !bindingResult.hasErrors())) {
                     result = "success";
                     errorMessages = null;
-                }
-                else {
+                } else {
                     result = "fail";
                     errorMessages = "";
                     if (ex != null) {
@@ -177,8 +175,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                                 userProvider = user.getProvider();
                             }
                         }
-                    }
-                    else {
+                    } else {
                         LOGGER.error("Invalid user id type");
                     }
                 }
@@ -192,12 +189,10 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                             List<?> existedPaymentPoliciesList = (List<?>) paymentPoliciesObject;
 
                             existedPaymentPolicies = existedPaymentPoliciesList.toString();
-                        }
-                        else {
+                        } else {
                             LOGGER.error("Invalid paymentPolicies type");
                         }
-                    }
-                    else {
+                    } else {
                         LOGGER.error("paymentPolicies request attribute is null");
                     }
                 }
@@ -214,8 +209,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                            existedPaymentPolicies, userContract, userSegment, userProvider, userPaymentPolicyId, userPaymentPolicySubCost, userPaymentPolicyPeriod, userPaymentPolicyPeriodUnit,
                            userPaymentPolicyAdditionalInfo, result, errorMessages);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

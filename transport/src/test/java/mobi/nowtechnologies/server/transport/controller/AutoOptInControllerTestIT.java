@@ -24,8 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-import static junit.framework.Assert.assertTrue;
-
 /**
  * User: Titov Mykhaylo (titov) User: Kolpakov Alexsandr (akolpakov) 05.09.13 15:44
  */

@@ -52,6 +52,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -109,11 +111,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             if (200 == response.getStatusLine().getStatusCode()) {
                 return true;
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot login into track repository. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while loginin into track repository. {}", e);
         }
         return false;
@@ -146,11 +146,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                     tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
                 }
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot search in track repository. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while searching for track in track repository. {}", e);
         }
         return tracks;
@@ -184,11 +182,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 Type type = new TypeToken<IngestWizardDataDto>() {}.getType();
                 data = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot search drops. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while searching drops. {}", e);
         }
         return data;
@@ -216,11 +212,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 Type type = new TypeToken<IngestWizardDataDto>() {}.getType();
                 result = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot select drops. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while selecting drops. {}", e);
         }
         return result;
@@ -248,11 +242,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 Type type = new TypeToken<IngestWizardDataDto>() {}.getType();
                 result = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot select tracks of the drops. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while selecting tracks of the drops. {}", e);
         }
         return result;
@@ -279,11 +271,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 Type type = new TypeToken<Boolean>() {}.getType();
                 result = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot commit drops. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while commiting drops. {}", e);
         }
         return result;
@@ -317,8 +307,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             LOGGER.info("Received json from track repo: {}", resJson);
             TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
             return trackDto;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
             throw e;
         }
@@ -353,15 +342,12 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
                 trackDto = gson.fromJson(new InputStreamReader(httpResponse.getEntity().getContent()), TrackDto.class);
-            }
-            else if (statusCode == HttpStatus.SC_NO_CONTENT) {
+            } else if (statusCode == HttpStatus.SC_NO_CONTENT) {
                 trackDto = null;
-            }
-            else {
+            } else {
                 throw new Exception("Wrong status code [" + statusCode + "] of response: [" + httpResponse + "]");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("encodeTrack exception: {}", e.getMessage(), e);
             throw e;
         }
@@ -434,11 +420,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                     }
                 }
             }
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             LOGGER.error("Cannot search in track repository. {}", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Communication exception while searching for track in track repository. {}", e);
         }
         return tracks;
@@ -512,12 +496,16 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 
     static class HttpClientFactory {
 
+        private static final int DEFAULT_SOCKET_TIMEOUT = 0;
+
         public static HttpClient getHttpClient() {
             SchemeRegistry schreg = new SchemeRegistry();
             schreg.register(new Scheme("http", 8080, PlainSocketFactory.getSocketFactory()));
             schreg.register(new Scheme("https", 443, PlainSocketFactory.getSocketFactory()));
             ClientConnectionManager conman = new ThreadSafeClientConnManager(schreg);
             HttpClient client = new DefaultHttpClient(conman);
+            HttpParams httpParams = client.getParams();
+            HttpConnectionParams.setSoTimeout(httpParams, DEFAULT_SOCKET_TIMEOUT);
             return client;
         }
     }

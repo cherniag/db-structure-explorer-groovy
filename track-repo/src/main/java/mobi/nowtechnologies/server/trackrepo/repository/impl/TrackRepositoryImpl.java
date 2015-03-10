@@ -55,15 +55,13 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
             if (searchTrackCriteria.isWithTerritories()) {
                 track.getTerritories().size();
-            }
-            else {
+            } else {
                 track.setTerritories(null);
             }
 
             if (searchTrackCriteria.isWithFiles()) {
                 track.getFiles().size();
-            }
-            else {
+            } else {
                 track.setFiles(null);
             }
 
@@ -86,8 +84,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
         if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds())) {
             query = query.setParameter("id", trackCriteria.getTrackIds().get(0).longValue());
-        }
-        else {
+        } else {
             setParamLike("genre", trackCriteria.getGenre(), query);
             setParamLike("album", trackCriteria.getAlbum(), query);
             setParamLike("artist", trackCriteria.getArtist(), query);
@@ -109,8 +106,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             if (trackCriteria.getMediaType() != null) {
                 if (trackCriteria.getMediaType().equals(AssetFile.FileType.VIDEO.name())) {
                     setParam("mediaType", AssetFile.FileType.VIDEO, query);
-                }
-                else {
+                } else {
                     setParam("mediaType", AssetFile.FileType.DOWNLOAD, query);
                 }
             }
@@ -133,8 +129,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
         StringBuilder criteria = new StringBuilder();
         if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds())) {
             addCriteria(criteria, " t.id = :id");
-        }
-        else {
+        } else {
             if (trackCriteria.getLabel() != null && !trackCriteria.getLabel().isEmpty()) {
                 addCriteria(criteria, " (ter.label like :label or ter.distributor like :label)");
             }

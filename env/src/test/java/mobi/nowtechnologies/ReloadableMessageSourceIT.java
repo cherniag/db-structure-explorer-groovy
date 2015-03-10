@@ -15,6 +15,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
+import org.junit.*;
 import org.junit.experimental.theories.*;
 import org.junit.runner.*;
 import static org.junit.Assert.*;
@@ -24,6 +25,7 @@ import static org.hamcrest.core.Is.is;
 // @author Titov Mykhaylo (titov) on 06.01.2015.
 //To run this test in idea IDE please run following command: maven -Dtest=ReloadableMessageSourceIT test -DfailIfNoTests=false
 @RunWith(Theories.class)
+@Ignore
 public class ReloadableMessageSourceIT {
 
     @DataPoints
@@ -98,8 +100,7 @@ public class ReloadableMessageSourceIT {
             //then
             try {
                 assertEquals("oldPropertyName=" + oldPropertyName + " for " + Arrays.toString(baseNames), oldMessage, newMessage);
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 logger.error(String.format("%s, %s, %s, %s, %s", Arrays.toString(baseNames), oldPropertyName, oldMessage, newMessage, community));
                 throw e;
             }

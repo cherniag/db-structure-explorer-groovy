@@ -38,9 +38,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-import junit.framework.Assert;
-import static junit.framework.Assert.assertEquals;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Utils.class)
 public class UserTest {

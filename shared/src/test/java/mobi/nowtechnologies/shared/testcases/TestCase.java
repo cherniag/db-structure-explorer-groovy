@@ -46,12 +46,10 @@ public class TestCase<IN, OUT> {
                     for (int i = 0; i < inputarr.length; i++) {
                         hash = (31 * hash) + inputarr[i].hashCode();
                     }
-                }
-                else {
+                } else {
                     hash = (31 * hash) + input.hashCode();
                 }
-            }
-            else {
+            } else {
                 hash = (31 * hash) + 0;
             }
         }

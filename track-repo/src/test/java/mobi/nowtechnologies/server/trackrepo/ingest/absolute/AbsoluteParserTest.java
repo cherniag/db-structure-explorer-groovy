@@ -400,12 +400,10 @@ public class AbsoluteParserTest extends ParserTest {
                                                "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[" + index + "]");
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))) {
                 fileType = DOWNLOAD;
-            }
-            else {
+            } else {
                 fileType = MOBILE;
             }
-        }
-        else {
+        } else {
             fileType = PREVIEW;
         }
         return fileType;

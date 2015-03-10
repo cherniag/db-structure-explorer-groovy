@@ -13,8 +13,7 @@ public class HazelcastService {
         Set<HazelcastInstance> instances = Hazelcast.getAllHazelcastInstances();
         if (instances.isEmpty()) {
             return Hazelcast.newHazelcastInstance(null);
-        }
-        else {
+        } else {
             return instances.iterator().next();
         }
     }

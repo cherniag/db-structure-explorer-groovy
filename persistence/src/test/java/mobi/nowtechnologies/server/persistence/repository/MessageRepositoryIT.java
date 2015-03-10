@@ -18,8 +18,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.collection.IsIn.isIn;
 
-import static junit.framework.Assert.assertNotNull;
-
 
 /**
  * @author Titov Mykhaylo (titov)

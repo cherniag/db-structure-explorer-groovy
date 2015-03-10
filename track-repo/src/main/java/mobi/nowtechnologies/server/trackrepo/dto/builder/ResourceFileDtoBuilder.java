@@ -102,8 +102,7 @@ public class ResourceFileDtoBuilder {
         if (dir != null) {
             Integer fileSize = getFileSize(getFilePath(type, resolution, dir, filename));
             resourceFileDto.setSize(fileSize);
-        }
-        else {
+        } else {
             resourceFileDto.setSize(0);
         }
 
@@ -119,8 +118,7 @@ public class ResourceFileDtoBuilder {
                 stream = file.toURI().toURL().openStream();
                 return stream.available();
             }
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(stream);
         }
         return 0;
@@ -137,12 +135,10 @@ public class ResourceFileDtoBuilder {
         try {
             if (fileName.toLowerCase().endsWith("." + FileType.DOWNLOAD.getExt())) {
                 return mp3Manager.getMP3MediaHash(fileName);
-            }
-            else { // Assume AAC.....
+            } else { // Assume AAC.....
                 return mp4manager.getMediaHash(fileName);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot get hash for {} : {}", fileName, e.getMessage(), e);
             return null;
         }

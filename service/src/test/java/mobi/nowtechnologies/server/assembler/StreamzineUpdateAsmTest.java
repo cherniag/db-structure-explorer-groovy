@@ -112,8 +112,7 @@ public class StreamzineUpdateAsmTest {
         block.setSubTitle(subTitle);
         if (include) {
             block.include();
-        }
-        else {
+        } else {
             block.exclude();
         }
         return block;

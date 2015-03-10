@@ -87,8 +87,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
             response = httpService
                 .makeReleaseRequest(pendingPayment.getCurrencyISO(), "Making first payment", paymentDetails.getVPSTxId(), paymentDetails.getVendorTxCode(), paymentDetails.getSecurityKey(),
                                     paymentDetails.getTxAuthNo(), pendingPayment.getAmount());
-        }
-        else {
+        } else {
             response = httpService.makeRepeatRequest(pendingPayment.getCurrencyISO(), "Making payment", paymentDetails.getVPSTxId(), paymentDetails.getVendorTxCode(), paymentDetails.getSecurityKey(),
                                                      paymentDetails.getTxAuthNo(), pendingPayment.getInternalTxId(), pendingPayment.getAmount());
         }

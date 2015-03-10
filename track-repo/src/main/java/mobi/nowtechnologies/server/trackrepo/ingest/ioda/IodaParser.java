@@ -77,11 +77,9 @@ public class IodaParser extends IParser {
 
             if ("update".equals(typeStr)) {
                 type = Type.UPDATE;
-            }
-            else if ("insert".equals(typeStr)) {
+            } else if ("insert".equals(typeStr)) {
                 type = Type.INSERT;
-            }
-            else if ("delete".equals(typeStr)) {
+            } else if ("delete".equals(typeStr)) {
                 type = Type.DELETE;
             }
 
@@ -92,8 +90,7 @@ public class IodaParser extends IParser {
             try {
                 Date releaseDate = dateParse.parse(releaseDateStr);
                 year = yearFormat.format(releaseDate);
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 LOGGER.error(e.getMessage());
             }
 
@@ -116,8 +113,7 @@ public class IodaParser extends IParser {
                 String startDate = territory.getChildText("publish_date", space);
                 try {
                     territoryData.startdate = dateParse.parse(startDate);
-                }
-                catch (ParseException e) {
+                } catch (ParseException e) {
                     LOGGER.error(e.getMessage());
                 }
 
@@ -172,11 +168,9 @@ public class IodaParser extends IParser {
 
             return result;
 
-        }
-        catch (IOException io) {
+        } catch (IOException io) {
             LOGGER.error("Ingest failed " + io.getMessage());
-        }
-        catch (JDOMException jdomex) {
+        } catch (JDOMException jdomex) {
             LOGGER.error("Ingest failed " + jdomex.getMessage());
         }
         return null;
@@ -190,8 +184,7 @@ public class IodaParser extends IParser {
             File dropDir = new File(drop.name);
             tracks = loadXml(drop.name + "/" + dropDir.getName() + ".xml");
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Ingest failed " + e.getMessage());
         }
         return tracks;
@@ -221,14 +214,11 @@ public class IodaParser extends IParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if ("dir.complete".equals(file.getName())) {
+            } else if ("dir.complete".equals(file.getName())) {
                 valid = true;
 
             }

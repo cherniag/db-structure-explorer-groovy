@@ -43,8 +43,7 @@ public class SQLUtils {
                         trimmedLine.startsWith("//") ||
                         trimmedLine.startsWith("/*")) {
                         continue;
-                    }
-                    else {
+                    } else {
                         if (trimmedLine.endsWith(";")) {
                             trimmedLine = trimmedLine.substring(0, trimmedLine.length() - 1);
                             sqlQuery.append(trimmedLine);
@@ -55,13 +54,11 @@ public class SQLUtils {
                             query.executeUpdate();
 
                             sqlQuery = new StringBuilder();
-                        }
-                        else {
+                        } else {
                             sqlQuery.append(trimmedLine).append(" ");
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new HibernateException("Error during import script execution at line " + lineNo, e);
                 }
             }

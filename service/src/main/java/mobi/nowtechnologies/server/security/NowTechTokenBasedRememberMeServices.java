@@ -54,11 +54,9 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
             if (null != successfulHander) {
                 successfulHander.onAuthenticationSuccess(request, response, successfulAuthentication);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Exception on successful authentication", e);
-        }
-        catch (ServletException e) {
+        } catch (ServletException e) {
             LOGGER.error("Exception on successful authentication", e);
         }
     }
@@ -85,8 +83,7 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
                 System.arraycopy(cookieTokens, 0, cookieTokens, 0, 3);
             }
             processAutoLoginCookie = super.processAutoLoginCookie(cookieTokens, request, response);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new InvalidCookieException(e.getMessage());
         }

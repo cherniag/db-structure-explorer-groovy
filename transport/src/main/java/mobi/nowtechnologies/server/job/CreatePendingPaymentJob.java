@@ -28,11 +28,9 @@ public class CreatePendingPaymentJob {
                 executor.execute(pendingPayment);
             }
             LOGGER.info("[DONE] Pending Payment job finished with {} pending payments added to queue", createPendingPayments.size());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error while running Pending Payment job", e);
-        }
-        finally {
+        } finally {
             LogUtils.removeClassNameMDC();
         }
     }

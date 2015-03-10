@@ -2,15 +2,18 @@ package mobi.nowtechnologies.server.trackrepo.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ExternalCommandThread implements Callable<String> {
 
-    private Exception ex = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalCommandThread.class);
+
     private String key;
     private List<String> command = new ArrayList<String>();
     private int exitCode;
@@ -35,89 +38,36 @@ public class ExternalCommandThread implements Callable<String> {
 
     public void run() throws IOException, InterruptedException {
 
-        InputStream stderr = null;
-        InputStream stdout = null;
-        String line;
-        System.out.println("Executing " + command);
+        LOGGER.info("Executing {}", command);
         Process p = Runtime.getRuntime().exec(command.toArray(new String[command.size()]));
-        stdout = p.getInputStream();
-        stderr = p.getErrorStream();
 
         // clean up if any output in stderr
-        BufferedReader brCleanUp = new BufferedReader(new InputStreamReader(stderr));
+        String line;
+        BufferedReader brCleanUp = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         while ((line = brCleanUp.readLine()) != null) {
-            System.err.println("[Stderr] {}" + line);
+            LOGGER.error("[Stderr] {}", line);
         }
 
         brCleanUp.close();
 
-        brCleanUp = new BufferedReader(new InputStreamReader(stdout));
+        brCleanUp = new BufferedReader(new InputStreamReader(p.getInputStream()));
         while ((line = brCleanUp.readLine()) != null) {
-            System.out.println("[Stout] {}" + line);
+            LOGGER.info("[Stout] {}", line);
             outBuffer.append(line);
         }
         brCleanUp.close();
         exitCode = p.waitFor();
-        System.out.println("Process finished with exit code {}" + exitCode);
+        p.destroy();
+        LOGGER.info("Process finished with exit code {}", exitCode);
     }
 
-    public Exception getException() {
-        return ex;
-    }
-
-    public String call() throws Exception {
+    @Override
+    public String call() {
         return key;
-    }
-
-    public String call2() throws Exception {
-        try {
-            InputStream stderr = null;
-            InputStream stdout = null;
-
-            Process p = Runtime.getRuntime().exec((String[]) command.toArray());
-            stdout = p.getInputStream();
-            stderr = p.getErrorStream();
-
-            // clean up if any output in stderr
-            BufferedReader brErrCleanUp = new BufferedReader(new InputStreamReader(stderr));
-            BufferedReader brOutCleanUp = new BufferedReader(new InputStreamReader(stdout));
-            String lineErr = brErrCleanUp.readLine();
-            String lineOut = brOutCleanUp.readLine();
-            while (lineErr != null && lineOut != null) {
-                if (lineErr != null) {
-                    System.err.println("[Stderr] " + lineErr);
-                }
-                if (lineOut != null) {
-                    System.err.println("[Stdout] " + lineOut);
-                }
-                lineErr = brErrCleanUp.readLine();
-                lineOut = brOutCleanUp.readLine();
-            }
-
-            brErrCleanUp.close();
-            brOutCleanUp.close();
-
-            int exitCode = p.waitFor();
-            System.out.println("Process finished with exit code {}" + exitCode);
-            if (exitCode == 0) {
-                return key;
-            }
-            else {
-                return null;
-            }
-        }
-        catch (Exception e) {
-            System.err.println("Cannot start {}, Exception: {}" + e.toString());
-            throw e;
-        }
     }
 
     public int getExitCode() {
         return exitCode;
-    }
-
-    public void setExitCode(int exitCode) {
-        this.exitCode = exitCode;
     }
 
     public String getOutBuffer() {

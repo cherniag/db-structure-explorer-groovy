@@ -21,7 +21,9 @@
         <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
           <value>
             <package name="org.junit" withSubpackages="true" static="false" />
+            <package name="org.junit" withSubpackages="true" static="true" />
             <package name="org.mockito" withSubpackages="true" static="false" />
+            <package name="org.mockito" withSubpackages="true" static="true" />
           </value>
         </option>
         <option name="IMPORT_LAYOUT_TABLE">
@@ -72,6 +74,10 @@
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
+        <codeStyleSettings language="ECMA Script Level 4">
+          <option name="WRAP_COMMENTS" value="true" />
+          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
+        </codeStyleSettings>
         <codeStyleSettings language="JAVA">
           <option name="KEEP_LINE_BREAKS" value="false" />
           <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
@@ -80,10 +86,6 @@
           <option name="BLANK_LINES_BEFORE_IMPORTS" value="0" />
           <option name="BLANK_LINES_AFTER_IMPORTS" value="0" />
           <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
-          <option name="ELSE_ON_NEW_LINE" value="true" />
-          <option name="WHILE_ON_NEW_LINE" value="true" />
-          <option name="CATCH_ON_NEW_LINE" value="true" />
-          <option name="FINALLY_ON_NEW_LINE" value="true" />
           <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
           <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
           <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
