@@ -20,8 +20,6 @@ import static org.junit.Assert.*;
 
 import static org.hamcrest.Matchers.is;
 
-import static junit.framework.Assert.assertNotNull;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/META-INF/application-test.xml"})
 public class AbsoluteParserIT {

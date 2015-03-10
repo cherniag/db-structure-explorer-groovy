@@ -7,8 +7,6 @@ import org.smslib.Message;
 
 import org.junit.*;
 
-import junit.framework.Assert;
-
 /**
  * User: Alexsandr_Kolpakov Date: 10/7/13 Time: 2:13 PM
  */

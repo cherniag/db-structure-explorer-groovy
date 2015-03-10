@@ -10,9 +10,7 @@ import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRA
 import javax.annotation.Resource;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * User: Titov Mykhaylo (titov) 16.07.13 10:28

@@ -16,10 +16,6 @@ import static org.junit.Assert.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-
 /**
  * User: Titov Mykhaylo (titov) 02.08.13 15:20
  */

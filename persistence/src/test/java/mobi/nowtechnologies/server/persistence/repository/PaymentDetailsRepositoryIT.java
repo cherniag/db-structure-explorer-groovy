@@ -25,9 +25,6 @@ import static org.junit.rules.ExpectedException.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-
 public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
 
     @Rule

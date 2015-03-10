@@ -32,12 +32,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
 import org.springframework.test.web.servlet.ResultActions;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Titov Mykhaylo (titov) on 25.06.2014.

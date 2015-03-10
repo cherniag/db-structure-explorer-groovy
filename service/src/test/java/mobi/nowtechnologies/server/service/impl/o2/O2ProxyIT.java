@@ -8,8 +8,6 @@ import org.springframework.web.client.RestTemplate;
 
 import org.junit.*;
 
-import junit.framework.Assert;
-
 public class O2ProxyIT {
 
     public final static String VALIDATE_PHONE_REQ = "/user/carrier/o2/authorise/";

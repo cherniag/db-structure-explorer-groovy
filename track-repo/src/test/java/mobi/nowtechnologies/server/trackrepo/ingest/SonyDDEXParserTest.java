@@ -25,9 +25,7 @@ import org.xml.sax.SAXException;
 import org.springframework.core.io.ClassPathResource;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class SonyDDEXParserTest extends ParserTest {
 

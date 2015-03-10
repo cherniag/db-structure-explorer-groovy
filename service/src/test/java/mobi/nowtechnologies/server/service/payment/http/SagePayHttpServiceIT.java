@@ -11,10 +11,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.junit.*;
-
-import junit.framework.Assert;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @Ignore
 public class SagePayHttpServiceIT {

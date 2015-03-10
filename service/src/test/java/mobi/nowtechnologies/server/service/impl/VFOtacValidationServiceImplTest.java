@@ -18,8 +18,6 @@ import static org.hamcrest.CoreMatchers.is;
 
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static junit.framework.Assert.assertNull;
-
 /**
  * User: Titov Mykhaylo (titov) 30.09.13 17:41
  */

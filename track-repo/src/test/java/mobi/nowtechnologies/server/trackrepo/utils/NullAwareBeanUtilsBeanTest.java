@@ -12,8 +12,6 @@ import org.junit.runner.*;
 
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import junit.framework.Assert;
-
 /**
  * Created with IntelliJ IDEA. User: Alexsandr_Kolpakov Date: 7/16/13 Time: 3:50 PM To change this template use File | Settings | File Templates.
  */
