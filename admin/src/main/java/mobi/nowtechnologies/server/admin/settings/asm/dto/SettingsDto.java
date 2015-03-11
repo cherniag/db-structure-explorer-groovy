@@ -80,7 +80,6 @@ public class SettingsDto {
         ads.putAll(initStatuses());
         periods.addAll(getRequiredPeriodValues());
         chartBehaviorTypes.addAll(BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType));
-        behaviorConfigTypes.addAll(Arrays.asList(BehaviorConfigType.values()));
     }
 
     // for JSON
