@@ -22,28 +22,28 @@ Feature: get context
     And user is in LIMITED state
 
     And the case is the following [----(Rm)--------(NOW)-----(Re)-------]
-    And chart 84 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action1
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action1
     When referral data matches current case
     When user invokes get context command
-    Then chart 84 contains [{now};PREVIEW;{community}://content/playlist?id=84&action=action1, {exp};PREVIEW;{community}://content/playlist?id=84&action=action1]
+    Then chart chart_ID contains [{now};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action1, {exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action1]
 
     And the case is the following [----(Rm)--------(NOW)-----(Re)-------]
-    And chart 84 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
     When referral data matches current case
     When user invokes get context command
-    Then chart 84 contains [{now};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id=84&action=refer_a_friend]
+    Then chart chart_ID contains [{now};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=refer_a_friend]
 
     And the case is the following [----(Rm)--------(NOW)----------------]
-    And chart 85 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action2
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action2
     When referral data matches current case
     When user invokes get context command
-    Then chart 85 contains [{now};PREVIEW;{community}://content/playlist?id=85&action=action2]
+    Then chart chart_ID contains [{now};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action2]
 
     And the case is the following [----(Rm)--------(NOW)----------------]
-    And chart 85 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
     When referral data matches current case
     When user invokes get context command
-    Then chart 85 contains [{now};SHUFFLED;null]
+    Then chart chart_ID contains [{now};SHUFFLED;null]
 
   Scenario: get context for different matched referral cases
     Given First time user with all devices using JSON format with all versions to get context and get context supported communities available
@@ -53,31 +53,47 @@ Feature: get context
     And user is in FREE_TRIAL state
 
     And the case is the following [----(Rm)-----(NOW)-------(FT)--(Re)--]
-    And chart 86 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action3
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action3
     When referral data matches current case
     When user invokes get context command
-    Then chart 86 contains [{now};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id=86&action=action3, {exp};PREVIEW;{community}://content/playlist?id=86&action=action3]
+    Then chart chart_ID contains [{now};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action3, {exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action3]
 
     And the case is the following [----(Rm)-----(NOW)-------(FT)--(Re)--]
-    And chart 86 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
     When referral data matches current case
     When user invokes get context command
-    Then chart 86 contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id=86&action=refer_a_friend]
+    Then chart chart_ID contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=refer_a_friend]
 
     And the case is the following [----(Rm)-----(NOW)-------(FT)--------]
-    And chart 87 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action4
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action4
     When referral data matches current case
     When user invokes get context command
-    Then chart 87 contains [{now};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id=87&action=action4]
+    Then chart chart_ID contains [{now};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action4]
 
     And the case is the following [----(Rm)-----(NOW)-------(FT)--------]
-    And chart 87 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
     When referral data matches current case
     When user invokes get context command
-    Then chart 87 contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null]
+    Then chart chart_ID contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null]
 
     And the case is the following [----(Rm)-----(NOW)-(Re)--(FT)--------]
-    And chart 87 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action5
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action5
     When referral data matches current case
     When user invokes get context command
-    Then chart 87 contains [{now};NORMAL;null, {exp};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id=87&action=action5]
+    Then chart chart_ID contains [{now};NORMAL;null, {exp};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id={chart_ID}&action=action5]
+
+  Scenario: get context for user with AWAITING payment details
+    Given First time user with all devices using JSON format with all versions to get context and get context supported communities available
+    And user has AWAITING payment details
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:<NULL>
+    When user invokes get context command
+    Then response has 200 http response code
+    Then chart chart_ID contains [{now};PREVIEW;null]
+
+  Scenario: get context for user with pending ERROR payment details
+    Given First time user with all devices using JSON format with all versions to get context and get context supported communities available
+    And user has ERROR payment details
+    And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:<NULL>
+    When user invokes get context command
+    Then response has 200 http response code
+    Then chart chart_ID contains [{now};PREVIEW;null]

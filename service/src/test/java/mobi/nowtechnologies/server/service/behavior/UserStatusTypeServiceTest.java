@@ -14,8 +14,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import static org.powermock.api.mockito.PowerMockito.mock;
-
 public class UserStatusTypeServiceTest {
 
     User user = mock(User.class);
@@ -96,4 +94,41 @@ public class UserStatusTypeServiceTest {
         assertEquals(UserStatusType.LIMITED, userStatusTypeDatePairs.get(1).getKey());
         assertEquals(freeTrialExpiredDate, userStatusTypeDatePairs.get(1).getValue());
     }
+
+    @Test
+    public void testUserStatusesToSinceMappingWhenUserHasAwaitingPaymentDetails(){
+        Date serverTime = new Date();
+        Date freeTrialExpiredDate = DateUtils.addDays(serverTime, -1);
+
+        when(user.getNextSubPaymentAsDate()).thenReturn(serverTime);
+        when(user.isSubscribedStatus()).thenReturn(true);
+        when(user.getFreeTrialExpiredAsDate()).thenReturn(freeTrialExpiredDate);
+        when(user.getCurrentPaymentDetails()).thenReturn(paymentDetails);
+        when(paymentDetails.isAwaiting()).thenReturn(true);
+
+        List<Pair<UserStatusType, Date>> userStatusTypeDatePairs = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
+
+        assertEquals(1, userStatusTypeDatePairs.size());
+        assertEquals(serverTime, userStatusTypeDatePairs.get(0).getValue());
+        assertEquals(UserStatusType.LIMITED, userStatusTypeDatePairs.get(0).getKey());
+    }
+
+    @Test
+    public void testUserStatusesToSinceMappingWhenUserHasPaymentDetailsErrorAndCanRetry(){
+        Date serverTime = new Date();
+        Date freeTrialExpiredDate = DateUtils.addDays(serverTime, -1);
+
+        when(user.getNextSubPaymentAsDate()).thenReturn(serverTime);
+        when(user.isSubscribedStatus()).thenReturn(true);
+        when(user.getFreeTrialExpiredAsDate()).thenReturn(freeTrialExpiredDate);
+        when(user.getCurrentPaymentDetails()).thenReturn(paymentDetails);
+        when(paymentDetails.isErrorAndCanRetry()).thenReturn(true);
+
+        List<Pair<UserStatusType, Date>> userStatusTypeDatePairs = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
+
+        assertEquals(1, userStatusTypeDatePairs.size());
+        assertEquals(serverTime, userStatusTypeDatePairs.get(0).getValue());
+        assertEquals(UserStatusType.LIMITED, userStatusTypeDatePairs.get(0).getKey());
+    }
+
 }
