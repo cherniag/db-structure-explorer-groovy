@@ -67,8 +67,7 @@ public class ReferralHttpService extends AbstractHttpService {
     private String toJson(List<ReferralDto> referrals) {
         try {
             return objectMapper.writeValueAsString(referrals);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }

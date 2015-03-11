@@ -25,8 +25,7 @@ public class UploadToCloudFileManager {
             if (file.exists()) {
                 String contentType = getContentTypeByExtension(file.getName());
                 cloudService.uploadFile(file, track.getId() + "_" + file.getName(), contentType, privateContainerName);
-            }
-            else {
+            } else {
                 LOGGER.warn("File {} doesn't exist", file);
             }
         }
@@ -35,8 +34,7 @@ public class UploadToCloudFileManager {
             if (file.exists()) {
                 String contentType = getContentTypeByExtension(file.getName());
                 cloudService.uploadFile(file, file.getName(), contentType, dataContainerName);
-            }
-            else {
+            } else {
                 LOGGER.warn("File {} doesn't exist", file);
             }
         }

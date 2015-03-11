@@ -21,8 +21,6 @@ import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-import static junit.framework.Assert.assertNotNull;
-
 
 // @author: Titov Mykhaylo (titov) 04.10.13 16:16
 @RunWith(SpringJUnit4ClassRunner.class)

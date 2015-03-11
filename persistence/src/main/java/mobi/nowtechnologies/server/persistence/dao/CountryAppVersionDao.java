@@ -28,8 +28,7 @@ public class CountryAppVersionDao extends JpaDaoSupport {
         boolean noRecords = Long.valueOf(0L).equals(foundedRecordsCount);
         if (noRecords) {
             return false;
-        }
-        else {
+        } else {
             String message = "There are " + foundedRecordsCount + " records found for appVersion = " + appVersion + ", countryFullName = " + countryCode;
             LOGGER.error(message);
             throw new PersistenceException(message);

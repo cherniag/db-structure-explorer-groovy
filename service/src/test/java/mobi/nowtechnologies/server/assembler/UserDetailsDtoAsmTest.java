@@ -19,9 +19,8 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.runners.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
-import static junit.framework.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserDetailsDtoAsmTest {

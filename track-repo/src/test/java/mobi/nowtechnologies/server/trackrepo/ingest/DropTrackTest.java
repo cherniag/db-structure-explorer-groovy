@@ -4,8 +4,6 @@ import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 
 import org.junit.*;
 
-import junit.framework.Assert;
-
 /**
  * Created with IntelliJ IDEA. User: Alexsandr_Kolpakov Date: 9/11/13 Time: 2:21 PM To change this template use File | Settings | File Templates.
  */

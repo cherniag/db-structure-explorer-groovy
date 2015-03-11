@@ -39,8 +39,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-import junit.framework.Assert;
-
 /**
  * User: gch Date: 12/19/13
  */

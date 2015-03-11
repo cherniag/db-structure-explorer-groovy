@@ -31,17 +31,14 @@ public class CleanExpirePendingPaymentsJob {
                 PaymentSystemService paymentSystemService = paymentSystems.get(pendingPayment.getPaymentSystem());
                 try {
                     cleanedPayments.add(paymentSystemService.commitPayment(pendingPayment, paymentSystemService.getExpiredResponse()));
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOGGER.warn("Can't remove expired pending payment with id:{} and txId:{}", pendingPayment.getI(), pendingPayment.getInternalTxId());
                 }
             }
             LOGGER.info("[DONE] Clean Expire Pending Payments Job has been finished with {} pending payments removed", cleanedPayments.size());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error while cleaning expired pending payments. {}", e);
-        }
-        finally {
+        } finally {
             LogUtils.removeClassNameMDC();
         }
     }

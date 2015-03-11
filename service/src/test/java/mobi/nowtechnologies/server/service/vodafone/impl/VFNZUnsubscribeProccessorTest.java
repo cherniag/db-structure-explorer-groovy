@@ -16,8 +16,6 @@ import static org.mockito.Mockito.*;
 
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import junit.framework.Assert;
-
 /**
  * User: Alexsandr_Kolpakov Date: 10/21/13 Time: 11:28 AM
  */

@@ -76,8 +76,7 @@ public class SMSNotification {
         User user = (User) joinPoint.getArgs()[0];
         try {
             userNotificationService.sendSmsOnFreeTrialExpired(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;
@@ -93,8 +92,7 @@ public class SMSNotification {
         try {
             User user = userService.findById(userId);
             userNotificationService.sendUnsubscribeAfterSMS(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;
@@ -112,8 +110,7 @@ public class SMSNotification {
                     userNotificationService.sendUnsubscribeAfterSMS(user);
                     users.add(user);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
@@ -130,8 +127,7 @@ public class SMSNotification {
         try {
             User user = userService.findById(userId);
             userNotificationService.sendLowBalanceWarning(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;
@@ -163,8 +159,7 @@ public class SMSNotification {
         try {
             User user = userService.findById(userId);
             userNotificationService.sendUnsubscribePotentialSMS(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;
@@ -176,8 +171,7 @@ public class SMSNotification {
         User user = (User) joinPoint.getArgs()[0];
         try {
             userNotificationService.sendUnsubscribePotentialSMS(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;
@@ -189,8 +183,7 @@ public class SMSNotification {
         User user = (User) joinPoint.getArgs()[0];
         try {
             userNotificationService.send4GDowngradeSMS(user, UserNotificationService.DOWNGRADE_FROM_4G_SUBSCRIBED);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;
@@ -202,8 +195,7 @@ public class SMSNotification {
         User user = (User) joinPoint.getArgs()[0];
         try {
             userNotificationService.send4GDowngradeSMS(user, UserNotificationService.DOWNGRADE_FROM_4G_FREETRIAL);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return object;

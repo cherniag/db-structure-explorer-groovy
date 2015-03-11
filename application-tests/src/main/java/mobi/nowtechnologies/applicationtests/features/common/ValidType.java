@@ -14,8 +14,7 @@ public enum ValidType {
     public String decide(String data) {
         if (this == NotValid) {
             return spoil(data);
-        }
-        else {
+        } else {
             return data;
         }
     }

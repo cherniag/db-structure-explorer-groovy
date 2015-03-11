@@ -46,11 +46,9 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
             result = new PhoneNumberValidationData().withPhoneNumber(normalizedPhoneNumber).withPin(pin);
 
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new InvalidPhoneNumberException(phoneNumber);
-        }
-        finally {
+        } finally {
             LOGGER.info("NZ VALIDATE_PHONE_NUMBER finished for[{}] with [{}]", new Object[] {phoneNumber, result});
         }
     }

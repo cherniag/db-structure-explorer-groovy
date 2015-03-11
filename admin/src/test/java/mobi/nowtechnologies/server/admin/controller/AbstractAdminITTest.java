@@ -84,8 +84,7 @@ public abstract class AbstractAdminITTest {
         ByteArrayOutputStream requestContent = new ByteArrayOutputStream();
         try {
             multipartRequestEntity.writeRequest(requestContent);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("Exception", e);
         }
         request.setContent(requestContent.toByteArray());
@@ -100,8 +99,7 @@ public abstract class AbstractAdminITTest {
                 Part[] parts = new Part[0];
                 try {
                     parts = new Part[] {new FilePart(fileAttributeName, fileName, file)};
-                }
-                catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     logger.error("Exception", e);
                 }
                 return writePartsAndReturnRequest(request, parts);

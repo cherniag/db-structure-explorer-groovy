@@ -43,12 +43,10 @@ public class PhoneNumberController extends CommonController {
             String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 
             return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, phone, user, ex);
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
         }
@@ -75,12 +73,10 @@ public class PhoneNumberController extends CommonController {
             }
 
             return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, phone, user, ex);
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
         }

@@ -192,14 +192,12 @@ public abstract class CommonController extends ProfileController {
         if (serverMessage != null) {
             localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
             message = localizedDisplayMessage;
-        }
-        else if (errorCodeForMessageLocalization != null) {
+        } else if (errorCodeForMessageLocalization != null) {
             Locale locale = httpServletRequest.getLocale();
             String commnityUri = getCommunityUrl(httpServletRequest);
             localizedDisplayMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
             message = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, Locale.ENGLISH);
-        }
-        else {
+        } else {
             localizedDisplayMessage = validationException.getLocalizedMessage();
             message = validationException.getMessage();
         }
@@ -232,8 +230,7 @@ public abstract class CommonController extends ProfileController {
                                       localizedDisplayMessage :
                                       "Bad user credentials";
             message = localizedDisplayMessage;
-        }
-        else {
+        } else {
             errorCode = null;
             localizedDisplayMessage = versionPriority > 0 ?
                                       exception.getMessage() :
@@ -269,27 +266,23 @@ public abstract class CommonController extends ProfileController {
         if (message != null && serverMessage == null) {
             if (throwable != null) {
                 errorMessage = getErrorMessage(throwable.getLocalizedMessage(), message, null);
-            }
-            else {
+            } else {
                 errorMessage = getErrorMessage(message, message, null);
             }
             LOGGER.error(message, serviceException);
-        }
-        else if (serverMessage != null) {
+        } else if (serverMessage != null) {
             String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
 
             errorMessage = getErrorMessage(localizedMessage, localizedMessage, serviceException.getServerMessage().getErrorCode());
             LOGGER.error(message);
-        }
-        else if (errorCodeForMessageLocalization != null) {
+        } else if (errorCodeForMessageLocalization != null) {
             Locale locale = httpServletRequest.getLocale();
             String communityUri = getCommunityUrl(httpServletRequest);
             String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
             message = serviceException.getLocalizedMessage();
             errorMessage = getErrorMessage(localizedMessage, message, serviceException.getErrorCode());
             LOGGER.error(message);
-        }
-        else {
+        } else {
             throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
         }
         return sendResponse(errorMessage, INTERNAL_SERVER_ERROR, response);
@@ -339,15 +332,13 @@ public abstract class CommonController extends ProfileController {
             errorCode = exception instanceof ServiceException ?
                         new Integer(((ServiceException) exception).getErrorCodeForMessageLocalization()) :
                         null;
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             errorCode = null;
         }
         ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
         if (isCriticalException) {
             LOGGER.error(message, exception);
-        }
-        else {
+        } else {
             LOGGER.warn(message, exception);
         }
 
@@ -362,8 +353,7 @@ public abstract class CommonController extends ProfileController {
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
         try {
             return Utils.isMajorVersionNumberLessThan(majorVersionNumber, apiVersion);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
         }

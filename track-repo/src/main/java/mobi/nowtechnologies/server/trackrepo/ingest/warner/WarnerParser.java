@@ -38,8 +38,7 @@ public class WarnerParser extends DDEXParser {
                     tracks.putAll(result);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
         return tracks;
@@ -68,14 +67,11 @@ public class WarnerParser extends DDEXParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            }
-            else if (DELIVERY_COMPLETE.equals(file.getName())) {
+            } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }

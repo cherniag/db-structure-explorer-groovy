@@ -69,8 +69,7 @@ public class OfferController extends AbstractCommonController {
                 FilterDto selectedfilterDto = null;
                 if (element instanceof FilterDto) {
                     selectedfilterDto = (FilterDto) element;
-                }
-                else if (element instanceof String) {
+                } else if (element instanceof String) {
                     Set<FilterDto> allOfferFilterDtos = getAllOfferFilterDtos();
                     for (FilterDto filterDto : allOfferFilterDtos) {
                         if (filterDto.getName().equals(element)) {
@@ -90,13 +89,11 @@ public class OfferController extends AbstractCommonController {
                 ItemDto selectedItemDto = null;
                 if (element instanceof ItemDto) {
                     selectedItemDto = (ItemDto) element;
-                }
-                else if (element instanceof String) {
+                } else if (element instanceof String) {
                     try {
                         Integer id = Integer.parseInt((String) element);
                         selectedItemDto = offerService.getItemById(id);
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         LOGGER.warn("String does not contain a parsable integer. Cause: {}", e);
 
                     }
@@ -175,8 +172,7 @@ public class OfferController extends AbstractCommonController {
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("offer/add");
 
-        }
-        else {
+        } else {
 
             String communityURL = RequestUtils.getCommunityURL();
 
@@ -197,8 +193,7 @@ public class OfferController extends AbstractCommonController {
         if (offerDto != null) {
             modelAndView = new ModelAndView("offer/edit");
             modelAndView.getModelMap().put(OfferDto.OFFER_DTO, offerDto);
-        }
-        else {
+        } else {
             modelAndView = new ModelAndView("redirect:/offers");
         }
 
@@ -215,8 +210,7 @@ public class OfferController extends AbstractCommonController {
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("offer/edit");
             modelAndView.getModelMap().put(OfferDto.OFFER_DTO, offerDto);
-        }
-        else {
+        } else {
 
             String communityURL = RequestUtils.getCommunityURL();
 
@@ -226,8 +220,7 @@ public class OfferController extends AbstractCommonController {
                 modelAndView.getModelMap().put(OfferDto.OFFER_DTO, offerDto);
                 bindingResult.addError(new ObjectError(OfferDto.OFFER_DTO, new String[] {"offer.edit.error.couldNotFindOffer"}, null,
                                                        "Couldn't find this offer in the DB. To save it as new item click 'Save changes' button."));
-            }
-            else {
+            } else {
                 modelAndView = new ModelAndView("redirect:/offers");
             }
         }

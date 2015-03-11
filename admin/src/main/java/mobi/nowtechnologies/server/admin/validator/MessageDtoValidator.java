@@ -67,8 +67,7 @@ public class MessageDtoValidator extends BaseValidator {
         if (!MessageType.getBannerTypes().contains(messageDto.getMessageType())) {
             if (isBlank(messageDto.getHeadline())) {
                 errors.rejectValue(HEADLINE, MESSAGE_HEADLINE_IS_BLANK, THE_HEADLINE_FIELD_COULDN_T_BE_NULL_EMPTY_OR_BLANK);
-            }
-            else if (messageDto.getHeadline().length() > 255) {
+            } else if (messageDto.getHeadline().length() > 255) {
                 errors.rejectValue(HEADLINE, MESSAGE_HEADLINE_WRONG_SIZE, new Object[] {1, 255}, THE_HEADLINE_FIELD_MUST_CONSIST_OF_0_1_CHARACTERS_FOR_THIS_MESSAGE_TYPE);
             }
         }
@@ -87,8 +86,7 @@ public class MessageDtoValidator extends BaseValidator {
                 if (messageActionType.isSpecificNewsStoryOrSpecificTrackOrExternalUrlOrMobileWebPortal()) {
                     errors.rejectValue(ACTION, RICH_POPUP_ACTION_IS_NULL_EMPTY_OR_BLANK, THE_ACTION_FIELD_COULDN_T_BE_NULL_EMPTY_OR_BLANK_FOR_THIS_ACTION_TYPE);
                 }
-            }
-            else {
+            } else {
                 if (!messageActionType.isSpecificNewsStoryOrSpecificTrackOrExternalUrlOrMobileWebPortal()) {
                     errors.rejectValue(ACTION, RICH_POPUP_ACTION_SHOULD_BE_NULL, THE_ACTION_FIELD_SHOULD_BE_NULL_FOR_THIS_ACTION_TYPE);
                 }
@@ -103,13 +101,11 @@ public class MessageDtoValidator extends BaseValidator {
             if (messageDto.getMessageType().equals(RICH_POPUP)) {
                 if (isBlank(actionButtonText)) {
                     errors.rejectValue(ACTION_BUTTON_TEXT, RICH_POPUP_ACTION_BUTTON_TEXT_IS_NULL_EMPTY_OR_BLANK, THE_ACTION_BUTTON_TEXT_FIELD_COULDN_T_BE_NULL_EMPTY_OR_BLANK);
-                }
-                else if (actionButtonText.length() > 255) {
+                } else if (actionButtonText.length() > 255) {
                     errors.rejectValue(ACTION_BUTTON_TEXT, RICH_POPUP_ACTION_BUTTON_TEXT_WRONG_SIZE, THE_ACTION_BUTTON_TEXT_FIELD_MUST_CONSIST_OF_1_255_CHARACTERS);
                 }
             }
-        }
-        else {
+        } else {
             if (body != null && body.length() > 255) {
                 errors.rejectValue(BODY, MESSAGE_BODY_WRONG_SIZE, new Object[] {1, 255}, THE_BODY_FIELD_MUST_CONSIST_OF_0_1_CHARACTERS_FOR_THIS_MESSAGE_TYPE);
             }

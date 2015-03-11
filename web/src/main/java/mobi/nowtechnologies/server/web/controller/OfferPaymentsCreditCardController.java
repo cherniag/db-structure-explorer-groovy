@@ -84,8 +84,7 @@ public class OfferPaymentsCreditCardController extends CommonController {
         if (result.hasErrors() || creditCardDto.getAction() == Action.EDIT) {
             creditCardDto.setAction(Action.PREVIEW);
             modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD);
-        }
-        else {
+        } else {
             creditCardDto.setAction(Action.EDIT);
             modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD_PREVIEW);
         }
@@ -102,8 +101,7 @@ public class OfferPaymentsCreditCardController extends CommonController {
         if (result.hasErrors()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
-        }
-        else {
+        } else {
             paymentDetailsService.buyByCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId(), offerId);
             modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
         }
@@ -120,8 +118,7 @@ public class OfferPaymentsCreditCardController extends CommonController {
         final String message = messageSource.getMessage(serviceException.getErrorCodeForMessageLocalization(), null, locale);
         if (serviceException instanceof ExternalServiceException) {
             modelAndView.addObject("external_error", message);
-        }
-        else {
+        } else {
             modelAndView.addObject("internal_error", message);
         }
 

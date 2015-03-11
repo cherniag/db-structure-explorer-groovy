@@ -106,8 +106,7 @@ public class ChartAsm {
 
         if (filenameAlias == null) {
             return null;
-        }
-        else {
+        } else {
             FileNameAliasDto dto = new FileNameAliasDto();
             dto.setId(filenameAlias.getId());
             dto.setFileName(filenameAlias.getFileName());

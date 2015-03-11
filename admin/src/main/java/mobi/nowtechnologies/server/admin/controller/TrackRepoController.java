@@ -118,8 +118,7 @@ public class TrackRepoController extends AbstractCommonController {
         ModelAndView modelAndView = new ModelAndView("tracks/tracks");
         if (bindingResult.hasErrors()) {
             modelAndView.getModelMap().put(SEARCH_TRACK_DTO, searchTrackDto);
-        }
-        else {
+        } else {
             PageListDto<TrackDto> tracks = query != null ?
                                            trackRepoService.find(query, pageable) :
                                            trackRepoService.find(searchTrackDto, pageable);
@@ -221,8 +220,7 @@ public class TrackRepoController extends AbstractCommonController {
                     TrackDto ret = trackRepoService.pull(track);
                     LOGGER.info("Finish WebAsyncTask: pulling track with id {}", track.getId());
                     return ret;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOGGER.error("Error while pulling track with ID " + track.getId() + ": " + e.getMessage(), e);
                     throw e;
                 }
@@ -331,8 +329,7 @@ public class TrackRepoController extends AbstractCommonController {
 
             if (resolution.equals(AudioResolution.RATE_96.name())) {
                 trackDto.setResolution(AudioResolution.RATE_96);
-            }
-            else {
+            } else {
                 trackDto.setResolution(AudioResolution.RATE_48);
             }
 

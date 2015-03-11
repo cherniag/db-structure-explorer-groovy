@@ -522,8 +522,7 @@ public class UserRegInfo {
             CardType cardType = (CardType) o;
             if (this.order < cardType.order) {
                 return -1;
-            }
-            else if (this.order > cardType.order) {
+            } else if (this.order > cardType.order) {
                 return 1;
             }
             return 0;

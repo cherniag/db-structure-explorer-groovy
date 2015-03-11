@@ -35,24 +35,21 @@ public class O2Response extends PaymentSystemResponse {
         if (objectResponse == null) {
             isSuccessful = false;
             descriptionError = "No response";
-        }
-        else if (objectResponse instanceof BillSubscriberResponse) {
+        } else if (objectResponse instanceof BillSubscriberResponse) {
             BillSubscriberResponse billSubscriberResponse = (BillSubscriberResponse) objectResponse;
 
             isSuccessful = true;
             final ServiceResult serviceResult = billSubscriberResponse.getResult();
             externalTxId = serviceResult.getSagTransactionId();
 
-        }
-        else if (objectResponse instanceof BillSubscriberFault) {
+        } else if (objectResponse instanceof BillSubscriberFault) {
             BillSubscriberFault billSubscriberFault = (BillSubscriberFault) objectResponse;
 
             isSuccessful = false;
             final SOAFaultType soaFaultType = billSubscriberFault.getFaultInfo();
             descriptionError = soaFaultType.getFaultDescription();
             errorCode = soaFaultType.getSOAFaultCode();
-        }
-        else {
+        } else {
             throw new ServiceException("Unknown response object [" + objectResponse + "]");
         }
     }
@@ -93,8 +90,7 @@ public class O2Response extends PaymentSystemResponse {
 
         if (objectResponse == null) {
             message = null;
-        }
-        else {
+        } else {
             message = objectResponse.toString();
         }
 

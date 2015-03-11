@@ -287,8 +287,7 @@ public class DeepLinkInfoService {
         public String toUrlAndAction() {
             if (getAction().isEmpty()) {
                 return getUrl();
-            }
-            else {
+            } else {
                 return getUrl() + "#" + getAction();
             }
         }

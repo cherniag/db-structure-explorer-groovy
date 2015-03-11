@@ -51,18 +51,15 @@ public class SignInEmailController extends CommonController {
             MergeResult mergeResult = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, false, withOneTimePayment));
-        }
-        catch (UserCredentialsException ce) {
+        } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("SIGN_IN_EMAIL can not find deviceUID: [{}] in community: [{}]", deviceUID, community);
             throw ce;
-        }
-        catch (RuntimeException re) {
+        } catch (RuntimeException re) {
             ex = re;
             LOGGER.error("SIGN_IN_EMAIL error: [{}] for user :[{}], community: [{}], activationEmailId: [{}]", re.getMessage(), deviceUID, community, activationEmailId);
             throw re;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, null, user, ex);
             LOGGER.info("SIGN_IN_EMAIL error for user: [{}], community: [{}], activationEmailId: [{}]", deviceUID, community, activationEmailId);
         }

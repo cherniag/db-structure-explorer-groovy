@@ -196,8 +196,7 @@ public class ChartService implements ApplicationContextAware {
             charts = chartType != null ?
                      chartRepository.getByCommunityURLAndChartType(communityURL, chartType) :
                      chartRepository.getByCommunityURL(communityURL);
-        }
-        else if (communityName != null) {
+        } else if (communityName != null) {
             charts = chartType != null ?
                      chartRepository.getByCommunityNameAndChartType(communityName, chartType) :
                      chartRepository.getByCommunityName(communityName);
@@ -247,8 +246,7 @@ public class ChartService implements ApplicationContextAware {
                 chartDetail = new ChartDetail();
                 chartDetail.setChart(chart);
                 chart.setNumTracks((byte) 0);
-            }
-            else {
+            } else {
                 Long numTracks = chartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
                 chartDetail.getChart().setNumTracks(numTracks.byteValue());
             }
@@ -260,11 +258,9 @@ public class ChartService implements ApplicationContextAware {
             public int compare(ChartDetail o1, ChartDetail o2) {
                 if (o1.getPosition() > o2.getPosition()) {
                     return 1;
-                }
-                else if (o1.getPosition() < o2.getPosition()) {
+                } else if (o1.getPosition() < o2.getPosition()) {
                     return -1;
-                }
-                else {
+                } else {
                     return 0;
                 }
             }

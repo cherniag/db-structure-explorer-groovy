@@ -51,22 +51,18 @@ public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJo
                     user.setLastBefore48SmsMillis(Utils.getEpochMillis());
                     userService.updateLastBefore48SmsMillis(user.getLastBefore48SmsMillis(), user.getId());
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
-                }
-                finally {
+                } finally {
                     MDC.remove(LogUtils.LOG_USER_NAME);
                     MDC.remove(LogUtils.LOG_USER_ID);
                 }
             }
 
             LOGGER.info("[DONE] Before 48h Expire PSMS Payment job");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error while Before 48h Expire PSMS Payment job. {}", e);
-        }
-        finally {
+        } finally {
             LogUtils.removeClassNameMDC();
         }
     }

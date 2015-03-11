@@ -11,8 +11,7 @@ public class NullableString {
     public <T extends Enum<T>> T value(final Class<T> type) {
         if (isNull()) {
             return null;
-        }
-        else {
+        } else {
             return Enum.valueOf(type, v);
         }
     }
@@ -25,8 +24,7 @@ public class NullableString {
         try {
             value(type);
             return true;
-        }
-        catch (IllegalArgumentException doesNotBelong) {
+        } catch (IllegalArgumentException doesNotBelong) {
             return false;
         }
     }

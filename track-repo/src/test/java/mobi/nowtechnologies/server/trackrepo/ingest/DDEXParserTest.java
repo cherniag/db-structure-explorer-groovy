@@ -15,13 +15,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * User: sanya Date: 7/9/13 Time: 1:31 PM

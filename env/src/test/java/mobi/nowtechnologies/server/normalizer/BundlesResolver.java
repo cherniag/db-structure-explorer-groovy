@@ -39,8 +39,7 @@ public class BundlesResolver {
         this.originalPropertiesFolder = originalPropertiesFolder;
         if (overrideOriginal) {
             this.normalizedPropertiesFolder = originalPropertiesFolder;
-        }
-        else {
+        } else {
             this.normalizedPropertiesFolder = new File(originalPropertiesFolder).getParent() + File.separator + NORMALIZED_FOLDER_NAME;
         }
     }
@@ -210,8 +209,7 @@ public class BundlesResolver {
         while ((currentLine = reader.readLine()) != null) {
             if (!rowsToDelete.contains(row)) {
                 writer.write(currentLine + LINE_SEPARATOR);
-            }
-            else {
+            } else {
                 System.out.println("Duplicate '" + currentLine + "' was found in " + newPropertiesFile.getPath());
             }
             row++;
@@ -224,8 +222,7 @@ public class BundlesResolver {
 
         if (newPropertiesFile.delete() & tempFile.renameTo(newPropertiesFile)) {
             System.out.println(newPropertiesFile.getPath() + " has been cleaned for duplicates.");
-        }
-        else {
+        } else {
             throw new IllegalStateException("ERROR cleaning duplicates from " + newPropertiesFile.getPath());
         }
     }
@@ -276,21 +273,18 @@ public class BundlesResolver {
                 if (!properties.containsKey(propertyKey)) { //remove
                     System.out.println("Remove property " + propertyKey + " from " + propertyPath);
                     //do nothing
-                }
-                else {
+                } else {
 
                     String newValue = StringEscapeUtils.escapeJava(properties.getProperty(propertyKey).trim());
                     if (propertyValue.equals(newValue)) { //no changes
                         writer.write(currentLine + LINE_SEPARATOR);
-                    }
-                    else {
+                    } else {
                         writer.write(propertyKey + "=" + newValue + LINE_SEPARATOR);
                         System.out.println("Update property " + propertyKey + " in " + propertyPath + ". Old value = [" + propertyValue + "]. New value = [" + newValue + "].");
                     }
                 }
 
-            }
-            else {
+            } else {
                 writer.write(currentLine + LINE_SEPARATOR); //write comments or empty lines
             }
         }

@@ -20,8 +20,7 @@ public abstract class PaymentSystemResponse {
             httpStatus = response.getStatusCode();
             if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length() > 255) {
                 message = response.getMessage().substring(0, 254);
-            }
-            else {
+            } else {
                 message = response.getMessage();
             }
             descriptionError = "";

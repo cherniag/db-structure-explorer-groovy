@@ -64,11 +64,9 @@ public class SonyParser extends IParser {
             String type = actionRoot.getAttribute("Type").getValue();
             if ("UPDATE".equals(type)) {
                 result.type = Type.UPDATE;
-            }
-            else if ("INSERT".equals(type)) {
+            } else if ("INSERT".equals(type)) {
                 result.type = Type.INSERT;
-            }
-            else if ("DELETE".equals(type)) {
+            } else if ("DELETE".equals(type)) {
                 result.type = Type.DELETE;
             }
 
@@ -192,15 +190,13 @@ public class SonyParser extends IParser {
                         String price = territory.getChild("PRICING").getChildText("WHOLE_SALE_PRICE");
                         try {
                             territoryData.price = Float.parseFloat(price);
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                         }
                         String startDate = territory.getChildText("SALES_START_DATE");
                         SimpleDateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
                         try {
                             territoryData.startdate = dateParse.parse(startDate);
-                        }
-                        catch (ParseException e) {
+                        } catch (ParseException e) {
                         }
                         territoryData.reportingId = reportingId;
                         territoryData.distributor = provider;
@@ -209,8 +205,7 @@ public class SonyParser extends IParser {
                     }
                 }
 
-            }
-            else {
+            } else {
                 String product = actionRoot.getChild("Product").getAttribute("Type").getValue();
                 if (!"TRACK".equals(product)) {
                     LOGGER.info("Skipping product " + product);
@@ -226,11 +221,9 @@ public class SonyParser extends IParser {
             }
             return result;
 
-        }
-        catch (IOException io) {
+        } catch (IOException io) {
             LOGGER.error(io.getMessage());
-        }
-        catch (JDOMException jdomex) {
+        } catch (JDOMException jdomex) {
             LOGGER.error(jdomex.getMessage());
         }
 
@@ -268,20 +261,17 @@ public class SonyParser extends IParser {
                             Date date = new Date();
                             SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:MM");
                             logWriter.write(file + " " + format.format(date) + " " + size.length() + "\n");
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             LOGGER.error("Skipping file " + file + " in logs: exception " + e.getMessage());
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         LOGGER.error("Not processed " + file);
                     }
                 }
             }
             logWriter.close();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -320,8 +310,7 @@ public class SonyParser extends IParser {
                 if (!logFile.exists()) {
                     addDrop(result, manifest);
                 }
-            }
-            else {
+            } else {
                 String ackName = manifest.getName().replace(".txt", ".ack");
                 File ackFile = new File(root + "/manifests/" + ackName);
                 if (!ackFile.exists() && !logFile.exists()) {

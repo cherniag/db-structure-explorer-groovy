@@ -190,8 +190,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
             Long countPerDay = userLogRepository.countByPhoneNumberAndDay(validatedPhoneNumber, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
             if (countPerDay >= limitValidatePhoneNumber) {
                 throw new LimitPhoneNumberValidationException(phoneNumber, url);
-            }
-            else {
+            } else {
                 userLog = userLogRepository.findByPhoneNumber(validatedPhoneNumber, UserLogType.VALIDATE_PHONE_NUMBER);
                 userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ?
                           userLog :
@@ -203,26 +202,21 @@ public class O2ProviderServiceImpl implements O2ProviderService {
             userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 
             return result;
-        }
-        catch (RestClientException e) {
+        } catch (RestClientException e) {
             userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.O2_FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
             LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), validatedPhoneNumber, url);
             throw new InvalidPhoneNumberException(validatedPhoneNumber);
-        }
-        catch (DOMException e) {
+        } catch (DOMException e) {
             userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
             LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), validatedPhoneNumber, url);
             throw new InvalidPhoneNumberException(validatedPhoneNumber);
-        }
-        catch (InvalidPhoneNumberException e) {
+        } catch (InvalidPhoneNumberException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
             LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", validatedPhoneNumber, e.getMessage());
             throw new InvalidPhoneNumberException(validatedPhoneNumber);
-        }
-        finally {
+        } finally {
             LOGGER.info("VALIDATE_PHONE_NUMBER finished for[{}]", validatedPhoneNumber != null ?
                                                                   validatedPhoneNumber :
                                                                   phoneNumber);
@@ -239,8 +233,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
         try {
             return o2Service.getProviderUserDetails(serverO2Url + GET_USER_DETAILS_REQ, token);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error of the number validation [{}]: [{}]", phoneNumber, e.getMessage());
             throw new ExternalServiceException("602", "O2 server cannot be reached");
         }
@@ -287,8 +280,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         Object response = null;
         try {
             response = webServiceGateway.sendAndReceive(chargeCustomerEndpoint, billSubscriber);
-        }
-        catch (SoapFaultException e) {
+        } catch (SoapFaultException e) {
             logAdditionalInformation(e);
             response = new BillSubscriberFault(e.getMessage(), (SOAFaultType) e.getSoapFaultObject());
         }
@@ -308,8 +300,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
             }
             message.append("SoapFaultObject={").append(e.getSoapFaultObject()).append("},").append("FaultStringOrReason={").append(e.getFaultStringOrReason()).append("}");
             LOGGER.error(message.toString());
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
 
         }
     }

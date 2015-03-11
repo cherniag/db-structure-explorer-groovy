@@ -29,8 +29,7 @@ public abstract class AbstractCellNumberValidator {
 
         if (!matcher.matches()) {
             phoneNUmber = null;
-        }
-        else {
+        } else {
             phoneNUmber = "+" + getNationalCode() + matcher.group(matcher.groupCount());
         }
 

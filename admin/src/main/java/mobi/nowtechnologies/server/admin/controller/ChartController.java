@@ -99,8 +99,7 @@ public class ChartController extends AbstractCommonController {
             chartDetail.setPublishTimeMillis(selectedPublishDateTime.getTime());
             chartService.updateChart(chartDetail, chartDto.getFile());
             modelAndView = new ModelAndView("redirect:/charts/" + chartId);
-        }
-        else {
+        } else {
             modelAndView = chartItemController.getChartItemsPage(selectedPublishDateTime, chartId, false, locale);
             modelAndView.getModel().put("chart", chartDto);
         }
@@ -147,8 +146,7 @@ public class ChartController extends AbstractCommonController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
         if (chartItemDtos.isEmpty()) {
             return simpleDateFormat.format(selectedPublishDateTime);
-        }
-        else {
+        } else {
             return simpleDateFormat.format(chartItemDtos.get(0).getPublishTime());
         }
     }

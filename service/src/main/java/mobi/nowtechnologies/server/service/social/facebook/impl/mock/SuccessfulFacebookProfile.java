@@ -33,8 +33,7 @@ class SuccessfulFacebookProfile extends FacebookProfile {
         // try to recognized null values: NULL_VALUE_MARKER
         if (AppTestFacebookTokenService.unmaskNullValueIfNeeded(country) == null) {
             return new Reference("", city);
-        }
-        else {
+        } else {
             String facebookLocation = city + "," + country;
             return new Reference("", facebookLocation);
         }

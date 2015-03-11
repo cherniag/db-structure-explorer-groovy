@@ -43,14 +43,12 @@ public class BusinessTaskJob {
             for (Task task : tasksListForExecution) {
                 try {
                     executor.execute(new ExecutableTask(task));
-                }
-                catch (RejectedExecutionException e) {
+                } catch (RejectedExecutionException e) {
                     LOGGER.error("Can't execute ExecutableTask({})", task.toString(), e);
                 }
             }
             LOGGER.info("BusinessTaskJob completed.");
-        }
-        finally {
+        } finally {
             LogUtils.removeClassNameMDC();
         }
     }

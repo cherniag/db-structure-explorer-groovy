@@ -17,8 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import static junit.framework.Assert.assertEquals;
-
 /**
  * Created by oar on 2/10/14.
  */

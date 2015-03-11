@@ -48,18 +48,13 @@ import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -106,8 +101,7 @@ public class TrackRepositoryHttpClientTest {
                                             "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\",\"date\":1374219880000," +
                                             "\"tracks\":null," +
                                             "\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}");
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }
@@ -235,8 +229,7 @@ public class TrackRepositoryHttpClientTest {
             public HttpEntity getEntity() {
                 try {
                     return new StringEntity(outputJson);
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }
@@ -429,8 +422,7 @@ public class TrackRepositoryHttpClientTest {
             public HttpEntity getEntity() {
                 try {
                     return new StringEntity(outputJson);
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }
@@ -670,8 +662,7 @@ public class TrackRepositoryHttpClientTest {
             public HttpEntity getEntity() {
                 try {
                     return new StringEntity("true");
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }
@@ -821,8 +812,7 @@ public class TrackRepositoryHttpClientTest {
                                             "exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true," +
                                             "\"ingestionUpdateDate\":\"2011-11-14\"," +
                                             "\"publishDate\":null,\"files\":null}]}");
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }
@@ -860,8 +850,7 @@ public class TrackRepositoryHttpClientTest {
                                             "exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true," +
                                             "\"ingestionUpdateDate\":\"2011-11-14\"," +
                                             "\"publishDate\":null,\"files\":null}]}");
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }
@@ -929,8 +918,7 @@ public class TrackRepositoryHttpClientTest {
                         "\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) 2010 Paul Simon under exclusive license of Sony Music Entertainment\",\"year\":null," +
                         "\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true,\"ingestionUpdateDate\":\"2011-11-14\",\"publishDate\":\"2011-11-14\",\"files\":[{\"type\":\"DOWNLOAD\"," +
                         "\"filename\":\"/global/path/temp.aud\",\"resolution\":\"RATE_ORIGINAL\"},{\"type\":\"\",\"filename\":\"/global/path/temp.aud\",\"resolution\":\"RATE_ORIGINAL\"}]}");
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     return null;
                 }
             }

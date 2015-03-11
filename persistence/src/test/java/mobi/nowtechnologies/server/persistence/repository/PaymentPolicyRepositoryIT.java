@@ -16,10 +16,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import javax.annotation.Resource;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * User: Titov Mykhaylo (titov) 12.07.13 10:08

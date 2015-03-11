@@ -47,20 +47,16 @@ public class StreamTest {
             RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(privSpec);
             params.setKey(privKey);
 
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        catch (InvalidKeySpecException e) {
+        } catch (InvalidKeySpecException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -72,20 +68,17 @@ public class StreamTest {
                 MP3Manager mp3Manager = new MP3Manager();
                 String hash = mp3Manager.getMP3MediaHash(args[0]);
                 mp3Manager.process(in, out, params, hash);
-            }
-            else { // Assume AAC.....
+            } else { // Assume AAC.....
                 IMP4Manager mp4manager = new MP4Manager();
                 String hash = mp4manager.getMediaHash(args[3]);
                 mp4manager.processHeader(in, out, params, hash);
             }
             in.close();
             out.close();
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

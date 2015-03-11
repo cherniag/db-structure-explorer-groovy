@@ -56,8 +56,7 @@ public class ReferralService {
             Community community = communityRepository.findOne(referral.getCommunityId());
             if (exists(referral, community)) {
                 logger.info("Skipped to save referral", referral);
-            }
-            else {
+            } else {
                 referralRepository.saveAndFlush(referral);
             }
         }

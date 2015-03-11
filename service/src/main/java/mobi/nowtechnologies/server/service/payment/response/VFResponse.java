@@ -34,8 +34,7 @@ public class VFResponse extends PaymentSystemResponse implements Parser<DeliverS
                     descriptionError = deliveryReceipt.getFinalStatus().toString();
                     errorCode = deliveryReceipt.getError();
                 }
-            }
-            catch (InvalidDeliveryReceiptException e) {
+            } catch (InvalidDeliveryReceiptException e) {
                 LOGGER.error(e.getMessage(), e);
                 descriptionError = e.getMessage();
             }
@@ -85,8 +84,7 @@ public class VFResponse extends PaymentSystemResponse implements Parser<DeliverS
 
         if (receipt == null) {
             message = null;
-        }
-        else {
+        } else {
             message = receipt.toString();
         }
 

@@ -30,8 +30,7 @@ public class EmailChecker {
         List resultList = query.getResultList();
         if (resultList.isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             return (Email) query.getResultList().get(0);
         }
     }

@@ -3,8 +3,7 @@ package mobi.nowtechnologies.common.util;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 public class TrackIdGeneratorTest {

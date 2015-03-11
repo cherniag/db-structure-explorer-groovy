@@ -38,8 +38,7 @@ public class ClassContextFilter extends Filter {
             try {
                 Class<?> c = Class.forName(classNameArray[i].trim());
                 classes.add(c);
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }

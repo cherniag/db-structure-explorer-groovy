@@ -47,8 +47,7 @@ public class SlowRequestFilter implements Filter {
         final long startTime = System.nanoTime();
         try {
             chain.doFilter(request, response);
-        }
-        finally {
+        } finally {
             final long elapsedMS = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
             if (elapsedMS >= threshold) {
                 LOGGER.warn("Slow request: {} {} ({}ms)", req.getMethod(), getFullUrl(req), elapsedMS);

@@ -22,8 +22,7 @@ public class MockitoSpyFactoryBean implements FactoryBean, InitializingBean {
     protected Object getTargetObject(Object proxy) throws Exception {
         if (AopUtils.isJdkDynamicProxy(proxy) || AopUtils.isCglibProxy(proxy)) {
             return ((Advised) proxy).getTargetSource().getTarget();
-        }
-        else {
+        } else {
             return proxy;
         }
     }

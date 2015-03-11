@@ -99,7 +99,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 User user = (User) invocation.getArguments()[0];
-                junit.framework.Assert.assertNotNull(user);
+                Assert.assertNotNull(user);
 
                 return null;
             }
@@ -147,7 +147,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 User user = (User) invocation.getArguments()[0];
-                junit.framework.Assert.assertNotNull(user);
+                Assert.assertNotNull(user);
 
                 return null;
             }

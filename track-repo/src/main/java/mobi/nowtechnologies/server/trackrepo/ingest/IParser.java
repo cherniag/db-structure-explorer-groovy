@@ -32,8 +32,7 @@ public abstract class IParser {
                        false :
                        true;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
         return false;
@@ -44,16 +43,14 @@ public abstract class IParser {
             File commitFile = new File(drop.name + "/" + INGEST_ACK);
             try {
                 commitFile.createNewFile();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 LOGGER.error(e.getMessage());
             }
         }
         File commitFile = new File(drop.name + "/" + AUTO_INGEST_ACK);
         try {
             commitFile.createNewFile();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
     }

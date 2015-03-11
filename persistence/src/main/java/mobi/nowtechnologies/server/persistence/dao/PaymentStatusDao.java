@@ -32,26 +32,19 @@ public class PaymentStatusDao {
             String paymentStatusName = paymentStatus.getName();
             if (paymentStatusName.equals(PaymentStatus.NULL)) {
                 NULL = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.OK)) {
+            } else if (paymentStatusName.equals(PaymentStatus.OK)) {
                 OK = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.AWAITING_PSMS)) {
+            } else if (paymentStatusName.equals(PaymentStatus.AWAITING_PSMS)) {
                 AWAITING_PSMS = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.PSMS_ERROR)) {
+            } else if (paymentStatusName.equals(PaymentStatus.PSMS_ERROR)) {
                 PSMS_ERROR = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.PIN_PENDING)) {
+            } else if (paymentStatusName.equals(PaymentStatus.PIN_PENDING)) {
                 PIN_PENDING = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.AWAITING_PAYMENT)) {
+            } else if (paymentStatusName.equals(PaymentStatus.AWAITING_PAYMENT)) {
                 AWAITING_PAYMENT = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.AWAITING_PAY_PAL)) {
+            } else if (paymentStatusName.equals(PaymentStatus.AWAITING_PAY_PAL)) {
                 AWAITING_PAY_PAL = paymentStatus;
-            }
-            else if (paymentStatusName.equals(PaymentStatus.PAY_PAL_ERROR)) {
+            } else if (paymentStatusName.equals(PaymentStatus.PAY_PAL_ERROR)) {
                 PAY_PAL_ERROR = paymentStatus;
             }
         }

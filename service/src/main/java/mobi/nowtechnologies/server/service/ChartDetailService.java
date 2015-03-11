@@ -61,12 +61,10 @@ public class ChartDetailService {
         Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, chartId);
         if (nearestLatestPublishTimeMillis == null) {
             chartDetails = Collections.EMPTY_LIST;
-        }
-        else {
+        } else {
             if (fetchLocked) {
                 chartDetails = chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
-            }
-            else {
+            } else {
                 chartDetails = chartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
             }
         }
@@ -106,8 +104,7 @@ public class ChartDetailService {
         final List<Media> chartDetails;
         if (nearestLatestPublishTimeMillis != null) {
             chartDetails = chartDetailRepository.getLockedChartItemByDate(chartId, nearestLatestPublishTimeMillis);
-        }
-        else {
+        } else {
             chartDetails = Collections.EMPTY_LIST;
         }
 
@@ -132,8 +129,7 @@ public class ChartDetailService {
         final List<ChartDetail> chartDetails;
         if (nearestLatestPublishTimeMillis != null) {
             chartDetails = chartDetailRepository.getActualChartItems(chartId, nearestLatestPublishTimeMillis);
-        }
-        else {
+        } else {
             chartDetails = Collections.EMPTY_LIST;
         }
 
@@ -173,8 +169,7 @@ public class ChartDetailService {
                 }
 
                 return clonedChartDetails;
-            }
-            else {
+            } else {
                 return Collections.<ChartDetail>emptyList();
             }
         }

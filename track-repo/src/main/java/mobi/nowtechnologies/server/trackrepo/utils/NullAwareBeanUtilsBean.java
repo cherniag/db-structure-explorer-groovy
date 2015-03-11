@@ -28,17 +28,14 @@ public class NullAwareBeanUtilsBean extends BeanUtilsBean {
                             super.copyProperties(oldobj, obj);
                         }
                     }
-                }
-                else {
+                } else {
                     if (oldval != null) {
                         super.copyProperties(oldval, value);
-                    }
-                    else {
+                    } else {
                         super.setProperty(dest, name, value);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

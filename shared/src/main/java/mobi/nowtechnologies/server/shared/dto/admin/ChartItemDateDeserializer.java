@@ -23,8 +23,7 @@ public class ChartItemDateDeserializer extends JsonDeserializer<Date> {
         String date = jp.getText();
         try {
             return format.parse(date);
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }

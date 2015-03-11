@@ -48,8 +48,7 @@ public class FacebookServiceTest {
 
         try {
             facebookService.getFacebookUserInfo(accessToken, inputFacebookId);
-        }
-        catch (OAuth2ForbiddenException e) {
+        } catch (OAuth2ForbiddenException e) {
             verify(facebookUserInfo, times(1)).getFacebookId();
             verify(facebookClient, times(1)).getProfileUserInfo(accessToken, facebookService.userId);
 

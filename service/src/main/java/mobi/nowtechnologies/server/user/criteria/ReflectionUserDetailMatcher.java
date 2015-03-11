@@ -30,8 +30,7 @@ public class ReflectionUserDetailMatcher<T> implements Matcher<User> {
             boolean result = matchStrategy.match((T) actualValue);
             LOGGER.debug("Result [{}]", result);
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MatchException(e);
         }
     }

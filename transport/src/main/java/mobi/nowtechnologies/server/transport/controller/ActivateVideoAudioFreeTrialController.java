@@ -39,12 +39,10 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
             AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheckDTO);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, getCurrentCommunityUri(), null, null, user, ex);
             LOGGER.info("command processing finished");
         }

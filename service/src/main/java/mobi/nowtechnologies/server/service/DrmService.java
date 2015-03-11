@@ -73,12 +73,10 @@ public class DrmService {
                             break;
                         }
                     }
-                }
-                catch (LazyInitializationException e) {
+                } catch (LazyInitializationException e) {
                     drm = null;
                 }
-            }
-            else {
+            } else {
                 drm = drmRepository.findByUserAndMedia(user.getId(), media.getI());
             }
         }

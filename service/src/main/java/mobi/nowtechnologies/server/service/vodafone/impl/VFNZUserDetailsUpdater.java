@@ -39,8 +39,7 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
 
         if (isNull(data)) {
             user.setProvider(ProviderType.VF);
-        }
-        else {
+        } else {
             user.setProvider(data.getProvider());
         }
 

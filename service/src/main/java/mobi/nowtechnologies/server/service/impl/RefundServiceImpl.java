@@ -36,11 +36,9 @@ public class RefundServiceImpl implements RefundService {
         final Refund resultRefund;
         if (USER_DOWNGRADED_TARIFF.equals(actionReason)) {
             resultRefund = logSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G(userWithOldTariffOnOldBoughtPeriod, actionReason);
-        }
-        else if (VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.equals(actionReason)) {
+        } else if (VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.equals(actionReason)) {
             resultRefund = logSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(userWithOldTariffOnOldBoughtPeriod, actionReason);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unknown refund direction [" + actionReason + "]");
         }
         return resultRefund;
@@ -56,8 +54,7 @@ public class RefundServiceImpl implements RefundService {
                         userOnOldBoughtPeriod.getNextSubPayment());
 
             resultRefund = log(userOnOldBoughtPeriod, actionReason);
-        }
-        else {
+        } else {
             LOGGER.info("Skip logging about skipped bought period because the following conditions are not met: the user is on Audio bought period [{}], user migrates on 4G Video Audio Subscription",
                         isOnAudioBoughtPeriod);
         }
@@ -75,8 +72,7 @@ public class RefundServiceImpl implements RefundService {
                         userWithOldTariffOnOldBoughtPeriod.getNextSubPayment());
 
             resultRefund = log(userWithOldTariffOnOldBoughtPeriod, actionReason);
-        }
-        else {
+        } else {
             LOGGER.info("Skip logging about skipped bought period because the following condition are not met: the old tariff [{}] is 4G, new tariff is 3G, user is Audio Video bought period [{}]",
                         olUserTariff, isOn4gVideoAudioBoughtPeriod);
         }

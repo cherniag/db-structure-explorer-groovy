@@ -19,8 +19,7 @@ public class AppTestFacebookTokenService {
     public static String maskNullValueIfNeed(String value) {
         if (value == null) {
             return NULL_VALUE_MARKER;
-        }
-        else {
+        } else {
             return value;
         }
     }
@@ -28,8 +27,7 @@ public class AppTestFacebookTokenService {
     public static String unmaskNullValueIfNeeded(String value) {
         if (NULL_VALUE_MARKER.equals(value)) {
             return null;
-        }
-        else {
+        } else {
             return value;
         }
     }
@@ -77,8 +75,7 @@ public class AppTestFacebookTokenService {
             }
 
             throw new IllegalArgumentException();
-        }
-        else {
+        } else {
             // no error markers:
             SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], split[6], "", split[2], split[3], split[8]);
             profile.addOtherInfo(split[1], split[7], split[4], split[9]);

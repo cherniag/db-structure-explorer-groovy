@@ -70,8 +70,7 @@ public class FacebookClientImplTest {
 
         try {
             facebookClient.getProfileUserInfo("asd", "dsa");
-        }
-        catch (OAuth2ForbiddenException e) {
+        } catch (OAuth2ForbiddenException e) {
             verify(facebookOperationsAdaptor, times(1)).getFacebookProfile("asd", "dsa");
             assertSame(FacebookClient.INVALID_FACEBOOK_TOKEN_EXCEPTION, e);
             throw e;

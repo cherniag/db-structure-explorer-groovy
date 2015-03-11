@@ -29,9 +29,6 @@ import org.springframework.data.domain.PageRequest;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-
 // Created by Oleg Artomov on 6/25/2014.
 @Ignore
 public class TrackServiceIT extends AbstractTrackRepoIT {

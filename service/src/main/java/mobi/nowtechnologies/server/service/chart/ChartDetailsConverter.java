@@ -184,8 +184,7 @@ public class ChartDetailsConverter {
 
         try {
             return getEncodedUTF8Text(replacePathSegmentInUrl(mediaAmazonUrl, 0, newCountryCode));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return getEncodedUTF8Text(mediaAmazonUrl);
         }
@@ -210,12 +209,10 @@ public class ChartDetailsConverter {
                 String newUrlValue = enrichWithAffiliateCampaignParameters(decodedITunesUrl, communityRewriteUrl);
                 String withCountryCode = replacePathSegmentInUrl(newUrlValue, 0, countryCode);
                 return getEncodedUTF8Text(withCountryCode);
-            }
-            else {
+            } else {
                 return replaceCountryPathToUrlParameter(countryCode, decodedITunesUrl);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return existingITunesUrl;
         }
@@ -263,8 +260,7 @@ public class ChartDetailsConverter {
                 encodedText = URLEncoder.encode(text, AppConstants.UTF_8);
             }
             return encodedText;
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             LOGGER.error(e.getMessage(), e);
             throw new PersistenceException(e.getMessage(), e);
         }

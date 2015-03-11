@@ -24,8 +24,7 @@ public class SubscriptionTextsGeneratorTest {
         File file = new File(".");
         if (file.getAbsolutePath().endsWith("/web/.") || file.getAbsolutePath().endsWith("\\web\\.")) {
             messageSource.setBasename("file:src/main/webapp/i18n/messages");
-        }
-        else {
+        } else {
             messageSource.setBasename("file:web/src/main/webapp/i18n/messages");
         }
         messageSource.setDefaultEncoding("UTF-8");

@@ -28,8 +28,7 @@ public class CompositeITunesResponseParser implements ITunesResponseParser {
                 logger.debug("Parsed result is {}", parseResult);
 
                 return parseResult;
-            }
-            catch (ITunesResponseParserException e) {
+            } catch (ITunesResponseParserException e) {
                 logger.debug("Failed to parse with " + parser, e);
             }
         }

@@ -21,8 +21,7 @@ public class DictionaryTransformer extends Transformer<Word> {
         try {
             Resource resource = new ClassPathResource(location);
             return toMap(Files.readLines(resource.getFile(), Charsets.UTF_8));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -2,8 +2,6 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.visual;
 
 import org.junit.*;
 
-import junit.framework.Assert;
-
 public class AccessPolicyTest {
 
     @Test

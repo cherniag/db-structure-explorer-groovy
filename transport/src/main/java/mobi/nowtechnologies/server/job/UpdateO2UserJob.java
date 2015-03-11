@@ -45,18 +45,15 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
                 submitTaskForExecution();
             }
 
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             LOG.error("Job ended with error.", t);
-        }
-        finally {
+        } finally {
 
             LOG.info("finished, cleaning up executor!");
             try {
                 executor.shutdown();
                 executor.awaitTermination(2, TimeUnit.HOURS);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 LOG.error("Error while awiting termination:" + ex, ex);
             }
             LOG.info("job completed!");

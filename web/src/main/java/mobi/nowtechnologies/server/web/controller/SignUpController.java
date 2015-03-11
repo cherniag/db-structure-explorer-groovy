@@ -83,8 +83,7 @@ public class SignUpController extends CommonController {
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("signup");
             modelAndView.addObject(UserRegDetailsDto.USER_REG_DETAILS_DTO, userRegDetailsDto);
-        }
-        else {
+        } else {
 
             String remoteAddr = Utils.getIpFromRequest(request);
 

@@ -140,8 +140,7 @@ public class UpdateValidator extends BaseValidator {
         if (hasTitle(shapeType)) {
             if (isEmpty(blockDto.getTitle())) {
                 rejectField("streamzine.error.title.not.provided", new Object[] {}, errors, "title");
-            }
-            else if (blockDto.getTitle().length() > Block.TITLE_MAX_LENGTH) {
+            } else if (blockDto.getTitle().length() > Block.TITLE_MAX_LENGTH) {
                 rejectField("streamzine.error.title.too.long", new Object[] {Block.TITLE_MAX_LENGTH}, errors, "title");
             }
         }
@@ -149,8 +148,7 @@ public class UpdateValidator extends BaseValidator {
         if (hasSubTitle(shapeType)) {
             if (isEmpty(blockDto.getSubTitle())) {
                 rejectField("streamzine.error.subtitle.not.provided", new Object[] {}, errors, "subTitle");
-            }
-            else if (blockDto.getSubTitle().length() > Block.SUBTITLE_MAX_LENGTH) {
+            } else if (blockDto.getSubTitle().length() > Block.SUBTITLE_MAX_LENGTH) {
                 rejectField("streamzine.error.subtitle.too.long", new Object[] {Block.SUBTITLE_MAX_LENGTH}, errors, "subTitle");
             }
         }
@@ -187,8 +185,7 @@ public class UpdateValidator extends BaseValidator {
                 if (playlists.containsKey(contentKey)) {
                     OrdinalBlockDto first = playlists.get(contentKey);
                     rejectField("streamzine.error.duplicate.content", new Object[] {blockDto.getTitle(), first.getTitle()}, errors, "value");
-                }
-                else {
+                } else {
                     playlists.put(contentKey, blockDto);
                 }
             }
@@ -197,8 +194,7 @@ public class UpdateValidator extends BaseValidator {
                 if (isrcs.containsKey(contentKey)) {
                     OrdinalBlockDto first = isrcs.get(contentKey);
                     rejectField("streamzine.error.duplicate.content", new Object[] {blockDto.getTitle(), first.getTitle()}, errors, "value");
-                }
-                else {
+                } else {
                     isrcs.put(contentKey, blockDto);
                 }
             }
@@ -288,8 +284,7 @@ public class UpdateValidator extends BaseValidator {
                 URI uri = URI.create(url);
                 Assert.notNull(uri.getScheme());
                 Assert.notNull(uri.getHost());
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 Object[] args = {url};
                 rejectField("streamzine.error.notvalid.url", args, errors, "valueLink");
             }
@@ -299,8 +294,7 @@ public class UpdateValidator extends BaseValidator {
             try {
                 openerAsString = blockDto.getValueOpener();
                 Opener.valueOf(openerAsString);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 Object[] args = {openerAsString};
                 rejectField("streamzine.error.notvalid.opener", args, errors, "valueOpener");
             }
@@ -326,8 +320,7 @@ public class UpdateValidator extends BaseValidator {
             PlaylistData playlistData = new PlaylistData(value);
             try {
                 parseInt(playlistData.getChartIdString());
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 Object[] args = {value, Arrays.toString(ChartType.values())};
                 rejectValue("streamzine.error.notfound.playlist.id", args, errors);
             }
@@ -368,8 +361,7 @@ public class UpdateValidator extends BaseValidator {
         }
         try {
             PlayerType.valueOf(playerType);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             Object[] args = {playerType, Arrays.toString(PlayerType.values())};
             rejectValue("streamzine.error.unknown.playerType", args, errors);
         }

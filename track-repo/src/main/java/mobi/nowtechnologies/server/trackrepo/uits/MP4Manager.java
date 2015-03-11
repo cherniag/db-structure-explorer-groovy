@@ -113,11 +113,9 @@ public class MP4Manager implements IMP4Manager {
 
             logger.debug("Finish process");
             return 1;
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException processing file: {}", e.getMessage(), e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("IOException processing file: {}", e.getMessage(), e);
         }
         return 0;
@@ -132,8 +130,7 @@ public class MP4Manager implements IMP4Manager {
         FileOutputStream encodedOutputStream = new FileOutputStream(encodedFile);
         try {
             return process(inputStream, audioOutputStream, headerOutputStream, encodedOutputStream, params, md5, encrypt);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(inputStream);
             IOUtils.closeQuietly(audioOutputStream);
             IOUtils.closeQuietly(headerOutputStream);
@@ -218,8 +215,7 @@ public class MP4Manager implements IMP4Manager {
             }
 
             return 1;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("processHeader IOException processing file: {}", e.getMessage(), e);
         }
         return -1;
@@ -268,11 +264,9 @@ public class MP4Manager implements IMP4Manager {
             }
 
             return crypto.finalizeHash();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("getMediaHash IOException processing file: {}", e.getMessage(), e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(audioInputStream);
         }
         return null;
@@ -284,8 +278,7 @@ public class MP4Manager implements IMP4Manager {
             if (new String(buffer).equalsIgnoreCase("stco")) {
                 int stcoSize = patchStcoAtom(moovAtom, idx, offset);
                 idx += stcoSize - 4;
-            }
-            else if (new String(buffer).equalsIgnoreCase("co64")) {
+            } else if (new String(buffer).equalsIgnoreCase("co64")) {
                 int co64Size = patchCo64Atom(moovAtom, idx, offset);
                 idx += co64Size - 4;
             }

@@ -82,8 +82,7 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
         long expireTime = getExpireTimestamp(community, result);
         try {
             iTunesPaymentService.checkForDuplicates(user.getId(), expireTime);
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             logger.info("Record with the same next sub payment millis [{}] for user [{}] already exists", expireTime, user.getId());
             return;
         }

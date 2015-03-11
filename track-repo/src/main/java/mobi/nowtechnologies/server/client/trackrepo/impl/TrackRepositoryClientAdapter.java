@@ -52,8 +52,7 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     public IngestWizardDataDto getDrops(String... ingestors) {
         try {
             return ingestTracksWizardController.getDrops(ingestors);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -62,8 +61,7 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     public IngestWizardDataDto selectDrops(IngestWizardDataDto data) {
         try {
             return ingestTracksWizardController.selectDrops(data);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -72,8 +70,7 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data) {
         try {
             return ingestTracksWizardController.selectDropTracks(data);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -82,8 +79,7 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     public Boolean commitDrops(IngestWizardDataDto data) {
         try {
             return ingestTracksWizardController.commitDrops(data);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

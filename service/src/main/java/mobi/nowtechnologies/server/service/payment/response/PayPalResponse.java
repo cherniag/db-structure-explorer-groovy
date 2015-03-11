@@ -37,29 +37,24 @@ public class PayPalResponse extends PaymentSystemResponse {
                         PayPalResponseParam key = PayPalResponseParam.valueOf(paramTuple[0]);
                         String value = paramTuple[1];
                         properties.put(key, value);
-                    }
-                    catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException e) {
                         if (paramTuple.length > 1) {
                             errors.put(paramTuple[0], paramTuple[1]);
-                        }
-                        else {
+                        } else {
                             descriptionError = paramTuple[0];
                         }
                     }
                 }
                 if (ACK_SUCCESS.equals(getAck()) || ACK_SUCCESSFUL_WITH_WARNINGS.equals(getAck())) {
                     isSuccessful = true;
-                }
-                else if (hasErrors(response.getMessage())) {
+                } else if (hasErrors(response.getMessage())) {
                     isSuccessful = false;
                     descriptionError = errors.values().toString();
                 }
-            }
-            catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
                 LOGGER.error("PayPal responsed with bad encoding format");
             }
-        }
-        else {
+        } else {
             descriptionError = message;
             LOGGER.error("Http error from PayPal");
         }

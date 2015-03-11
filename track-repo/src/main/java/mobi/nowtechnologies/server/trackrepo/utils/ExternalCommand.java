@@ -29,8 +29,7 @@ public class ExternalCommand {
         if (thread.getExitCode() == 0) {
             LOGGER.debug("successful finished: ", command.getFilename());
             return thread.getOutBuffer();
-        }
-        else {
+        } else {
             LOGGER.error("ExternalCommand.executeCommand failed : {}, with exit code {}", command.getFilename(), thread.getExitCode());
             throw new RuntimeException("Cannot encode track files or create zip package: execution of " + thread.getExitCode() + " returned exit code " + thread.getExitCode());
         }

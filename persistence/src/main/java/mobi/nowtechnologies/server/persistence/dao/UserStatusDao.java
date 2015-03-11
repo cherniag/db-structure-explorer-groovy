@@ -31,12 +31,10 @@ public class UserStatusDao {
             if (userStatus.getName().equals(SUBSCRIBED)) {
                 subscribedUserStatus = userStatus;
                 userStatusMapUserStatusAsKey.put(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED, userStatus);
-            }
-            else if (userStatus.getName().equals(EULA)) {
+            } else if (userStatus.getName().equals(EULA)) {
                 eulaUserStatus = userStatus;
                 userStatusMapUserStatusAsKey.put(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA, userStatus);
-            }
-            else if (userStatus.getName().equals(LIMITED)) {
+            } else if (userStatus.getName().equals(LIMITED)) {
                 limitedUserStatus = userStatus;
                 userStatusMapUserStatusAsKey.put(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED, userStatus);
             }

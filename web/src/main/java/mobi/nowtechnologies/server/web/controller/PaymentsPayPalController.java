@@ -65,8 +65,7 @@ public class PaymentsPayPalController extends CommonController {
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
             PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
             modelAndModel.addObject("currentPaymentPolicy", dto);
-        }
-        else {
+        } else {
             PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
             modelAndModel.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
         }
@@ -146,8 +145,7 @@ public class PaymentsPayPalController extends CommonController {
         final String message = messageSource.getMessage(exception.getErrorCodeForMessageLocalization(), null, locale);
         if (exception instanceof ExternalServiceException) {
             modelAndView.addObject("external_error", message);
-        }
-        else {
+        } else {
             modelAndView.addObject("internal_error", message);
         }
         modelAndView.addObject(REQUEST_PARAM_PAYPAL, FAIL);

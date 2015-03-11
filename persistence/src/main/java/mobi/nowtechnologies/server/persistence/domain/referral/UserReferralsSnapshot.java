@@ -99,8 +99,7 @@ public class UserReferralsSnapshot {
     public Date getMatchedDate() {
         if (matchedDate == null) {
             return null;
-        }
-        else {
+        } else {
             return new Date(matchedDate.getTime());
         }
     }
@@ -129,8 +128,7 @@ public class UserReferralsSnapshot {
         if (getMatchedDate().getTime() <= start.getTime()) {
             if (end == null) {
                 return hasNoDuration();
-            }
-            else {
+            } else {
                 return hasNoDuration() || getReferralsExpiresDate().getTime() >= end.getTime();
             }
         }

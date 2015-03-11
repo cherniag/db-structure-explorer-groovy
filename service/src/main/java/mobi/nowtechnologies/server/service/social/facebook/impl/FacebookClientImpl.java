@@ -38,8 +38,7 @@ public class FacebookClientImpl implements FacebookClient {
         FacebookProfile profile;
         try {
             profile = facebookOperationsAdaptor.getFacebookProfile(accessToken, userId);
-        }
-        catch (SocialException se) {
+        } catch (SocialException se) {
             log.error(String.format("Unexpected SocialException: %s", se.getMessage()), se);
             throw INVALID_FACEBOOK_TOKEN_EXCEPTION;
         }
@@ -79,8 +78,7 @@ public class FacebookClientImpl implements FacebookClient {
         if (!Strings.isNullOrEmpty(birthday)) {
             try {
                 return new SimpleDateFormat(DATE_FORMAT).parse(birthday);
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 log.error(String.format("Can't parse birthday: [%s]", birthday), e);
             }
         }

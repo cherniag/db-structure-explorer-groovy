@@ -45,8 +45,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
-import junit.framework.Assert;
-
 /**
  * User: Alexsandr_Kolpakov Date: 10/22/13 Time: 1:27 PM
  */

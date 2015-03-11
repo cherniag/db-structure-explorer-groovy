@@ -10,8 +10,6 @@ import static org.junit.Assert.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
-import static junit.framework.Assert.assertNotNull;
-
 // @author: Titov Mykhaylo (titov) 17.10.13 10:30
 public class UserGroupRepositoryIT extends AbstractRepositoryIT {
 
