@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.behavior;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,10 +12,21 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 public class UserStatusTypeService {
 
     public List<Pair<UserStatusType, Date>> userStatusesToSinceMapping(User user, Date time) {
         final UserStatusType currentStatus = of(user, time);
+
+        PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
+        if(paymentDetails!=null && (paymentDetails.isAwaiting() || paymentDetails.isErrorAndCanRetry())){
+            Pair<UserStatusType, Date> pair = new ImmutablePair<>(UserStatusType.LIMITED, time);
+            return Collections.singletonList(pair);
+        }
 
         if (currentStatus == UserStatusType.LIMITED) {
             Pair<UserStatusType, Date> pair = new ImmutablePair<>(UserStatusType.LIMITED, possibleLimitedSince(user, time));

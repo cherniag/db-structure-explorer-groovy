@@ -56,6 +56,7 @@ public class SettingsService {
         dto.getReferralDto().setRequired(currentBehaviorConfig.getRequiredReferrals());
         dto.getReferralDto().getDurationInfoDto().fromDuration(currentBehaviorConfig.getReferralsDuration());
 
+        addAllowedBehaviorConfigTypes(c, dto);
 
         for (ChartBehaviorType chartBehaviorType : BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType)) {
             final ChartBehavior chartBehavior = currentBehaviorConfig.getChartBehavior(chartBehaviorType);
@@ -107,7 +108,6 @@ public class SettingsService {
             logger().info("User switched for {} community to new behavior config type {}", communityUrl, newBehaviorConfigType);
         }
     }
-
 
     @Transactional
     public void makeImport(String communityUrl, SettingsDto dto) {
@@ -188,5 +188,9 @@ public class SettingsService {
     //
     private Logger logger() {
         return LoggerFactory.getLogger(getClass());
+    }
+
+    private void addAllowedBehaviorConfigTypes(Community c, SettingsDto dto) {
+        dto.getBehaviorConfigTypes().addAll(behaviorConfigRepository.findBehaviorConfigTypesForCommunity(c.getId()));
     }
 }

@@ -31,10 +31,12 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigTyp
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -60,6 +62,8 @@ public class GetContextFeature {
     @Resource
     BehaviorConfigRepository behaviorConfigRepository
     @Resource
+    ChartRepository chartRepository;
+    @Resource
     SubscriptionService subscriptionService
     @Resource
     UserReferralsSnapshotRepository referralsSnapshotRepository
@@ -76,6 +80,7 @@ public class GetContextFeature {
     Map<String, BehaviorConfig> freemiumSettings = new ConcurrentHashMap<>();
     Map<UserDeviceData, ResponseEntity<String>> responses = new ConcurrentHashMap<>()
     Set<String> allCommunities = new HashSet<>()
+    Map<String, Integer> communitiesCharts = new HashMap<>();
 
     Date serverTime = new Date()
     ChartBehaviorCase currentCase;
@@ -89,6 +94,14 @@ public class GetContextFeature {
         allCommunities.addAll(communities.set())
         userDeviceDatas.addAll(userDeviceDataService.table(versions.list(), allCommunities, deviceTypes.set(), Sets.newHashSet(format)))
         runner = runnerService.create(userDeviceDatas)
+
+        allCommunities.each{ it ->
+            List charts = chartRepository.getByCommunityName(it);
+            if(charts == null || charts.empty){
+                throw new IllegalStateException("Community $it has no charts.");
+            }
+            communitiesCharts[it] = charts[0].i;
+        }
 
         for(def it : userDeviceDatas) {
             appClientDeviceSet.singup(it)
@@ -104,15 +117,16 @@ public class GetContextFeature {
         }
     }
 
-    @Given('^chart (.+) contains \\[(.+)\\]$')
-    def "chart contains info"(int chartId, @Transform(ListValuesTransformer.class) ListValues listValues) {
+    @Given('^chart chart_ID contains \\[(.+)\\]$')
+    def "chart contains info"(@Transform(ListValuesTransformer.class) ListValues listValues) {
         runner.sequence {
+            def chartId = communitiesCharts.get(it.community);
             def foundJson = extractFromJsonChartInfo(responses[it], chartId);
 
             UserReferralsSnapshot referralInfo = findUserReferralsSnapshot(it);
             def timeInResponse = extractValueFromResponse(responses[it], "context.serverTime")
 
-            def expected = extractResult(it, referralInfo, listValues, timeInResponse);
+            def expected = extractResult(it, referralInfo, listValues, timeInResponse, chartId);
 
             assertEquals("Did not match for " + it, expected, foundJson)
         }
@@ -185,16 +199,26 @@ public class GetContextFeature {
         }
     }
 
+    @And('^user has (.+) payment details$')
+    def "user has AWAITING payment details"(PaymentDetailsStatus paymentDetailsStatus) {
+        runner.parallel {
+            PhoneState phoneState = appClientDeviceSet.getPhoneState(it);
+            User user = findUserInDatabase(it, phoneState);
+            subscriptionService.setCurrentPaymentDetailsStatus(user, paymentDetailsStatus);
+        }
+    }
+
     @And('^the case is the following \\[(.+)\\]$')
     def "the case is the following"(@Transform(ChartBehaviorCaseTransformer.class) ChartBehaviorCase chartBehaviorCase) {
         currentCase = chartBehaviorCase
     }
 
-    @And('^chart (.+) configured (.+):(.+),locked:(.+) and (.+):(.+),locked:(.+)$')
-    def "chart is configured"(int chartId,
-                              UserStatusType status1, ChartBehaviorType type1, @Transform(NullableStringTransformer.class) NullableString action1,
+    @And('^chart chart_ID configured (.+):(.+),locked:(.+) and (.+):(.+),locked:(.+)$')
+    def "chart is configured"(UserStatusType status1, ChartBehaviorType type1, @Transform(NullableStringTransformer.class) NullableString action1,
                               UserStatusType status2, ChartBehaviorType type2, @Transform(NullableStringTransformer.class) NullableString action2) {
         allCommunities.each {
+            def chartId = communitiesCharts.get(it);
+
             ChartUserStatusBehavior b1 = find(it, chartId, status1);
             b1.@chartBehavior.@type=type1
             b1.@action=action1.value()
@@ -233,7 +257,7 @@ public class GetContextFeature {
         appClientDeviceSet.cleanup()
     }
 
-    def extractResult(UserDeviceData data, UserReferralsSnapshot snapshot, ListValues listValues, String serverTime) {
+    def extractResult(UserDeviceData data, UserReferralsSnapshot snapshot, ListValues listValues, String serverTime, Integer chartId) {
         List<ExpectedValue> expectedList = listValues.values(new ExpectedValueTransformer())
         List<Map<String, String>> result = []
 
@@ -241,7 +265,7 @@ public class GetContextFeature {
             expectedValue.expected['validFrom'] = simpleInterpolator.interpolate(expectedValue.expected['validFrom'], mapForDates(snapshot, serverTime, data))
 
             if(expectedValue.expected.containsKey('lockedAction')) {
-                expectedValue.expected['lockedAction'] = simpleInterpolator.interpolate(expectedValue.expected['lockedAction'], mapForLockedAction(data))
+                expectedValue.expected['lockedAction'] = simpleInterpolator.interpolate(expectedValue.expected['lockedAction'], mapForLockedAction(data, chartId))
             }
 
             result.add(expectedValue.expected)
@@ -249,9 +273,10 @@ public class GetContextFeature {
         return result
     }
 
-    def mapForLockedAction(UserDeviceData data) {
+    def mapForLockedAction(UserDeviceData data, Integer chartId) {
         def map = [:]
         map['community'] = data.getCommunityUrl()
+        map['chart_ID'] = chartId
         return map
     }
 

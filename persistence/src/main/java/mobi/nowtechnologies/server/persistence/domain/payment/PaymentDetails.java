@@ -346,6 +346,14 @@ public class PaymentDetails {
         madeAttempts++;
     }
 
+    public boolean isAwaiting() {
+        return PaymentDetailsStatus.AWAITING.equals(getLastPaymentStatus());
+    }
+
+    public boolean isErrorAndCanRetry() {
+        return PaymentDetailsStatus.ERROR.equals(getLastPaymentStatus()) && !areAllAttemptSpent() && isActivated();
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("i", i).append("madeAttempts", madeAttempts).append("madeRetries", madeRetries).append("retriesOnError", retriesOnError)

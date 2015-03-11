@@ -12,16 +12,24 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPortalService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
 import javax.annotation.Resource;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +57,8 @@ public class SubscriptionService {
     PaymentDetailsRepository paymentDetailsRepository;
     @Resource
     UserStatusRepository userStatusRepository;
+    @Resource
+    PaymentPolicyRepository paymentPolicyRepository;
     @Resource
     PayPalHttpService payPalHttpService;
     @Resource
@@ -113,5 +123,29 @@ public class SubscriptionService {
         }
     }
 
+    @Transactional(value = "applicationTestsTransactionManager")
+    public void setCurrentPaymentDetailsStatus(User user, PaymentDetailsStatus paymentDetailsStatus) {
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+        if (currentPaymentDetails == null) {
+            currentPaymentDetails = new PaymentDetails();
+            currentPaymentDetails.setOwner(user);
+
+            List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(user.getCommunity(),
+                    user.getProvider(),
+                    user.getSegment(),
+                    user.getContract(),
+                    user.getTariff(),
+                    Arrays.asList(AUDIO, VIDEO_AND_AUDIO));
+            if (CollectionUtils.isNotEmpty(paymentPolicies)) {
+                currentPaymentDetails.setPaymentPolicy(paymentPolicies.get(0));
+            }
+
+            user.setCurrentPaymentDetails(currentPaymentDetails);
+        }
+        currentPaymentDetails.setActivated(true);
+        currentPaymentDetails.setLastPaymentStatus(paymentDetailsStatus);
+        paymentDetailsRepository.save(currentPaymentDetails);
+        userRepository.save(user);
+    }
 
 }
