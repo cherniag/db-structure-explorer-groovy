@@ -27,6 +27,7 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.springframework.test.web.ModelAndViewAssert;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -38,8 +39,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-
-import static junit.framework.Assert.assertNotNull;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ChartDetailsAsm.class)

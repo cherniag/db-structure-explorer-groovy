@@ -18,8 +18,7 @@ public class Crypto {
     public Crypto(String algo) {
         try {
             hashSum = MessageDigest.getInstance(algo);
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             logger.error("Error : {}", e.getMessage(), e);
         }
     }
@@ -32,8 +31,7 @@ public class Crypto {
             sig.initSign(privateKey);
             sig.update(data.getBytes());
             return sig.sign();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error : {}", e.getMessage(), e);
         }
         return null;

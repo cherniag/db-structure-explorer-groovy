@@ -177,8 +177,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public User applyPotentialPromo(User user) {
         if (userService.canActivateVideoTrial(user)) {
             user = skipPrevDataAndApplyPromotionForO24GConsumer(user);
-        }
-        else {
+        } else {
             user = applyPotentialPromo(user, user.getUserGroup().getCommunity());
         }
         return user;
@@ -190,8 +189,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (userService.canActivateVideoTrial(user)) {
             user = skipPrevDataAndApplyPromotionForO24GConsumer(user);
             isPromotionApplied = user.isPromotionApplied();
-        }
-        else {
+        } else {
             throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action").addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
         }
         if (!isPromotionApplied) {
@@ -204,12 +202,10 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (user.isOnAudioBoughtPeriod()) {
             LOGGER.info("User is on audio bought period");
             user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-        }
-        else if (user.isOnFreeTrial()) {
+        } else if (user.isOnFreeTrial()) {
             LOGGER.info("User is on free trial");
             userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-        }
-        else if (user.hasActivePaymentDetails()) {
+        } else if (user.hasActivePaymentDetails()) {
             LOGGER.info("User has active payment details");
             userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
         }
@@ -231,8 +227,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (StringUtils.hasText(messageCodeForPromoCode)) {
             String promoCode = messageSource.getMessage(user.getCommunityRewriteUrl(), messageCodeForPromoCode, null, null, null);
             promotion = setPotentialPromoByPromoCode(user, promoCode);
-        }
-        else {
+        } else {
             promotion = null;
             LOGGER.error("Couldn't find promotion code for [{}]", messageCodeForPromoCode);
         }
@@ -246,8 +241,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (contractChannel == null) {
             LOGGER.warn("The user contract channel is null, DIRECT will be used");
             messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
-        }
-        else {
+        } else {
             messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
         }
         LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
@@ -298,14 +292,11 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode)) {
             promotion = setPotentialPromoByPromoCode(user, staffCode);
-        }
-        else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode)) {
+        } else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode)) {
             promotion = setPotentialPromoByPromoCode(user, storeCode);
-        }
-        else if (user.isO2User() || user.isVFNZUser()) {
+        } else if (user.isO2User() || user.isVFNZUser()) {
             promotion = setPotentialPromoByMessageCode(user, "promotionCode");
-        }
-        else {
+        } else {
             promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
         }
 
@@ -326,8 +317,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         if (isUserNotBanned(user)) {
             user = applyPromoForNotBannedUser(promoParams);
-        }
-        else {
+        } else {
             skipPotentialPromoCodePromotionApplyingForBannedUser(user);
         }
 

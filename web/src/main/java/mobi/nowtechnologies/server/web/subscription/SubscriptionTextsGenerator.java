@@ -47,8 +47,7 @@ public class SubscriptionTextsGenerator {
                 data.setNextBillingText(
                     decideLeftDaysMessage("subscription.text.freeTrial_next_bill.leftDays", "subscription.text.freeTrial_next_bill.leftDays.lastDay", state.getDaysToNextBillingDate()));
                 data.setFutureText(null);
-            }
-            else {
+            } else {
 
                 if (state.isFreeTrialOptedIn()) {
                     data.setStatusText(getMessage("subscription.text.subscribed"));
@@ -59,8 +58,7 @@ public class SubscriptionTextsGenerator {
 
                 if (state.isFreeTrialAudioOnly()) {
                     data.setStatusText(getMessage("subscription.text.freeTrial_AudioOnly"));
-                }
-                else {
+                } else {
                     data.setStatusText(getMessage("subscription.text.freeTrial_Video"));
                 }
 
@@ -79,12 +77,10 @@ public class SubscriptionTextsGenerator {
         if (state.isEligibleForVideo()) {
             if (state.isSubscribedToVideo()) {
                 data.setStatusText(getMessage("subscription.text.subscribed_Video"));
-            }
-            else {
+            } else {
                 data.setStatusText(getMessage("subscription.text.subscribed_AudioOnly"));
             }
-        }
-        else {
+        } else {
             data.setStatusText(getMessage("subscription.text.subscribed"));
         }
 
@@ -99,14 +95,12 @@ public class SubscriptionTextsGenerator {
             data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.upgradeVideo", getLongDate(state.getNextBillingDate())));
             data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
             data.setFutureText(getMessage("subscription.text.subscription_future.upgrading"));
-        }
-        else if (state.isDowngradingToAudioOnly()) {
+        } else if (state.isDowngradingToAudioOnly()) {
             data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.downgradeVideo", getLongDate(state.getNextBillingDate())));
             data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
             data.setFutureText(getMessage("subscription.text.subscription_future.downgrading"));
 
-        }
-        else {
+        } else {
             data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.ongoing", getLongDate(state.getNextBillingDate())));
             data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
             data.setFutureText(getMessage("subscription.text.subscription_future.ongoing"));

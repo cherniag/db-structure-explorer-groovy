@@ -79,8 +79,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 
         if (appStoreOriginalTransactionId != null) {
             return userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
-        }
-        else {
+        } else {
             return Collections.singletonList(user);
         }
     }

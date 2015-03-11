@@ -30,8 +30,7 @@ public class TrackServiceStub extends TrackServiceImpl {
 
             LOGGER.info("output encode(trackId, isHighRate): [{}]", new Object[] {track});
             return track;
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.error("Cannot encode track files or create zip package.", e);
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -53,8 +52,7 @@ public class TrackServiceStub extends TrackServiceImpl {
 
             LOGGER.info("output pull(trackId): [{}]", new Object[] {track});
             return track;
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.error("Cannot pull track.", e);
             throw new RuntimeException(e.getMessage(), e);
         }

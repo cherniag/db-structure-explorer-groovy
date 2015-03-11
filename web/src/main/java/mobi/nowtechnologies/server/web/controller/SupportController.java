@@ -66,8 +66,7 @@ public class SupportController extends CommonController {
         if (!result.hasErrors()) {
             userService.contactWithUser(dto.getEmail(), dto.getName(), dto.getSubject());
             sentStatus = true;
-        }
-        else {
+        } else {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         ModelAndView modelAndView = new ModelAndView("contact_us");

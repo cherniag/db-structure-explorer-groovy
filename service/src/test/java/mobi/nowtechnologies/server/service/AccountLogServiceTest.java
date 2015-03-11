@@ -20,8 +20,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static junit.framework.Assert.assertNotNull;
-
 /**
  * User: Titov Mykhaylo (titov) 04.10.13 15:40
  */

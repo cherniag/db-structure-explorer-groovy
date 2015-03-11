@@ -37,8 +37,7 @@ public class EmiParser extends DDEXParser {
                 tracks.putAll(result);
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Ingest failed " + e.getMessage());
         }
         return tracks;
@@ -68,21 +67,17 @@ public class EmiParser extends DDEXParser {
                 if (isDirectory(file)) {
                     LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                     result.addAll(getDrops(file, auto));
-                }
-                else if (INGEST_ACK.equals(file.getName())) {
+                } else if (INGEST_ACK.equals(file.getName())) {
                     processed = true;
-                }
-                else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+                } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                     processed = true;
-                }
-                else {
+                } else {
                     File xml = getXmlFile(folder);
                     if (xml != null && xml.exists()) {
                         deliveryComplete = true;
                     }
                 }
-            }
-            catch (Exception e1) {
+            } catch (Exception e1) {
                 LOGGER.error("Ingest failed " + e1.getMessage());
             }
 

@@ -54,8 +54,7 @@ public class SMPPSubmitRegisteredTestIT {
         try {
             session.connectAndBind("localhost", 5000, new BindParameter(BindType.BIND_TRX, "MQPRD", "u8VrD9ka", "SMPP", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
             //            session.connectAndBind("localhost", 5000, new BindParameter(BindType.BIND_TRX, "MQ", "ZnFeSn77", "SMPP", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("Failed connect and bind to host");
             e.printStackTrace();
         }
@@ -83,32 +82,26 @@ public class SMPPSubmitRegisteredTestIT {
             // finalDate is " + response.getFinalDate());
 
             //Thread.sleep(2000);
-        }
-        catch (PDUException e) {
+        } catch (PDUException e) {
             // Invalid PDU parameter
             System.err.println("Invalid PDU parameter");
             e.printStackTrace();
-        }
-        catch (ResponseTimeoutException e) {
+        } catch (ResponseTimeoutException e) {
             // Response timeout
             System.err.println("Response timeout");
             e.printStackTrace();
-        }
-        catch (InvalidResponseException e) {
+        } catch (InvalidResponseException e) {
             // Invalid response
             System.err.println("Receive invalid respose");
             e.printStackTrace();
-        }
-        catch (NegativeResponseException e) {
+        } catch (NegativeResponseException e) {
             // Receiving negative response (non-zero command_status)
             System.err.println("Receive negative response");
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("IO error occur");
             e.printStackTrace();
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             System.err.println("Thread interrupted");
             e.printStackTrace();
         }
@@ -135,13 +128,11 @@ public class SMPPSubmitRegisteredTestIT {
                  */
 
                     System.out.println("Receiving delivery receipt for message '" + messageId + " ' from " + deliverSm.getSourceAddr() + " to " + deliverSm.getDestAddress() + " : " + delReceipt);
-                }
-                catch (InvalidDeliveryReceiptException e) {
+                } catch (InvalidDeliveryReceiptException e) {
                     System.err.println("Failed getting delivery receipt");
                     e.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 // this message is regular short message
 
             /*

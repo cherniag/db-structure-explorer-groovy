@@ -90,18 +90,15 @@ public class SignUpDeviceController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, withUuid, false);
 
             return buildModelAndView(accountCheck);
-        }
-        catch (ValidationException ve) {
+        } catch (ValidationException ve) {
             ex = ve;
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]", ve.getMessage(), userDeviceDetailsDto, community);
             throw ve;
-        }
-        catch (RuntimeException re) {
+        } catch (RuntimeException re) {
             ex = re;
             LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]", re.getMessage(), userDeviceDetailsDto, community);
             throw re;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, userDeviceDetailsDto, null, user, ex);
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]", userDeviceDetailsDto, community);
         }

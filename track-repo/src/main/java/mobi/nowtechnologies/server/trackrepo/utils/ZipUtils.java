@@ -61,8 +61,7 @@ public class ZipUtils {
                 }
             }
             zipFile.close();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             System.err.println("Unhandled exception:");
             ioe.printStackTrace();
             return;

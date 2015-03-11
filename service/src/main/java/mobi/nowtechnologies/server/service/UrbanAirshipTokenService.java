@@ -34,8 +34,7 @@ public class UrbanAirshipTokenService {
             urbanAirshipToken.setUser(user);
             urbanAirshipToken.setToken(token);
             urbanAirshipTokenRepository.save(urbanAirshipToken);
-        }
-        else if (!token.equals(urbanAirshipToken.getToken())) {
+        } else if (!token.equals(urbanAirshipToken.getToken())) {
             logger.info("Token differs from already persisted one, updating...");
             urbanAirshipToken.setToken(token);
             urbanAirshipTokenRepository.save(urbanAirshipToken);
@@ -62,8 +61,7 @@ public class UrbanAirshipTokenService {
                 toToken = new UrbanAirshipToken();
                 toToken.setUser(toUser);
                 toToken.setToken(fromToken.getToken());
-            }
-            else {
+            } else {
                 toToken.setToken(fromToken.getToken());
             }
 

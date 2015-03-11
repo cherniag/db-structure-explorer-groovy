@@ -136,19 +136,16 @@ public class PaymentDetailsService {
                 dto.setVendorTxCode(UUID.randomUUID().toString());
                 dto.setDescription("Creating payment details for user " + user.getUserName());
                 paymentDetails = sagePayPaymentService.createPaymentDetails(dto, user, paymentPolicy);
-            }
-            else if (dto.getPaymentType().equals(PAY_PAL)) {
+            } else if (dto.getPaymentType().equals(PAY_PAL)) {
                 paymentDetails = payPalPaymentService.createPaymentDetails(dto.getBillingAgreementDescription(), dto.getSuccessUrl(), dto.getFailUrl(), user, paymentPolicy);
-            }
-            else if (dto.getPaymentType().equals(PREMIUM_USER)) {
+            } else if (dto.getPaymentType().equals(PREMIUM_USER)) {
                 PaymentDetails pendingPaymentDetails = user.getPendingPaymentDetails();
                 if (null != pendingPaymentDetails) {
                     pendingPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
                     pendingPaymentDetails.setDescriptionError("Was not verified and replaced by another payment details");
                 }
                 paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
-            }
-            else if (dto.getPaymentType().equals(O2_PSMS)) {
+            } else if (dto.getPaymentType().equals(O2_PSMS)) {
                 paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
             }
 
@@ -336,8 +333,7 @@ public class PaymentDetailsService {
         final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto;
         if (paymentDetailsList.isEmpty()) {
             paymentDetailsByPaymentDto = null;
-        }
-        else {
+        } else {
             paymentDetailsByPaymentDto = paymentDetailsList.get(0).toPaymentDetailsByPaymentDto();
         }
 

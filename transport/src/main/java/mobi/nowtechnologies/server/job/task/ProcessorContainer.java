@@ -21,8 +21,7 @@ public class ProcessorContainer {
         Processor<Task> processor = processorMap.get(task.getClass().getSimpleName());
         if (processor != null) {
             processor.process(task);
-        }
-        else {
+        } else {
             LOGGER.error("There is no corresponding processor for task {}", task);
         }
     }

@@ -167,8 +167,7 @@ public class UserService {
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             mergeIsDone = true;
             user = mergeUser(mobileUser, user);
-        }
-        else {
+        } else {
             LOGGER.info("User merge procedure is skipped");
         }
         return new MergeResult(mergeIsDone, user);
@@ -178,13 +177,11 @@ public class UserService {
         LOGGER.info("Attempt to update user contract and provider with [{}]", providerUserDetails);
         if (user.isVFNZCommunityUser()) {
             updateProviderForVFNZCommunityUser(user, providerUserDetails);
-        }
-        else {
+        } else {
             if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity())) {
                 user.setContract(PAYM);
                 user.setProvider(O2);
-            }
-            else {
+            } else {
                 user.setContract(Contract.valueOf(providerUserDetails.contract));
                 user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
             }
@@ -236,15 +233,12 @@ public class UserService {
         if (isNull(promoRequest.mobileUser)) {
             if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
                 user = promotionService.applyPotentialPromo(user);
-            }
-            else {
+            } else {
                 LOGGER.info("Promo applying procedure is skipped for new user");
             }
-        }
-        else if (promoRequest.isSubjectToAutoOptIn) {
+        } else if (promoRequest.isSubjectToAutoOptIn) {
             user = findAndApplyPromoFromRule(user);
-        }
-        else {
+        } else {
             LOGGER.info("Promo applying procedure is skipped for existed user");
         }
         return user;
@@ -254,8 +248,7 @@ public class UserService {
         Promotion promotion = promotionService.getPromotionFromRuleForAutoOptIn(user);
         if (isNotNull(promotion)) {
             user = promotionService.applyPromotionByPromoCode(user, promotion.withCouldBeAppliedMultipleTimes(true));
-        }
-        else {
+        } else {
             LOGGER.info("Promo applying procedure is skipped because no promotion from rule found");
         }
         return user;
@@ -264,8 +257,7 @@ public class UserService {
     private User checkAndUpdateWithProviderUserDetails(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
         if (updateContractAndProvider) {
             return updateContractAndProvider(user, providerUserDetails);
-        }
-        else {
+        } else {
             LOGGER.info("Update user contract and provider procedure is skipped");
         }
         return user;
@@ -314,16 +306,13 @@ public class UserService {
                 PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
                 if (null == currentPaymentDetails && user.getStatus().getI() == UserStatusDao.getEulaUserStatus().getI()) {
                     LOGGER.info("The user [{}] couldn't login in while he has no payment details and he is in status [{}]", new Object[] {user, UserStatus.EULA.name()});
-                }
-                else {
+                } else {
                     return user;
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("Invalid user token. Expected {} but received {}", localUserToken, user.getToken());
             }
-        }
-        else {
+        } else {
             String message = "Could not find user with userName [" + userName + "] and communityName [" + communityName + "] in the database";
             LOGGER.info(message);
 
@@ -350,40 +339,32 @@ public class UserService {
             if (!user.isTempUserName()) {
                 message = "User activation status [REGISTERED] is invalid. User must have temp userName";
                 messageCode = "error.604.activation.status.REGISTERED.invalid.userName";
-            }
-            else if (user.hasAllDetails()) {
+            } else if (user.hasAllDetails()) {
                 message = "User activation status [REGISTERED] is invalid. User can't have all details";
                 messageCode = "error.604.activation.status.REGISTERED.invalid.userDetails";
-            }
-            else if (!user.isLimited()) {
+            } else if (!user.isLimited()) {
                 message = "User activation status [REGISTERED] is invalid. User must have limit status";
                 messageCode = "error.604.activation.status.REGISTERED.invalid.status";
-            }
-            else if (user.hasPhoneNumber()) {
+            } else if (user.hasPhoneNumber()) {
                 message = "User activation status [REGISTERED] is invalid. User can't have phoneNumber";
                 messageCode = "error.604.activation.status.REGISTERED.invalid.phoneNumber";
             }
-        }
-        else if (activationStatus == ENTERED_NUMBER) {
+        } else if (activationStatus == ENTERED_NUMBER) {
             if (!user.isTempUserName()) {
                 message = "User activation status [ENTERED_NUMBER] is invalid. User must have temp userName";
                 messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.userName";
-            }
-            else if (!user.isLimited()) {
+            } else if (!user.isLimited()) {
                 message = "User activation status [ENTERED_NUMBER] is invalid. User must have limit status";
                 messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.status";
-            }
-            else if (!user.hasPhoneNumber()) {
+            } else if (!user.hasPhoneNumber()) {
                 message = "User activation status [ENTERED_NUMBER] is invalid. User must have phoneNumber";
                 messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.phoneNumber";
             }
-        }
-        else if (activationStatus == ACTIVATED) {
+        } else if (activationStatus == ACTIVATED) {
             if (!user.hasAllDetails()) {
                 message = "User activation status [ACTIVATED] is invalid. User must have all user details";
                 messageCode = "error.604.activation.status.ACTIVATED.invalid.userDetails";
-            }
-            else if (!user.isActivatedUserName()) {
+            } else if (!user.isActivatedUserName()) {
                 message = "User activation status [ACTIVATED] is invalid. User must have activated userName";
                 messageCode = "error.604.activation.status.ACTIVATED.invalid.userName";
             }
@@ -403,8 +384,7 @@ public class UserService {
             final String communityURL;
             if (community != null) {
                 communityURL = community.getRewriteUrlParameter();
-            }
-            else {
+            } else {
                 communityURL = "unknown community for communityName [" + communityName + "]";
             }
             ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, communityURL);
@@ -444,8 +424,7 @@ public class UserService {
         String countryName;
         if ("127.0.0.1".equals(ipAddress) || "0:0:0:0:0:0:0:1".equals(ipAddress)) {
             countryName = "GB";
-        }
-        else {
+        } else {
             countryName = countryByIpService.findCountryCodeByIp(ipAddress);
         }
 
@@ -543,8 +522,7 @@ public class UserService {
             final User owner = paymentDetail.getOwner();
             if (isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())) {
                 unsubscribeUser(owner, reason);
-            }
-            else {
+            } else {
                 paymentDetailsService.disablePaymentDetails(paymentDetail, reason);
             }
             LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
@@ -650,8 +628,7 @@ public class UserService {
             user.setNextSubPayment(payment.getNextSubPayment());
             user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
             user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
-        }
-        else {
+        } else {
             int subscriptionStartTimeSeconds = max(getEpochSeconds(), user.getNextSubPayment());
             user.setNextSubPayment(period.toNextSubPaymentSeconds(subscriptionStartTimeSeconds));
         }
@@ -802,8 +779,7 @@ public class UserService {
         final String facebookId = facebookProfile.getId();
         if (email == null) {
             userName = facebookId;
-        }
-        else {
+        } else {
             userName = email.toLowerCase();
         }
 
@@ -928,8 +904,7 @@ public class UserService {
         if (user == null) {
             detectUserAccountWithSameDeviceAndDisableIt(deviceUID, community);
             user = createUser(userDeviceRegDetailsDto, deviceUID, community);
-        }
-        else if (isNotNull(user) && updateUserPendingActivation && PENDING_ACTIVATION == user.getActivationStatus()) {
+        } else if (isNotNull(user) && updateUserPendingActivation && PENDING_ACTIVATION == user.getActivationStatus()) {
             user.setActivationStatus(REGISTERED);
         }
 
@@ -953,13 +928,11 @@ public class UserService {
 
         if (canBePromoted(community, user.getDeviceUID(), deviceModel)) {
             promotionCode = messageSource.getMessage(communityUri, "promotionCode", null, null);
-        }
-        else {
+        } else {
             String blackListModels = messageSource.getMessage(communityUri, "promotion.blackListModels", null, null);
             if (deviceModel != null && blackListModels.contains(deviceModel)) {
                 promotionCode = null;
-            }
-            else {
+            } else {
                 promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
             }
         }
@@ -1068,8 +1041,7 @@ public class UserService {
         if (userDto.getNextSubPayment().after(originalNextSubPayment)) {
             if (user.isOnFreeTrial()) {
                 accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TRIAL_TOPUP, null);
-            }
-            else {
+            } else {
                 accountLogService.logAccountEvent(userId, originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
             }
         }
@@ -1178,8 +1150,7 @@ public class UserService {
             if (migResponse.isSuccessful()) {
                 LOGGER.info("The request for freeSms sent to MIG about user {} successfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively",
                             new Object[] {user, user.getNextSubPayment(), user.getStatus(), user.getPaymentStatus(), user.getSubBalance()});
-            }
-            else {
+            } else {
                 throw new Exception(migResponse.getDescriptionError());
             }
 
@@ -1191,8 +1162,7 @@ public class UserService {
 
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
         }
@@ -1258,8 +1228,7 @@ public class UserService {
         if (sendActivationSMS) {
             try {
                 userNotificationService.sendActivationPinSMS(user);
-            }
-            catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
@@ -1272,12 +1241,10 @@ public class UserService {
         if (isPromotedDevice(phoneNumber, community)) {
             // if the device is promoted, we set the default field
             populateSubscriberData(user, null);
-        }
-        else {
+        } else {
             try {
                 mobileProviderService.getSubscriberData(phoneNumber, userDetailsUpdater);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=[{}]", phoneNumber, ex);
             }
@@ -1330,8 +1297,7 @@ public class UserService {
             user.setStatus(UserStatusDao.getLimitedUserStatus());
             userRepository.save(user);
             LOGGER.info("Unable to decrease balance [{}] for user with id [{}]. So the user subscription status was changed on LIMITED", subBalance, user.getId());
-        }
-        else {
+        } else {
 
             user.setSubBalance((byte) (subBalance - 1));
             user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
@@ -1414,22 +1380,19 @@ public class UserService {
                 userWithOldTariff = skipBoughtPeriodAndUnsubscribe(userWithOldTariff, USER_DOWNGRADED_TARIFF);
 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed(userWithOldTariff);
-            }
-            else if (userWithOldTariff.isOnVideoAudioFreeTrial()) {
+            } else if (userWithOldTariff.isOnVideoAudioFreeTrial()) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
 
                 userServiceNotification.sendSmsFor4GDowngradeForFreeTrial(userWithOldTariff);
-            }
-            else if (userWithOldTariff.has4GVideoAudioSubscription()) {
+            } else if (userWithOldTariff.has4GVideoAudioSubscription()) {
                 LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff,
                             userWithOldTariff.getNextSubPayment(), newTariff);
                 userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF.getDescription());
 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed(userWithOldTariff);
             }
-        }
-        else {
+        } else {
             LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
         }
         return userWithOldTariff;
@@ -1494,8 +1457,7 @@ public class UserService {
         if (!newTariff.equals(user.getTariff())) {
             if (user.isOnWhiteListedVideoAudioFreeTrial()) {
                 LOGGER.info("User will not be downgraded because of he on white listed Video Audio Free Trial");
-            }
-            else {
+            } else {
                 LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(), newTariff);
                 user = downgradeUserTariff(user, newTariff);
             }
@@ -1508,8 +1470,7 @@ public class UserService {
         boolean isPromoted = false;
         try {
             isPromoted = deviceService.isPromotedDevicePhone(community, phoneNumber, null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
@@ -1542,8 +1503,7 @@ public class UserService {
                 new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false)
                                          .setIsSubjectToAutoOptIn(true).setDisableReactivationForUser(checkReactivation).createPromoRequest());
             user = resultObject.getResultOfOperation();
-        }
-        else {
+        } else {
             User result = promotionService.applyPotentialPromo(user);
             disableReactivation(checkReactivation, result);
             user = result;

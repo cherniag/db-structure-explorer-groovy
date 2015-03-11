@@ -31,8 +31,7 @@ public class PaymentPolicyDao extends JpaDaoSupport {
             queryArgArray = new Object[] {operatorId, paymentType, communityId};
 
             paymentPolicies = getJpaTemplate().findByNamedQuery("PaymentPolicy.getPaymentPolicyForMigPaymentType", queryArgArray);
-        }
-        else {
+        } else {
             queryArgArray = new Object[] {paymentType, communityId};
             paymentPolicies = getJpaTemplate().findByNamedQuery("PaymentPolicy.getPaymentPolicyForNotMigPaymentType", queryArgArray);
         }
@@ -41,8 +40,7 @@ public class PaymentPolicyDao extends JpaDaoSupport {
         if (paymentPolicies.size() > 1) {
             throw new PersistenceException(
                 "There are more than one paymentPolicies in the table for operatorId = [" + operatorId + "], paymentType = [" + paymentType + "], communityId = [" + communityId + "]");
-        }
-        else if (paymentPolicies.size() == 1) {
+        } else if (paymentPolicies.size() == 1) {
             paymentPolicy = paymentPolicies.get(0);
         }
 

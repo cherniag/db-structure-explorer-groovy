@@ -80,8 +80,7 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
             parameters.setScope("email");
             String buildAuthorizeUrl = oAuthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, parameters);
             response.sendRedirect(buildAuthorizeUrl);
-        }
-        else {
+        } else {
             AccessGrant accessGrant = oAuthOperations.exchangeForAccess(code, redirectUri, null);
             Connection<Facebook> connection = connectionFactory.createConnection(accessGrant);
 
@@ -100,8 +99,7 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 
             if (userDetailsImpl.isNewUser()) {
                 simpleUrlAuthenticationSuccessHandler.setDefaultTargetUrl(defaultTargetUrlForNewUser);
-            }
-            else {
+            } else {
                 simpleUrlAuthenticationSuccessHandler.setDefaultTargetUrl(defaultTargetUrlForOldUser);
             }
 

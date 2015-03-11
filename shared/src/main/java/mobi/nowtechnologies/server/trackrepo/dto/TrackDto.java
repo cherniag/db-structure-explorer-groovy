@@ -537,112 +537,98 @@ public class TrackDto {
             if (other.album != null) {
                 return false;
             }
-        }
-        else if (!album.equals(other.album)) {
+        } else if (!album.equals(other.album)) {
             return false;
         }
         if (artist == null) {
             if (other.artist != null) {
                 return false;
             }
-        }
-        else if (!artist.equals(other.artist)) {
+        } else if (!artist.equals(other.artist)) {
             return false;
         }
         if (copyright == null) {
             if (other.copyright != null) {
                 return false;
             }
-        }
-        else if (!copyright.equals(other.copyright)) {
+        } else if (!copyright.equals(other.copyright)) {
             return false;
         }
         if (coverFileName == null) {
             if (other.coverFileName != null) {
                 return false;
             }
-        }
-        else if (!coverFileName.equals(other.coverFileName)) {
+        } else if (!coverFileName.equals(other.coverFileName)) {
             return false;
         }
         if (files == null) {
             if (other.files != null) {
                 return false;
             }
-        }
-        else if (!files.equals(other.files)) {
+        } else if (!files.equals(other.files)) {
             return false;
         }
         if (genre == null) {
             if (other.genre != null) {
                 return false;
             }
-        }
-        else if (!genre.equals(other.genre)) {
+        } else if (!genre.equals(other.genre)) {
             return false;
         }
         if (id == null) {
             if (other.id != null) {
                 return false;
             }
-        }
-        else if (!id.equals(other.id)) {
+        } else if (!id.equals(other.id)) {
             return false;
         }
         if (info == null) {
             if (other.info != null) {
                 return false;
             }
-        }
-        else if (!info.equals(other.info)) {
+        } else if (!info.equals(other.info)) {
             return false;
         }
         if (ingestionDate == null) {
             if (other.ingestionDate != null) {
                 return false;
             }
-        }
-        else if (!ingestionDate.equals(other.ingestionDate)) {
+        } else if (!ingestionDate.equals(other.ingestionDate)) {
             return false;
         }
         if (ingestionUpdateDate == null) {
             if (other.ingestionUpdateDate != null) {
                 return false;
             }
-        }
-        else if (!ingestionUpdateDate.equals(other.ingestionUpdateDate)) {
+        } else if (!ingestionUpdateDate.equals(other.ingestionUpdateDate)) {
             return false;
         }
         if (ingestor == null) {
             if (other.ingestor != null) {
                 return false;
             }
-        }
-        else if (!ingestor.equals(other.ingestor)) {
+        } else if (!ingestor.equals(other.ingestor)) {
             return false;
         }
         if (isrc == null) {
             if (other.isrc != null) {
                 return false;
             }
-        }
-        else if (!isrc.equals(other.isrc)) {
+        } else if (!isrc.equals(other.isrc)) {
             return false;
         }
         if (itunesUrl == null) {
             if (other.itunesUrl != null) {
                 return false;
             }
-        }
-        else if (!itunesUrl.equals(other.itunesUrl)) {
+        } else if (!itunesUrl.equals(other.itunesUrl)) {
             return false;
         }
         if (amazonUrl == null) {
             if (other.amazonUrl != null) {
                 return false;
             }
-        }
-        else if (!amazonUrl.equals(other.amazonUrl)) {
+        } else if (!amazonUrl.equals(other.amazonUrl)) {
             return false;
         }
         if (areArtistUrls != other.areArtistUrls) {
@@ -652,48 +638,42 @@ public class TrackDto {
             if (other.licensed != null) {
                 return false;
             }
-        }
-        else if (!licensed.equals(other.licensed)) {
+        } else if (!licensed.equals(other.licensed)) {
             return false;
         }
         if (productCode == null) {
             if (other.productCode != null) {
                 return false;
             }
-        }
-        else if (!productCode.equals(other.productCode)) {
+        } else if (!productCode.equals(other.productCode)) {
             return false;
         }
         if (productId == null) {
             if (other.productId != null) {
                 return false;
             }
-        }
-        else if (!productId.equals(other.productId)) {
+        } else if (!productId.equals(other.productId)) {
             return false;
         }
         if (publishArtist == null) {
             if (other.publishArtist != null) {
                 return false;
             }
-        }
-        else if (!publishArtist.equals(other.publishArtist)) {
+        } else if (!publishArtist.equals(other.publishArtist)) {
             return false;
         }
         if (publishDate == null) {
             if (other.publishDate != null) {
                 return false;
             }
-        }
-        else if (!publishDate.equals(other.publishDate)) {
+        } else if (!publishDate.equals(other.publishDate)) {
             return false;
         }
         if (publishTitle == null) {
             if (other.publishTitle != null) {
                 return false;
             }
-        }
-        else if (!publishTitle.equals(other.publishTitle)) {
+        } else if (!publishTitle.equals(other.publishTitle)) {
             return false;
         }
         if (resolution != other.resolution) {
@@ -706,48 +686,42 @@ public class TrackDto {
             if (other.subTitle != null) {
                 return false;
             }
-        }
-        else if (!subTitle.equals(other.subTitle)) {
+        } else if (!subTitle.equals(other.subTitle)) {
             return false;
         }
         if (territoryCodes == null) {
             if (other.territoryCodes != null) {
                 return false;
             }
-        }
-        else if (!territoryCodes.equals(other.territoryCodes)) {
+        } else if (!territoryCodes.equals(other.territoryCodes)) {
             return false;
         }
         if (title == null) {
             if (other.title != null) {
                 return false;
             }
-        }
-        else if (!title.equals(other.title)) {
+        } else if (!title.equals(other.title)) {
             return false;
         }
         if (year == null) {
             if (other.year != null) {
                 return false;
             }
-        }
-        else if (!year.equals(other.year)) {
+        } else if (!year.equals(other.year)) {
             return false;
         }
         if (reportingType == null) {
             if (other.reportingType != null) {
                 return false;
             }
-        }
-        else if (!reportingType.equals(other.reportingType)) {
+        } else if (!reportingType.equals(other.reportingType)) {
             return false;
         }
         if (negativeTags == null) {
             if (other.negativeTags != null) {
                 return false;
             }
-        }
-        else if (!negativeTags.equals(other.negativeTags)) {
+        } else if (!negativeTags.equals(other.negativeTags)) {
             return false;
         }
         return true;
@@ -789,8 +763,7 @@ public class TrackDto {
             result.put("territoryCodes", territoryCodes);
             result.put("files", files);
             result.put("territories", territories);
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             LOGGER.error("Couldn't convert to json", e);
         }
         return result;

@@ -213,12 +213,10 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
             String userDefinedValue = evaluate(userDefinedValueFileXPathSelector);
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))) {
                 fileType = DOWNLOAD;
-            }
-            else {
+            } else {
                 fileType = MOBILE;
             }
-        }
-        else {
+        } else {
             fileType = PREVIEW;
         }
         return fileType;
@@ -332,14 +330,11 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
         for (File file : content) {
             if (isDirectory(file)) {
                 result.addAll(getDrops(file, auto));
-            }
-            else if (DELIVERY_COMPLETE.equals(file.getName())) {
+            } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
@@ -391,8 +386,7 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
                                        .addLabel(label).addYear(year).addIsrc(isrc).addPhysicalProductId(isrc).addInfo(null).addExplicit(getExplicit()).addProductId(isrc).addTerritories(territories)
                                        .addFiles(files).addAlbum(album).addXml(getXml()));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return res;

@@ -22,8 +22,7 @@ public class Compare implements Command {
         String text;
         try {
             text = page.text(selector);
-        }
-        catch (NoSuchElementException notFound) {
+        } catch (NoSuchElementException notFound) {
             return false;
         }
 

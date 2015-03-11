@@ -49,8 +49,7 @@ public class VersionCheckService {
         if (v.qualifier() == null) {
             return versionCheckRepository
                 .findSuitableVersions(userAgent.getCommunity(), userAgent.getPlatform(), userAgent.getApplicationName(), v.major(), v.minor(), v.revision(), includedStatuses, pagingAndSortingData);
-        }
-        else {
+        } else {
             return versionCheckRepository
                 .findSuitableVersionsWithQualifier(userAgent.getCommunity(), userAgent.getPlatform(), userAgent.getApplicationName(), v.major(), v.minor(), v.revision(), v.qualifier(),
                                                    includedStatuses, pagingAndSortingData);

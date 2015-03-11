@@ -48,8 +48,7 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         try {
             forkUsers();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             LOG.error("ForkO2UsersForUpdateJob error:", t);
         }
     }

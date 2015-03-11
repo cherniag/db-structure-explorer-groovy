@@ -65,14 +65,12 @@ public class RestorePasswordController extends CommonController {
         ModelAndView modelAndView;
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("restore_password");
-        }
-        else {
+        } else {
             boolean isUserExsist = userService.restoreUserPassword(emailDto.getValue(), communityRedirectURL);
             if (!isUserExsist) {
                 bindingResult.rejectValue("value", "restorePassword.userNotFound");
                 modelAndView = new ModelAndView("restore_password");
-            }
-            else {
+            } else {
                 modelAndView = new ModelAndView("redirect:restore_password_confirmation.html");
             }
         }

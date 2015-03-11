@@ -59,17 +59,14 @@ public class PostService {
             try {
                 httpEntity.writeTo(byteArrayOutputStream);
                 response.setMessage(new String(byteArrayOutputStream.toByteArray()));
-            }
-            finally {
+            } finally {
                 EntityUtils.consume(httpEntity);
                 byteArrayOutputStream.close();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new IllegalStateException("post failed", e);
-        }
-        finally {
+        } finally {
             httpclient.getConnectionManager().shutdown();
         }
         return response;

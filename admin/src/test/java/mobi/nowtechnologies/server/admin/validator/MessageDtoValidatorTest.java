@@ -49,8 +49,6 @@ import static org.junit.Assert.*;
 
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static junit.framework.Assert.assertFalse;
-
 /**
  * @author Titov Mykhaylo (titov)
  */

@@ -54,8 +54,7 @@ public class ITunesPostService extends PostService {
         ITunesInAppSubscriptionRequestDto requestDto;
         try {
             requestDto = objectMapper.readValue(body, ITunesInAppSubscriptionRequestDto.class);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         String token = requestDto.getReceiptData();
@@ -75,11 +74,9 @@ public class ITunesPostService extends PostService {
         String type = parts[0];
         if ("onetime".equalsIgnoreCase(type)) {
             basicResponse.setMessage(getStrSubstitutor(parts).replace(oneTimeResponse));
-        }
-        else if ("renewable".equalsIgnoreCase(type)) {
+        } else if ("renewable".equalsIgnoreCase(type)) {
             basicResponse.setMessage(getStrSubstitutor(parts).replace(renewableResponse));
-        }
-        else {
+        } else {
             throw new RuntimeException("unknown type " + type + " for receipt : " + Arrays.toString(parts));
         }
 

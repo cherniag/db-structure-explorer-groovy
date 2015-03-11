@@ -27,8 +27,7 @@ public class MessageFactory {
         for (int i = 0; i < initialCapacity; i++) {
             if (i > 3) {
                 title = "https://i.ua";
-            }
-            else {
+            } else {
                 title = "file://ggg";
             }
             messages.add(createMessage(title + i));

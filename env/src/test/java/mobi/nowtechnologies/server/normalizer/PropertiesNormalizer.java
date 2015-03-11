@@ -37,8 +37,7 @@ public class PropertiesNormalizer {
                                "-Dnormalizer.override.original.properties=true \n" +
                                "-Dnormalizer.property.merge.with=\"D:/Workspace/Server/service/src/main/resources\"");
             return;
-        }
-        else {
+        } else {
             propertiesFolder = propertiesFolder.replaceAll("\\\\|/", Matcher.quoteReplacement(File.separator));
         }
 
@@ -47,12 +46,10 @@ public class PropertiesNormalizer {
         if (propertiesFolder != null && mainPropertyName != null) {
             if (propertiesFolder.startsWith("*")) {
                 normalizer.normalizeRowProperties(propertiesFolder, mainPropertyName);
-            }
-            else {
+            } else {
                 normalizer.normalizeBundle(propertiesFolder, mainPropertyName);
             }
-        }
-        else {
+        } else {
             normalizer.normalizeAll();
         }
 

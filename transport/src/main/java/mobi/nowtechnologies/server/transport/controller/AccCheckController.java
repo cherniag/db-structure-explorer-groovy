@@ -150,8 +150,7 @@ public class AccCheckController extends CommonController {
             if (isNotBlank(xtifyToken)) {
                 try {
                     deviceUserDataService.saveXtifyToken(user, xtifyToken);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
@@ -165,8 +164,7 @@ public class AccCheckController extends CommonController {
             if (!user.hasActivePaymentDetails() && (transactionReceipt != null || user.hasAppReceiptInLimitedState())) {
                 try {
                     iTunesService.processInAppSubscription(user, transactionReceipt);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
@@ -174,12 +172,10 @@ public class AccCheckController extends CommonController {
             AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
 
             return buildModelAndView(accountCheck);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }

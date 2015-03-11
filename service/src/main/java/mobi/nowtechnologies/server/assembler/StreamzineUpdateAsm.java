@@ -94,8 +94,7 @@ public class StreamzineUpdateAsm {
             assignValuesToItemDto(dto, block, c, resolution);
 
             return dto;
-        }
-        else {
+        } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
             dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, c, includePlayer));
 

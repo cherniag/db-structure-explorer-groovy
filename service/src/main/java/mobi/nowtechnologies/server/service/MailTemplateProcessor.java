@@ -36,8 +36,7 @@ public class MailTemplateProcessor {
             if (model.containsKey(key)) {
                 String value = model.get(key);
                 output.append(value);
-            }
-            else {
+            } else {
                 output.append(token);
             }
 

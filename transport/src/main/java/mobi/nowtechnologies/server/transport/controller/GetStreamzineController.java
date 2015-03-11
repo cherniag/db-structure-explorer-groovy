@@ -89,12 +89,10 @@ public class GetStreamzineController extends CommonController {
             LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 
             return new Response(new Object[] {dto});
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("GET_STREAMZINE  finished");
         }

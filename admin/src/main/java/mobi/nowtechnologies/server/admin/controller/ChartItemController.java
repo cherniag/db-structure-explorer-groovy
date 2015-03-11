@@ -183,8 +183,7 @@ public class ChartItemController extends AbstractCommonController {
         try {
             chartDetailService.updateChartItems(chartId, selectedPublishDateTime.getTime(), newPublishDateTime.getTime());
             modelAndView = new ModelAndView("redirect:/chartsNEW/" + chartId + "/" + new SimpleDateFormat(URL_DATE_TIME_FORMAT).format(newPublishDateTime));
-        }
-        catch (ServiceCheckedException e) {
+        } catch (ServiceCheckedException e) {
             LOGGER.warn(e.getMessage(), e);
             response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
             modelAndView = new ModelAndView("errors");
@@ -210,8 +209,7 @@ public class ChartItemController extends AbstractCommonController {
         }
         if ("media".equals(mediaType)) {
             return mediaService.getMusic(searchWords);
-        }
-        else {
+        } else {
             return mediaService.getVideo(searchWords);
         }
     }

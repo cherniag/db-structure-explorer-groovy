@@ -41,17 +41,14 @@ public class UITS {
             if (isMP3(inputFileName)) {
                 String hash = mp3Manager.getMP3MediaHash(inputFileName);
                 mp3Manager.process(in, out, params, hash);
-            }
-            else {
+            } else {
                 // Assume AAC
                 mp4Manager.process(inputFileName, audioFileName, headerFileName, encodedFileName, params, null, encrypt);
             }
             logger.debug("Finish process");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("IO exception, message : {}", e.getMessage(), e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
         }
@@ -83,14 +80,11 @@ public class UITS {
             RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyFactory.generatePrivate(encodedKeySpec);
             params.setKey(rsaPrivateKey);
 
-        }
-        catch (InvalidKeySpecException e) {
+        } catch (InvalidKeySpecException e) {
             logger.error("Invalid key spec, message : {}", e.getMessage(), e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("IO exception, message : {}", e.getMessage(), e);
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             logger.error("No such algorithm, message : {}", e.getMessage(), e);
         }
         return params;

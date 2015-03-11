@@ -226,8 +226,7 @@ public class ServiceConfigFeature {
 
             if (nullable.isNull()) {
                 assertNull("Value by field: " + field + " is not null for " + userDeviceData, stringObjectMap.get(field));
-            }
-            else {
+            } else {
                 assertEquals("Value by field: " + field + " differs from expected for " + userDeviceData, nullable.value(), stringObjectMap.get(field));
             }
         }

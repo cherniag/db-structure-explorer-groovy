@@ -83,8 +83,7 @@ public class EncodeManager {
 
             cloudUploadFileManager.uploadFilesToCloud(track, toPrivateContainerFileList, toDataContainerFileList);
             LOGGER.info("Encoding done");
-        }
-        finally {
+        } finally {
             FileUtils.deleteQuietly(tmpDir);
         }
     }
@@ -98,12 +97,10 @@ public class EncodeManager {
             if (licensed) {
                 LOGGER.info("encoding licensed");
                 return imageGenerator.generateThumbnails(dir, track.getFileName(IMAGE), track.getUniqueTrackId(), track.isVideo());
-            }
-            else {
+            } else {
                 return imageGenerator.generateThumbnailsWithWatermark(dir, track.getFileName(IMAGE), track.getUniqueTrackId(), track.isVideo());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Image generating failed for track {}", track.getUniqueTrackId(), e);
         }
         return Collections.emptyList();
@@ -115,11 +112,9 @@ public class EncodeManager {
 
         if (Encoding.MP3.equals(encoding)) {
             commandEncodeMP3.executeCommand(audioFilePath, purchasedTmpFile.getAbsolutePath());
-        }
-        else if (Encoding.ACC.equals(encoding)) {
+        } else if (Encoding.ACC.equals(encoding)) {
             commandEncodeACC.executeCommand(audioFilePath, purchasedTmpFile.getAbsolutePath());
-        }
-        else if (Encoding.WAV.equals(encoding)) {
+        } else if (Encoding.WAV.equals(encoding)) {
             commandEncodeWAV.executeCommand(audioFilePath, purchasedTmpFile.getAbsolutePath());
         }
         LOGGER.debug("Purchased file is created: {}", purchasedTmpFile.exists());
@@ -298,17 +293,13 @@ public class EncodeManager {
         public static Encoding getInstance(String code) {
             if (MP3.code.equalsIgnoreCase(code)) {
                 return MP3;
-            }
-            else if (ACC.code.equalsIgnoreCase(code)) {
+            } else if (ACC.code.equalsIgnoreCase(code)) {
                 return ACC;
-            }
-            else if (code != null && code.toLowerCase().startsWith(PCMS16LE.code)) {
+            } else if (code != null && code.toLowerCase().startsWith(PCMS16LE.code)) {
                 return WAV;
-            }
-            else if (code != null && code.toLowerCase().startsWith(ACC_MP4A.code)) {
+            } else if (code != null && code.toLowerCase().startsWith(ACC_MP4A.code)) {
                 return MP4;
-            }
-            else {
+            } else {
                 return UNKNOWN;
             }
         }

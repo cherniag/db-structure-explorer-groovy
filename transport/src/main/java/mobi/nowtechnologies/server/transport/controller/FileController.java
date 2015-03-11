@@ -56,16 +56,13 @@ public class FileController extends CommonController {
                                          "" :
                                          videoURL;
                 return new PlainTextView(textValue);
-            }
-            else {
+            } else {
                 return processGetFile(user, mediaId, fileType, resolution, request);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }

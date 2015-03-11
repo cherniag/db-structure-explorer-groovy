@@ -53,12 +53,10 @@ public class TaskService {
                     taskRepository.save(sendChargeNotificationTask);
                     LOGGER.info("{} task {} has been created successfully", SendChargeNotificationTask.TASK_TYPE, sendChargeNotificationTask);
                 }
-            }
-            catch (ServiceException e) {
+            } catch (ServiceException e) {
                 LOGGER.error(String.format("Can't create task [%s]", sendChargeNotificationTask), e);
             }
-        }
-        else {
+        } else {
             LOGGER.info("Send charge notification is not enabled for community {}", user.getCommunityRewriteUrl());
         }
     }
@@ -95,8 +93,7 @@ public class TaskService {
             scheduler.reScheduleTask(communityRewriteUrl, task);
             int rowsUpdated = taskRepository.updateExecutionTimestamp(task.getId(), task.getExecutionTimestamp());
             LOGGER.info("Task {} has been rescheduled, update rows count is {}", task, rowsUpdated);
-        }
-        catch (ServiceException e) {
+        } catch (ServiceException e) {
             LOGGER.error(String.format("Can't reschedule task [%s], communityRewriteUrl is %s", task, communityRewriteUrl), e);
         }
     }

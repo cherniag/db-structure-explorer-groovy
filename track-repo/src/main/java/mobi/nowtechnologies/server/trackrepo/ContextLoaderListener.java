@@ -26,8 +26,7 @@ public class ContextLoaderListener extends org.springframework.web.context.Conte
             try {
                 ZipUtils zipUtils = new ZipUtils();
                 zipUtils.unzip(binZip.getFile().getAbsolutePath(), true);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }

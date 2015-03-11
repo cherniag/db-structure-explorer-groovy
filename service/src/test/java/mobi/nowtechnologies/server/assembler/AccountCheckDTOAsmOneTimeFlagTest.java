@@ -19,8 +19,6 @@ import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import static junit.framework.Assert.assertFalse;
-
 @SuppressWarnings("unchecked")
 public class AccountCheckDTOAsmOneTimeFlagTest {
 

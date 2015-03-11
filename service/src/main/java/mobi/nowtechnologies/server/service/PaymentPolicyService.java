@@ -118,8 +118,7 @@ public class PaymentPolicyService {
         List<PaymentPolicyDto> paymentPolicyDtos;
         if (user.isO2User() || (user.isO2CommunityUser() && isNull(user.getProvider()))) {
             paymentPolicyDtos = getPaymentPolicyForO2UserOrO2CommunityUserWithNullProvider(user);
-        }
-        else {
+        } else {
             paymentPolicyDtos = getMergedPaymentPolicies(user, null, null);
         }
 
@@ -171,8 +170,7 @@ public class PaymentPolicyService {
     private List<MediaType> getMediaTypes(User user) {
         if (user.isVideoFreeTrialHasBeenActivated()) {
             return Arrays.asList(AUDIO, VIDEO_AND_AUDIO);
-        }
-        else {
+        } else {
             return Arrays.asList(AUDIO);
         }
     }
@@ -206,8 +204,7 @@ public class PaymentPolicyService {
                 if (!inList) {
                     result.add(getPaymentPolicy(paymentPolicy, null));
                 }
-            }
-            else {
+            } else {
                 result.add(getPaymentPolicy(paymentPolicy, null));
             }
         }

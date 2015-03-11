@@ -95,8 +95,7 @@ public class FileService {
             File file = storePath.getFile();
             isTrue(storePath.exists(), "Path does not exist: " + file.getAbsolutePath() + ". Amend store.path property");
             this.storePath = storePath;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Error to set up propertie 'store.path' in FileSirvice. store.path=" + storePath);
             throw new RuntimeException(e);
         }
@@ -140,8 +139,7 @@ public class FileService {
             builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE + resolution);
             builder.insert(0, folderPath + SEPARATOR);
             fileName = new File(builder.toString());
-        }
-        else {
+        } else {
             fileName = new File(folderPath, mediaFileName);
         }
         File file = fileName;
@@ -154,8 +152,7 @@ public class FileService {
         try {
             Pair<String, Long> stringLongPair = TrackIdGenerator.parseUniqueTrackId(trackId);
             return mediaRepository.findByTrackId(stringLongPair.getRight());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Problem with track id [{}]", trackId, e);
             return mediaService.findByIsrc(trackId);
         }
@@ -166,14 +163,12 @@ public class FileService {
         logEvents(media, fileType, user);
         try {
             return cloudFileService.getInputStream(destinationContainerNameForAudioContent, mediaFileName);
-        }
-        catch (FilesNotFoundException e) {
+        } catch (FilesNotFoundException e) {
             LOGGER.error("ERROR download from cloud [{}]. Try to find on local storage", mediaFileName);
             File file = getFileFromLocalStorage(mediaId, fileType, resolution, mediaFileName);
             try {
                 return new FileInputStream(file);
-            }
-            catch (FileNotFoundException e1) {
+            } catch (FileNotFoundException e1) {
                 LOGGER.error("ERROR find on local storage[{}]", mediaFileName);
                 throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Coudn't find  file");
             }
@@ -211,8 +206,7 @@ public class FileService {
         try {
             File file = storePath.getFile();
             return new File(file, folderName).getAbsolutePath();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getStackTrace().toString());
             throw new RuntimeException(e);
         }
@@ -286,12 +280,10 @@ public class FileService {
         File file = null;
         try {
             file = getFile(isrc, FileService.FileType.PURCHASED, null, userId);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Can't find purchased file. path=" + file.getAbsolutePath() + ", isrc=" + isrc);
             throw new ServiceException("error.download.file", "Can't download puchased file");
-        }
-        catch (ServiceException e) {
+        } catch (ServiceException e) {
             throw e;
         }
 
@@ -299,16 +291,13 @@ public class FileService {
         try {
             fileInputStream = new FileInputStream(file);
             IOUtils.copy(fileInputStream, outputStream);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             LOGGER.error("Can't find purchased file {}", file.getAbsoluteFile());
             throw new ServiceException("error.download.file", "Can't download puchased file");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("User interrupted downloading process of file {}", file.toString());
             throw new ServiceException("error.download.file", "Can't download puchased file");
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(fileInputStream);
         }
         return file;

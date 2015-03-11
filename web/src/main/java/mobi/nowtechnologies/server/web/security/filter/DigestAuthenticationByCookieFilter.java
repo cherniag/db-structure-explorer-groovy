@@ -45,8 +45,7 @@ public class DigestAuthenticationByCookieFilter extends DigestAuthenticationFilt
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("No MD5 algorithm available!");
         }
 
@@ -64,8 +63,7 @@ public class DigestAuthenticationByCookieFilter extends DigestAuthenticationFilt
     public void setAuthenticationEntryPoint(DigestAuthenticationEntryPoint authenticationEntryPoint) {
         if (authenticationEntryPoint instanceof DigestAuthenticationByCookieEntryPoint) {
             super.setAuthenticationEntryPoint(authenticationEntryPoint);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("The " + DigestAuthenticationByCookieFilter.class.getName() + " class can work with DigestAuthenticationByCookieEntryPoint class only");
         }
     }
@@ -97,8 +95,7 @@ public class DigestAuthenticationByCookieFilter extends DigestAuthenticationFilt
                 // (HttpServletResponse)servletResponse;
                 chain.doFilter(servletRequest, servletResponse);
             }
-        }
-        else {
+        } else {
             chain.doFilter(servletRequest, servletResponse);
         }
     }
@@ -138,8 +135,7 @@ public class DigestAuthenticationByCookieFilter extends DigestAuthenticationFilt
             String value;
             if ((value = headerMap.get(name)) != null) {
                 return value;
-            }
-            else {
+            } else {
                 return ((HttpServletRequest) getRequest()).getHeader(name);
             }
 

@@ -167,8 +167,7 @@ public class O2ClientServiceImplTest {
         try {
             fixture.validatePhoneNumber(phoneNumber);
             fail();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (!(e instanceof InvalidPhoneNumberException)) {
                 fail();
             }
@@ -192,8 +191,7 @@ public class O2ClientServiceImplTest {
         try {
             fixture.validatePhoneNumber(phoneNumber);
             fail();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (!(e instanceof InvalidPhoneNumberException)) {
                 fail();
             }
@@ -217,8 +215,7 @@ public class O2ClientServiceImplTest {
         try {
             fixture.validatePhoneNumber(phoneNumber);
             fail();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (!(e instanceof LimitPhoneNumberValidationException)) {
                 fail();
             }

@@ -32,8 +32,7 @@ public class PropertiesProcessor {
                 Set<String> propertyValues = bundle.get(propertyName).stringPropertyNames();
                 if (propertiesIntersection == null) {
                     propertiesIntersection = propertyValues;
-                }
-                else {
+                } else {
                     propertiesIntersection.retainAll(propertyValues);
                 }
             }
@@ -57,8 +56,7 @@ public class PropertiesProcessor {
 
                         if (value == null) {
                             value = bundlePropertyValue;
-                        }
-                        else if (!value.equals(bundlePropertyValue)) {
+                        } else if (!value.equals(bundlePropertyValue)) {
                             allEquals = false;
                             break;
                         }
@@ -82,8 +80,7 @@ public class PropertiesProcessor {
                     System.out.println("Rewrite default property " + propertyKey + ". Old value [" + bundle.get(mainPropertyPath).getProperty(propertyKey) + "]. New value [" + propertyValue + "]");
                 }
                 bundle.get(mainPropertyPath).setProperty(propertyKey, propertyValue);
-            }
-            else {
+            } else {
                 bundle.get(propertyName).remove(propertyKey);
                 System.out.println("Property " + propertyKey + " has been removed from " + propertyName);
             }
@@ -140,8 +137,7 @@ public class PropertiesProcessor {
                         if (isProdPath(propertyPath, prodEnvironments) && !prodValue.equals(testValue)) {
                             bundle.get(propertyPath).setProperty(commonPropertyKey, prodValue);
                             System.out.println("Property " + commonPropertyKey + " has been returned back to " + propertyPath);
-                        }
-                        else {
+                        } else {
                             bundle.get(propertyPath).remove(commonPropertyKey);
                             System.out.println("Property " + commonPropertyKey + " has been removed from " + propertyPath);
                         }
@@ -181,12 +177,10 @@ public class PropertiesProcessor {
                 if (value == null) {
                     value = bundlePropertyValue;
                     testEnvironmentsHasProperty++;
-                }
-                else if (!value.equals(bundlePropertyValue)) {
+                } else if (!value.equals(bundlePropertyValue)) {
                     value = null;
                     break;
-                }
-                else {
+                } else {
                     testEnvironmentsHasProperty++;
                 }
             }
@@ -203,8 +197,7 @@ public class PropertiesProcessor {
         for (String propertyPath : bundle.keySet()) {
             if (bundlesResolver.synchronizeBundle(propertyPath, bundle.get(propertyPath))) {
                 System.out.println("Property file " + propertyPath + " has been successfully synchronized.");
-            }
-            else {
+            } else {
                 throw new IllegalStateException("ERROR: Failed to synchronize " + propertyPath);
             }
         }
@@ -223,8 +216,7 @@ public class PropertiesProcessor {
                 warningProperties.addAll(propertyValues);
                 if (propertiesIntersection == null) {
                     propertiesIntersection = propertyValues;
-                }
-                else {
+                } else {
                     propertiesIntersection.retainAll(propertyValues);
                 }
             }

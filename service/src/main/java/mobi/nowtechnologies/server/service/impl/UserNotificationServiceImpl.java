@@ -134,19 +134,16 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             try {
 
                 result = userService.makeSuccessfulPaymentFreeSMSRequest(user);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 result = new AsyncResult<Boolean>(Boolean.FALSE);
             }
             LOGGER.info("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removePaymentMDC();
         }
     }
@@ -180,22 +177,18 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The unsubscription confirmation sms was sent successfully");
                     result = new AsyncResult<Boolean>(Boolean.TRUE);
-                }
-                else {
+                } else {
                     LOGGER.info("The unsubscription confirmation sms wasn't sent");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The unsubscription confirmation sms wasn't sent cause rejecting");
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
     }
@@ -234,22 +227,18 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The subscription confirmation sms was sent successfully");
                     result = new AsyncResult<Boolean>(Boolean.TRUE);
-                }
-                else {
+                } else {
                     LOGGER.info("The subscription confirmation sms wasn't sent");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The subscription confirmation sms wasn't sent cause rejecting");
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
     }
@@ -293,26 +282,21 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The free trial expired sms was sent successfully");
                         result = new AsyncResult<Boolean>(Boolean.TRUE);
-                    }
-                    else {
+                    } else {
                         LOGGER.info("The free trial expired sms wasn't sent");
                     }
-                }
-                else {
+                } else {
                     LOGGER.info("The free trial expired sms wasn't sent cause rejecting");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The free trial expired sms wasn't send cause the user has [{}] status and [{}] payment details", userStatusName, paymentDetailsList);
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
     }
@@ -329,20 +313,16 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 if (result) {
                     LOGGER.info("Charge notification reminder has been sent");
                     futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
-                }
-                else {
+                } else {
                     LOGGER.warn("Charge notification reminder was failed");
                 }
-            }
-            else {
+            } else {
                 LOGGER.warn("Charge notification reminder was rejected for device type {}", user.getDeviceTypeIdString());
             }
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
         return futureResult != null ?
@@ -376,26 +356,21 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The low balance sms was sent successfully");
                         result = new AsyncResult<Boolean>(Boolean.TRUE);
-                    }
-                    else {
+                    } else {
                         LOGGER.info("The low balance sms wasn't sent");
                     }
-                }
-                else {
+                } else {
                     LOGGER.info("The low balance sms wasn't sent cause rejecting");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The low balance sms wasn't sent cause user isn't o2 PAYG consumer [{}]", user);
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
     }
@@ -415,15 +390,12 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
             if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter())) {
                 return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails));
-            }
-            else {
+            } else {
                 LOGGER.info("The payment fail sms for vf_nz community user wasn't sent cause it should be send between 8am and 8 pm by separate job");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
         return new AsyncResult<Boolean>(Boolean.FALSE);
@@ -453,25 +425,20 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The payment fail sms was sent successfully");
                         paymentDetailsService.update(paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis()));
-                    }
-                    else {
+                    } else {
                         LOGGER.info("The payment fail sms wasn't sent");
                     }
-                }
-                else {
+                } else {
                     LOGGER.info("The payment fail sms wasn't sent cause rejecting");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The payment fail sms wasn't sent cause current attempt isn't failed");
             }
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
             return wasSmsSentSuccessfully;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
         return false;
@@ -511,22 +478,18 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The downgrade sms was sent successfully");
                     result = new AsyncResult<Boolean>(Boolean.TRUE);
-                }
-                else {
+                } else {
                     LOGGER.info("The downgrade sms wasn't sent");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The downgrade sms wasn't sent cause rejecting");
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
     }
@@ -551,22 +514,18 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The activation pin sms was sent successfully");
                     result = new AsyncResult<Boolean>(Boolean.TRUE);
-                }
-                else {
+                } else {
                     LOGGER.info("The activation pin sms wasn't sent");
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The activation pin sms wasn't sent cause rejecting");
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
     }
@@ -600,8 +559,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
                         try {
                             url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
                         }
 
@@ -615,24 +573,19 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                         SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(user.getMobile(), message, title);
                         if (smsResponse.isSuccessful()) {
                             wasSmsSentSuccessfully = true;
-                        }
-                        else {
+                        } else {
                             LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", smsResponse);
                         }
-                    }
-                    else {
+                    } else {
                         LOGGER.info("The sms wasn't sent cause empty sms text message");
                     }
-                }
-                else {
+                } else {
                     LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
                 }
-            }
-            else {
+            } else {
                 LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
             }
-        }
-        else {
+        } else {
             LOGGER.info("The sms wasn't sent cause rejecting");
         }
 
@@ -758,12 +711,10 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             if (prefix != null) {
                 if (i == 0) {
                     code = prefix + ".for." + value;
-                }
-                else {
+                } else {
                     code = prefix + "." + value;
                 }
-            }
-            else if (recursive) {
+            } else if (recursive) {
                 code = getCode(codes, i - 1, value, recursive);
             }
         }

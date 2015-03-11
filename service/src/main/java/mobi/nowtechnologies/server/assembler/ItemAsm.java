@@ -71,8 +71,7 @@ public class ItemAsm {
             final Media media = (Media) item;
             contentOfferItemDto.setCoverFileName(media.getImageFileSmall().getFilename());
             contentOfferItemDto.setAuthorName(media.getArtist().getName());
-        }
-        else {
+        } else {
             throw new ServiceException("Unknown type [" + item.getClass() + "] of item [" + item + "]");
         }
 

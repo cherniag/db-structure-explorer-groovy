@@ -57,8 +57,7 @@ public class MediaAsm {
         List<MediaDto> mediaDtos;
         if (medias.isEmpty()) {
             mediaDtos = Collections.EMPTY_LIST;
-        }
-        else {
+        } else {
             mediaDtos = new LinkedList<MediaDto>();
 
             for (Media media : medias) {

@@ -28,8 +28,7 @@ public class ReferralsContextDto {
 
         if (snapshot.isMatched()) {
             activated = required;
-        }
-        else {
+        } else {
             activated = snapshot.getCurrentReferrals();
         }
     }

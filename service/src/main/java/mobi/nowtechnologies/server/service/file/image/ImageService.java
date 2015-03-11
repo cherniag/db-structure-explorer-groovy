@@ -51,12 +51,10 @@ public class ImageService {
             final int height = reader.getHeight(minIndex);
 
             return new ImageInfo(format, width, height);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("Got an error during getting image format", e);
             return null;
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.dispose();
             }

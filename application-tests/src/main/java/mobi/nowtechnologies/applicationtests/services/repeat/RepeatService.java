@@ -33,8 +33,7 @@ public class RepeatService {
     private void delay() {
         try {
             Thread.sleep(retryDelayInMillis);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

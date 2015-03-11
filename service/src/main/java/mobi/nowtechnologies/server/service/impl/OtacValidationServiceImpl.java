@@ -36,8 +36,7 @@ public class OtacValidationServiceImpl implements OtacValidationService {
         ProviderDetailsExtractor detailsExtractor = resolveDetailsExtractorForCommunity(community);
         if (detailsExtractor != null) {
             return detailsExtractor.getUserDetails(otac, phoneNumber, community);
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Details extractor is not specified for community [" + community + "]");
         }
     }

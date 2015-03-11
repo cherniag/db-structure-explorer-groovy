@@ -118,8 +118,7 @@ public class TrackServiceImpl implements TrackService {
 
             LOGGER.info("Track {} is encoded", trackId);
             return track;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot encode track {} files or create zip package", trackId, e);
 
             track.setStatus(TrackStatus.NONE);
@@ -151,8 +150,7 @@ public class TrackServiceImpl implements TrackService {
             pull(track);
 
             track.setStatus(TrackStatus.PUBLISHED);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception while pulling track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             track.setStatus(oldStatus);
         }
@@ -182,8 +180,7 @@ public class TrackServiceImpl implements TrackService {
 
             track.setPublishDate(new Date());
             trackRepository.save(track);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot pull encoded track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             throw new RuntimeException("Cannot pull encoded track.");
         }
@@ -220,8 +217,7 @@ public class TrackServiceImpl implements TrackService {
             if (query != null && !query.isEmpty()) {
                 pagelist = trackRepository.find("%" + query + "%", page);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
@@ -240,8 +236,7 @@ public class TrackServiceImpl implements TrackService {
             if (searchTrackCriteria != null) {
                 page = trackRepository.find(searchTrackCriteria, pageable);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
@@ -314,8 +309,7 @@ public class TrackServiceImpl implements TrackService {
             videoId =
                 brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
             LOGGER.info("Create video with referenceId=[{}] and id=[{}]", new Object[] {video.getReferenceId(), videoId});
-        }
-        catch (MediaApiException e) {
+        } catch (MediaApiException e) {
             String error = e.getResponseMessage();
             if (error.equals("Reference ID " + video.getReferenceId() + " is already in use")) {
                 brightcoveWriteService.DeleteVideo(brightcoveWriteToken, video.getId(), video.getReferenceId(), true, true);
@@ -323,8 +317,7 @@ public class TrackServiceImpl implements TrackService {
                 videoId = brightcoveWriteService
                     .CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
                 LOGGER.info("This video is new. Video with referenceId=[{}] doesn't exist", video.getReferenceId());
-            }
-            else {
+            } else {
                 throw e;
             }
         }
@@ -337,8 +330,7 @@ public class TrackServiceImpl implements TrackService {
                 status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
                 try {
                     Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
@@ -355,8 +347,7 @@ public class TrackServiceImpl implements TrackService {
         command.setCommand(itunesScript);
         try {
             return command.executeCommand(artist, title);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.warn("Can't get iTunes url for [{}] artist and [{}] title", artist, title, e);
             return null;
         }
@@ -377,15 +368,13 @@ public class TrackServiceImpl implements TrackService {
 
             if (StringUtils.isBlank(trackId)) {
                 trackId = "";
-            }
-            else {
+            } else {
                 trackId = "#t" + trackId;
             }
 
             return "https://m.7digital.com/GB/releases/" + releaseId + trackId + "?partner=3734";
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.warn("Can't get amazonUrl for track with isrc={}", isrc, e);
             return null;
         }

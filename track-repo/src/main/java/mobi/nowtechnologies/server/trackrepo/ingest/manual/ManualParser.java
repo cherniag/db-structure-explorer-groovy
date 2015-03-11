@@ -43,8 +43,7 @@ public class ManualParser extends IParser {
         File commitFile = new File(commitFileName);
         try {
             commitFile.createNewFile();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Ingest failed " + e.getMessage());
         }
     }
@@ -87,8 +86,7 @@ public class ManualParser extends IParser {
             data.date = new Date(csv.lastModified());
             try {
                 data.name = csv.getCanonicalPath();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 LOGGER.error("getDrops failed " + e.getMessage());
             }
             result.add(data);
@@ -161,22 +159,18 @@ public class ManualParser extends IParser {
                     // Unlicensed flag
                     if ("no".equalsIgnoreCase(tokens[13])) {
                         track.licensed = false;
-                    }
-                    else {
+                    } else {
                         track.licensed = true;
                     }
-                }
-                else {
+                } else {
                     track.licensed = true;
                 }
 
                 result.put(track.isrc, track);
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             LOGGER.error("Ingest failed", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Ingest failed", e);
         }
         return result;
@@ -189,8 +183,7 @@ public class ManualParser extends IParser {
                 DropTerritory territory = getDropTerritory(track, countryName.trim());
                 dropTerritories.add(territory);
             }
-        }
-        else {
+        } else {
             DropTerritory territory = getDropTerritory(track, "Worldwide");
             dropTerritories.add(territory);
         }

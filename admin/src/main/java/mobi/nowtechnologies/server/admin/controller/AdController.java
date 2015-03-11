@@ -69,8 +69,7 @@ public class AdController extends AbstractCommonController {
                 FilterDto selectedfilterDto = null;
                 if (element instanceof FilterDto) {
                     selectedfilterDto = (FilterDto) element;
-                }
-                else if (element instanceof String) {
+                } else if (element instanceof String) {
                     Set<FilterDto> allMessageFilterDtos = populateAllMessageFilterDtos();
                     for (FilterDto filterDto : allMessageFilterDtos) {
                         if (filterDto.getName().equals(element)) {
@@ -125,8 +124,7 @@ public class AdController extends AbstractCommonController {
             response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
             modelAndView = new ModelAndView("ads/add");
             modelAndView.addObject(ERRORS, bindingResult.getAllErrors());
-        }
-        else {
+        } else {
 
             String communityURL = RequestUtils.getCommunityURL();
 
@@ -149,8 +147,7 @@ public class AdController extends AbstractCommonController {
             }
             modelAndView.getModelMap().put(AdItemDto.NAME, adItemDto);
             modelAndView.addObject(ERRORS, bindingResult.getAllErrors());
-        }
-        else {
+        } else {
 
             String communityURL = RequestUtils.getCommunityURL();
 
@@ -163,8 +160,7 @@ public class AdController extends AbstractCommonController {
                 bindingResult.addError(new ObjectError(AdItemDto.NAME, new String[] {"message.edit.error.couldNotFindMessage"}, null,
                                                        "Couldn't find this message in the DB. To save it as new item click 'Save changes' button."));
                 modelAndView.addObject(ERRORS, bindingResult.getAllErrors());
-            }
-            else {
+            } else {
                 LOGGER.info("The advertisement has been updated on [" + message + "] successfully");
                 modelAndView = new ModelAndView("redirect:/ads");
             }
@@ -183,8 +179,7 @@ public class AdController extends AbstractCommonController {
 
             modelAndView = new ModelAndView("ads/edit");
             modelAndView.getModelMap().put(AdItemDto.NAME, adItemDto);
-        }
-        else {
+        } else {
             modelAndView = new ModelAndView("redirect:/ads");
         }
 

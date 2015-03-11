@@ -18,11 +18,9 @@ public class SendChargeNotificationTaskProcessor extends AbstractTaskProcessor<S
         LOGGER.info("About to start processing {} by {}", task, this);
         try {
             userNotificationService.sendChargeNotificationReminder(task.getUser());
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        finally {
+        } finally {
             Community community = task.getUser().getUserGroup() != null ?
                                   task.getUser().getUserGroup().getCommunity() :
                                   null;

@@ -39,8 +39,7 @@ public class UserAsm {
         final List<UserDto> userDtos;
         if (users.isEmpty()) {
             userDtos = Collections.EMPTY_LIST;
-        }
-        else {
+        } else {
             userDtos = new ArrayList<UserDto>(users.size());
             for (User user : users) {
                 userDtos.add(toUserDto(user));
@@ -70,8 +69,7 @@ public class UserAsm {
         if (currentPaymentDetails != null) {
             currentPaymentDetailsDto = PaymentDetailsAsm.toPaymentDetailsDto(currentPaymentDetails);
             userDto.setPaymentEnabled(currentPaymentDetails.isActivated());
-        }
-        else {
+        } else {
             currentPaymentDetailsDto = null;
         }
 
@@ -178,20 +176,16 @@ public class UserAsm {
     static String getPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem) {
         if (isNull(paymentDetails) && ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem)) {
             return "ITUNES_SUBSCRIPTION";
-        }
-        else if (isNull(paymentDetails)) {
+        } else if (isNull(paymentDetails)) {
             return "UNKNOWN";
         }
         if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
             return "creditCard";
-        }
-        else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
+        } else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
             return "PAY_PAL";
-        }
-        else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+        } else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "PSMS";
-        }
-        else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
+        } else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "O2_PSMS";
         }
         return paymentDetails.getPaymentType();

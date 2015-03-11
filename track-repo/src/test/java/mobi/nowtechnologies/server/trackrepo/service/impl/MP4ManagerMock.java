@@ -32,8 +32,7 @@ public class MP4ManagerMock implements IMP4Manager {
             Files.copy(new File(inputFile), new File(encodedFile));
             Files.copy(new File(inputFile), new File(audioFile));
             Files.copy(new File(inputFile), new File(headerFile));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("ERROR", e);
         }
         return 0;

@@ -45,8 +45,7 @@ public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaym
         final String externalTxId = response.getExternalTxId();
         if (externalTxId != null) {
             pendingPayment.setExternalTxId(externalTxId);
-        }
-        else {
+        } else {
             pendingPayment.setExternalTxId("");
         }
 

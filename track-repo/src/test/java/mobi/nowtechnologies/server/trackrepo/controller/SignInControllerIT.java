@@ -5,9 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 
 import org.junit.*;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 // @author Alexander Kolpakov (akolpakov)
 public class SignInControllerIT extends AbstractTrackRepoIT {

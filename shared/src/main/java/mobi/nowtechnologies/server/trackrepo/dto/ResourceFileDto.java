@@ -52,8 +52,7 @@ public class ResourceFileDto {
         if (this.resolution != null) {
             try {
                 resolution = AudioResolution.valueOf(this.resolution);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 resolution = ImageResolution.valueOf(this.resolution);
             }
         }
@@ -162,48 +161,42 @@ public class ResourceFileDto {
             if (other.filename != null) {
                 return false;
             }
-        }
-        else if (!filename.equals(other.filename)) {
+        } else if (!filename.equals(other.filename)) {
             return false;
         }
         if (md5 == null) {
             if (other.md5 != null) {
                 return false;
             }
-        }
-        else if (!md5.equals(other.md5)) {
+        } else if (!md5.equals(other.md5)) {
             return false;
         }
         if (mediaHash == null) {
             if (other.mediaHash != null) {
                 return false;
             }
-        }
-        else if (!mediaHash.equals(other.mediaHash)) {
+        } else if (!mediaHash.equals(other.mediaHash)) {
             return false;
         }
         if (resolution == null) {
             if (other.resolution != null) {
                 return false;
             }
-        }
-        else if (!resolution.equals(other.resolution)) {
+        } else if (!resolution.equals(other.resolution)) {
             return false;
         }
         if (size == null) {
             if (other.size != null) {
                 return false;
             }
-        }
-        else if (!size.equals(other.size)) {
+        } else if (!size.equals(other.size)) {
             return false;
         }
         if (type == null) {
             if (other.type != null) {
                 return false;
             }
-        }
-        else if (!type.equals(other.type)) {
+        } else if (!type.equals(other.type)) {
             return false;
         }
         return true;

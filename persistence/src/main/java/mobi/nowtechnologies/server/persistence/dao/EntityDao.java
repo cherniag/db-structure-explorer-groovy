@@ -35,8 +35,7 @@ public class EntityDao extends JpaDaoSupport {
         }
         try {
             return getJpaTemplate().find(entityClass, id);
-        }
-        catch (DataAccessException dae) {
+        } catch (DataAccessException dae) {
             LOGGER.error(dae.getMessage(), dae);
             throw new PersistenceException(dae);
         }
@@ -55,12 +54,10 @@ public class EntityDao extends JpaDaoSupport {
         }
         try {
             return getJpaTemplate().find(entityClass, findIdByCommunity(entityClass, communityName));
-        }
-        catch (DataAccessException dae) {
+        } catch (DataAccessException dae) {
             LOGGER.error(dae.getMessage(), dae);
             throw new PersistenceException(dae);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             LOGGER.error(nfe.getMessage(), nfe);
             throw new PersistenceException(nfe);
         }
@@ -77,12 +74,10 @@ public class EntityDao extends JpaDaoSupport {
             return getJpaTemplate()
                 .find("select o.id from " + entityClass.getSimpleName() + " o where o.community = " + "(select oo.id from " + Community.class.getSimpleName() + " oo where oo.name = ?1)",
                       communityName).get(0);
-        }
-        catch (DataAccessException dae) {
+        } catch (DataAccessException dae) {
             LOGGER.error(dae.getMessage(), dae);
             throw new PersistenceException(dae);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             LOGGER.error(nfe.getMessage(), nfe);
             throw new PersistenceException(nfe);
         }
@@ -98,8 +93,7 @@ public class EntityDao extends JpaDaoSupport {
             T merge = getJpaTemplate().merge(entity);
             LOGGER.debug("Output parameter [{}]", merge);
             return merge;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new PersistenceException("Couldn't update entity");
         }
@@ -116,8 +110,7 @@ public class EntityDao extends JpaDaoSupport {
             getJpaTemplate().flush();
             LOGGER.info("[{}] entity [{}] inserted in db", entity.getClass(), entity);
             return entity;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new PersistenceException("Couldn't save entity");
         }
@@ -132,8 +125,7 @@ public class EntityDao extends JpaDaoSupport {
             Object objectToRemove = getJpaTemplate().find(entityClass, entityId);
             getJpaTemplate().remove(objectToRemove);
             getJpaTemplate().flush();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new PersistenceException("Couldn't remove entity");
         }
@@ -147,8 +139,7 @@ public class EntityDao extends JpaDaoSupport {
             }
             getJpaTemplate().remove(entity);
             getJpaTemplate().flush();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new PersistenceException("Couldn't remove entity");
         }
@@ -216,27 +207,22 @@ public class EntityDao extends JpaDaoSupport {
                 String condition = " o." + fieldName;
                 if (object == null) {
                     condition = condition + " is NULL ";
-                }
-                else if (object instanceof String) {
+                } else if (object instanceof String) {
                     condition = condition + " = '" + String.valueOf(object) + "'";
-                }
-                else {
+                } else {
                     condition = condition + " = " + String.valueOf(object);
                 }
                 if (query.length() == query.lastIndexOf(_O_WHERE_) + _O_WHERE_.length()) {
                     query.append(condition);
-                }
-                else {
+                } else {
                     query.append(_OR_ + condition);
                 }
             }
             return getJpaTemplate().find(query.toString());
-        }
-        catch (DataAccessException dae) {
+        } catch (DataAccessException dae) {
             LOGGER.error(dae.getMessage(), dae);
             throw new PersistenceException();
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             LOGGER.error(nfe.getMessage(), nfe);
             throw new PersistenceException();
         }
@@ -296,8 +282,7 @@ public class EntityDao extends JpaDaoSupport {
                                fieldNameValueSetEntry.getKey() + " = " + fieldNameValueSetEntry.getValue();
             if (query.length() == query.lastIndexOf(_O_WHERE_) + _O_WHERE_.length()) {
                 query.append(condition);
-            }
-            else {
+            } else {
                 query.append(_AND_ + condition);
             }
         }

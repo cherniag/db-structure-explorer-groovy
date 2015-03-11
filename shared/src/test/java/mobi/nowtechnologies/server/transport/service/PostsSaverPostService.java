@@ -41,8 +41,7 @@ public class PostsSaverPostService extends PostService {
             public void waitToComplete(final long timeout) throws Exception {
                 try {
                     queue.poll(timeout, TimeUnit.MILLISECONDS);
-                }
-                finally {
+                } finally {
                     queue = null;
                 }
             }
@@ -55,8 +54,7 @@ public class PostsSaverPostService extends PostService {
 
 
                 saveDataToFile(url, nameValuePairs, body);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 logger.error("Error save to file", e);
                 throw new RuntimeException(e);
             }
@@ -64,8 +62,7 @@ public class PostsSaverPostService extends PostService {
             response.setMessage("OK");
             response.setStatusCode(200);
             return response;
-        }
-        finally {
+        } finally {
             if (queue != null) {
                 queue.add(0);
             }
@@ -87,8 +84,7 @@ public class PostsSaverPostService extends PostService {
     private void initData() throws IOException {
         if (smsTemporaryFolder.exists()) {
             FileUtils.cleanDirectory(smsTemporaryFolder);
-        }
-        else {
+        } else {
             smsTemporaryFolder.mkdirs();
         }
     }

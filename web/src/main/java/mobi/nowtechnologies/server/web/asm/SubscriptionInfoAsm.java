@@ -44,8 +44,7 @@ public class SubscriptionInfoAsm {
     public PaymentPolicyDto getCurrentPaymentPolicy(User user) {
         if (user.hasActivePaymentDetails()) {
             return new PaymentPolicyDto(user.getCurrentPaymentDetails().getPaymentPolicy());
-        }
-        else if (hasITunesSubscription(user)) {
+        } else if (hasITunesSubscription(user)) {
             PaymentPolicy currentPaymentPolicy = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
             if (currentPaymentPolicy != null) {
                 return new PaymentPolicyDto(currentPaymentPolicy);

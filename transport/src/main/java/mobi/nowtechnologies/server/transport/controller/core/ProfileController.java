@@ -40,8 +40,7 @@ public abstract class ProfileController {
                             if (serverMessage != null) {
                                 String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
                                 errorMessage = localizedMessage;
-                            }
-                            else {
+                            } else {
                                 errorMessage = errorCodeForMessageLocalization;
                             }
 
@@ -99,8 +98,7 @@ public abstract class ProfileController {
                     new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri,
                         newMobile, newDeviceUID, newDeviceModel, newDeviceType, result, executionTimeMillis, errorMessage});
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

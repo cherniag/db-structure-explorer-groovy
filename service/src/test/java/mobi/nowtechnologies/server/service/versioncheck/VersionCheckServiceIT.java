@@ -23,12 +23,10 @@ import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import static org.junit.Assert.*;
 
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 
 /**
@@ -145,8 +143,7 @@ public class VersionCheckServiceIT {
 
         if (StringUtils.isEmpty(url)) {
             assertTrue(StringUtils.isEmpty(response.getUri()));
-        }
-        else {
+        } else {
             assertEquals(url, response.getUri());
         }
     }

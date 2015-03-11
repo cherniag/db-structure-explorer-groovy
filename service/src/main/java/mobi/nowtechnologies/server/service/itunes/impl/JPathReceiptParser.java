@@ -39,8 +39,7 @@ public class JPathReceiptParser implements ITunesResponseParser {
             Long purchaseTime = safeReadTime(purchaseTimestampPath, response);
 
             return new ITunesResult(result, productId, originalTransactionId, expireTime, purchaseTime);
-        }
-        catch (InvalidPathException e) {
+        } catch (InvalidPathException e) {
             throw new ITunesResponseParserException(e);
         }
     }

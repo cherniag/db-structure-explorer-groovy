@@ -43,11 +43,10 @@ import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import static org.junit.Assert.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Titov Mykhaylo (titov) 08.03.14 19:27

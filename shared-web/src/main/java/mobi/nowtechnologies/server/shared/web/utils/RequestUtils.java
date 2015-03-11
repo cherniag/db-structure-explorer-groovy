@@ -46,8 +46,7 @@ public class RequestUtils {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             URL reconstructedURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());
             return reconstructedURL.toString();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }

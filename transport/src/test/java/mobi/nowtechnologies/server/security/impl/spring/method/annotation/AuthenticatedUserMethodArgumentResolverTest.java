@@ -57,8 +57,7 @@ public class AuthenticatedUserMethodArgumentResolverTest {
             // noinspection unchecked
             when(methodParameter.getParameterType()).thenReturn(AUTHENTICATED_USER_CLASS);
             argumentResolver.handleMissingValue("missing", methodParameter);
-        }
-        catch (MissingServletRequestParameterException e) {
+        } catch (MissingServletRequestParameterException e) {
             assertEquals(AuthenticatedUser.class.getSimpleName(), e.getParameterType());
             assertEquals("missing", e.getParameterName());
 

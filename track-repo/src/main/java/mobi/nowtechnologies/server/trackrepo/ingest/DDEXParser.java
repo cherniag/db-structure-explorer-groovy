@@ -69,8 +69,7 @@ public abstract class DDEXParser extends IParser {
                 DropTrack track = parseTrack(distributor, action, deals, files, resourceDetails, imageFile, release);
 
                 result.put(track.isrc + track.productCode + getClass(), track);
-            }
-            else {
+            } else {
                 albumElement = release;
             }
         }
@@ -132,8 +131,7 @@ public abstract class DDEXParser extends IParser {
         if (pLine != null) {
             track.year = pLine.getChildText("Year");
             track.copyright = pLine.getChildText("PLineText");
-        }
-        else if (resourceDetail != null) {
+        } else if (resourceDetail != null) {
             track.year = resourceDetail.year;
             track.copyright = resourceDetail.copyright;
         }
@@ -225,8 +223,7 @@ public abstract class DDEXParser extends IParser {
                     while (it.hasNext()) {
                         parseTerritory(distributor, track, territory, deal, it.next());
                     }
-                }
-                else {
+                } else {
                     parseTerritory(distributor, track, territory, deal, code);
                 }
             }
@@ -283,8 +280,7 @@ public abstract class DDEXParser extends IParser {
                 Map<String, DropTerritory> existingDealsMap = deals.get(reference.getText());
                 if (existingDealsMap == null) {
                     deals.put(reference.getText(), dealsMap);
-                }
-                else {
+                } else {
                     existingDealsMap.putAll(dealsMap);
                 }
             }
@@ -301,8 +297,7 @@ public abstract class DDEXParser extends IParser {
             SimpleDateFormat dateParse = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 dealStartDate = dateParse.parse(startDate);
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 LOGGER.error(e.getMessage());
             }
 
@@ -337,8 +332,7 @@ public abstract class DDEXParser extends IParser {
                     if (price != null) {
                         territory.price = Float.valueOf(price);
                     }
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     LOGGER.error(e.getMessage());
                 }
                 territory.currency = currency;
@@ -527,14 +521,11 @@ public abstract class DDEXParser extends IParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            }
-            else if (file.getName().startsWith("BatchComplete")) {
+            } else if (file.getName().startsWith("BatchComplete")) {
                 deliveryComplete = true;
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
@@ -581,12 +572,10 @@ public abstract class DDEXParser extends IParser {
 
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))) {
                 fileType = DOWNLOAD;
-            }
-            else {
+            } else {
                 fileType = MOBILE;
             }
-        }
-        else {
+        } else {
             fileType = PREVIEW;
         }
         return fileType;
@@ -599,11 +588,9 @@ public abstract class DDEXParser extends IParser {
     private File getXmlFileParentFolder(File fileOrDir) {
         if (fileOrDir.isDirectory()) {
             return fileOrDir;
-        }
-        else if (fileOrDir.isFile()) {
+        } else if (fileOrDir.isFile()) {
             return fileOrDir.getParentFile();
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unknown folder content [" + fileOrDir + "]");
         }
     }
@@ -626,8 +613,7 @@ public abstract class DDEXParser extends IParser {
                 }
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Ingest failed: [{}]", e.getMessage(), e);
         }
         return tracks;
@@ -657,11 +643,9 @@ public abstract class DDEXParser extends IParser {
 
             return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
 
-        }
-        catch (IOException io) {
+        } catch (IOException io) {
             LOGGER.error("Exception: [{}]", io.getMessage());
-        }
-        catch (JDOMException jdomex) {
+        } catch (JDOMException jdomex) {
             LOGGER.error("Exception: [{}]", jdomex.getMessage());
         }
         return null;

@@ -12,14 +12,11 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletRequest;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
 public class UserDeviceRegDetailsDtoValidatorTest {

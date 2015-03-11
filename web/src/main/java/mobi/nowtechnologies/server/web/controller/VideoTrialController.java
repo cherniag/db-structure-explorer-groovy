@@ -50,8 +50,7 @@ public class VideoTrialController extends CommonController {
 
         if (userService.canActivateVideoTrial(user)) {
             userService.activateVideoAudioFreeTrialAndAutoOptIn(user);
-        }
-        else {
+        } else {
             // free trial was already activated
             LOGGER.warn("VideoFreeTrial was already activated for user ({}) but the page was called", userId);
             mav.addObject("hasErrors", "true");

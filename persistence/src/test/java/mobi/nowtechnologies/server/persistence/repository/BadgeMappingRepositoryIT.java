@@ -240,8 +240,7 @@ public class BadgeMappingRepositoryIT extends AbstractRepositoryIT {
         for (BadgeMapping badgeMapping : found) {
             if (badgeMapping.getResolution() == null) {
                 generals.add(badgeMapping);
-            }
-            else {
+            } else {
                 specific.add(badgeMapping);
             }
         }

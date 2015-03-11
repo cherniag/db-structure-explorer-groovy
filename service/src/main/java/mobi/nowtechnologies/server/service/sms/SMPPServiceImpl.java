@@ -56,8 +56,7 @@ public class SMPPServiceImpl extends SMPPService {
 
             // and fire-it-up
             Service.getInstance().startService();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

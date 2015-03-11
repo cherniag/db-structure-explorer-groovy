@@ -245,8 +245,7 @@ public class SMPPGateway extends JSMPPGateway {
                 if (encoding != Alphabet.ALPHA_8_BIT) {
                     dataCoding = new GeneralDataCoding();
                     dataCoding.setAlphabet(encoding);
-                }
-                else {
+                } else {
                     dataCoding = new GeneralDataCoding(0);
                 }
         }
@@ -256,8 +255,7 @@ public class SMPPGateway extends JSMPPGateway {
 
         if (msg instanceof OutboundBinaryMessage) {
             binaryContent = ((OutboundBinaryMessage) msg).getDataBytes();
-        }
-        else {
+        } else {
             binaryContent = msg.getText().getBytes();
         }
 
@@ -279,8 +277,7 @@ public class SMPPGateway extends JSMPPGateway {
                 binaryContentPart = ArrayUtils.add(binaryContentPart, 5, (byte) (i + 1));
                 returnValue = submitShortMessage(msg, dataCoding, registeredDelivery, binaryContentPart, new ESMClass(SMPPConstant.ESMCLS_UDHI_INDICATOR_SET));
             }
-        }
-        else {
+        } else {
             returnValue = submitShortMessage(msg, dataCoding, registeredDelivery, binaryContent, new ESMClass());
         }
 
@@ -317,23 +314,19 @@ public class SMPPGateway extends JSMPPGateway {
             logger.debug(getGatewayId() + " : Message was sent successfully: " + msg);
             incOutboundMessageCount();
 
-        }
-        catch (PDUException e) {
+        } catch (PDUException e) {
             msg.setGatewayId(getGatewayId());
             msg.setMessageStatus(MessageStatuses.FAILED);
             msg.setFailureCause(FailureCauses.BAD_FORMAT);
             logger.error(getGatewayId() + ": Message Format not accepted: " + e.getMessage(), e);
             return false;
-        }
-        catch (ResponseTimeoutException e) {
+        } catch (ResponseTimeoutException e) {
             logger.error(getGatewayId() + ": Message could not be sent: " + e.getMessage(), e);
             throw new TimeoutException(e);
-        }
-        catch (InvalidResponseException e) {
+        } catch (InvalidResponseException e) {
             logger.error(getGatewayId() + ": Message could not be sent: " + e.getMessage(), e);
             throw new IOException("InvalidResponseException: ", e);
-        }
-        catch (NegativeResponseException e) {
+        } catch (NegativeResponseException e) {
             logger.error(getGatewayId() + ": Message could not be sent: " + e.getMessage(), e);
             throw new IOException("NegativeResponseException: ", e);
         }
@@ -350,8 +343,7 @@ public class SMPPGateway extends JSMPPGateway {
             session.connectAndBind(host, port,
                                    new BindParameter(bindType, bindAttributes.getSystemId(), bindAttributes.getPassword(), bindAttributes.getSystemType(), bindTypeOfNumber, bindNumberingPlanIndicator,
                                                      null));
-        }
-        else {
+        } else {
             org.smslib.helper.Logger.getInstance().logWarn("SMPP session already bound.", null, getGatewayId());
         }
         smppMonitoringAgent.onGatewayStartupSuccess(getGatewayId());
@@ -361,8 +353,7 @@ public class SMPPGateway extends JSMPPGateway {
     public void stopGateway() throws TimeoutException, GatewayException, IOException, InterruptedException {
         if (session != null && session.getSessionState().isBound()) {
             closeSession();
-        }
-        else {
+        } else {
             org.smslib.helper.Logger.getInstance().logWarn("SMPP session not bound.", null, getGatewayId());
         }
         agateway.stopGateway();
@@ -531,14 +522,12 @@ public class SMPPGateway extends JSMPPGateway {
                             logger.info("#onStateChange: gateway " + getGatewayId() + " started.");
                         }
 
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                         smppMonitoringAgent.onGatewayStartupError(SMPPGateway.this.getGatewayId(), e);
                     }
                 }
-            }
-            else if (newState.equals(SessionState.CLOSED) || newState.equals(SessionState.UNBOUND)) {
+            } else if (newState.equals(SessionState.CLOSED) || newState.equals(SessionState.UNBOUND)) {
                 if (getStatus().equals(GatewayStatuses.STARTED)) {
                     agateway.setStatus(GatewayStatuses.RESTART);
                 }

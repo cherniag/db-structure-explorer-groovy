@@ -38,8 +38,7 @@ public class MailServiceMocked extends MailService {
         try {
             LOGGER.info("Writing to: " + file);
             FileUtils.writeLines(file, params);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("error", e);
         }
     }

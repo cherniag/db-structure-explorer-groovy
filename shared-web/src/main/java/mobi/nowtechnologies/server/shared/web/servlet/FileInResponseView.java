@@ -43,8 +43,7 @@ public class FileInResponseView extends AbstractView {
         }
         try {
             IOUtils.copy(stream, response.getOutputStream());
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(stream);
         }
     }

@@ -119,8 +119,7 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
             }
 
             LOGGER.info("[DONE] SmsAccordingToLawJob job finished");
-        }
-        finally {
+        } finally {
             LogUtils.removeClassNameMDC();
         }
     }
@@ -148,19 +147,16 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
             if (migResponse.isSuccessful()) {
                 LOGGER.info("The request for freeSms sent to MIG about user {} successfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively", user,
                             user.getNextSubPayment(), user.getStatus(), user.getPaymentStatus(), user.getSubBalance());
-            }
-            else {
+            } else {
                 throw new Exception(migResponse.getDescriptionError());
             }
 
             user = userService.resetSmsAccordingToLawAttributes(user);
             LOGGER.info("Processing finished successfully for user with id [{}], userName [{}], communityName [{}]", user.getId(), user.getUserName(), community.getName());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             LOGGER.error("Processing finished UNSUCCESSFULLY for user with id [{}], userName [{}], communityName [{}]", user.getId(), user.getUserName(), community.getName());
-        }
-        finally {
+        } finally {
             LogUtils.removeSpecificMDC();
         }
         LOGGER.info("Output parameter user=[{}]", user);
@@ -176,8 +172,7 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
     private String getSmsMessageCode(User user, BigDecimal amountOfMoneyToUserNotification) {
         if (user.getAmountOfMoneyToUserNotification().compareTo(amountOfMoneyToUserNotification) >= 0) {
             return amountOfMoneyToUserNotificationIsReachedMessageCode + getSmsMessageKeyVideoPart(user);
-        }
-        else {
+        } else {
             return deltaSuccesfullPaymentSmsSendingTimestampMillisIsReachedMessageCode + getSmsMessageKeyVideoPart(user);
         }
     }
