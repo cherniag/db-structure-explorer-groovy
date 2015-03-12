@@ -5,51 +5,66 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
+import mobi.nowtechnologies.server.service.TaskService;
+import mobi.nowtechnologies.server.service.UserNotificationService;
+
+import javax.annotation.Resource;
+
+import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 3/3/2015
  */
-public class SimpleUserNotificationTaskProcessor extends AbstractUserNotificationTaskProcessor {
-    private NZSubscriberInfoRepository nzSubscriberInfoRepository;
+public class SimpleUserNotificationTaskProcessor implements TaskProcessor<UserTask> {
+    @Resource
+    NZSubscriberInfoRepository nzSubscriberInfoRepository;
+    @Resource
+    UserNotificationService userNotificationService;
+    @Resource
+    TaskService taskService;
+
+
     private String messageKey;
-    private Class<?> supportedTaskClass;
+    private String supportedTaskType;
 
     @Override
     public void process(UserTask task) {
-        LOGGER.info("Start processing task {}", task);
+        logger().info("Start processing task {}", task);
         User user = task.getUser();
         NZSubscriberInfo nzSubscriberInfo = nzSubscriberInfoRepository.findSubscriberInfoByUserId(user.getId());
         if(nzSubscriberInfo == null){
-            LOGGER.warn("Could not find NZSubscriberInfo for user {}, SMS can not be sent", user.getId());
-            getTaskService().removeTask(task);
+            logger().warn("Could not find NZSubscriberInfo for user {}, SMS can not be sent", user.getId());
+            taskService.removeTask(task);
             return;
         }
 
         try {
-            getUserNotificationService().sendSMSByKey(user, nzSubscriberInfo.getMsisdn(), messageKey);
+            userNotificationService.sendSMSByKey(user, nzSubscriberInfo.getMsisdn(), messageKey);
         } catch (Exception e) {
-            LOGGER.error("Could not send SMS to msisdn " + nzSubscriberInfo.getMsisdn() + ", message: " + e.getMessage(), e);
+            logger().error("Could not send SMS to msisdn " + nzSubscriberInfo.getMsisdn() + ", message: " + e.getMessage(), e);
         } finally {
-            LOGGER.info("Remove task {}", task);
-            getTaskService().removeTask(task);
+            logger().info("Remove task {}", task);
+            taskService.removeTask(task);
         }
     }
 
     @Override
     public boolean supports(Task task) {
-        return task.getClass().isAssignableFrom(supportedTaskClass);
+        return supportedTaskType.equals(task.getTaskType());
     }
 
     public void setMessageKey(String messageKey) {
         this.messageKey = messageKey;
     }
 
-    public void setNzSubscriberInfoRepository(NZSubscriberInfoRepository nzSubscriberInfoRepository) {
-        this.nzSubscriberInfoRepository = nzSubscriberInfoRepository;
+    public void setSupportedTaskType(String supportedTaskType) {
+        this.supportedTaskType = Preconditions.checkNotNull(supportedTaskType);
     }
 
-    public void setSupportedTaskClass(Class<?> supportedTaskClass) {
-        this.supportedTaskClass = supportedTaskClass;
+    private Logger logger() {
+        return LoggerFactory.getLogger(getClass());
     }
 }

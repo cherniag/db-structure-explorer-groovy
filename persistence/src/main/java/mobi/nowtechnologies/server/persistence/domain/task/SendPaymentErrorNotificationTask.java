@@ -12,4 +12,8 @@ import javax.persistence.Entity;
 public class SendPaymentErrorNotificationTask extends UserTask {
     public static final String TASK_TYPE = "SendPaymentErrorNotificationTask";
 
+    @Override
+    public String getTaskType() {
+        return TASK_TYPE;
+    }
 }

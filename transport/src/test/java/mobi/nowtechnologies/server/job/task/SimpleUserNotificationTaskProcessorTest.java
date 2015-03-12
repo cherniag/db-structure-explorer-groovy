@@ -84,7 +84,7 @@ public class SimpleUserNotificationTaskProcessorTest {
 
     @Test
     public void testSupports() throws Exception {
-        simpleUserNotificationTaskProcessor.setSupportedTaskClass(SendPaymentErrorNotificationTask.class);
+        simpleUserNotificationTaskProcessor.setSupportedTaskType(SendPaymentErrorNotificationTask.TASK_TYPE);
         SendPaymentErrorNotificationTask task = new SendPaymentErrorNotificationTask();
 
         boolean supports = simpleUserNotificationTaskProcessor.supports(task);
@@ -94,7 +94,7 @@ public class SimpleUserNotificationTaskProcessorTest {
 
     @Test
     public void testNotSupports() throws Exception {
-        simpleUserNotificationTaskProcessor.setSupportedTaskClass(SendPaymentErrorNotificationTask.class);
+        simpleUserNotificationTaskProcessor.setSupportedTaskType(SendPaymentErrorNotificationTask.TASK_TYPE);
         SendChargeNotificationTask task = new SendChargeNotificationTask();
 
         boolean notSupports = simpleUserNotificationTaskProcessor.supports(task);

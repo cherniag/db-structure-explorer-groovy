@@ -15,6 +15,11 @@ public class SendChargeNotificationTask extends UserTask {
     public static final String TASK_TYPE = "SendChargeNotificationTask";
 
     @Override
+    public String getTaskType() {
+        return TASK_TYPE;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString()).toString();
     }

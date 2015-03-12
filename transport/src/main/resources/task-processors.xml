@@ -21,23 +21,16 @@
     </bean>
 
     <!-- Task processors config -->
-    <bean id="task.AbstractTaskProcessor" class="mobi.nowtechnologies.server.job.task.AbstractUserNotificationTaskProcessor" abstract="true">
-        <property name="taskService" ref="task.TaskService"/>
-        <property name="userNotificationService" ref="service.UserNotificationService"/>
-    </bean>
+    <bean id="sendChargeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SendChargeNotificationTaskProcessor" />
 
-    <bean id="sendChargeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SendChargeNotificationTaskProcessor" parent="task.AbstractTaskProcessor"/>
-
-    <bean id="sendPaymentErrorNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SimpleUserNotificationTaskProcessor" parent="task.AbstractTaskProcessor">
+    <bean id="sendPaymentErrorNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SimpleUserNotificationTaskProcessor">
         <property name="messageKey" value="sms.notification.on.payment.error.text"/>
-        <property name="supportedTaskClass" value="mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask"/>
-        <property name="nzSubscriberInfoRepository" ref="NZSubscriberInfoRepository"/>
+        <property name="supportedTaskType" value="#{T(mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask).TASK_TYPE}"/>
     </bean>
 
-    <bean id="sendUnsubscribeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SimpleUserNotificationTaskProcessor" parent="task.AbstractTaskProcessor">
+    <bean id="sendUnsubscribeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SimpleUserNotificationTaskProcessor">
         <property name="messageKey" value="sms.notification.on.user.was.unsubscribed.text"/>
-        <property name="supportedTaskClass" value="mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask"/>
-        <property name="nzSubscriberInfoRepository" ref="NZSubscriberInfoRepository"/>
+        <property name="supportedTaskType" value="#{T(mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask).TASK_TYPE}"/>
     </bean>
     <!-- End task processors config -->
 

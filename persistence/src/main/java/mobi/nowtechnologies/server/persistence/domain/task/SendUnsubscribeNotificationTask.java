@@ -11,4 +11,9 @@ import javax.persistence.Entity;
 @DiscriminatorValue(SendUnsubscribeNotificationTask.TASK_TYPE)
 public class SendUnsubscribeNotificationTask extends UserTask {
     public static final String TASK_TYPE = "SendUnsubscribeNotificationTask";
+
+    @Override
+    public String getTaskType() {
+        return TASK_TYPE;
+    }
 }

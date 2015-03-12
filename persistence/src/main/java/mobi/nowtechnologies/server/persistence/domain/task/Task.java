@@ -44,6 +44,8 @@ public abstract class Task implements Serializable {
     @Column(name = "taskType", insertable = false, updatable = false)
     private String taskType;
 
+    public abstract String getTaskType();
+
     private long executionTimestamp;
 
     private long creationTimestamp;
