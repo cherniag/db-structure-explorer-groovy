@@ -23,8 +23,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.sentaca.spring.smpp.mt.MTMessage;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 

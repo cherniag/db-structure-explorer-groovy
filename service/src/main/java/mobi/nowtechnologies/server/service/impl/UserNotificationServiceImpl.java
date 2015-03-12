@@ -522,13 +522,13 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         String message = getMessage(user, user.getCommunity(), messageKey, null);
 
         if (StringUtils.isBlank(message)) {
-            LOGGER.warn("The sms wasn't sent cause empty sms text message, community: {}, messageKey: {}", communityUrl, messageKey);
+            LOGGER.error("The sms wasn't sent cause empty sms text message, community: {}, messageKey: {}", communityUrl, messageKey);
             return false;
         }
 
         String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
         SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(phoneNumber, message, title);
-        LOGGER.info("Sms response: {}", smsResponse);
+        LOGGER.info("Sms response: {}, error: {}", smsResponse.isSuccessful(), smsResponse.getDescriptionError());
         return smsResponse.isSuccessful();
     }
 

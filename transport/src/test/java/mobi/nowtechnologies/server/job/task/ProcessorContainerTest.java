@@ -2,9 +2,7 @@ package mobi.nowtechnologies.server.job.task;
 
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask;
-import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
-import mobi.nowtechnologies.server.shared.Processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +11,7 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.runners.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**

@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.quartz.JobDataMap;

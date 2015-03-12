@@ -273,13 +273,15 @@
             </set>
         </property>
     </bean>
-    <bean id="sendChargeNotificationJobDetails" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="sendChargeNotificationJob" />
-        <property name="targetMethod" value="execute" />
-        <property name="concurrent" value="false" />
-    </bean>
+
     <bean id="sendChargeNotificationTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail" ref="sendChargeNotificationJobDetails" />
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetObject" ref="sendChargeNotificationJob" />
+                <property name="targetMethod" value="execute" />
+                <property name="concurrent" value="false" />
+            </bean>
+        </property>
         <property name="startDelay" value="${task.job.startDelayMillis}" />
         <property name="repeatInterval" value="${task.job.repeatIntervalMillis}" />
     </bean>
@@ -290,31 +292,34 @@
     </bean>
 
     <!-- Send payment error notifications job -->
-    <bean id="sendPaymentErrorNotificationJob" class="mobi.nowtechnologies.server.job.BusinessTaskJob">
-        <property name="taskService" ref="task.TaskService" />
-        <property name="processorContainer" ref="sendPaymentErrorNotificationProcessorContainer" />
-        <property name="tasksCount" value="${send.payment.error.job.tasks.count}" />
-        <property name="executor" ref="sendChargeNotificationThreadExecutor" />
-        <property name="supportedTaskTypes">
-            <set>
-                <value>SendUnsubscribeNotificationTask</value>
-                <value>SendPaymentErrorNotificationTask</value>
-            </set>
-        </property>
-    </bean>
+
     <bean id="sendPaymentErrorNotificationJobDetails" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="sendPaymentErrorNotificationJob" />
+        <property name="targetObject">
+            <bean class="mobi.nowtechnologies.server.job.BusinessTaskJob">
+                <property name="taskService" ref="task.TaskService" />
+                <property name="processorContainer" ref="sendPaymentErrorNotificationProcessorContainer" />
+                <property name="tasksCount" value="${send.payment.error.job.tasks.count}" />
+                <property name="executor">
+                    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+                        <property name="corePoolSize" value="${send.payment.error.job.executor.corePoolSize}"/>
+                        <property name="maxPoolSize" value="${send.payment.error.job.executor.maxPoolSize}"/>
+                        <property name="queueCapacity" value="${send.payment.error.job.executor.queueCapacity}"/>
+                    </bean>
+                </property>
+                <property name="supportedTaskTypes">
+                    <set>
+                        <value>SendUnsubscribeNotificationTask</value>
+                        <value>SendPaymentErrorNotificationTask</value>
+                    </set>
+                </property>
+            </bean>
+        </property>
         <property name="targetMethod" value="execute" />
         <property name="concurrent" value="false" />
     </bean>
     <bean id="sendPaymentErrorNotificationTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="sendPaymentErrorNotificationJobDetails" />
         <property name="cronExpression" value="${send.payment.error.job.cron.expression}"/>
-    </bean>
-    <bean id="sendPaymentErrorNotificationThreadExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <property name="corePoolSize" value="${send.payment.error.job.executor.corePoolSize}"/>
-        <property name="maxPoolSize" value="${send.payment.error.job.executor.maxPoolSize}"/>
-        <property name="queueCapacity" value="${send.payment.error.job.executor.queueCapacity}"/>
     </bean>
 
     <!-- Fork users job -->
@@ -392,6 +397,7 @@
 				<ref bean="before48hPSMSPaymentTrigger"/>
                 <ref bean="sendSmsForVFNZUsersTrigger"/>
                 <ref bean="sendChargeNotificationTrigger"/>
+                <ref bean="sendPaymentErrorNotificationTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -428,6 +434,7 @@
                     <ref bean="before48hPSMSPaymentTrigger"/>
                     <ref bean="sendSmsForVFNZUsersTrigger"/>
                     <ref bean="sendChargeNotificationTrigger"/>
+                    <ref bean="sendPaymentErrorNotificationTrigger"/>
                     <ref bean="jobTrigger"/>
                 </list>
             </property>
