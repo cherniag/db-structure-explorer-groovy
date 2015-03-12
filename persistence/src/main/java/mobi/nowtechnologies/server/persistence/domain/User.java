@@ -83,7 +83,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Entity
-@Table(name = "tb_users", uniqueConstraints = {/*@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})*/})
+@Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})})
 @NamedQueries(
     {@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"), @NamedQuery(
         name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL,

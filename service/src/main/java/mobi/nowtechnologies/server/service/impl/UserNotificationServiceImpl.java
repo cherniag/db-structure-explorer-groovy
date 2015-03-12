@@ -409,11 +409,9 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
             return new AsyncResult<>(wasSmsSentSuccessfully);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        finally {
+        } finally {
             LogUtils.removeGlobalMDC();
         }
         return new AsyncResult<>(false);

@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
@@ -38,9 +37,9 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	private PaymentDetailsRepository paymentDetailsRepository;
 	protected UserService userService;
     private PaymentEventNotifier paymentEventNotifier;
-	
-	@Transactional(propagation=Propagation.REQUIRED)
-	@Override
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response){
 		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
 		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
@@ -55,14 +54,12 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
             paymentDetails.setDescriptionError(response.getDescriptionError());
             paymentDetails.setErrorCode(response.getErrorCode());
             paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
-        }
-        else if (response.isSuccessful()) {
+        } else if (response.isSuccessful()) {
             status = SUCCESSFUL;
             paymentDetails.setDescriptionError(null);
             paymentDetails.setErrorCode(null);
             paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
-        }
-        else {
+        } else {
             status = ERROR;
             final String descriptionError = "Unexpected http status code [" + httpStatus + "] so the madeRetries won't be incremented";
             submittedPayment.setDescriptionError(descriptionError);
@@ -154,7 +151,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		this.userService = userService;
 	}
 
-    public PaymentEventNotifier getPaymentEventNotifier() {
+    protected PaymentEventNotifier getPaymentEventNotifier() {
         return paymentEventNotifier;
     }
 
