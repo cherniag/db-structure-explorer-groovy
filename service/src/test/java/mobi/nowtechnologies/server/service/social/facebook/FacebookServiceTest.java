@@ -3,6 +3,8 @@ package mobi.nowtechnologies.server.service.social.facebook;
 
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
+import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -29,11 +31,15 @@ public class FacebookServiceTest {
 
         when(facebookUserInfo.getFacebookId()).thenReturn("inputFacebookId");
         when(facebookClient.getProfileUserInfo(accessToken, facebookService.userId)).thenReturn(facebookUserInfo);
+        when(facebookClient.getProfileImage(accessToken, facebookService.userProfileImageUrlId)).thenReturn(new FacebookProfileImage(AppTestFacebookOperationsAdaptor.TEST_PROFILE_IMAGE_URL, false));
 
         FacebookUserInfo actual = facebookService.getFacebookUserInfo(accessToken, facebookUserInfo.getFacebookId());
 
         verify(facebookUserInfo, times(2)).getFacebookId();
         verify(facebookClient, times(1)).getProfileUserInfo(accessToken, facebookService.userId);
+        verify(facebookClient, times(1)).getProfileImage(accessToken, facebookService.userProfileImageUrlId);
+        verify(facebookUserInfo, times(1)).setProfileImageUrl(AppTestFacebookOperationsAdaptor.TEST_PROFILE_IMAGE_URL);
+        verify(facebookUserInfo, times(1)).setProfileImageSilhouette(false);
         verifyNoMoreInteractions(facebookClient, facebookUserInfo);
 
         assertSame(facebookUserInfo, actual);

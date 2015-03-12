@@ -63,6 +63,11 @@ public class FacebookClientImpl implements FacebookClient {
         return details;
     }
 
+    @Override
+    public FacebookProfileImage getProfileImage(String accessToken, String userId) {
+        return facebookOperationsAdaptor.getFacebookProfileImage(accessToken, userId);
+    }
+
     String getEmail(FacebookProfile profile) {
         String email = profile.getEmail();
         if (Strings.isNullOrEmpty(email)) {

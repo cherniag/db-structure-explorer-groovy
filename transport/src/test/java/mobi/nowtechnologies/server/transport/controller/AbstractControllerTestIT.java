@@ -54,7 +54,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
 
-    public static final String LATEST_SERVER_API_VERSION = "6.9";
+    public static final String LATEST_SERVER_API_VERSION = "6.10";
     private static AtomicInteger position = new AtomicInteger(0);
     protected MockMvc mockMvc;
     @Autowired

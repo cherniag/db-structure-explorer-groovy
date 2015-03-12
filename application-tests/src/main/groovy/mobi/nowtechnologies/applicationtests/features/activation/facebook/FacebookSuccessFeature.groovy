@@ -13,10 +13,12 @@ import mobi.nowtechnologies.applicationtests.features.common.transformers.dictio
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
@@ -30,6 +32,8 @@ import javax.annotation.Resource
 import java.text.SimpleDateFormat
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertFalse
+
 /**
  * @author kots
  * @since 8/14/2014.
@@ -215,6 +219,30 @@ class FacebookSuccessFeature {
             assertEquals(FacebookUserInfoGenerator.SURNAME, actual.getSurname())
             assertEquals(FacebookUserInfoGenerator.CITY, actual.getCity())
             assertEquals(FacebookUserInfoGenerator.COUNTRY, actual.getCountry())
+        }
+    }
+
+    @Given('^Registered user with (.+) using (.+) format for (.+) above (.+) and (.+)$')
+    def "Registered user with given devices using given format for given versions above version and given communities"(
+            @Transform(DictionaryTransformer.class) Word devices,
+            @Transform(DictionaryTransformer.class) Word formats,
+            @Transform(DictionaryTransformer.class) Word versions,
+            String aboveVersion,
+            @Transform(DictionaryTransformer.class) Word communities) {
+
+        def above = ApiVersions.from(versions.list()).above(aboveVersion)
+        currentUserDevices = userDeviceDataService.table(above, communities.set(), devices.set(), formats.set(RequestFormat))
+
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel { deviceSet.singup(it) }
+    }
+
+    @Then('^User receives additional facebook profile image url in the SIGN_IN_FACEBOOK response$')
+    def "User receives additional facebook profile image url in the SIGN_IN_FACEBOOK response"() {
+        runner.parallel {
+            def lastFacebookInfo = deviceSet.getPhoneState(it).lastFacebookInfo
+            assertEquals(AppTestFacebookOperationsAdaptor.TEST_PROFILE_IMAGE_URL, lastFacebookInfo.userDetails.facebookProfileImageUrl)
+            assertFalse(lastFacebookInfo.userDetails.facebookProfileImageSilhouette)
         }
     }
 

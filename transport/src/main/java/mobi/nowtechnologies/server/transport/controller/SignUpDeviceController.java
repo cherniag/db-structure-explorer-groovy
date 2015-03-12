@@ -40,8 +40,8 @@ public class SignUpDeviceController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.9}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.8}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.7}/SIGN_UP_DEVICE",
-                        "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"})
+                    value = {"**/{community}/{apiVersion:6\\.10}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.9}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.8}/SIGN_UP_DEVICE",
+                        "**/{community}/{apiVersion:6\\.7}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"})
     public ModelAndView signUpDeviceV6_6(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
         return processSignUpDevice(userDeviceDetailsDto, true, true, true, true);
     }
