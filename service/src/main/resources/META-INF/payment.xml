@@ -134,6 +134,7 @@
 		<entry key="migSms" value-ref="service.migPaymentService" />
 		<entry key="o2Psms" value-ref="service.o2PaymentService" />	
 		<entry key="vfPsms" value-ref="service.vfPaymentService" />
+		<entry key="mtvnzPsms" value-ref="mtvnzPaymentSystemService" />
 	</util:map>
 	
 	<!-- Listeners -->

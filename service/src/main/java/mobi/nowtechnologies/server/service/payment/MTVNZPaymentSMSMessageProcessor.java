@@ -6,26 +6,34 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessor;
-import org.jsmpp.bean.DeliverSm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.jsmpp.bean.DeliverSm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 2/26/2015
  */
 public class MTVNZPaymentSMSMessageProcessor implements SMSMessageProcessor<MTVNZResponse> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MTVNZPaymentSMSMessageProcessor.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private Set<String> paymentShortCodes = new HashSet<>();
-    private MTVNZPaymentSystemService mtvnzPaymentSystemService;
-    private MTVNZPaymentResponseParser mtvnzPaymentResponseParser;
-    private NZSubscriberInfoRepository nzSubscriberInfoRepository;
-    private PendingPaymentService pendingPaymentService;
+
+    @Resource
+    MTVNZPaymentSystemService mtvnzPaymentSystemService;
+    @Resource
+    MTVNZPaymentResponseParser mtvnzPaymentResponseParser;
+    @Resource
+    NZSubscriberInfoRepository nzSubscriberInfoRepository;
+    @Resource
+    PendingPaymentService pendingPaymentService;
 
     @Override
     public boolean supports(DeliverSm deliverSm) {
@@ -34,17 +42,17 @@ public class MTVNZPaymentSMSMessageProcessor implements SMSMessageProcessor<MTVN
 
     @Override
     public void parserAndProcess(Object data) {
-        LOGGER.info("Processing receipt: {}", data);
+        logger.info("Processing receipt: {}", data);
         DeliverSm deliverSm = (DeliverSm) data;
         final MTVNZResponse mtvnzResponse = mtvnzPaymentResponseParser.parse(deliverSm);
-        LOGGER.debug("Parse result: {}", mtvnzResponse);
+        logger.debug("Parse result: {}", mtvnzResponse);
         process(mtvnzResponse);
     }
 
     @Override
     public void process(MTVNZResponse mtvnzResponse) {
         final NZSubscriberInfo subscriberInfo = nzSubscriberInfoRepository.findSubscriberInfoByMsisdn(mtvnzResponse.getPhoneNumber());
-        LOGGER.debug("Subscriber Info {} for {} msisdn", subscriberInfo, mtvnzResponse.getPhoneNumber());
+        logger.debug("Subscriber Info {} for {} msisdn", subscriberInfo, mtvnzResponse.getPhoneNumber());
         if(subscriberInfo == null) {
             throw new ServiceException("No NZSubscriberInfo found for " + mtvnzResponse.getPhoneNumber());
         }
@@ -62,21 +70,5 @@ public class MTVNZPaymentSMSMessageProcessor implements SMSMessageProcessor<MTVN
 
     public void setPaymentShortCodes(Set<String> paymentShortCodes) {
         this.paymentShortCodes = paymentShortCodes;
-    }
-
-    public void setMtvnzPaymentSystemService(MTVNZPaymentSystemService mtvnzPaymentSystemService) {
-        this.mtvnzPaymentSystemService = mtvnzPaymentSystemService;
-    }
-
-    public void setMtvnzPaymentResponseParser(MTVNZPaymentResponseParser mtvnzPaymentResponseParser) {
-        this.mtvnzPaymentResponseParser = mtvnzPaymentResponseParser;
-    }
-
-    public void setNzSubscriberInfoRepository(NZSubscriberInfoRepository nzSubscriberInfoRepository) {
-        this.nzSubscriberInfoRepository = nzSubscriberInfoRepository;
-    }
-
-    public void setPendingPaymentService(PendingPaymentService pendingPaymentService) {
-        this.pendingPaymentService = pendingPaymentService;
     }
 }

@@ -1,20 +1,22 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
-import mobi.nowtechnologies.server.service.TaskService;
-import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
+import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
+
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
-import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
+import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
@@ -52,7 +54,7 @@ public class MTVNZPaymentSystemService extends AbstractPaymentSystemService {
                 LOGGER.warn("Could not send SMS payment request : {}, skip current attempt", smsResponse.getDescriptionError());
                 skipCurrentPaymentAttempt(pendingPayment, smsResponse.getDescriptionError());
             }
-        } catch (MsisdnNotFoundException e) {
+        } catch (ProviderNotAvailableException e) {
             LOGGER.warn("NZ subscriber service is not available: {}", e.getMessage());
             skipCurrentPaymentAttempt(pendingPayment, e.getMessage());
         }
