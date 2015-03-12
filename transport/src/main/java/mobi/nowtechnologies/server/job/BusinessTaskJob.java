@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * User: gch Date: 12/19/13

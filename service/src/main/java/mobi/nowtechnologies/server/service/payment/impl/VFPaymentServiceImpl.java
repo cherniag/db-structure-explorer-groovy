@@ -18,7 +18,6 @@ import java.util.Set;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 
-import org.springframework.aop.framework.AopContext;
 import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
@@ -111,7 +110,4 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         return null;
     }
 
-    private VFPaymentServiceImpl getThis() {
-        return ((VFPaymentServiceImpl) AopContext.currentProxy());
-    }
 }
