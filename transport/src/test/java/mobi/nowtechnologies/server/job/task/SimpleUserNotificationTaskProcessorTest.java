@@ -8,15 +8,14 @@ import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoReposi
 import mobi.nowtechnologies.server.service.TaskService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Date;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -85,7 +84,7 @@ public class SimpleUserNotificationTaskProcessorTest {
     @Test
     public void testSupports() throws Exception {
         simpleUserNotificationTaskProcessor.setSupportedTaskType(SendPaymentErrorNotificationTask.TASK_TYPE);
-        SendPaymentErrorNotificationTask task = new SendPaymentErrorNotificationTask();
+        SendPaymentErrorNotificationTask task = new SendPaymentErrorNotificationTask(new Date(), user);
 
         boolean supports = simpleUserNotificationTaskProcessor.supports(task);
 
@@ -95,7 +94,7 @@ public class SimpleUserNotificationTaskProcessorTest {
     @Test
     public void testNotSupports() throws Exception {
         simpleUserNotificationTaskProcessor.setSupportedTaskType(SendPaymentErrorNotificationTask.TASK_TYPE);
-        SendChargeNotificationTask task = new SendChargeNotificationTask();
+        SendChargeNotificationTask task = new SendChargeNotificationTask(new Date(), user);
 
         boolean notSupports = simpleUserNotificationTaskProcessor.supports(task);
 

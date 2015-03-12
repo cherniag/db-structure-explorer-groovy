@@ -1,11 +1,8 @@
 package mobi.nowtechnologies.server.job;
 
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
-import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
@@ -19,7 +16,7 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
 import javax.annotation.Resource;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 import com.sentaca.spring.smpp.mt.MTMessage;
 
@@ -32,6 +29,7 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
@@ -88,11 +86,12 @@ public class BusinessTaskJobTestIT {
         user.setUserName("+64598720352");
         user.setUserGroup(userGroup);
         user.setProvider(ProviderType.VF);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
-        sendChargeNotificationTask.setTaskStatus(TaskStatus.ACTIVE);
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setUser(userRepository.save(user));
-        sendChargeNotificationTask.setCreationTimestamp(now - 2000L);
-        sendChargeNotificationTask.setExecutionTimestamp(now);
+
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", now);
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", now - 2000L);
+
         sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
         sendChargeNotificationJob.execute();
         Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());
@@ -110,11 +109,12 @@ public class BusinessTaskJobTestIT {
         user.setUserName("+6459336695");
         user.setUserGroup(userGroup);
         user.setProvider(ProviderType.VF);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
-        sendChargeNotificationTask.setTaskStatus(TaskStatus.ACTIVE);
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setUser(userRepository.save(user));
-        sendChargeNotificationTask.setCreationTimestamp(now - 2000L);
-        sendChargeNotificationTask.setExecutionTimestamp(now + 3000L);
+
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", now + 3000L);
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", now - 2000L);
+
         sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
         sendChargeNotificationJob.execute();
         Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());

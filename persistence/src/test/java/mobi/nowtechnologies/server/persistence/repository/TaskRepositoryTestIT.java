@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
@@ -11,6 +10,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,11 +19,11 @@ import static java.lang.System.currentTimeMillis;
 
 import com.google.common.collect.Iterables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import org.junit.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -70,7 +70,7 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
 
     @Test
     public void checkSendChargeNotificationTaskIsSavedSuccessfully() {
-        SendChargeNotificationTask task = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask task = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         task.setId(null);
         task.setUser(userRepository.findOne(110));
         repository.save(task);
@@ -81,7 +81,6 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
         assertThat(actual.getId(), is(task.getId()));
         assertThat(actual.getExecutionTimestamp(), is(task.getExecutionTimestamp()));
         assertThat(actual.getCreationTimestamp(), is(task.getCreationTimestamp()));
-        assertThat(actual.getTaskStatus(), is(task.getTaskStatus()));
     }
 
 
@@ -210,9 +209,8 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     }
 
     private SendChargeNotificationTask createAndSaveSendChargeNotificationTask(User user, Long executionTimestamp) {
-        SendChargeNotificationTask task = TaskFactory.createSendChargeNotificationTask();
-        task.setUser(user);
-        task.setExecutionTimestamp(executionTimestamp);
+        SendChargeNotificationTask task = new SendChargeNotificationTask(new Date(), user);
+        ReflectionTestUtils.setField(task, "executionTimestamp", executionTimestamp);
         return (SendChargeNotificationTask) taskRepository.save(task);
     }
 

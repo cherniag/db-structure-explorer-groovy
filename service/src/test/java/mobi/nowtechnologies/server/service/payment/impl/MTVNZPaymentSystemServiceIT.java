@@ -1,19 +1,30 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import com.google.common.collect.Lists;
-import com.sentaca.spring.smpp.mt.MTMessage;
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
-import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.MTVNZPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
@@ -23,23 +34,23 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import javax.annotation.Resource;
+
 import java.math.BigDecimal;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import com.google.common.collect.Lists;
+import com.sentaca.spring.smpp.mt.MTMessage;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
@@ -137,7 +148,6 @@ public class MTVNZPaymentSystemServiceIT {
 
         List<UserTask> userTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendUnsubscribeNotificationTask.TASK_TYPE);
         assertEquals(user.getId(), userTasks.get(0).getUser().getId());
-        assertEquals(TaskStatus.ACTIVE, userTasks.get(0).getTaskStatus());
         assertTrue(userTasks.get(0).getExecutionTimestamp() < timeService.now().getTime());
         assertTrue(userTasks.get(0).getCreationTimestamp() < timeService.now().getTime());
     }

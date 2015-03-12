@@ -3,12 +3,10 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
-import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask;
@@ -39,12 +37,13 @@ import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.*;
 
 /**
  * User: gch Date: 12/17/13
@@ -130,7 +129,7 @@ public class TaskServiceTestIT {
         Community community = createAndSaveCommunity("vf_nz");
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setUser(user);
         taskRepository.save(sendChargeNotificationTask);
         int count = jdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
@@ -218,7 +217,6 @@ public class TaskServiceTestIT {
         assertEquals(1, tasks.size());
         assertEquals(creationDate.getTime(), tasks.get(0).getCreationTimestamp());
         assertEquals(creationDate.getTime(), tasks.get(0).getExecutionTimestamp());
-        assertEquals(TaskStatus.ACTIVE, tasks.get(0).getTaskStatus());
         assertTrue(tasks.get(0) instanceof SendPaymentErrorNotificationTask);
     }
 
@@ -236,7 +234,6 @@ public class TaskServiceTestIT {
         assertEquals(1, tasks.size());
         assertEquals(creationDate.getTime(), tasks.get(0).getCreationTimestamp());
         assertEquals(creationDate.getTime(), tasks.get(0).getExecutionTimestamp());
-        assertEquals(TaskStatus.ACTIVE, tasks.get(0).getTaskStatus());
         assertTrue(tasks.get(0) instanceof SendUnsubscribeNotificationTask);
     }
 
@@ -244,11 +241,13 @@ public class TaskServiceTestIT {
         Community community = createAndSaveCommunity(communityUrl);
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setId(null);
         sendChargeNotificationTask.setUser(user);
-        sendChargeNotificationTask.setExecutionTimestamp(executionTimestamp);
-        sendChargeNotificationTask.setCreationTimestamp(creationTimestamp);
+
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", executionTimestamp);
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", creationTimestamp);
+
         return taskRepository.save(sendChargeNotificationTask);
     }
 

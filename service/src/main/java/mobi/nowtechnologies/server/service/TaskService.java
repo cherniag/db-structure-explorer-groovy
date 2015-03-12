@@ -2,18 +2,17 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
+import mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
-import mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.util.IntervalScheduler;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,16 +33,16 @@ public class TaskService {
 
     private TaskRepository<Task> taskRepository;
 
-    private IntervalScheduler scheduler;
-
     private CommunityResourceBundleMessageSource messageSource;
 
     private TimeService timeService;
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public void createSendChargeNotificationTask(User user) {
-        if (!messageSource.readBoolean(user.getCommunityRewriteUrl(), "sendchargenotificationtask.creation.enabled", false)) {
-            LOGGER.info("Send charge notification is not enabled for community {}", user.getCommunityRewriteUrl());
+        final String communityRewriteUrl = user.getCommunityRewriteUrl();
+
+        if (!messageSource.readBoolean(communityRewriteUrl, "sendchargenotificationtask.creation.enabled", false)) {
+            LOGGER.info("Send charge notification is not enabled for community {}", communityRewriteUrl);
             return;
         }
 
@@ -54,10 +53,16 @@ public class TaskService {
         }
 
         try {
-            SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask();
-            fillUserTask(sendChargeNotificationTask, user);
-            scheduler.scheduleTask(sendChargeNotificationTask, user.getCommunityRewriteUrl());
+            Date serverTime = timeService.now();
+
+            SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(serverTime, user);
+
+            long executeInterval = getNextExecInterval(communityRewriteUrl, sendChargeNotificationTask);
+
+            sendChargeNotificationTask.scheduleAfter(executeInterval);
+
             taskRepository.save(sendChargeNotificationTask);
+
             LOGGER.info("Task {} has been created successfully", sendChargeNotificationTask);
         } catch (Exception e) {
             LOGGER.error("Can't create SendChargeNotificationTask for user " + user.getId(), e);
@@ -67,12 +72,24 @@ public class TaskService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void createSendPaymentErrorNotificationTask(User user) {
-        createInternal(new SendPaymentErrorNotificationTask(), user);
+        Date serverTime = timeService.now();
+
+        UserTask userTask = new SendPaymentErrorNotificationTask(serverTime, user);
+
+        LOGGER.info("Create {} for user {}", userTask.getClass().getSimpleName(), user.getId());
+
+        taskRepository.save(userTask);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void createSendUnsubscribeNotificationTask(User user) {
-        createInternal(new SendUnsubscribeNotificationTask(), user);
+        Date serverTime = timeService.now();
+
+        UserTask userTask = new SendUnsubscribeNotificationTask(serverTime, user);
+
+        LOGGER.info("Create {} for user {}", userTask.getClass().getSimpleName(), user.getId());
+
+        taskRepository.save(userTask);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -98,13 +115,18 @@ public class TaskService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void reScheduleTask(String communityRewriteUrl, Task task) {
-        LOGGER.info("Rescheduling {}...", task);
+        Task existing = taskRepository.findOne(task.getId());
+
+        LOGGER.info("Rescheduling {}...", existing);
+
         try {
-            scheduler.scheduleTask(task, communityRewriteUrl);
-            int rowsUpdated = taskRepository.updateExecutionTimestamp(task.getId(), task.getExecutionTimestamp());
-            LOGGER.info("Task {} has been rescheduled with executionTimestamp {}, update rows count is {}", task, task.getExecutionTimestamp(), rowsUpdated);
+            long executeInterval = getNextExecInterval(communityRewriteUrl, existing);
+
+            existing.scheduleAfter(executeInterval);
+
+            LOGGER.info("Task {} has been rescheduled with executionTimestamp {}", existing, existing.getExecutionTimestamp());
         } catch (Exception e) {
-            LOGGER.error(String.format("Can't reschedule task [%s], communityRewriteUrl is %s", task, communityRewriteUrl), e);
+            LOGGER.error(String.format("Can't reschedule task [%s], communityRewriteUrl is %s", existing, communityRewriteUrl), e);
         }
     }
 
@@ -113,27 +135,14 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
-    private void createInternal(UserTask userTask, User user){
-        LOGGER.info("Create {} for user {}", userTask.getClass().getSimpleName(), user.getId());
-        fillUserTask(userTask, user);
-        taskRepository.save(userTask);
-        LOGGER.info("Task {} has been created successfully", userTask);
-    }
-
-    private void fillUserTask(UserTask userTask, User user) {
-        long currentTimeMillis = timeService.now().getTime();
-        userTask.setCreationTimestamp(currentTimeMillis);
-        userTask.setExecutionTimestamp(currentTimeMillis);
-        userTask.setUser(user);
-        userTask.setTaskStatus(TaskStatus.ACTIVE);
+    private long getNextExecInterval(String communityRewriteUrl, Task task) {
+        String messageCode = task.getTaskType().toLowerCase() + ".schedule.period.in.millis";
+        String nextExecution = messageSource.getMessage(communityRewriteUrl, messageCode, null, null);
+        return Long.valueOf(nextExecution);
     }
 
     public void setTaskRepository(TaskRepository<Task> taskRepository) {
         this.taskRepository = taskRepository;
-    }
-
-    public void setScheduler(IntervalScheduler scheduler) {
-        this.scheduler = scheduler;
     }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
