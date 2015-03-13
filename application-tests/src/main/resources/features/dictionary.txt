@@ -4,19 +4,19 @@
 # Separate with coma list values
 #
 facebook supported communities=mtv1, mtvnz
-all facebook supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+all facebook supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9
 
 google plus supported communities=mtv1, mtvnz
-all google plus supported versions=6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+all google plus supported versions=6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9 
 
 email supported communities=mtv1
-all email supported versions=5.3, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+all email supported versions=5.3, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9 
 
 streamzine supported communities=mtv1
-all streamzine supported versions=6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+all streamzine supported versions=6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9 
 
 providers supported communities=mtv1
-all providers supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+all providers supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9 
 
 JSON and XML=JSON, XML
 XML and JSON=JSON, XML
@@ -28,7 +28,7 @@ any device=ANDROID
 
 partner communities=o2, vf_nz
 all communities=o2, vf_nz, mtv1
-all versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+all versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9 
 
 get context supported communities=mtv1
 
