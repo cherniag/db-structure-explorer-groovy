@@ -4,19 +4,19 @@
 # Separate with coma list values
 #
 facebook supported communities=mtv1, mtvnz
-all facebook supported versions=6.10
+all facebook supported versions=6.0,6.10
 
 google plus supported communities=mtv1, mtvnz
-all google plus supported versions=6.10
+all google plus supported versions=6.0,6.10
 
 email supported communities=mtv1
-all email supported versions=6.10
+all email supported versions=6.0,6.10
 
 streamzine supported communities=mtv1
-all streamzine supported versions=6.10
+all streamzine supported versions=6.0,6.10
 
 providers supported communities=mtv1
-all providers supported versions=6.10
+all providers supported versions=6.0,6.10
 
 JSON and XML=JSON, XML
 XML and JSON=JSON, XML
@@ -28,12 +28,12 @@ any device=ANDROID
 
 partner communities=o2, vf_nz
 all communities=o2, vf_nz, mtv1
-all versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9 
+all versions=6.0,6.10
 
 get context supported communities=mtv1
 
 #
 # Try to avoid unneeded server polling
 #
-all versions to signup=6.0, 6.3, 6.5, 6.7
-all versions to get context=6.8
+all versions to signup=6.0,6.10
+all versions to get context=6.0,6.10
