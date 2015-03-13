@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ public class FacebookService {
     FacebookClient facebookClient;
 
     String userId;
+    String userProfileImageUrlId;
 
     public FacebookUserInfo getFacebookUserInfo(String accessToken, String inputFacebookId) {
         FacebookUserInfo facebookProfileInfo = facebookClient.getProfileUserInfo(accessToken, userId);
@@ -22,10 +24,19 @@ public class FacebookService {
             log.warn("inputFacebookId should match id on Facebook!");
             throw FacebookClient.INVALID_FACEBOOK_USER_ID;
         }
+
+        FacebookProfileImage facebookProfileImage = facebookClient.getProfileImage(accessToken, userProfileImageUrlId);
+        facebookProfileInfo.setProfileImageUrl(facebookProfileImage.getUrl());
+        facebookProfileInfo.setProfileImageSilhouette(facebookProfileImage.isSilhouette());
+
         return facebookProfileInfo;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public void setUserProfileImageUrlId(String userProfileImageUrlId) {
+        this.userProfileImageUrlId = userProfileImageUrlId;
     }
 }
