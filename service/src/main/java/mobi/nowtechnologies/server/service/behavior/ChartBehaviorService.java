@@ -42,7 +42,7 @@ public class ChartBehaviorService {
         for (Map.Entry<Integer, Map<UserStatusType, ChartUserStatusBehavior>> chartToStatusBehaviorMapping : orderedByChart.entrySet()) {
             NavigableSet<ChartBehaviorInfo> infos = createInfos(user, chartToStatusBehaviorMapping, userStatusTypeDateMap);
 
-            chartBehaviorReferralsService.apply(infos, snapshot, serverTime);
+            chartBehaviorReferralsService.apply(behaviorConfig, infos, snapshot, serverTime);
 
             int chartId = chartToStatusBehaviorMapping.getKey();
             info.put(chartId, infos);
