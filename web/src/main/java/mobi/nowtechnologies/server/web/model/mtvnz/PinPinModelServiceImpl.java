@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
-import com.google.common.collect.Collections2;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -9,12 +8,22 @@ import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoReposi
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.web.model.PinModelService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
 
 public class PinPinModelServiceImpl implements PinModelService {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -29,7 +38,11 @@ public class PinPinModelServiceImpl implements PinModelService {
     public Map<String, Object> getModel(User user, String phone) {
         List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
         List<PaymentPolicy> filtered = filterWithOneDurationLength(all);
-        Collection<PaymentPolicy> vfPsms = Collections2.filter(filtered, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
+
+        Collection<PaymentPolicy> vfPsms = Collections2.filter(filtered, new PaymentTypePredicate(PaymentDetails.MTVNZ_PSMS_TYPE));
+
+        Preconditions.checkState(vfPsms.size() == 2, "Found not one payment policy for vfPsms for community " + user.getCommunity());
+
         Collection<PaymentPolicyDto> converted = PaymentPolicyDto.convert(vfPsms);
         Object policies = new ArrayList<>(new TreeSet<>(converted));
 

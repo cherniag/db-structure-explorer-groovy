@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -11,12 +8,24 @@ import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoReposi
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import mobi.nowtechnologies.server.web.model.PaymentModelService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
 
 class PaymentModelServiceImpl implements PaymentModelService {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -40,7 +49,7 @@ class PaymentModelServiceImpl implements PaymentModelService {
 
         Collection<PaymentPolicy> payPal = Collections2.filter(all, new PaymentTypePredicate("PAY_PAL"));
         Collection<PaymentPolicy> iTunes = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.ITUNES_SUBSCRIPTION));
-        Collection<PaymentPolicy> vfPsms = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
+        Collection<PaymentPolicy> vfPsms = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.MTVNZ_PSMS_TYPE));
 
         Preconditions.checkState(vfPsms.size() == 2, "Found not one payment policy for vfPsms for community " + user.getCommunity());
         Preconditions.checkState(payPal.size() == 1, "Found not one payment policy for PayPal for community " + user.getCommunity());
