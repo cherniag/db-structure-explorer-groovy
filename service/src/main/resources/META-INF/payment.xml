@@ -142,8 +142,6 @@
 	<bean id="subBalancePaymentListener" class="mobi.nowtechnologies.server.service.listener.SubBalancePaymentListener">
 		<property name="userService" ref="service.UserService" />
 		<property name="promotionService" ref="service.PromotionService" />
-		<property name="migHttpService" ref="service.migHttpService" />
-		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 	
