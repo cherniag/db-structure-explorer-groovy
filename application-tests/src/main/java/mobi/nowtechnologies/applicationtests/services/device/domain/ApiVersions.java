@@ -1,15 +1,15 @@
 package mobi.nowtechnologies.applicationtests.services.device.domain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.util.Assert;
 
 public class ApiVersions {
+
+    private static ApiVersionsComparator apiVersionsComparator = new ApiVersionsComparator();
 
     private List<String> versions = new ArrayList<>();
 
@@ -19,54 +19,7 @@ public class ApiVersions {
     public static ApiVersions from(Collection<String> versions) {
         ApiVersions apiVersions = new ApiVersions();
         apiVersions.versions.addAll(versions);
-        Collections.sort(apiVersions.versions, new Comparator<String>() {
-            @Override
-            public int compare(String v1, String v2) {
-                v1 = v1.replaceAll("\\s", "");
-                v2 = v2.replaceAll("\\s", "");
-                String[] a1 = v1.split("\\.");
-                String[] a2 = v2.split("\\.");
-                List<String> l1 = Arrays.asList(a1);
-                List<String> l2 = Arrays.asList(a2);
-
-
-                int i=0;
-                while(true){
-                    Double d1 = null;
-                    Double d2 = null;
-
-                    try{
-                        d1 = Double.parseDouble(l1.get(i));
-                    }catch(IndexOutOfBoundsException e){
-                    }
-
-                    try{
-                        d2 = Double.parseDouble(l2.get(i));
-                    }catch(IndexOutOfBoundsException e){
-                    }
-
-                    if (d1 != null && d2 != null) {
-                        if (d1.doubleValue() > d2.doubleValue()) {
-                            return 1;
-                        } else if (d1.doubleValue() < d2.doubleValue()) {
-                            return -1;
-                        }
-                    } else if (d2 == null && d1 != null) {
-                        if (d1.doubleValue() > 0) {
-                            return 1;
-                        }
-                    } else if (d1 == null && d2 != null) {
-                        if (d2.doubleValue() > 0) {
-                            return -1;
-                        }
-                    } else {
-                        break;
-                    }
-                    i++;
-                }
-                return 0;
-            }
-        });
+        Collections.sort(apiVersions.versions, apiVersionsComparator);
         return apiVersions;
     }
 
