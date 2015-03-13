@@ -59,6 +59,12 @@ public class FacebookUserInfo extends SocialInfo {
     @Column(name = "age_range_max")
     private Integer ageRangeMax;
 
+    @Column(name = "profile_image_url", columnDefinition = "char(255)")
+    private String profileImageUrl;
+
+    @Column(name = "profile_image_silhouette")
+    private boolean profileImageSilhouette;
+
     public Date getBirthday() {
         return birthday;
     }
@@ -165,5 +171,21 @@ public class FacebookUserInfo extends SocialInfo {
 
     public void setAgeRangeMax(Integer ageRangeMax) {
         this.ageRangeMax = ageRangeMax;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public boolean isProfileImageSilhouette() {
+        return profileImageSilhouette;
+    }
+
+    public void setProfileImageSilhouette(boolean profileImageSilhouette) {
+        this.profileImageSilhouette = profileImageSilhouette;
     }
 }

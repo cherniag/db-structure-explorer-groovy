@@ -11,6 +11,8 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
 
 
     private String facebookId;
+    private String facebookProfileImageUrl;
+    private Boolean facebookProfileImageSilhouette;
 
 
     public String getFacebookId() {
@@ -27,4 +29,19 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
         return SocialInfoType.Facebook;
     }
 
+    public String getFacebookProfileImageUrl() {
+        return facebookProfileImageUrl;
+    }
+
+    public void setFacebookProfileImageUrl(String facebookProfileImageUrl) {
+        this.facebookProfileImageUrl = facebookProfileImageUrl;
+    }
+
+    public Boolean isFacebookProfileImageSilhouette() {
+        return facebookProfileImageSilhouette;
+    }
+
+    public void setFacebookProfileImageSilhouette(Boolean facebookProfileImageSilhouette) {
+        this.facebookProfileImageSilhouette = facebookProfileImageSilhouette;
+    }
 }

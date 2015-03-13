@@ -16,6 +16,8 @@ public class UserDetails {
     private String birthDay;
     private String socialInfoType;
     private String facebookId;
+    private String facebookProfileImageUrl;
+    private boolean facebookProfileImageSilhouette;
     private String googlePlusId;
 
     public String getProfileUrl() {
@@ -96,6 +98,22 @@ public class UserDetails {
 
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
+    }
+
+    public String getFacebookProfileImageUrl() {
+        return facebookProfileImageUrl;
+    }
+
+    public void setFacebookProfileImageUrl(String facebookProfileImageUrl) {
+        this.facebookProfileImageUrl = facebookProfileImageUrl;
+    }
+
+    public boolean isFacebookProfileImageSilhouette() {
+        return facebookProfileImageSilhouette;
+    }
+
+    public void setFacebookProfileImageSilhouette(boolean facebookProfileImageSilhouette) {
+        this.facebookProfileImageSilhouette = facebookProfileImageSilhouette;
     }
 
     public String getGooglePlusId() {

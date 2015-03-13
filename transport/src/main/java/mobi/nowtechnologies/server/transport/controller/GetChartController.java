@@ -57,7 +57,7 @@ public class GetChartController extends CommonController {
         binder.registerCustomEditor(Resolution.class, new ResolutionParameterEditor());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.9}/GET_CHART", "**/{community}/{apiVersion:6\\.8}/GET_CHART"})
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.10}/GET_CHART", "**/{community}/{apiVersion:6\\.9}/GET_CHART", "**/{community}/{apiVersion:6\\.8}/GET_CHART"})
     public ModelAndView getChartV68(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
