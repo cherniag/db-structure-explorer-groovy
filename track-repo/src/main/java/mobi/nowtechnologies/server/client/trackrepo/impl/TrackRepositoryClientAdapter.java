@@ -8,10 +8,12 @@ import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
+
     private TrackController trackController;
 
     private IngestTracksWizardController ingestTracksWizardController;
@@ -28,7 +30,7 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
 
     @Override
     public PageListDto<TrackDto> search(String criteria, Pageable page) {
-        return (PageListDto<TrackDto>)trackController.find(criteria, null,  page);
+        return (PageListDto<TrackDto>) trackController.find(criteria, null, page);
     }
 
     @Override
@@ -43,11 +45,11 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
 
     @Override
     public PageListDto<TrackDto> search(SearchTrackDto criteria, Pageable page) {
-        return (PageListDto<TrackDto>)trackController.find(null, criteria, page);
+        return (PageListDto<TrackDto>) trackController.find(null, criteria, page);
     }
 
     @Override
-    public IngestWizardDataDto getDrops(String... ingestors){
+    public IngestWizardDataDto getDrops(String... ingestors) {
         try {
             return ingestTracksWizardController.getDrops(ingestors);
         } catch (Exception e) {
@@ -65,7 +67,7 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     }
 
     @Override
-    public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data){
+    public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data) {
         try {
             return ingestTracksWizardController.selectDropTracks(data);
         } catch (Exception e) {

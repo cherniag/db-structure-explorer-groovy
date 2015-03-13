@@ -10,18 +10,22 @@ public enum FeatureValueType {
 
     private String id;
 
+    FeatureValueType(String id) {
+        this.id = id;
+    }
+
     public static FeatureValueType of(DeeplinkInfo deeplinkInfo) {
-        if(deeplinkInfo instanceof InformationDeeplinkInfo) {
+        if (deeplinkInfo instanceof InformationDeeplinkInfo) {
             InformationDeeplinkInfo i = (InformationDeeplinkInfo) deeplinkInfo;
 
-            if(i.getLinkType() == LinkLocationType.INTERNAL_AD) {
+            if (i.getLinkType() == LinkLocationType.INTERNAL_AD) {
                 if (RecognizedPage.GENERIC_NEWS.equals(RecognizedPage.recognize(i.getUrl()))) {
                     return CONTENT;
                 }
                 return PAGE;
             }
 
-            if(i.getLinkType() == LinkLocationType.EXTERNAL_AD) {
+            if (i.getLinkType() == LinkLocationType.EXTERNAL_AD) {
                 return WEB;
             }
 
@@ -29,10 +33,6 @@ public enum FeatureValueType {
         } else {
             return CONTENT;
         }
-    }
-
-    FeatureValueType(String id) {
-        this.id = id;
     }
 
     public String getId() {

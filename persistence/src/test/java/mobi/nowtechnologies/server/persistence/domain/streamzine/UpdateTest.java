@@ -2,21 +2,22 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
 
 import java.util.Date;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
+import org.apache.commons.lang.time.DateUtils;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
+import static org.hamcrest.CoreMatchers.is;
 
 public class UpdateTest {
+
     @Test
     public void testCanCreate() throws Exception {
         Date yesterday = DateUtils.addDays(new Date(), -1);
@@ -59,7 +60,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void shouldCloneBlocksAsIncluded(){
+    public void shouldCloneBlocksAsIncluded() {
         //given
         Community community = mock(Community.class);
         Update updateWithBlocks = new Update(addDays(new Date(), 1), community);

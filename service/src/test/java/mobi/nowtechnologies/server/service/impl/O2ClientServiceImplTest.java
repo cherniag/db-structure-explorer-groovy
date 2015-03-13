@@ -1,8 +1,11 @@
-
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -15,21 +18,18 @@ import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationE
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xerces.dom.ElementImpl;
-import org.apache.xerces.dom.TextImpl;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.web.client.RestTemplate;
 
 import javax.xml.transform.dom.DOMSource;
 
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.ElementImpl;
+import org.apache.xerces.dom.TextImpl;
+
+import org.springframework.web.client.RestTemplate;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
@@ -37,8 +37,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.eq;
 
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ O2ProviderServiceImpl.class})
+@PrepareForTest({O2ProviderServiceImpl.class})
 public class O2ClientServiceImplTest {
 
     private O2ProviderServiceImpl fixture;
@@ -63,8 +66,7 @@ public class O2ClientServiceImplTest {
 
 
     @Before
-    public void setUp()
-            throws Exception {
+    public void setUp() throws Exception {
         final Community community = CommunityFactory.createCommunity();
         community.setRewriteUrlParameter("o2");
         community.setName("o2");
@@ -92,8 +94,7 @@ public class O2ClientServiceImplTest {
 
     @SuppressWarnings("unchecked")
     //@Test
-    public void testValidatePhoneNumber_NotPromoted_Success()
-            throws Exception {
+    public void testValidatePhoneNumber_NotPromoted_Success() throws Exception {
 
         String phoneNumber = "07870111111";
         String expectedPhoneNumber = "+447870111111";
@@ -121,8 +122,7 @@ public class O2ClientServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testValidatePhoneNumber_PromotedWithSpaces_Success()
-            throws Exception {
+    public void testValidatePhoneNumber_PromotedWithSpaces_Success() throws Exception {
 
         String phoneNumber = "078 701 11111";
         String expectedPhoneNumber = "+447870111111";
@@ -155,8 +155,7 @@ public class O2ClientServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testValidatePhoneNumber_InvalidPhoneNumber_Failure()
-            throws Exception {
+    public void testValidatePhoneNumber_InvalidPhoneNumber_Failure() throws Exception {
 
         String phoneNumber = "0787011fff1111";
 
@@ -169,8 +168,9 @@ public class O2ClientServiceImplTest {
             fixture.validatePhoneNumber(phoneNumber);
             fail();
         } catch (Exception e) {
-            if(!(e instanceof InvalidPhoneNumberException))
+            if (!(e instanceof InvalidPhoneNumberException)) {
                 fail();
+            }
         }
 
         verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
@@ -179,8 +179,7 @@ public class O2ClientServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testValidatePhoneNumber_ShortInvalidPhoneNumber_Failure()
-            throws Exception {
+    public void testValidatePhoneNumber_ShortInvalidPhoneNumber_Failure() throws Exception {
 
         String phoneNumber = "0787011";
 
@@ -193,8 +192,9 @@ public class O2ClientServiceImplTest {
             fixture.validatePhoneNumber(phoneNumber);
             fail();
         } catch (Exception e) {
-            if(!(e instanceof InvalidPhoneNumberException))
+            if (!(e instanceof InvalidPhoneNumberException)) {
                 fail();
+            }
         }
 
         verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
@@ -203,8 +203,7 @@ public class O2ClientServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testValidatePhoneNumber_LimitPhoneNumber_Failure()
-            throws Exception {
+    public void testValidatePhoneNumber_LimitPhoneNumber_Failure() throws Exception {
 
         String phoneNumber = "07870111111";
 
@@ -217,8 +216,9 @@ public class O2ClientServiceImplTest {
             fixture.validatePhoneNumber(phoneNumber);
             fail();
         } catch (Exception e) {
-            if(!(e instanceof LimitPhoneNumberValidationException))
+            if (!(e instanceof LimitPhoneNumberValidationException)) {
                 fail();
+            }
         }
 
         verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
@@ -327,7 +327,7 @@ public class O2ClientServiceImplTest {
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
-    @Test(expected=ExternalServiceException.class)
+    @Test(expected = ExternalServiceException.class)
     public void getUserDetail_Fail() {
         String phoneNumber = "+447870111111";
         String otac_auth_code = "6666fasdffwqe";
@@ -340,7 +340,7 @@ public class O2ClientServiceImplTest {
     }
 
     @Test
-    public void testGetRedeemServerO2Url_Promoted_Success() throws Exception{
+    public void testGetRedeemServerO2Url_Promoted_Success() throws Exception {
         final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
@@ -353,7 +353,7 @@ public class O2ClientServiceImplTest {
     }
 
     @Test
-    public void testGetRedeemServerO2Url_NotPromoted_Success() throws Exception{
+    public void testGetRedeemServerO2Url_NotPromoted_Success() throws Exception {
         final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(false);
@@ -364,7 +364,6 @@ public class O2ClientServiceImplTest {
 
         Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), anyString());
     }
-
 
 
 }

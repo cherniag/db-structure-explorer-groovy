@@ -1,37 +1,62 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.Artist;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.FileType;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Label;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
+import mobi.nowtechnologies.server.persistence.repository.LabelRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.ChartService;
-import org.junit.Test;
-import org.springframework.test.web.servlet.ResultActions;
-
-import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-
 import static mobi.nowtechnologies.server.shared.enums.ChartType.BASIC_CHART;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.FIFTH_CHART;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
+
+import javax.annotation.Resource;
+
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
+import org.junit.*;
+import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // @author Titov Mykhaylo (titov) on 17.11.2014.
-public class ChartItemControllerIT extends AbstractAdminITTest{
+public class ChartItemControllerIT extends AbstractAdminITTest {
 
     static final String URL_DATE_TIME_FORMAT = "yyyy-MM-dd_HH:mm:ss";
 
-    @Resource(name = "service.ChartService") ChartService chartService;
-    @Resource ChartDetailRepository chartDetailRepository;
-    @Resource CommunityRepository communityRepository;
-    @Resource ChartRepository chartRepository;
-    @Resource GenreRepository genreRepository;
-    @Resource MediaRepository mediaRepository;
-    @Resource ArtistRepository artistRepository;
-    @Resource MediaFileRepository mediaFileRepository;
-    @Resource LabelRepository labelRepository;
+    @Resource(name = "service.ChartService")
+    ChartService chartService;
+    @Resource
+    ChartDetailRepository chartDetailRepository;
+    @Resource
+    CommunityRepository communityRepository;
+    @Resource
+    ChartRepository chartRepository;
+    @Resource
+    GenreRepository genreRepository;
+    @Resource
+    MediaRepository mediaRepository;
+    @Resource
+    ArtistRepository artistRepository;
+    @Resource
+    MediaFileRepository mediaFileRepository;
+    @Resource
+    LabelRepository labelRepository;
 
     @Test
     public void shouldReturnDuplicatedMediaAcrossNearestChartsDtos() throws Exception {
@@ -49,7 +74,9 @@ public class ChartItemControllerIT extends AbstractAdminITTest{
         Genre rockGenre = genreRepository.save(new Genre().withName("Rock"));
         Label label = labelRepository.findOne(1L);
 
-        Media media = mediaRepository.save(new Media().withIsrc("isrc").withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile).withGenre(rockGenre).withLabel(label).withTrackId(666L));
+        Media media = mediaRepository.save(
+            new Media().withIsrc("isrc").withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile)
+                       .withGenre(rockGenre).withLabel(label).withTrackId(666L));
 
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
 
@@ -78,6 +105,10 @@ public class ChartItemControllerIT extends AbstractAdminITTest{
 
         //then
         perform.andExpect(status().isOk());
-        perform.andExpect(content().string("{\"duplicatedMediaAcrossNearestChartsDtos\":[{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":86400000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":432000000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":0,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":518400000,\"position\":1,\"trackId\":\"isrc_666\"}],\"chartFilesURL\":\"http://c1129449.r49.cf3.rackcdn.com/\"}"));
+        perform.andExpect(content().string(
+            "{\"duplicatedMediaAcrossNearestChartsDtos\":[{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":86400000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":19," +
+            "\"chartName\":\"chart 1\",\"publishTimeMillis\":432000000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":0,\"position\":1," +
+            "\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":518400000,\"position\":1,\"trackId\":\"isrc_666\"}],\"chartFilesURL\":\"http://c1129449.r49" +
+            ".cf3.rackcdn.com/\"}"));
     }
 }

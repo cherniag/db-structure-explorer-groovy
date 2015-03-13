@@ -23,3 +23,8 @@ Feature: Successful user activation via Facebook in facebook supported communiti
     And In database user does not have payment details
     And In database user has log for applied promotion
     And In database user has facebook details the same as specified in facebook account
+
+  Scenario: Activation of new user via Facebook in facebook supported communities. API version above 6.10
+    Given Registered user with all devices using JSON and XML format for all facebook supported versions above 6.10 and facebook supported communities
+    When Registered user enters Facebook credentials
+    Then User receives additional facebook profile image url in the SIGN_IN_FACEBOOK response

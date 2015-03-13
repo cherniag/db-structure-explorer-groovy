@@ -7,45 +7,40 @@ import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtract
 import mobi.nowtechnologies.server.service.impl.details.VfNzProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.springframework.context.ApplicationContext;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.springframework.test.util.ReflectionTestUtils;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.CoreMatchers.is;
+
+import org.powermock.modules.junit4.PowerMockRunner;
+
 /**
- * User: Titov Mykhaylo (titov)
- * 30.09.13 17:20
+ * User: Titov Mykhaylo (titov) 30.09.13 17:20
  */
 @RunWith(PowerMockRunner.class)
 public class OtacValidationServiceImplTest {
 
-    private OtacValidationServiceImpl otacValidationServiceImplFixture;
-
     @Mock
     public O2ProviderService o2ProviderServiceMock;
-
     @Mock
     public VFOtacValidationService vfOtacValidationServiceMock;
-
     @Mock
     public CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
-
     @Mock
     public ApplicationContext applicationContext;
-
     public O2ProviderDetailsExtractor o2ProviderDetailsExtractor = new O2ProviderDetailsExtractor();
-
     public VfNzProviderDetailsExtractor vfNzProviderDetailsExtractor = new VfNzProviderDetailsExtractor();
+    private OtacValidationServiceImpl otacValidationServiceImplFixture;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         otacValidationServiceImplFixture = new OtacValidationServiceImpl();
         ReflectionTestUtils.setField(otacValidationServiceImplFixture, "messageSource", communityResourceBundleMessageSource);
         ReflectionTestUtils.setField(otacValidationServiceImplFixture, "applicationContext", applicationContext);
@@ -54,7 +49,7 @@ public class OtacValidationServiceImplTest {
     }
 
     @Test
-    public void shouldUseO2ProviderService(){
+    public void shouldUseO2ProviderService() {
         //given
         String otac = "otac";
         String phoneNumber = "phoneNumber";
@@ -78,7 +73,7 @@ public class OtacValidationServiceImplTest {
     }
 
     @Test
-    public void shouldUseVFNZProviderService(){
+    public void shouldUseVFNZProviderService() {
         //given
         String otac = "otac";
         String phoneNumber = "phoneNumber";

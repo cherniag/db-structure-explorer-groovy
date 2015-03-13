@@ -4,23 +4,21 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Future;
-
-public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
+public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendSMSQuartzJobBean.class);
 
@@ -35,14 +33,14 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     }
 
     private void process(JobExecutionContext context) {
-        try{
+        try {
             LogUtils.putClassNameMDC(this.getClass());
             init(context.getMergedJobDataMap());
             LOGGER.info("[START] Send SMS job started for [{}] community users", communityUrl);
             execute();
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }finally {
+        } finally {
             LOGGER.info("[FINISH] Send SMS job finished for [{}] community users", communityUrl);
             LogUtils.removeGlobalMDC();
         }
@@ -51,7 +49,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     private void init(JobDataMap jobDataMap) {
         paymentDetailsService = (PaymentDetailsService) jobDataMap.get("paymentDetailsService");
         communityUrl = (String) jobDataMap.get("communityURL");
-        paymentDetailsFetchSize = Integer.parseInt((String)jobDataMap.get("paymentDetailsFetchSize"));
+        paymentDetailsFetchSize = Integer.parseInt((String) jobDataMap.get("paymentDetailsFetchSize"));
         userNotificationService = (UserNotificationService) jobDataMap.get("userNotificationService");
     }
 
@@ -66,7 +64,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
             } catch (UnsupportedEncodingException e) {
                 LogUtils.putClassNameMDC(this.getClass());
                 LOGGER.error(e.getMessage(), e);
-            }finally {
+            } finally {
                 LogUtils.putClassNameMDC(this.getClass());
             }
         }

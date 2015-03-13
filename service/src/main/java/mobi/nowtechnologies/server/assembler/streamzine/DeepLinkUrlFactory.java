@@ -1,22 +1,29 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.InformationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsStoryDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.PlayableItemDeepLink;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
-import org.apache.commons.net.util.Base64;
-import org.springframework.util.Assert;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+
+import org.apache.commons.net.util.Base64;
+
+import org.springframework.util.Assert;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Composes URLs following this format:
  * <p/>
- * 1)
- * <protocol>://<content>/<subtype>?id=<[ISRC | News Timestamp | News story Id | Playlist type Id]>
+ * 1) <protocol>://<content>/<subtype>?id=<[ISRC | News Timestamp | News story Id | Playlist type Id]>
  * <p/>
- * 2)
- * <protocol>://[web | page]/<[page enum | base64 encoded URL]>?action=<ACTION>
+ * 2) <protocol>://[web | page]/<[page enum | base64 encoded URL]>?action=<ACTION>
  * <p/>
  * where <protocol> is "mq-app"
  */
@@ -35,7 +42,7 @@ public class DeepLinkUrlFactory {
         uriComponentsBuilder.host(FeatureValueType.CONTENT.getId());
         uriComponentsBuilder.pathSegment(ContentSubType.PLAYLIST.getName());
         uriComponentsBuilder.queryParam(ID, chartId);
-        if(action != null) {
+        if (action != null) {
             uriComponentsBuilder.queryParam(ACTION, action);
         }
         return uriComponentsBuilder.build().toUriString();

@@ -4,19 +4,20 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
 public class SoapFaultException extends SoapFaultClientException {
-	private static final long serialVersionUID = 1L;
 
-	private Object soapFaultObject;
+    private static final long serialVersionUID = 1L;
 
-	public SoapFaultException(SoapMessage faultMessage) {
-		super(faultMessage);
-	}
+    private Object soapFaultObject;
 
-	public Object getSoapFaultObject() {
-		return soapFaultObject;
-	}
+    public SoapFaultException(SoapMessage faultMessage) {
+        super(faultMessage);
+    }
 
-	public void setSoapFaultObject(Object soapFaultObject) {
-		this.soapFaultObject = soapFaultObject;
-	}
+    public Object getSoapFaultObject() {
+        return soapFaultObject;
+    }
+
+    public void setSoapFaultObject(Object soapFaultObject) {
+        this.soapFaultObject = soapFaultObject;
+    }
 }

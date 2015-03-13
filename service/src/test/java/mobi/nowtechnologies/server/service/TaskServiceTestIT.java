@@ -1,6 +1,12 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
@@ -9,34 +15,37 @@ import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
+import static java.lang.String.format;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import static org.junit.Assert.*;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 /**
- * User: gch
- * Date: 12/17/13
+ * User: gch Date: 12/17/13
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class TaskServiceTestIT {
+
     private static final String TASK_COUNT_QUERY = "select count(*) from tb_tasks t join tb_users u on t.user_id=u.i where u.i=%s and t.taskType='%s'";
     @Autowired
     private TaskService taskService;
@@ -126,16 +135,16 @@ public class TaskServiceTestIT {
         List<SendChargeNotificationTask> tasksIsReady = new ArrayList<SendChargeNotificationTask>();
         List<SendChargeNotificationTask> tasksInFuture = new ArrayList<SendChargeNotificationTask>();
         long now = System.currentTimeMillis();
-        for(int i = 1; i < 11; i++){
-            tasksIsReady.add(createAndStoreTask("vf_nz",now - i * 10000L));
+        for (int i = 1; i < 11; i++) {
+            tasksIsReady.add(createAndStoreTask("vf_nz", now - i * 10000L));
         }
-        for(int i = 1; i < 8; i++){
-            tasksInFuture.add(createAndStoreTask("vf_nz",now + i * 10000L));
+        for (int i = 1; i < 8; i++) {
+            tasksInFuture.add(createAndStoreTask("vf_nz", now + i * 10000L));
         }
         List<Task> taskToExecute = taskService.getTasksForExecution(now, 100);
         assertThat(taskToExecute.size(), is(10));
         assertThat(taskToExecute.get(0), instanceOf(SendChargeNotificationTask.class));
-        assertThat(((SendChargeNotificationTask)taskToExecute.get(0)).getUser(), notNullValue());
+        assertThat(((SendChargeNotificationTask) taskToExecute.get(0)).getUser(), notNullValue());
     }
 
     @Test
@@ -180,7 +189,7 @@ public class TaskServiceTestIT {
         assertThat(count, is(5L));
     }
 
-    private SendChargeNotificationTask createAndStoreTask(String communityUrl, long executionTimestamp){
+    private SendChargeNotificationTask createAndStoreTask(String communityUrl, long executionTimestamp) {
         Community community = createAndSaveCommunity(communityUrl);
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);

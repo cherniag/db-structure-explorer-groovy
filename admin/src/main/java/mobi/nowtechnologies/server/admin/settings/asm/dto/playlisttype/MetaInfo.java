@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype;
 
 public class MetaInfo {
+
     private boolean tracksInfoSupported;
     private boolean tracksPlayDurationSupported;
 

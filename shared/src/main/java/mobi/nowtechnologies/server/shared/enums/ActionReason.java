@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.server.shared.enums;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 13.08.13 14:28
+ * User: Titov Mykhaylo (titov) 13.08.13 14:28
  */
 public enum ActionReason {
     USER_DOWNGRADED_TARIFF("User downgraded tariff"),
@@ -10,8 +9,8 @@ public enum ActionReason {
 
     final String description;
 
-     ActionReason(String description) {
-         this.description = description;
+    ActionReason(String description) {
+        this.description = description;
     }
 
     public String getDescription() {

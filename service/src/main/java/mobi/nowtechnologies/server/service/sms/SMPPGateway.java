@@ -25,6 +25,11 @@ package mobi.nowtechnologies.server.service.sms;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+
 import com.sentaca.spring.smpp.BindConfiguration;
 import com.sentaca.spring.smpp.jsmpp.JSMPPGateway;
 import com.sentaca.spring.smpp.jsmpp.SMPPSession;
@@ -34,7 +39,14 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.bean.*;
+import org.jsmpp.bean.Alphabet;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.GeneralDataCoding;
+import org.jsmpp.bean.MessageClass;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
@@ -42,16 +54,16 @@ import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SessionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.smslib.*;
+import org.smslib.AGateway;
+import org.smslib.GatewayException;
+import org.smslib.OutboundBinaryMessage;
+import org.smslib.OutboundMessage;
 import org.smslib.OutboundMessage.FailureCauses;
 import org.smslib.OutboundMessage.MessageStatuses;
+import org.smslib.StatusReportMessage;
+import org.smslib.TimeoutException;
 import org.smslib.smpp.AbstractSMPPGateway;
 import org.smslib.smpp.BindAttributes;
-
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
 
 /**
  * A gateway that supports SMPP through JSMPP (http://code.google.com/p/jsmpp/).
@@ -86,8 +98,8 @@ public class SMPPGateway extends JSMPPGateway {
         this.smppMonitoringAgent = smppMonitoringAgent;
         this.useUdhi = useUdhi;
 
-        setAttributes(AGateway.GatewayAttributes.SEND | AGateway.GatewayAttributes.CUSTOMFROM | AGateway.GatewayAttributes.BIGMESSAGES
-                | AGateway.GatewayAttributes.FLASHSMS | AGateway.GatewayAttributes.RECEIVE);
+        setAttributes(AGateway.GatewayAttributes.SEND | AGateway.GatewayAttributes.CUSTOMFROM | AGateway.GatewayAttributes.BIGMESSAGES | AGateway.GatewayAttributes.FLASHSMS |
+                      AGateway.GatewayAttributes.RECEIVE);
         this.setSourceAddress(smscConfig.getSourceAddress());
         this.setDestinationAddress(smscConfig.getDestinationAddress());
         this.setProtocol(Protocols.PDU);
@@ -119,12 +131,24 @@ public class SMPPGateway extends JSMPPGateway {
         int minutes = cDate.get(Calendar.MINUTE);
         int seconds = cDate.get(Calendar.SECOND);
 
-        String yearsString = (years < 10) ? "0" + years : years + "";
-        String monthsString = (months < 10) ? "0" + months : months + "";
-        String daysString = (days < 10) ? "0" + days : days + "";
-        String hoursString = (hours < 10) ? "0" + hours : hours + "";
-        String minutedString = (minutes < 10) ? "0" + minutes : minutes + "";
-        String secondsString = (seconds < 10) ? "0" + seconds : seconds + "";
+        String yearsString = (years < 10) ?
+                             "0" + years :
+                             years + "";
+        String monthsString = (months < 10) ?
+                              "0" + months :
+                              months + "";
+        String daysString = (days < 10) ?
+                            "0" + days :
+                            days + "";
+        String hoursString = (hours < 10) ?
+                             "0" + hours :
+                             hours + "";
+        String minutedString = (minutes < 10) ?
+                               "0" + minutes :
+                               minutes + "";
+        String secondsString = (seconds < 10) ?
+                               "0" + seconds :
+                               seconds + "";
 
         return yearsString + monthsString + daysString + hoursString + minutedString + secondsString + "000R";
     }
@@ -160,10 +184,10 @@ public class SMPPGateway extends JSMPPGateway {
 
     private void initGateway() {
         BindConfiguration smscConfig = getSmscConfig();
-        if(agateway == null){
-            agateway = new AbstractSMPPGateway(smscConfig.getHost() + ":" + smscConfig.getPort() + ":" + smscConfig.getSystemId(), smscConfig.getHost(), smscConfig.getPort(), new BindAttributes(
-                    smscConfig.getSystemId(), smscConfig.getPassword(), smscConfig.getSystemType(), org.smslib.smpp.BindAttributes.BindType.TRANSCEIVER)) {
-            };
+        if (agateway == null) {
+            agateway = new AbstractSMPPGateway(smscConfig.getHost() + ":" + smscConfig.getPort() + ":" + smscConfig.getSystemId(), smscConfig.getHost(), smscConfig.getPort(),
+                                               new BindAttributes(smscConfig.getSystemId(), smscConfig.getPassword(), smscConfig.getSystemType(),
+                                                                  org.smslib.smpp.BindAttributes.BindType.TRANSCEIVER)) {};
         }
     }
 
@@ -270,14 +294,17 @@ public class SMPPGateway extends JSMPPGateway {
      * @throws IOException
      * @throws TimeoutException
      */
-    protected boolean submitShortMessage(OutboundMessage msg, GeneralDataCoding dataCoding, final RegisteredDelivery registeredDelivery, byte[] binaryContentPart,
-                                         ESMClass esmClass) throws IOException, TimeoutException {
+    protected boolean submitShortMessage(OutboundMessage msg, GeneralDataCoding dataCoding, final RegisteredDelivery registeredDelivery, byte[] binaryContentPart, ESMClass esmClass)
+        throws IOException, TimeoutException {
         try {
             String msgId = session.submitShortMessage(getSmscConfig().getServiceType(), TypeOfNumber.valueOf(sourceAddress.getTypeOfNumber().value()),
-                    NumberingPlanIndicator.valueOf(sourceAddress.getNumberingPlanIndicator().value()), (msg.getFrom() != null) ? msg.getFrom() : getFrom(),
-                    TypeOfNumber.valueOf(destinationAddress.getTypeOfNumber().value()),
-                    NumberingPlanIndicator.valueOf(destinationAddress.getNumberingPlanIndicator().value()), msg.getRecipient(), esmClass, (byte) 0,
-                    (byte) msg.getPriority(), null, formatTimeFromMillis(msg.getValidityPeriod()), registeredDelivery, (byte) 0, dataCoding, (byte) 0, binaryContentPart);
+                                                      NumberingPlanIndicator.valueOf(sourceAddress.getNumberingPlanIndicator().value()), (msg.getFrom() != null) ?
+                                                                                                                                         msg.getFrom() :
+                                                                                                                                         getFrom(),
+                                                      TypeOfNumber.valueOf(destinationAddress.getTypeOfNumber().value()),
+                                                      NumberingPlanIndicator.valueOf(destinationAddress.getNumberingPlanIndicator().value()), msg.getRecipient(), esmClass, (byte) 0,
+                                                      (byte) msg.getPriority(), null, formatTimeFromMillis(msg.getValidityPeriod()), registeredDelivery, (byte) 0, dataCoding, (byte) 0,
+                                                      binaryContentPart);
 
             msg.setRefNo(msgId);
             msg.setDispatchDate(new Date());
@@ -307,22 +334,15 @@ public class SMPPGateway extends JSMPPGateway {
     }
 
     @Override
-    public void setEnquireLink(int enquireLink) {
-        agateway.setEnquireLink(enquireLink);
-        if (session != null) {
-            session.setEnquireLinkTimer(enquireLink);
-        }
-    }
-
-    @Override
     public void startGateway() throws TimeoutException, GatewayException, IOException, InterruptedException {
         if (session == null || !session.getSessionState().isBound()) {
             initSession();
             if (enquireLink > 0) {
                 session.setEnquireLinkTimer(enquireLink);
             }
-            session.connectAndBind(host, port, new BindParameter(bindType, bindAttributes.getSystemId(), bindAttributes.getPassword(),
-                    bindAttributes.getSystemType(), bindTypeOfNumber, bindNumberingPlanIndicator, null));
+            session.connectAndBind(host, port,
+                                   new BindParameter(bindType, bindAttributes.getSystemId(), bindAttributes.getPassword(), bindAttributes.getSystemType(), bindTypeOfNumber, bindNumberingPlanIndicator,
+                                                     null));
         } else {
             org.smslib.helper.Logger.getInstance().logWarn("SMPP session already bound.", null, getGatewayId());
         }
@@ -340,10 +360,16 @@ public class SMPPGateway extends JSMPPGateway {
         smppMonitoringAgent.onGatewayShutdown(getGatewayId());
     }
 
-    //============================================ Delegation abstract implementation ==============================================================================//
-
     public int getAttributes() {
         return agateway.getAttributes();
+    }
+
+    //============================================ Delegation abstract implementation ==============================================================================//
+
+    public void setAttributes(int myAttributes) {
+        initGateway();
+
+        agateway.setAttributes(myAttributes);
     }
 
     public String getHost() {
@@ -362,6 +388,14 @@ public class SMPPGateway extends JSMPPGateway {
         return agateway.getEnquireLink();
     }
 
+    @Override
+    public void setEnquireLink(int enquireLink) {
+        agateway.setEnquireLink(enquireLink);
+        if (session != null) {
+            session.setEnquireLinkTimer(enquireLink);
+        }
+    }
+
     public org.smslib.smpp.Address getSourceAddress() {
         return agateway.getSourceAddress();
     }
@@ -376,12 +410,6 @@ public class SMPPGateway extends JSMPPGateway {
 
     public void setDestinationAddress(org.smslib.smpp.Address destinationAddress) {
         agateway.setDestinationAddress(destinationAddress);
-    }
-
-    public void setAttributes(int myAttributes) {
-        initGateway();
-
-        agateway.setAttributes(myAttributes);
     }
 
     public AGateway getMyself() {
@@ -450,8 +478,11 @@ public class SMPPGateway extends JSMPPGateway {
 
     public int sendMessages(Collection<OutboundMessage> msgList) throws TimeoutException, GatewayException, IOException, InterruptedException {
         int cnt = 0;
-        for (OutboundMessage msg : msgList)
-            if (sendMessage(msg)) cnt++;
+        for (OutboundMessage msg : msgList) {
+            if (sendMessage(msg)) {
+                cnt++;
+            }
+        }
         return cnt;
     }
 

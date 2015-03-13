@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.applicationtests.services.util;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
-
-import java.io.IOException;
 
 /**
  * @author kots

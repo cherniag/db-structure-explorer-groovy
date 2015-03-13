@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
-import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
@@ -12,38 +11,37 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.Recognize
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
+import org.junit.*;
+import org.junit.rules.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 3/24/14
+ * Author: Gennadii Cherniaiev Date: 3/24/14
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DeepLinkInfoServiceTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Mock
     private MediaRepository mediaRepository;
     @Mock
     private MessageRepository messageRepository;
     @InjectMocks
     private DeepLinkInfoService deepLinkInfoService;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testTryToHandleSecuredTileForSecuredAction() throws Exception {
@@ -65,7 +63,7 @@ public class DeepLinkInfoServiceTest {
         when(deepLinkInfo.isVip()).thenReturn(true);
         when(deepLinkInfo.getKey()).thenReturn(MusicType.PLAYLIST.name());
         when(deepLinkInfo.getContentType()).thenReturn(ContentType.MUSIC);
-        when(deepLinkInfo.getValue()).thenReturn("666#"+ PlayerType.REGULAR_PLAYER_ONLY);
+        when(deepLinkInfo.getValue()).thenReturn("666#" + PlayerType.REGULAR_PLAYER_ONLY);
 
         AccessPolicy accessPolicy = deepLinkInfoService.tryToHandleSecuredTile(deepLinkInfo);
 
@@ -116,7 +114,7 @@ public class DeepLinkInfoServiceTest {
         deepLinkInfoService.create(blockDto);
     }
 
-    private String composeIds(Integer ... ids) {
+    private String composeIds(Integer... ids) {
         return Joiner.on('#').join(ids);
     }
 

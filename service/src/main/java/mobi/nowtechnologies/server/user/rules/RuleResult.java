@@ -3,10 +3,10 @@ package mobi.nowtechnologies.server.user.rules;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/8/2014
+ * Author: Gennadii Cherniaiev Date: 4/8/2014
  */
 public class RuleResult<T> {
+
     public static final RuleResult FAIL_RESULT = new RuleResult(false, null);
 
     private final boolean isSuccessful;
@@ -27,9 +27,6 @@ public class RuleResult<T> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("isSuccessful", isSuccessful)
-                .append("result", result)
-                .toString();
+        return new ToStringBuilder(this).append("isSuccessful", isSuccessful).append("result", result).toString();
     }
 }

@@ -32,8 +32,3 @@
         <span><s:message code='button.feedback.title' /></span>
     </a>
 </div>
-
-
-
-
-

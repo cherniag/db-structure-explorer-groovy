@@ -10,33 +10,37 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.MessageSource;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
 
 import static java.util.Collections.singletonList;
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
+
+import org.springframework.context.MessageSource;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.Mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.MockitoAnnotations.initMocks;
+
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PrepareForTest(StreamzineUpdateAdminAsm.class)
 @RunWith(PowerMockRunner.class)
 public class StreamzineUpdateAdminAsmTest {
 
-    @Mock MessageSource messageSourceMock;
-    @Mock StreamzineAdminMediaAsm streamzineAdminMediaAsmMock;
+    @Mock
+    MessageSource messageSourceMock;
+    @Mock
+    StreamzineAdminMediaAsm streamzineAdminMediaAsmMock;
 
-    @InjectMocks StreamzineUpdateAdminAsm streamzineUpdateAdminAsm;
+    @InjectMocks
+    StreamzineUpdateAdminAsm streamzineUpdateAdminAsm;
 
     @Before
     public void setUp() {

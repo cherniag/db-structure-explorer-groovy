@@ -163,36 +163,7 @@ $(function() {
     }
 
     //-----------------Select All Checkbox------------//
-    var checkAllInput = $("input#selectAll[type=checkbox]");
-    var otherCheckboxes = $("input[id!='selectAll'][type='checkbox']");
-    if(checkAllInput){
-        var updateCheckAll = function() {
-            var allchecked = null;
-            otherCheckboxes.each(function(i) {
-                var checked = $(this).attr("checked");
-                checked = checked ? true : false;
-                if(allchecked == null)
-                    allchecked = checked;
-                else if(allchecked != checked){
-                    allchecked = null;
-                    return false;
-                }
-            });
-
-            if(allchecked != null){
-                checkAllInput.attr("checked",allchecked);
-            }
-        }
-
-        checkAllInput.change(function(){
-            var checked = $(this).attr("checked");
-            otherCheckboxes.each(function(i) {
-                $(this).attr("checked", checked ? true : false);
-            });
-        });
-        otherCheckboxes.change(updateCheckAll);
-        updateCheckAll();
-    }
+    initSelectAll();
   //-----------------Toggle button-----------------//
   $('.toggleButton').toggleButtons({
     transitionspeed: "500%"
@@ -292,6 +263,39 @@ $(function() {
       } 
   });
 });
+
+function initSelectAll(){
+    var checkAllInput = $("input#selectAll[type=checkbox]");
+    var otherCheckboxes = $("input[id!='selectAll'][type='checkbox']");
+    if(checkAllInput){
+        var updateCheckAll = function() {
+            var allChecked = null;
+            otherCheckboxes.each(function(i) {
+                var checked = $(this).attr("checked");
+                checked = checked ? true : false;
+                if(allChecked == null)
+                    allChecked = checked;
+                else if(allChecked != checked){
+                    allChecked = null;
+                    return false;
+                }
+            });
+
+            if(allChecked != null){
+                checkAllInput.attr("checked",allChecked);
+            }
+        };
+
+        checkAllInput.change(function(){
+            var checked = $(this).attr("checked");
+            otherCheckboxes.each(function(i) {
+                $(this).attr("checked", checked ? true : false);
+            });
+        });
+        otherCheckboxes.change(updateCheckAll);
+        updateCheckAll();
+    }
+}
 
 var Main = function() {
   return {

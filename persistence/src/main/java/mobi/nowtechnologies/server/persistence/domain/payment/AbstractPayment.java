@@ -2,220 +2,210 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @MappedSuperclass
 public abstract class AbstractPayment {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPayment.class);
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long i;
-	
-	private String internalTxId;
-	
-	private String externalTxId;
-	
-	private BigDecimal amount;
 
-	private long timestamp;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPayment.class);
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "paymentDetailsId")
+    protected PaymentDetails paymentDetails;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long i;
+    private String internalTxId;
+    private String externalTxId;
+    private BigDecimal amount;
+    private long timestamp;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
+    private User user;
+    @Column(insertable = false, updatable = false)
+    private int userId;
+    @Embedded
+    private Period period;
+    private Integer offerId;
+    private String currencyISO;
+    private String paymentSystem;
+    @Enumerated(EnumType.STRING)
+    private PaymentDetailsType type;
+    @Column(insertable = false, updatable = false)
+    private Long paymentDetailsId;
 
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="userId")
-	private User user;
-	
-	@Column(insertable=false, updatable=false)
-	private int userId;
+    public AbstractPayment() {
+        internalTxId = UUID.randomUUID().toString().replaceAll("-", "");
+    }
 
-	@Embedded
-	private Period period;
-	
-	private Integer offerId;
-	
-	private String currencyISO;
-	
-	private String paymentSystem;
-	
-	@Enumerated(EnumType.STRING)
-	private PaymentDetailsType type;
-	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="paymentDetailsId")
-	protected PaymentDetails paymentDetails;
-	
-	@Column(insertable=false, updatable=false)
-	private Long paymentDetailsId; 
-	
-	public AbstractPayment() {
-		internalTxId = UUID.randomUUID().toString().replaceAll("-",	"");
-	}
+    public static List<PaymentHistoryItemDto> toPaymentHistoryItemDto(List<AbstractPayment> abstractPayments) {
+        LOGGER.debug("input parameters abstractPayments: [{}]", abstractPayments);
 
-	public Long getI() {
-		return i;
-	}
+        List<PaymentHistoryItemDto> paymentHistoryItemDtos = new LinkedList<PaymentHistoryItemDto>();
+        for (AbstractPayment abstractPayment : abstractPayments) {
+            paymentHistoryItemDtos.add(abstractPayment.toPaymentHistoryItemDto());
+        }
 
-	public void setI(Long i) {
-		this.i = i;
-	}
+        LOGGER.debug("Output parameter paymentHistoryItemDtos=[{}]", paymentHistoryItemDtos);
+        return paymentHistoryItemDtos;
+    }
 
-	public String getInternalTxId() {
-		return internalTxId;
-	}
+    public Long getI() {
+        return i;
+    }
 
-	public void setInternalTxId(String internalTxId) {
-		this.internalTxId = internalTxId;
-	}
+    public void setI(Long i) {
+        this.i = i;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public String getInternalTxId() {
+        return internalTxId;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-	
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public void setInternalTxId(String internalTxId) {
+        this.internalTxId = internalTxId;
+    }
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-		if(user!=null) userId=user.getId();
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public String getCurrencyISO() {
-		return currencyISO;
-	}
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public void setCurrencyISO(String currencyISO) {
-		this.currencyISO = currencyISO;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public String getPaymentSystem() {
-		return paymentSystem;
-	}
+    public void setUser(User user) {
+        this.user = user;
+        if (user != null) {
+            userId = user.getId();
+        }
+    }
 
-	public void setPaymentSystem(String paymentSystem) {
-		this.paymentSystem = paymentSystem;
-	}
+    public String getCurrencyISO() {
+        return currencyISO;
+    }
 
-	public PaymentDetailsType getType() {
-		return type;
-	}
+    public void setCurrencyISO(String currencyISO) {
+        this.currencyISO = currencyISO;
+    }
 
-	public void setType(PaymentDetailsType type) {
-		this.type = type;
-	}
+    public String getPaymentSystem() {
+        return paymentSystem;
+    }
 
-	public String getExternalTxId() {
-		return externalTxId;
-	}
+    public void setPaymentSystem(String paymentSystem) {
+        this.paymentSystem = paymentSystem;
+    }
 
-	public void setExternalTxId(String externalTxId) {
-		this.externalTxId = externalTxId;
-	}
+    public PaymentDetailsType getType() {
+        return type;
+    }
 
-	public int getUserId() {
-		return userId;
-	}
+    public void setType(PaymentDetailsType type) {
+        this.type = type;
+    }
 
-	public Integer getOfferId() {
-		return offerId;
-	}
+    public String getExternalTxId() {
+        return externalTxId;
+    }
 
-	public void setOfferId(Integer offerId) {
-		this.offerId = offerId;
-	}
+    public void setExternalTxId(String externalTxId) {
+        this.externalTxId = externalTxId;
+    }
 
-	public PaymentDetails getPaymentDetails() {
-		return paymentDetails;
-	}
+    public int getUserId() {
+        return userId;
+    }
 
-	public void setPaymentDetails(PaymentDetails paymentDetails) {
-		this.paymentDetails = paymentDetails;
-		if (paymentDetails != null)
-			paymentDetailsId = paymentDetails.getI();
-	}
+    public Integer getOfferId() {
+        return offerId;
+    }
 
-	public Period getPeriod() {
-		return period;
-	}
+    public void setOfferId(Integer offerId) {
+        this.offerId = offerId;
+    }
 
-	public void setPeriod(Period period) {
-		this.period = period;
-	}
+    public PaymentDetails getPaymentDetails() {
+        return paymentDetails;
+    }
 
-	public boolean isRetry(){
+    public void setPaymentDetails(PaymentDetails paymentDetails) {
+        this.paymentDetails = paymentDetails;
+        if (paymentDetails != null) {
+            paymentDetailsId = paymentDetails.getI();
+        }
+    }
+
+    public Period getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Period period) {
+        this.period = period;
+    }
+
+    public boolean isRetry() {
         return RETRY.equals(type);
     }
 
     public PaymentHistoryItemDto toPaymentHistoryItemDto() {
-		PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
+        PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
 
-		paymentHistoryItemDto.setTransactionId(internalTxId);
-		paymentHistoryItemDto.setDate(new Date(timestamp));
-		if (type.equals(PaymentDetailsType.FIRST))
-			paymentHistoryItemDto.setDescription("1");
-		else
-			paymentHistoryItemDto.setDescription("2");
-		paymentHistoryItemDto.setDuration(period.getDuration());
-		paymentHistoryItemDto.setDurationUnit(period.getDurationUnit());
-		paymentHistoryItemDto.setPaymentMethod(paymentSystem);
-		paymentHistoryItemDto.setAmount(amount);
+        paymentHistoryItemDto.setTransactionId(internalTxId);
+        paymentHistoryItemDto.setDate(new Date(timestamp));
+        if (type.equals(PaymentDetailsType.FIRST)) {
+            paymentHistoryItemDto.setDescription("1");
+        } else {
+            paymentHistoryItemDto.setDescription("2");
+        }
+        paymentHistoryItemDto.setDuration(period.getDuration());
+        paymentHistoryItemDto.setDurationUnit(period.getDurationUnit());
+        paymentHistoryItemDto.setPaymentMethod(paymentSystem);
+        paymentHistoryItemDto.setAmount(amount);
 
-		LOGGER.debug("Output parameter paymentHistoryItemDto=[{}]", paymentHistoryItemDto);
-		return paymentHistoryItemDto;
-	}
+        LOGGER.debug("Output parameter paymentHistoryItemDto=[{}]", paymentHistoryItemDto);
+        return paymentHistoryItemDto;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-				.append("i", i)
-				.append("internalTxId", internalTxId)
-				.append("externalTxId", externalTxId)
-				.append("amount", amount)
-				.append("timestamp", timestamp)
-				.append("userId", userId)
-				.append("period", period)
-				.append("offerId", offerId)
-				.append("currencyISO", currencyISO)
-				.append("paymentSystem", paymentSystem)
-				.append("type", type)
-				.append("paymentDetails", paymentDetails)
-				.append("paymentDetailsId", paymentDetailsId)
-				.toString();
-	}
-
-	public static List<PaymentHistoryItemDto> toPaymentHistoryItemDto(List<AbstractPayment> abstractPayments) {
-		LOGGER.debug("input parameters abstractPayments: [{}]", abstractPayments);
-		
-		List<PaymentHistoryItemDto> paymentHistoryItemDtos = new LinkedList<PaymentHistoryItemDto>();
-		for (AbstractPayment abstractPayment : abstractPayments) {
-			paymentHistoryItemDtos.add(abstractPayment.toPaymentHistoryItemDto());
-		}
-		
-		LOGGER.debug("Output parameter paymentHistoryItemDtos=[{}]", paymentHistoryItemDtos);
-		return paymentHistoryItemDtos;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("i", i).append("internalTxId", internalTxId).append("externalTxId", externalTxId).append("amount", amount)
+                                                                          .append("timestamp", timestamp).append("userId", userId).append("period", period).append("offerId", offerId)
+                                                                          .append("currencyISO", currencyISO).append("paymentSystem", paymentSystem).append("type", type)
+                                                                          .append("paymentDetails", paymentDetails).append("paymentDetailsId", paymentDetailsId).toString();
+    }
 }

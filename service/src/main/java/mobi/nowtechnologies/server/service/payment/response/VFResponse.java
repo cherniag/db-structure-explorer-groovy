@@ -2,6 +2,9 @@ package mobi.nowtechnologies.server.service.payment.response;
 
 import mobi.nowtechnologies.server.shared.Parser;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.util.DeliveryReceiptState;
@@ -9,47 +12,25 @@ import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @author Alexander Kolpakov
- * 
  */
 public class VFResponse extends PaymentSystemResponse implements Parser<DeliverSm, VFResponse> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(VFResponse.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VFResponse.class);
 
-	private String phoneNumber;
+    private String phoneNumber;
 
-    public static VFResponse futureResponse() {
-        return new VFResponse();
-    }
+    protected VFResponse(DeliverSm deliverSm, BasicResponse response) {
+        super(response, false);
 
-	public static VFResponse failResponse(final String message) {
-		final VFResponse failVFResponse = new VFResponse(null, new BasicResponse() {
-			@Override
-			public int getStatusCode() {
-				return HttpServletResponse.SC_OK;
-			}
-
-			@Override
-			public String getMessage() {
-				return message;
-			}
-		});
-		return failVFResponse;
-	}
-
-	protected VFResponse(DeliverSm deliverSm, BasicResponse response) {
-		super(response, false);
-
-        if(deliverSm != null){
+        if (deliverSm != null) {
             try {
-                phoneNumber = "+"+deliverSm.getSourceAddr();
+                phoneNumber = "+" + deliverSm.getSourceAddr();
                 DeliveryReceipt deliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
                 isSuccessful = deliveryReceipt.getFinalStatus() == DeliveryReceiptState.ACCEPTD || deliveryReceipt.getFinalStatus() == DeliveryReceiptState.DELIVRD;
 
-                if(!isSuccessful){
+                if (!isSuccessful) {
                     descriptionError = deliveryReceipt.getFinalStatus().toString();
                     errorCode = deliveryReceipt.getError();
                 }
@@ -59,17 +40,36 @@ public class VFResponse extends PaymentSystemResponse implements Parser<DeliverS
             }
         }
 
-	}
+    }
 
     protected VFResponse() {
         super(null, true);
     }
 
+    public static VFResponse futureResponse() {
+        return new VFResponse();
+    }
+
+    public static VFResponse failResponse(final String message) {
+        final VFResponse failVFResponse = new VFResponse(null, new BasicResponse() {
+            @Override
+            public int getStatusCode() {
+                return HttpServletResponse.SC_OK;
+            }
+
+            @Override
+            public String getMessage() {
+                return message;
+            }
+        });
+        return failVFResponse;
+    }
+
     @Override
     public String toString() {
         return "VFResponse{" +
-                "phoneNumber='" + phoneNumber + '\'' +
-                "} " + super.toString();
+               "phoneNumber='" + phoneNumber + '\'' +
+               "} " + super.toString();
     }
 
     public String getPhoneNumber() {

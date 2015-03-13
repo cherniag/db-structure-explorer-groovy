@@ -1,18 +1,21 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.server.shared.dto.admin.ArtistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaFileDto;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
-import org.junit.Test;
-import org.springframework.http.MediaType;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.MediaType;
+
+import org.junit.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,8 +35,8 @@ public class ITunesLinksControllerIT extends AbstractAdminITTest {
         List<ChartItemDto> dto = new ArrayList<ChartItemDto>();
         dto.add(buildDto("", "a", "a", ""));
         mockMvc.perform(post("/validateITunesLinks").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)).
-                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
-                andExpect(status().isBadRequest()).andDo(print()).andExpect(jsonPath("$.[0].message").value("[0]"));
+            cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
+                   andExpect(status().isBadRequest()).andDo(print()).andExpect(jsonPath("$.[0].message").value("[0]"));
     }
 
     @Test
@@ -42,8 +45,8 @@ public class ITunesLinksControllerIT extends AbstractAdminITTest {
         List<ChartItemDto> dto = new ArrayList<ChartItemDto>();
         dto.add(buildDto("", "Appcast", "a", ""));
         mockMvc.perform(post("/validateITunesLinks").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)).
-                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
-                andExpect(status().isOk());
+            cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
+                   andExpect(status().isOk());
     }
 
     private ChartItemDto buildDto(String itunesUrl, String channel, String artistName, String label) {

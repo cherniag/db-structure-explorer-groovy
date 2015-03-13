@@ -4,16 +4,17 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.task.TaskExecutor;
+import static mobi.nowtechnologies.server.service.payment.response.InternalErrorResponse.createErrorResponse;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static mobi.nowtechnologies.server.service.payment.response.InternalErrorResponse.createErrorResponse;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.core.task.TaskExecutor;
 
 public class PendingPaymentExecutor {
 
@@ -24,8 +25,7 @@ public class PendingPaymentExecutor {
     private TaskExecutor executor;
 
     /**
-     * Adding a pending payment to task executor,
-     * where PendingPayment according to PaymentSystem will be carried out
+     * Adding a pending payment to task executor, where PendingPayment according to PaymentSystem will be carried out
      *
      * @param pendingPayment - the payment that should be carried out
      */
@@ -81,14 +81,9 @@ public class PendingPaymentExecutor {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this)
-                    .append("i", pendingPayment.getI())
-                    .append("userId", pendingPayment.getUserId())
-                    .append("paymentSystem", pendingPayment.getPaymentSystem())
-                    .append("internalTxId", pendingPayment.getInternalTxId())
-                    .append("timestamp", new Date(pendingPayment.getTimestamp()))
-                    .append("expireMillis", new Date(pendingPayment.getExpireTimeMillis()))
-                    .toString();
+            return new ToStringBuilder(this).append("i", pendingPayment.getI()).append("userId", pendingPayment.getUserId()).append("paymentSystem", pendingPayment.getPaymentSystem())
+                                            .append("internalTxId", pendingPayment.getInternalTxId()).append("timestamp", new Date(pendingPayment.getTimestamp()))
+                                            .append("expireMillis", new Date(pendingPayment.getExpireTimeMillis())).toString();
         }
     }
 }

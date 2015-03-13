@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,9 +12,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import java.io.IOException;
-import java.util.List;
-
 public class ListValueWrapperDeserializer extends JsonDeserializer<ListValueWrapper> {
 
     @Override
@@ -20,7 +20,7 @@ public class ListValueWrapperDeserializer extends JsonDeserializer<ListValueWrap
 
         ListValueWrapper wrapper = new ListValueWrapper();
 
-        if(node instanceof ArrayNode) {
+        if (node instanceof ArrayNode) {
             ArrayNode n = (ArrayNode) node;
             List<JsonNode> elements = Lists.newArrayList(n.elements());
 

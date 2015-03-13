@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.junit.*;
+import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -12,12 +13,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/8/2014
+ * Author: Gennadii Cherniaiev Date: 4/8/2014
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-public class SubscriptionCampaignRepositoryIT{
+@ContextConfiguration(locations = {"/META-INF/dao-test.xml"})
+public class SubscriptionCampaignRepositoryIT {
 
     @Autowired
     private SubscriptionCampaignRepository subscriptionCampaignRepository;

@@ -5,16 +5,18 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 /**
- * User: gch
- * Date: 12/17/13
+ * User: gch Date: 12/17/13
  */
 public class Scheduler {
-    private CommunityResourceBundleMessageSource messageSource;
+
     private static final String SCHEDULE_PERIOD_IN_MILLIS_PROPERTY = ".schedule.period.in.millis";
+    private CommunityResourceBundleMessageSource messageSource;
 
     public void scheduleTask(String communityRewriteUrl, Task task) {
         long executeInterval = getExecutionInterval(communityRewriteUrl, task);
-        long taskCreationTimestamp = task.getCreationTimestamp() != 0 ? task.getCreationTimestamp() : System.currentTimeMillis();
+        long taskCreationTimestamp = task.getCreationTimestamp() != 0 ?
+                                     task.getCreationTimestamp() :
+                                     System.currentTimeMillis();
         task.setExecutionTimestamp(taskCreationTimestamp + executeInterval);
     }
 

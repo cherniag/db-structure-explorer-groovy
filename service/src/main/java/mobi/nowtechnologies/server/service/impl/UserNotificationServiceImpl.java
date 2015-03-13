@@ -68,8 +68,9 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     }
 
     public void setAvailableCommunities(String[] availableCommunities) {
-        if (availableCommunities == null)
+        if (availableCommunities == null) {
             return;
+        }
 
         this.availableCommunities = Arrays.asList(availableCommunities);
     }
@@ -115,11 +116,11 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     public Future<Boolean> notifyUserAboutSuccessfulPayment(User user) {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
-            if (user == null)
+            if (user == null) {
                 throw new NullPointerException("The parameter user is null");
+            }
 
-            LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity()
-                    .getName()), UserNotificationService.class);
+            LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity().getName()), UserNotificationService.class);
 
             Future<Boolean> result;
             try {
@@ -131,7 +132,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.info("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -145,10 +146,12 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
 
-            if (user == null)
+            if (user == null) {
                 throw new NullPointerException("The parameter user is null");
-            if (user.getCurrentPaymentDetails() == null)
+            }
+            if (user.getCurrentPaymentDetails() == null) {
                 throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
+            }
 
             final UserGroup userGroup = user.getUserGroup();
             final Community community = userGroup.getCommunity();
@@ -161,8 +164,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
             Integer days = Days.daysBetween(new DateTime(Utils.getEpochMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
             if (!rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")) {
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.after.text",
-                        new String[]{paymentsUrl, days.toString()});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.after.text", new String[] {paymentsUrl, days.toString()});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The unsubscription confirmation sms was sent successfully");
@@ -175,7 +177,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -188,10 +190,12 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     public Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
-            if (user == null)
+            if (user == null) {
                 throw new NullPointerException("The parameter user is null");
-            if (user.getCurrentPaymentDetails() == null)
+            }
+            if (user.getCurrentPaymentDetails() == null) {
                 throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
+            }
 
             final UserGroup userGroup = user.getUserGroup();
             final Community community = userGroup.getCommunity();
@@ -210,7 +214,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 String currencyISO = paymentPolicy.getCurrencyISO();
                 String shortCode = paymentPolicy.getShortCode();
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subCost, durationUnitPart, shortCode});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] {unsubscribeUrl, currencyISO, subCost, durationUnitPart, shortCode});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The subscription confirmation sms was sent successfully");
@@ -223,7 +227,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -233,7 +237,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     private String getDurationUnitPart(Community community, Period period) {
         String code = PeriodMessageKeyBuilder.of(period.getDurationUnit()).getMessageKey(period);
-        return messageSource.getMessage(community.getRewriteUrlParameter(), code, new String[]{String.valueOf(period.getDuration())}, null);
+        return messageSource.getMessage(community.getRewriteUrlParameter(), code, new String[] {String.valueOf(period.getDuration())}, null);
     }
 
     @Async
@@ -241,17 +245,20 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     public Future<Boolean> sendSmsOnFreeTrialExpired(User user) throws UnsupportedEncodingException {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
-            if (user == null)
+            if (user == null) {
                 throw new NullPointerException("The parameter user is null");
+            }
 
             final mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = user.getStatus();
             final String userStatusName = userStatus.getName();
             final List<PaymentDetails> paymentDetailsList = user.getPaymentDetailsList();
 
-            if (userStatusName == null)
+            if (userStatusName == null) {
                 throw new NullPointerException("The parameter userStatusName is null");
-            if (paymentDetailsList == null)
+            }
+            if (paymentDetailsList == null) {
                 throw new NullPointerException("The parameter paymentDetailsList is null");
+            }
 
             final UserGroup userGroup = user.getUserGroup();
             final Community community = userGroup.getCommunity();
@@ -262,7 +269,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             if (userStatusName.equals(UserStatus.LIMITED.name()) && paymentDetailsList.isEmpty()) {
                 if (!rejectDevice(user, "sms.notification.limited.not.for.device.type")) {
 
-                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.freeTrialExpired.text", new String[]{paymentsUrl});
+                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.freeTrialExpired.text", new String[] {paymentsUrl});
 
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The free trial expired sms was sent successfully");
@@ -278,7 +285,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -293,15 +300,15 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         Future<Boolean> futureResult = null;
         try {
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-            if (!rejectDevice(user, "sms.notification.charge.reminder.not.for.device.type")){
+            if (!rejectDevice(user, "sms.notification.charge.reminder.not.for.device.type")) {
                 boolean result = sendSMSWithUrl(user, "sms.charge.reminder.text", null);
-                if(result){
+                if (result) {
                     LOGGER.info("Charge notification reminder has been sent");
                     futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
-                }else {
+                } else {
                     LOGGER.warn("Charge notification reminder was failed");
                 }
-            }else{
+            } else {
                 LOGGER.warn("Charge notification reminder was rejected for device type {}", user.getDeviceTypeIdString());
             }
         } catch (RuntimeException e) {
@@ -310,7 +317,9 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         } finally {
             LogUtils.removeGlobalMDC();
         }
-        return futureResult != null ? futureResult : new AsyncResult<Boolean>(Boolean.FALSE);
+        return futureResult != null ?
+               futureResult :
+               new AsyncResult<Boolean>(Boolean.FALSE);
     }
 
     @Async
@@ -319,10 +328,12 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
 
-            if (user == null)
+            if (user == null) {
                 throw new NullPointerException("The parameter user is null");
-            if (user.getCurrentPaymentDetails() == null)
+            }
+            if (user.getCurrentPaymentDetails() == null) {
                 throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
+            }
 
             final UserGroup userGroup = user.getUserGroup();
             final Community community = userGroup.getCommunity();
@@ -348,7 +359,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -359,7 +370,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     @Async
     @Override
     public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
-        try{
+        try {
             LOGGER.info("Start send payment fail SMS: {}", pendingPayment);
             PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
             User user = pendingPayment.getUser();
@@ -371,7 +382,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
             if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter())) {
                 return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails));
-            }else{
+            } else {
                 LOGGER.info("The payment fail sms for vf_nz community user wasn't sent cause it should be send between 8am and 8 pm by separate job");
             }
         } catch (Exception e) {
@@ -380,7 +391,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             LogUtils.removeGlobalMDC();
         }
         return new AsyncResult<Boolean>(Boolean.FALSE);
-     }
+    }
 
     @Override
     @Transactional
@@ -401,7 +412,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
                 if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
                     String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
-                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[]{paymentsUrl, shortCode});
+                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[] {paymentsUrl, shortCode});
 
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The payment fail sms was sent successfully");
@@ -417,7 +428,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
             return wasSmsSentSuccessfully;
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LogUtils.removeGlobalMDC();
@@ -454,7 +465,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                     smsPrefix = "sms.downgrade.freetrial.text";
                 }
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{paymentsUrl});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[] {paymentsUrl});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The downgrade sms was sent successfully");
@@ -467,7 +478,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -491,7 +502,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
             if (!rejectDevice(user, "sms.notification.activation.pin.not.for.device.type")) {
                 String smsPrefix = "sms.activation.pin.text.for." + community.getRewriteUrlParameter();
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{null, user.getPin()});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[] {null, user.getPin()});
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The activation pin sms was sent successfully");
                     result = new AsyncResult<Boolean>(Boolean.TRUE);
@@ -503,7 +514,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
@@ -514,8 +525,9 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
         LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
 
-        if (msgCode == null)
+        if (msgCode == null) {
             throw new NullPointerException("The parameter msgCode is null");
+        }
 
         final UserGroup userGroup = user.getUserGroup();
         Community community = userGroup.getCommunity();
@@ -527,7 +539,9 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
                 if (availableCommunities.contains(communityUrl)) {
 
-                    String baseUrl = msgArgs != null ? msgArgs[0] : null;
+                    String baseUrl = msgArgs != null ?
+                                     msgArgs[0] :
+                                     null;
                     if (baseUrl != null) {
                         String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
                         String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
@@ -561,7 +575,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                     LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
                 }
             } else {
-                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[]{user.getMobile(), communityUrl});
+                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
             }
         } else {
             LOGGER.info("The sms wasn't sent cause rejecting");
@@ -575,7 +589,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         Community community = user.getUserGroup().getCommunity();
         String communityUrl = community.getRewriteUrlParameter();
         String devices = messageSource.getMessage(communityUrl, code, null, null, null);
-        if(devices != null){
+        if (devices != null) {
             for (String device : devices.split(",")) {
                 if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
                     LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);

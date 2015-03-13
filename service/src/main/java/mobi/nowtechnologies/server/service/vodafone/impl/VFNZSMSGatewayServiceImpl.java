@@ -1,18 +1,22 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import com.sentaca.spring.smpp.mt.MTMessage;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.sms.*;
+import mobi.nowtechnologies.server.service.sms.SMPPMessage;
+import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
+import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
+import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
+import mobi.nowtechnologies.server.service.sms.SMSResponse;
+
+import com.sentaca.spring.smpp.mt.MTMessage;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/7/13
- * Time: 10:03 AM
+ * User: Alexsandr_Kolpakov Date: 10/7/13 Time: 10:03 AM
  */
 public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse> {
+
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private SMPPServiceImpl smppService;
@@ -26,8 +30,8 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
         return send(new SMPPMessage(originator, numbers, message, smscDeliveryReceipt, expireTimeMillis));
     }
 
-    protected SMSResponse send(MTMessage messageObject){
-        LOGGER.info("start sending sms [{}], [{}], [{}]", messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
+    protected SMSResponse send(MTMessage messageObject) {
+        LOGGER.debug("start sending sms [{}], [{}], [{}]", new Object[] {messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
         boolean result = false;
         try {
             result = smppService.sendMessage(messageObject);

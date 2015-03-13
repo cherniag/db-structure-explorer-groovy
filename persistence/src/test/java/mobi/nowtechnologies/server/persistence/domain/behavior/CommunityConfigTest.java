@@ -1,13 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain.behavior;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class CommunityConfigTest {
+
     @Test
     public void testRequiresBehaviorConfigChange() throws Exception {
         CommunityConfig communityConfigDefFree = createCommunityConfig(BehaviorConfigType.DEFAULT);

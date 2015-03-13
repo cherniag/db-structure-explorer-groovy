@@ -4,23 +4,28 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 10/10/2014
+ * Author: Gennadii Cherniaiev Date: 10/10/2014
  */
 @Service
 public class NewsHttpService extends AbstractHttpService {
-    public <T> ResponseEntity<T> getNews(UserDeviceData deviceData, PhoneState state, Class<T> responseType){
+
+    public <T> ResponseEntity<T> getNews(UserDeviceData deviceData, PhoneState state, Class<T> responseType) {
         MultiValueMap<String, String> parameters = getParametersMultiValueMap(state);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getUri(deviceData, "GET_NEWS", deviceData.getFormat()));
         for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
@@ -37,7 +42,7 @@ public class NewsHttpService extends AbstractHttpService {
         return body;
     }
 
-    public <T> ResponseEntity<T> postNews(UserDeviceData deviceData, PhoneState state, Class<T> responseType){
+    public <T> ResponseEntity<T> postNews(UserDeviceData deviceData, PhoneState state, Class<T> responseType) {
         String uri = getUri(deviceData, "GET_NEWS", deviceData.getFormat());
         HttpEntity<MultiValueMap> httpEntity = createHttpEntity(state);
 

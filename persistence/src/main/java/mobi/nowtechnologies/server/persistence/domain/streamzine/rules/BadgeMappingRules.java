@@ -15,9 +15,22 @@ public enum BadgeMappingRules {
     private ShapeType shapeType;
     private List<TypeToSubTypePair> typePairs;
 
-    BadgeMappingRules(ShapeType shapeType, TypeToSubTypePair ... pairs) {
+    BadgeMappingRules(ShapeType shapeType, TypeToSubTypePair... pairs) {
         this.shapeType = shapeType;
         this.typePairs = Arrays.asList(pairs);
+    }
+
+    public static boolean allowed(ShapeType shapeType, ContentType contentType, Enum<?> subType) {
+        for (BadgeMappingRules rule : values()) {
+            if (rule.shapeType == shapeType) {
+                for (TypeToSubTypePair typePair : rule.typePairs) {
+                    if (typePair.getContentType() == contentType && typePair.getSubType() == subType) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public ShapeType getShapeType() {
@@ -26,18 +39,5 @@ public enum BadgeMappingRules {
 
     public List<TypeToSubTypePair> getTypePairs() {
         return new ArrayList<TypeToSubTypePair>(typePairs);
-    }
-
-    public static boolean allowed(ShapeType shapeType, ContentType contentType, Enum<?> subType) {
-        for (BadgeMappingRules rule : values()) {
-            if(rule.shapeType == shapeType) {
-                for (TypeToSubTypePair typePair : rule.typePairs) {
-                    if(typePair.getContentType() == contentType && typePair.getSubType() == subType) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

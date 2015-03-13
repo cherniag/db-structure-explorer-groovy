@@ -1,12 +1,23 @@
 package mobi.nowtechnologies.server.persistence.domain.referral;
 
-import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import java.util.Date;
+
+import com.google.common.base.Preconditions;
+
+import org.springframework.util.Assert;
 
 /**
  * Created by zam on 12/17/2014.
@@ -26,10 +37,7 @@ public class UserReferralsSnapshot {
     private int currentReferrals;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "referrals_duration")),
-            @AttributeOverride(name = "unit", column = @Column(name = "referrals_duration_type"))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "amount", column = @Column(name = "referrals_duration")), @AttributeOverride(name = "unit", column = @Column(name = "referrals_duration_type"))})
     private Duration referralsDuration;
 
     @Column(name = "matched_timestamp")
@@ -85,13 +93,11 @@ public class UserReferralsSnapshot {
     public boolean isActual(Date time) {
         Assert.notNull(time);
 
-        return isMatched() && (
-                hasNoDuration() || getReferralsExpiresDate().after(time)
-        );
+        return isMatched() && (hasNoDuration() || getReferralsExpiresDate().after(time));
     }
 
     public Date getMatchedDate() {
-        if(matchedDate == null) {
+        if (matchedDate == null) {
             return null;
         } else {
             return new Date(matchedDate.getTime());
@@ -101,28 +107,26 @@ public class UserReferralsSnapshot {
     @Override
     public String toString() {
         return "UserReferralsSnapshot{" +
-                "userId=" + userId +
-                ", matchedDate=" + matchedDate +
-                ", referralsDuration=" + referralsDuration +
-                ", requiredReferrals=" + requiredReferrals +
-                '}';
+               "userId=" + userId +
+               ", matchedDate=" + matchedDate +
+               ", referralsDuration=" + referralsDuration +
+               ", requiredReferrals=" + requiredReferrals +
+               '}';
     }
 
     public Date getReferralsExpiresDate() {
         Preconditions.checkState(isMatched(), "Referrals was not matched. Check is it before");
         Preconditions.checkState(!hasNoDuration(), "Referrals has no duration. Check is it before");
 
-        return DateTimeUtils.moveDate(
-                getMatchedDate(), DateTimeUtils.GMT_TIME_ZONE_ID,
-                referralsDuration.getAmount(), referralsDuration.getUnit());
+        return DateTimeUtils.moveDate(getMatchedDate(), DateTimeUtils.GMT_TIME_ZONE_ID, referralsDuration.getAmount(), referralsDuration.getUnit());
     }
 
     public boolean includes(Date start, Date end) {
         Assert.notNull(start);
         Preconditions.checkState(isMatched(), "Check if it is already matched");
 
-        if(getMatchedDate().getTime() <= start.getTime()) {
-            if(end == null) {
+        if (getMatchedDate().getTime() <= start.getTime()) {
+            if (end == null) {
                 return hasNoDuration();
             } else {
                 return hasNoDuration() || getReferralsExpiresDate().getTime() >= end.getTime();

@@ -2,29 +2,34 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import static java.lang.Integer.parseInt;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
-public class SonyDDEXParserTest extends ParserTest{
+import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import org.springframework.core.io.ClassPathResource;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
+public class SonyDDEXParserTest extends ParserTest {
+
+    public static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd");
     private Map<String, DropTrack> resultDropTrackMap;
     private String expectedAlbum;
     private Type expectedDropTrackType;
@@ -33,8 +38,6 @@ public class SonyDDEXParserTest extends ParserTest{
     private Map<String, Map<Integer, DropAssetFile>> expectedDropAssetsMap;
     private Map<String, Map<Integer, DropTerritory>> expectedTerritoriesMap;
     private Map<String, List<DropAssetFile>> dropAssetsByResourceReferenceMap;
-
-    public static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd");
 
     public void createParser() throws FileNotFoundException {
         parserFixture = new SonyDDEXParser("classpath:media/sony_cdu/ern.v3.4.1/");
@@ -178,29 +181,29 @@ public class SonyDDEXParserTest extends ParserTest{
         assertNotNull(resultDropTrack.territories);
         assertEquals(expectedDropAssetFiles.size(), resultDropTrack.files.size());
         j = 0;
-        for (DropTerritory territory: resultDropTrack.territories) {
+        for (DropTerritory territory : resultDropTrack.territories) {
             validateTerritory(territory, j, resourceRef);
             j++;
         }
     }
 
-    private void validateAssetFile(DropAssetFile file, Integer j, String resourceRef){
-          Map<Integer, DropAssetFile> expectedMap = expectedDropAssetsMap.get(resourceRef);
+    private void validateAssetFile(DropAssetFile file, Integer j, String resourceRef) {
+        Map<Integer, DropAssetFile> expectedMap = expectedDropAssetsMap.get(resourceRef);
 
-          if(expectedMap != null){
-              DropAssetFile expected = expectedMap.get(j);
+        if (expectedMap != null) {
+            DropAssetFile expected = expectedMap.get(j);
 
-              assertEquals(expected.file, file.file);
-              assertEquals(expected.type, file.type);
-              assertEquals(expected.isrc, file.isrc);
-              assertEquals(expected.md5, file.md5);
-          }
+            assertEquals(expected.file, file.file);
+            assertEquals(expected.type, file.type);
+            assertEquals(expected.isrc, file.isrc);
+            assertEquals(expected.md5, file.md5);
+        }
     }
 
-    private void validateTerritory(DropTerritory territory, Integer j, String resourceRef){
+    private void validateTerritory(DropTerritory territory, Integer j, String resourceRef) {
         Map<Integer, DropTerritory> expectedMap = expectedTerritoriesMap.get(resourceRef);
 
-        if(expectedMap != null){
+        if (expectedMap != null) {
             DropTerritory expected = expectedMap.get(j);
 
             assertEquals(expected.country, territory.country);
@@ -217,33 +220,36 @@ public class SonyDDEXParserTest extends ParserTest{
         }
     }
 
-    private Map<String,Map<Integer,DropAssetFile>> getExpectedDropAssetsMap() throws IOException {
-        Map<String,Map<Integer,DropAssetFile>> map = new HashMap<String, Map<Integer, DropAssetFile>>();
+    private Map<String, Map<Integer, DropAssetFile>> getExpectedDropAssetsMap() throws IOException {
+        Map<String, Map<Integer, DropAssetFile>> map = new HashMap<String, Map<Integer, DropAssetFile>>();
 
-        Map<Integer,DropAssetFile> assetMap = new HashMap<Integer, DropAssetFile>();
+        Map<Integer, DropAssetFile> assetMap = new HashMap<Integer, DropAssetFile>();
         map.put("A1", assetMap);
 
         String dirVersionAbsolutePath = new ClassPathResource("media/sony_cdu/ern.v3.4.1/").getFile().getAbsolutePath();
 
-        assetMap.put(0, createDropAssetFile(AssetFile.FileType.PREVIEW, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10413_SoundRecording_001-001.aac", "FIBMB9100008", "e2767ec5f8a5ac0116c88f8b8e6dc533"));
-        assetMap.put(1, createDropAssetFile(AssetFile.FileType.DOWNLOAD, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-11006_SoundRecording_001-001.mp3", "FIBMB9100008", "3a2e576a50ea0d80444108a11cd6b134"));
-        assetMap.put(2, createDropAssetFile(AssetFile.FileType.MOBILE, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10253_SoundRecording_001-001.m4a", "FIBMB9100008", "19b6c9dbdd030d608d9710c215d1c648"));
+        assetMap.put(0, createDropAssetFile(AssetFile.FileType.PREVIEW, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10413_SoundRecording_001-001.aac", "FIBMB9100008",
+                                            "e2767ec5f8a5ac0116c88f8b8e6dc533"));
+        assetMap.put(1, createDropAssetFile(AssetFile.FileType.DOWNLOAD, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-11006_SoundRecording_001-001.mp3", "FIBMB9100008",
+                                            "3a2e576a50ea0d80444108a11cd6b134"));
+        assetMap.put(2, createDropAssetFile(AssetFile.FileType.MOBILE, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10253_SoundRecording_001-001.m4a", "FIBMB9100008",
+                                            "19b6c9dbdd030d608d9710c215d1c648"));
         assetMap.put(3, createDropAssetFile(AssetFile.FileType.IMAGE, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10026_Image.jpg", null, "68eac0c555283fd215cff48321815ad0"));
 
         return map;
     }
 
-    private Map<String,Map<Integer,DropTerritory>> getExpectedTerritoryMap() throws ParseException {
-        Map<String,Map<Integer, DropTerritory>> map = new HashMap<String, Map<Integer, DropTerritory>>();
+    private Map<String, Map<Integer, DropTerritory>> getExpectedTerritoryMap() throws ParseException {
+        Map<String, Map<Integer, DropTerritory>> map = new HashMap<String, Map<Integer, DropTerritory>>();
 
-        Map<Integer,DropTerritory> assetMap = new HashMap<Integer, DropTerritory>();
+        Map<Integer, DropTerritory> assetMap = new HashMap<Integer, DropTerritory>();
         map.put("A1", assetMap);
         assetMap.put(0, createDropTerritory());
 
         return map;
     }
 
-    private DropAssetFile createDropAssetFile(AssetFile.FileType type, String file, String isrc, String md5){
+    private DropAssetFile createDropAssetFile(AssetFile.FileType type, String file, String isrc, String md5) {
         DropAssetFile dropAssetFile = new DropAssetFile();
 
         dropAssetFile.type = type;
@@ -255,7 +261,7 @@ public class SonyDDEXParserTest extends ParserTest{
     }
 
     private DropTerritory createDropTerritory() throws ParseException {
-        DropTerritory dropTerritory= new DropTerritory();
+        DropTerritory dropTerritory = new DropTerritory();
 
         dropTerritory.country = "GB";
         dropTerritory.label = "RCA Camden";

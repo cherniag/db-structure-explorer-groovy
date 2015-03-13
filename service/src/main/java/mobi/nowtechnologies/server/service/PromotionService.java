@@ -5,7 +5,14 @@ import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
+import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.PromoCode;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserBanned;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
@@ -15,41 +22,43 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.user.rules.*;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import java.util.*;
-
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import mobi.nowtechnologies.server.user.rules.RuleResult;
+import mobi.nowtechnologies.server.user.rules.TriggerType;
 import static mobi.nowtechnologies.server.builder.PromoParamsBuilder.PromoParams;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
-import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.Validate.notNull;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-public class PromotionService extends ConfigurationAwareService <PromotionService.PromotionTriggerType,Promotion> {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
+public class PromotionService extends ConfigurationAwareService<PromotionService.PromotionTriggerType, Promotion> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
-	
-	private PromotionDao promotionDao;
-	private EntityService entityService;
+
+    private PromotionDao promotionDao;
+    private EntityService entityService;
     private UserService userService;
     private CommunityResourceBundleMessageSource messageSource;
     private PromotionRepository promotionRepository;
@@ -58,12 +67,12 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
     private CommunityService communityService;
 
     public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
+        this.entityService = entityService;
+    }
 
-	public void setPromotionDao(PromotionDao promotionDao) {
-		this.promotionDao = promotionDao;
-	}
+    public void setPromotionDao(PromotionDao promotionDao) {
+        this.promotionDao = promotionDao;
+    }
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -85,155 +94,154 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         this.deviceService = deviceService;
     }
 
-    public static enum PromotionTriggerType implements TriggerType {
-        AUTO_OPT_IN;
-    }
-
     public Promotion getActivePromotion(String promotionCode, String communityName) {
-		notNull(promotionCode, "The parameter promotionCode is null");
-		notNull(communityName, "The parameter communityName is null");
+        notNull(promotionCode, "The parameter promotionCode is null");
+        notNull(communityName, "The parameter communityName is null");
         LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, communityName);
 
-		Community community = communityService.getCommunityByName(communityName);
+        Community community = communityService.getCommunityByName(communityName);
 
-		UserGroup userGroup = entityService.findByProperty(UserGroup.class,	UserGroup.Fields.communityId.toString(), community.getId());
+        UserGroup userGroup = entityService.findByProperty(UserGroup.class, UserGroup.Fields.communityId.toString(), community.getId());
 
         Promotion promotion = promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
         return promotion;
-	}
-
-	@Transactional(propagation= REQUIRED)
-	public Promotion getPromotionForUser(final String communityName, User user) {
-		LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
-		
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-		int userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId();
-		
-		List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(userGroupId);
-		List<Promotion> promotions = new LinkedList<Promotion>();
-			for (Promotion currentPromotion : promotionWithFilters) {
-				List<AbstractFilter> filters = currentPromotion.getFilters();
-				boolean filtered=true;
-				for (AbstractFilter filter : filters) {
-					if(!(filtered = filter.doFilter(user, null))) break;
-				}
-				if (filtered) {
-					promotions.add(currentPromotion);
-				}
-			}
-			
-		Promotion resPromotion = null;
-		for (Promotion promotion : promotions) {
-			List<AbstractFilter> filters = promotion.getFilters();
-			for (AbstractFilter abstractFilter : filters) {
-				if (abstractFilter instanceof FreeTrialPeriodFilter) {
-					resPromotion = promotion;
-					break;
-				}
-			}
-		}
-			
-		
-		if (resPromotion==null) resPromotion= (promotions.size()>0)?promotions.get(0):null;
-		LOGGER.info("Output parameter resPromotion=[{}]", resPromotion);
-		return resPromotion;
-	}
-	
-	@Transactional(propagation= REQUIRED)
-	public User applyPromotion(User user) {
-		if (null != user.getPotentialPromotion()) {
-			user.setPotentialPromotion(null);
-			user = entityService.updateEntity(user);
-		}
-		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		if (null!=currentPaymentDetails && null != currentPaymentDetails.getPromotionPaymentPolicy()) {
-			currentPaymentDetails.setPromotionPaymentPolicy(null);
-			entityService.updateEntity(currentPaymentDetails);
-		}
-		return user;
-	}
-	
-	@Transactional(propagation= REQUIRED)
-	public synchronized Promotion incrementUserNumber(Promotion promotion) {
-		if (null != promotion) {
-			promotion.setNumUsers(promotion.getNumUsers()+1);
-			return entityService.updateEntity(promotion);
-		}
-		return null;
-	}
+    }
 
     @Transactional(propagation = REQUIRED)
-    public User applyPotentialPromo(User user){
+    public Promotion getPromotionForUser(final String communityName, User user) {
+        LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
+
+        Community community = CommunityDao.getMapAsNames().get(communityName);
+        int userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId();
+
+        List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(userGroupId);
+        List<Promotion> promotions = new LinkedList<Promotion>();
+        for (Promotion currentPromotion : promotionWithFilters) {
+            List<AbstractFilter> filters = currentPromotion.getFilters();
+            boolean filtered = true;
+            for (AbstractFilter filter : filters) {
+                if (!(filtered = filter.doFilter(user, null))) {
+                    break;
+                }
+            }
+            if (filtered) {
+                promotions.add(currentPromotion);
+            }
+        }
+
+        Promotion resPromotion = null;
+        for (Promotion promotion : promotions) {
+            List<AbstractFilter> filters = promotion.getFilters();
+            for (AbstractFilter abstractFilter : filters) {
+                if (abstractFilter instanceof FreeTrialPeriodFilter) {
+                    resPromotion = promotion;
+                    break;
+                }
+            }
+        }
+
+
+        if (resPromotion == null) {
+            resPromotion = (promotions.size() > 0) ?
+                           promotions.get(0) :
+                           null;
+        }
+        LOGGER.info("Output parameter resPromotion=[{}]", resPromotion);
+        return resPromotion;
+    }
+
+    @Transactional(propagation = REQUIRED)
+    public User applyPromotion(User user) {
+        if (null != user.getPotentialPromotion()) {
+            user.setPotentialPromotion(null);
+            user = entityService.updateEntity(user);
+        }
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+        if (null != currentPaymentDetails && null != currentPaymentDetails.getPromotionPaymentPolicy()) {
+            currentPaymentDetails.setPromotionPaymentPolicy(null);
+            entityService.updateEntity(currentPaymentDetails);
+        }
+        return user;
+    }
+
+    @Transactional(propagation = REQUIRED)
+    public synchronized Promotion incrementUserNumber(Promotion promotion) {
+        if (null != promotion) {
+            promotion.setNumUsers(promotion.getNumUsers() + 1);
+            return entityService.updateEntity(promotion);
+        }
+        return null;
+    }
+
+    @Transactional(propagation = REQUIRED)
+    public User applyPotentialPromo(User user) {
         if (userService.canActivateVideoTrial(user)) {
             user = skipPrevDataAndApplyPromotionForO24GConsumer(user);
-        }else {
+        } else {
             user = applyPotentialPromo(user, user.getUserGroup().getCommunity());
         }
         return user;
     }
-    
+
     @Transactional(propagation = REQUIRED)
-    public User activateVideoAudioFreeTrial(User user){
+    public User activateVideoAudioFreeTrial(User user) {
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
             user = skipPrevDataAndApplyPromotionForO24GConsumer(user);
             isPromotionApplied = user.isPromotionApplied();
-        }else{
-            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action")
-                    .addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
+        } else {
+            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action").addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
         }
-        if (!isPromotionApplied){
+        if (!isPromotionApplied) {
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
         return user;
     }
 
-    private User skipPrevDataAndApplyPromotionForO24GConsumer(User user){
-        if(user.isOnAudioBoughtPeriod()){
+    private User skipPrevDataAndApplyPromotionForO24GConsumer(User user) {
+        if (user.isOnAudioBoughtPeriod()) {
             LOGGER.info("User is on audio bought period");
             user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-        }
-        else if (user.isOnFreeTrial()) {
+        } else if (user.isOnFreeTrial()) {
             LOGGER.info("User is on free trial");
             userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-        }
-        else if (user.hasActivePaymentDetails()){
+        } else if (user.hasActivePaymentDetails()) {
             LOGGER.info("User has active payment details");
             userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
         }
         return applyPromotionForO24GConsumer(user);
     }
 
-    private User applyPromotionForO24GConsumer(User user){
+    private User applyPromotionForO24GConsumer(User user) {
         Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
         LOGGER.info("Promotion to apply [{}]", promotion);
-        if (isNotNull(promotion)){
+        if (isNotNull(promotion)) {
             user = applyPromotionByPromoCode(user, promotion);
         }
         return user;
     }
 
-    private Promotion setVideoAudioPromotionForO24GConsumer(User user){
+    private Promotion setVideoAudioPromotionForO24GConsumer(User user) {
         final Promotion promotion;
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
-        if(StringUtils.hasText(messageCodeForPromoCode)){
-            String promoCode = messageSource.getMessage(user.getCommunityRewriteUrl(), messageCodeForPromoCode,null, null, null);
+        if (StringUtils.hasText(messageCodeForPromoCode)) {
+            String promoCode = messageSource.getMessage(user.getCommunityRewriteUrl(), messageCodeForPromoCode, null, null, null);
             promotion = setPotentialPromoByPromoCode(user, promoCode);
-        }else{
+        } else {
             promotion = null;
             LOGGER.error("Couldn't find promotion code for [{}]", messageCodeForPromoCode);
         }
         return promotion;
     }
-    
+
     public String getVideoCodeForO24GConsumer(User user) {
         final String messageCodeForPromoCode;
         ContractChannel contractChannel = user.getContractChannel();
         String contract = user.getContract().name();
-        if (contractChannel == null){
+        if (contractChannel == null) {
             LOGGER.warn("The user contract channel is null, DIRECT will be used");
             messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
-        }else{
+        } else {
             messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
         }
         LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
@@ -242,10 +250,11 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
 
     @Transactional(propagation = REQUIRED)
     public User applyInitialPromotion(User user) {
-        LOGGER.debug("input parameters user: [{}]", new Object[]{user});
+        LOGGER.debug("input parameters user: [{}]", new Object[] {user});
 
-        if (user == null)
+        if (user == null) {
             throw new NullPointerException("The parameter user is null");
+        }
 
         if (UserStatusDao.LIMITED.equals(user.getStatus().getName())) {
 
@@ -261,8 +270,8 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
     @Transactional(propagation = REQUIRED)
     public boolean updatePromotionNumUsers(Promotion promotion) {
         int updatedRowsCount = promotionRepository.updatePromotionNumUsers(promotion);
-        if (updatedRowsCount!=1){
-            throw new ServiceException("Couldn't update promotion [" + promotion +"] numUsers ");
+        if (updatedRowsCount != 1) {
+            throw new ServiceException("Couldn't update promotion [" + promotion + "] numUsers ");
         }
         return true;
     }
@@ -281,14 +290,15 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
         String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
 
-        if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
+        if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode)) {
             promotion = setPotentialPromoByPromoCode(user, staffCode);
-        else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
+        } else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode)) {
             promotion = setPotentialPromoByPromoCode(user, storeCode);
-        else if (user.isO2User() || user.isVFNZUser())
+        } else if (user.isO2User() || user.isVFNZUser()) {
             promotion = setPotentialPromoByMessageCode(user, "promotionCode");
-        else
+        } else {
             promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
+        }
 
         return applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(freeTrialStartedTimestampSeconds).createPromoParams());
     }
@@ -360,8 +370,9 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
             throw new IllegalArgumentException("No promotion found");
         }
 
-        if(couldNotBeApplied(user, promotion)){
-            throw new ServiceException("Couldn't apply promotion for ["+ promotion + "]. Probably because last applied promotion was on the same media type and this promo couldn't be applied multiple times");
+        if (couldNotBeApplied(user, promotion)) {
+            throw new ServiceException(
+                "Couldn't apply promotion for [" + promotion + "]. Probably because last applied promotion was on the same media type and this promo couldn't be applied multiple times");
         }
 
         final PromoCode promoCode = promotion.getPromoCode();
@@ -373,7 +384,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         user.setFreeTrialExpiredMillis(secondsToMillis(nextSubPayment));
         user.setPotentialPromoCodePromotion(null);
 
-        if(isVideoAndMusicPromoCode(promoCode)){
+        if (isVideoAndMusicPromoCode(promoCode)) {
             user.setVideoFreeTrialHasBeenActivated(true);
         }
 
@@ -396,13 +407,13 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         return userBannedRepository.findOne(userId);
     }
 
-    private boolean couldNotBeApplied(User user, Promotion promotion){
+    private boolean couldNotBeApplied(User user, Promotion promotion) {
         return !promotion.isCouldBeAppliedMultipleTimes() && arePromotionMediaTypesTheSame(user.getLastPromo(), promotion.getPromoCode());
     }
 
-    private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){
-        boolean arePromotionMediaTypesTheSame = isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType())
-                && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
+    private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode) {
+        boolean arePromotionMediaTypesTheSame = isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType()) &&
+                                                lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
         LOGGER.info("Are found and last applied promotions have the same media type: [{}]", arePromotionMediaTypesTheSame);
         return arePromotionMediaTypesTheSame;
     }
@@ -448,7 +459,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         User applyPromotionByPromoCodeUser = applyPromotionByPromoCode(user, userPromotion);
 
         boolean isPromotionApplied = applyPromotionByPromoCodeUser.isPromotionApplied();
-        if (isPromotionApplied){
+        if (isPromotionApplied) {
             userService.processAccountCheckCommandForAuthorizedUser(user.getId());
         }
     }
@@ -470,5 +481,9 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
 
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
+    }
+
+    public static enum PromotionTriggerType implements TriggerType {
+        AUTO_OPT_IN;
     }
 }

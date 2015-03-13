@@ -12,12 +12,24 @@ import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.ABSOLUTE;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.CI;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.EMI;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.EMI_UMG;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.FUGA;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.IODA;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.MANUAL;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.MOS;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.SONY;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.SONY_DDEX;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.UNIVERSAL;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.WARNER;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.WARNER_OLD;
 
 import java.io.FileNotFoundException;
 
-import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.*;
-
 public class IParserFactory {
+
     private String sonyRoot;
     private String warnerOldRoot;
     private String universalRoot;
@@ -57,7 +69,7 @@ public class IParserFactory {
             return new SonyDDEXParser(sonyDDEXRoot);
         } else if (ABSOLUTE == name) {
             return new AbsoluteParser(absoluteRoot);
-        } else if (MOS == name){
+        } else if (MOS == name) {
             final String root = mosRoot;
             return new SonyDDEXParser(root);
         }
@@ -93,10 +105,10 @@ public class IParserFactory {
     public void setEmiRoot(String emiRoot) {
         this.emiRoot = emiRoot;
     }
-    
-	public void setEmiUmgRoot(String emiUmgRoot) {
-		this.emiUmgRoot = emiUmgRoot;
-	}
+
+    public void setEmiUmgRoot(String emiUmgRoot) {
+        this.emiUmgRoot = emiUmgRoot;
+    }
 
     public void setIodaRoot(String iodaRoot) {
         this.iodaRoot = iodaRoot;

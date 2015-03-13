@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType
 import java.util.Date;
 
 public class ChartBehaviorInfo implements Comparable<ChartBehaviorInfo> {
+
     Date validFrom;
     ChartBehaviorType chartBehaviorType;
     String lockedAction;
@@ -60,14 +61,26 @@ public class ChartBehaviorInfo implements Comparable<ChartBehaviorInfo> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChartBehaviorInfo)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChartBehaviorInfo)) {
+            return false;
+        }
 
         ChartBehaviorInfo that = (ChartBehaviorInfo) o;
 
-        if (chartBehaviorType != that.chartBehaviorType) return false;
-        if (lockedAction != null ? !lockedAction.equals(that.lockedAction) : that.lockedAction != null) return false;
-        if (!validFrom.equals(that.validFrom)) return false;
+        if (chartBehaviorType != that.chartBehaviorType) {
+            return false;
+        }
+        if (lockedAction != null ?
+            !lockedAction.equals(that.lockedAction) :
+            that.lockedAction != null) {
+            return false;
+        }
+        if (!validFrom.equals(that.validFrom)) {
+            return false;
+        }
 
         return true;
     }
@@ -76,17 +89,19 @@ public class ChartBehaviorInfo implements Comparable<ChartBehaviorInfo> {
     public int hashCode() {
         int result = validFrom.hashCode();
         result = 31 * result + chartBehaviorType.hashCode();
-        result = 31 * result + (lockedAction != null ? lockedAction.hashCode() : 0);
+        result = 31 * result + (lockedAction != null ?
+                                lockedAction.hashCode() :
+                                0);
         return result;
     }
 
     @Override
     public String toString() {
         return "ChartBehaviorInfo{" +
-                "validFrom=" + validFrom +
-                ", chartBehaviorType=" + chartBehaviorType +
-                ", lockedAction='" + lockedAction + '\'' +
-                ", userStatusType=" + userStatusType +
-                '}';
+               "validFrom=" + validFrom +
+               ", chartBehaviorType=" + chartBehaviorType +
+               ", lockedAction='" + lockedAction + '\'' +
+               ", userStatusType=" + userStatusType +
+               '}';
     }
 }

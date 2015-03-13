@@ -15,18 +15,21 @@ import mobi.nowtechnologies.applicationtests.services.http.news.json.JsonNewsRes
 import mobi.nowtechnologies.applicationtests.services.http.news.xml.XmlNewsResponse;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+
+import javax.annotation.Resource;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public abstract class ClientDevicesSet {
+
     // helpers
     @Resource
     protected UserDataCreator userDataCreator;
@@ -47,19 +50,29 @@ public abstract class ClientDevicesSet {
     //
     // Flow operations
     //
-    public void accountCheck(UserDeviceData userDeviceData){
+    public void accountCheck(UserDeviceData userDeviceData) {
         final PhoneStateImpl state = states.get(userDeviceData);
-        state.accountCheck = accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
+        state.accountCheck =
+            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
     }
 
-    public void accountCheckFromIOS(UserDeviceData userDeviceData, String iTunesReceipt){
+    public void accountCheckWithUrbanAirshipToken(UserDeviceData userDeviceData, String urbanAirshipToken) {
         final PhoneStateImpl state = states.get(userDeviceData);
-        state.accountCheck = accountCheckHttpService.accountCheckFromIOS(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(), iTunesReceipt);
+
+        state.accountCheck = accountCheckHttpService
+            .accountCheckWithUrbanAirshipToken(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(),
+                                               urbanAirshipToken);
+    }
+
+    public void accountCheckFromIOS(UserDeviceData userDeviceData, String iTunesReceipt) {
+        final PhoneStateImpl state = states.get(userDeviceData);
+        state.accountCheck = accountCheckHttpService
+            .accountCheckFromIOS(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(), iTunesReceipt);
     }
 
 
     public ResponseEntity<String> serviceConfig(UserDeviceData userDeviceData, String header, ApiVersions apiVersions) {
-        if(apiVersions.above("6.8").contains(userDeviceData.getApiVersion())) {
+        if (apiVersions.above("6.8").contains(userDeviceData.getApiVersion())) {
             return serviceConfigHttpService.serviceConfigXUserAgent(userDeviceData, header);
         } else {
             return serviceConfigHttpService.serviceConfigUserAgent(userDeviceData, header);
@@ -70,6 +83,10 @@ public abstract class ClientDevicesSet {
     // Sign up
     //
     public void singup(UserDeviceData deviceData) {
+        singup(deviceData, null, null, false, userDataCreator.generateDeviceUID());
+    }
+
+    public void singupWithUrbanAirshipToken(UserDeviceData deviceData, String urbanAirshipToken) {
         singup(deviceData, null, null, false, userDataCreator.generateDeviceUID());
     }
 
@@ -93,13 +110,12 @@ public abstract class ClientDevicesSet {
         PhoneStateImpl state = states.get(deviceData);
 
         // signup device could be called twice for the same device when user changes the phone (different device uid or changes the api version)
-        if(state == null) {
+        if (state == null) {
             state = new PhoneStateImpl();
             state.email = userDataCreator.generateEmail();
             state.deviceUID = deviceUID;
             states.put(deviceData, state);
-        }
-        else if (overrideDeviceUID) {
+        } else if (overrideDeviceUID) {
             state.deviceUID = deviceUID;
         }
 
@@ -125,13 +141,13 @@ public abstract class ClientDevicesSet {
         return chartHttpService.getChart(deviceData, state, resolution, httpMethod);
     }
 
-    public NewsDetailDto[] getNews(UserDeviceData deviceData, ApiVersions allVersions){
+    public NewsDetailDto[] getNews(UserDeviceData deviceData, ApiVersions allVersions) {
         final PhoneState state = states.get(deviceData);
 
         boolean needToSendGet = allVersions.above("6.3").contains(deviceData.getApiVersion());
 
-        if(deviceData.getFormat().json()) {
-            if(needToSendGet) {
+        if (deviceData.getFormat().json()) {
+            if (needToSendGet) {
                 ResponseEntity<JsonNewsResponse> entity = newsHttpService.getNews(deviceData, state, JsonNewsResponse.class);
                 return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
             } else {
@@ -139,7 +155,7 @@ public abstract class ClientDevicesSet {
                 return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
             }
         } else {
-            if(needToSendGet) {
+            if (needToSendGet) {
                 ResponseEntity<XmlNewsResponse> entity = newsHttpService.getNews(deviceData, state, XmlNewsResponse.class);
                 return entity.getBody().getNews().getNewsDetailDtos();
             } else {
@@ -183,26 +199,27 @@ public abstract class ClientDevicesSet {
     }
 
 
-
     static class PhoneStateImpl implements PhoneState {
-        String deviceUID;
-        String email;
-        AccountCheckDTO accountCheck;
-        Error lastFacebookError;
-        User lastFacebookInfo;
-        User lastGooglePlusUserInfo;
+
         public PhoneActivationDto phoneActivationDto;
-        public AccountCheckDTO activationResponse;
+        public AccountCheckDto activationResponse;
         public String lastSentXTofyToken;
         public String facebookUserId;
         public String googlePlusUserId;
         public long lastActivationEmailToken;
-        private String lastEnteredPhoneNumberOnWebPortal;
         public String facebookAccessToken;
         public HttpStatus lastFacebookErrorStatus;
         public String googlePlusToken;
         public Error lastGooglePlusError;
         public HttpStatus lastGooglePlusErrorStatus;
+        public String urbanAirshipToken;
+        String deviceUID;
+        String email;
+        AccountCheckDto accountCheck;
+        Error lastFacebookError;
+        User lastFacebookInfo;
+        User lastGooglePlusUserInfo;
+        private String lastEnteredPhoneNumberOnWebPortal;
 
         PhoneStateImpl() {
         }
@@ -233,7 +250,7 @@ public abstract class ClientDevicesSet {
         }
 
         @Override
-        public AccountCheckDTO getLastAccountCheckResponse() {
+        public AccountCheckDto getLastAccountCheckResponse() {
             return accountCheck;
         }
 
@@ -258,7 +275,7 @@ public abstract class ClientDevicesSet {
         }
 
         @Override
-        public AccountCheckDTO getActivationResponse() {
+        public AccountCheckDto getActivationResponse() {
             return activationResponse;
         }
 
@@ -283,13 +300,13 @@ public abstract class ClientDevicesSet {
         }
 
         @Override
-        public void setLastEnteredPhoneNumberOnWebPortal(String lastEnteredPhoneNumberOnWebPortal) {
-            this.lastEnteredPhoneNumberOnWebPortal = lastEnteredPhoneNumberOnWebPortal;
+        public String getLastEnteredPhoneNumberOnWebPortal() {
+            return lastEnteredPhoneNumberOnWebPortal;
         }
 
         @Override
-        public String getLastEnteredPhoneNumberOnWebPortal() {
-            return lastEnteredPhoneNumberOnWebPortal;
+        public void setLastEnteredPhoneNumberOnWebPortal(String lastEnteredPhoneNumberOnWebPortal) {
+            this.lastEnteredPhoneNumberOnWebPortal = lastEnteredPhoneNumberOnWebPortal;
         }
 
         @Override
@@ -334,11 +351,11 @@ public abstract class ClientDevicesSet {
         @Override
         public String toString() {
             return "PhoneStateImpl{" +
-                    "deviceUID='" + deviceUID + '\'' +
-                    ", email='" + email + '\'' +
-                    ", accountCheck=" + accountCheck +
-                    ", lastFacebookError=" + lastFacebookError +
-                    '}';
+                   "deviceUID='" + deviceUID + '\'' +
+                   ", email='" + email + '\'' +
+                   ", accountCheck=" + accountCheck +
+                   ", lastFacebookError=" + lastFacebookError +
+                   '}';
         }
     }
 

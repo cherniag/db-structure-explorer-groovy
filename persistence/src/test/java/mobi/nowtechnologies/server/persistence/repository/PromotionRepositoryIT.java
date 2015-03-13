@@ -4,27 +4,24 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.annotation.Resource;
-
-import static junit.framework.Assert.*;
 import static mobi.nowtechnologies.server.persistence.dao.UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_SUBBALANCE_PROMOTION;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+
+import javax.annotation.Resource;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 02.08.13 15:20
+ * User: Titov Mykhaylo (titov) 02.08.13 15:20
  */
 
 
-public class PromotionRepositoryIT  extends AbstractRepositoryIT{
+public class PromotionRepositoryIT extends AbstractRepositoryIT {
 
     @Resource(name = "promotionRepository")
     PromotionRepository promotionRepository;
@@ -46,7 +43,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     private Promotion o2PromotionByPromoCodeAfter2014StartDate;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         Community o2Community = communityRepository.findByRewriteUrlParameter("o2");
 
         o2UserGroup = getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2Community.getId());
@@ -54,7 +51,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
 
 
     @Test
-    public void shouldReturnDeactivatedPromotion(){
+    public void shouldReturnDeactivatedPromotion() {
         promotionCode = "code";
 
         saved(o2PromotionByPromoCodeBefore2014EndDate().withIsActive(false));
@@ -66,7 +63,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldReturnPromotionInPast(){
+    public void shouldReturnPromotionInPast() {
         promotionCode = "code";
 
         saved(o2PromotionByPromoCodeBefore2014EndDate().withIsActive(false).withEndDate(2000));
@@ -82,7 +79,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldDoNotReturnNotActivePromotion(){
+    public void shouldDoNotReturnNotActivePromotion() {
         //given
         promotionCode = "code";
         int currentTimeOneSecond = 1;
@@ -98,7 +95,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldDoNotReturnLimitedPromotion(){
+    public void shouldDoNotReturnLimitedPromotion() {
         //given
         promotionCode = "code";
         int currentTimeOneSecond = 1;
@@ -114,7 +111,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldDoNotReturnExpiredPromotion(){
+    public void shouldDoNotReturnExpiredPromotion() {
         //given
         promotionCode = "code";
         int currentTime2015Seconds = 2015;
@@ -130,7 +127,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldDoNotReturnAddSubBalancePromotion(){
+    public void shouldDoNotReturnAddSubBalancePromotion() {
         //given
         promotionCode = "code";
         int currentTimeOneSecond = 1;
@@ -146,7 +143,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldDoNotReturnNotStartedPromotion(){
+    public void shouldDoNotReturnNotStartedPromotion() {
         //given
         promotionCode = "code";
         int currentTimeOneSecond = 1;
@@ -162,7 +159,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldReturnPromotionBefore2014EndDate(){
+    public void shouldReturnPromotionBefore2014EndDate() {
         //given
         promotionCode = "code";
         int currentTimeOneSecond = 1;
@@ -178,7 +175,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldReturnPromotionAfter2014StartDate(){
+    public void shouldReturnPromotionAfter2014StartDate() {
         //given
         promotionCode = "code";
         int currentTime2015Seconds = 2015;
@@ -197,47 +194,51 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldUpdatePromotionNumUsers(){
+    public void shouldUpdatePromotionNumUsers() {
         //given
-        Promotion maxUsersLimitedPromotion = saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
+        Promotion maxUsersLimitedPromotion =
+            saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
 
         // when
-        int  updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
+        int updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
 
         //then
         assertThat(updatedRowsCount, is(1));
     }
 
     @Test
-    public void shouldUpdateNotMaxUsersLimitedPromotionNumUsers(){
+    public void shouldUpdateNotMaxUsersLimitedPromotionNumUsers() {
         //given
-        Promotion maxUsersLimitedPromotion = saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withNumUsers(5).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
+        Promotion maxUsersLimitedPromotion = saved(
+            new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withNumUsers(5).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
 
         // when
-        int  updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
+        int updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
 
         //then
         assertThat(updatedRowsCount, is(1));
     }
 
     @Test
-    public void shouldDoNotUpdatePromotionNumUsers(){
+    public void shouldDoNotUpdatePromotionNumUsers() {
         //given
-        Promotion maxUsersLimitedPromotion = saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withNumUsers(5).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
+        Promotion maxUsersLimitedPromotion = saved(
+            new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withNumUsers(5).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
 
         // when
-        int  updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
+        int updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
 
         //then
         assertThat(updatedRowsCount, is(0));
     }
 
     Promotion o2PromotionByPromoCodeAfter2014StartDate() {
-        o2PromotionByPromoCodeAfter2014StartDate = new Promotion().withStartDate(2014).withEndDate(2016).withIsActive(true).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");
+        o2PromotionByPromoCodeAfter2014StartDate =
+            new Promotion().withStartDate(2014).withEndDate(2016).withIsActive(true).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");
         return o2PromotionByPromoCodeAfter2014StartDate;
     }
 
-    PromoCode promoCodeForO2PromotionAfter2014StartDate(){
+    PromoCode promoCodeForO2PromotionAfter2014StartDate() {
         promoCodeForO2PromotionAfter2014StartDate = new PromoCode().withCode(promotionCode).withPromotion(o2PromotionByPromoCodeAfter2014StartDate).withMediaType(VIDEO_AND_AUDIO);
         return promoCodeForO2PromotionAfter2014StartDate;
     }
@@ -248,7 +249,8 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
     }
 
     Promotion o2PromotionByPromoCodeBefore2014EndDate() {
-        o2PromotionByPromoCodeBefore2014EndDate = new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");
+        o2PromotionByPromoCodeBefore2014EndDate =
+            new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");
         return o2PromotionByPromoCodeBefore2014EndDate;
     }
 
@@ -257,21 +259,25 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
         assertEquals(o2PromotionByPromoCodeBefore2014EndDate.getI(), activePromoCodePromotion.getI());
     }
 
-    void validateAsReturnedPromotionAfter2014StartDate(){
+    void validateAsReturnedPromotionAfter2014StartDate() {
         assertNotNull(activePromoCodePromotion);
         assertEquals(o2PromotionByPromoCodeAfter2014StartDate.getI(), activePromoCodePromotion.getI());
     }
 
 
-    void validateAsDoNotReturnedPromotion(){
+    void validateAsDoNotReturnedPromotion() {
         assertNull(activePromoCodePromotion);
     }
 
-    Promotion saved(Promotion promotion){
+    Promotion saved(Promotion promotion) {
         return promotionRepository.save(promotion);
-    };
+    }
 
-    void saved(PromoCode promoCode){
+    ;
+
+    void saved(PromoCode promoCode) {
         promoCodeRepository.save(promoCode);
-    };
+    }
+
+    ;
 }

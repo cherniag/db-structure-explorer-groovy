@@ -2,10 +2,10 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ResolutionFactory {
+
     public static Resolution create(String deviceType, int width, int height) {
         Resolution r = mock(Resolution.class);
         when(r.getDeviceType()).thenReturn(deviceType);

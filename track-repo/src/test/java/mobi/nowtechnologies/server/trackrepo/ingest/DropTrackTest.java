@@ -1,15 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import org.junit.Test;
+
+import org.junit.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Alexsandr_Kolpakov
- * Date: 9/11/13
- * Time: 2:21 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: Alexsandr_Kolpakov Date: 9/11/13 Time: 2:21 PM To change this template use File | Settings | File Templates.
  */
 public class DropTrackTest {
 

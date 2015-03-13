@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.duration.DurationInfoDto;
 
 public class TracksInfoDto {
+
     private int number;
     private DurationInfoDto durationInfoDto = new DurationInfoDto();
 

@@ -11,26 +11,26 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.Deepli
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Date;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.mockito.Mockito.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 3/20/14
+ * Author: Gennadii Cherniaiev Date: 3/20/14
  */
 @RunWith(MockitoJUnitRunner.class)
 public class StreamzineUpdateAsmTest {
+
     @Mock
     private DeepLinkUrlFactory deepLinkUrlFactory;
     @Mock
@@ -110,9 +110,9 @@ public class StreamzineUpdateAsmTest {
         Block block = new Block(position, shapeType, mock(DeeplinkInfo.class));
         block.setTitle(title);
         block.setSubTitle(subTitle);
-        if(include){
+        if (include) {
             block.include();
-        }else{
+        } else {
             block.exclude();
         }
         return block;

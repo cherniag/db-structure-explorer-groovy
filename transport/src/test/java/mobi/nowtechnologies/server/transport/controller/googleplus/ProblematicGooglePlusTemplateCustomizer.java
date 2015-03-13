@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller.googleplus;
 import org.springframework.http.HttpStatus;
 
 public class ProblematicGooglePlusTemplateCustomizer extends AbstractGooglePlusTemplateCustomizerImpl {
+
     public ProblematicGooglePlusTemplateCustomizer(String accessToken) {
         super(accessToken);
     }

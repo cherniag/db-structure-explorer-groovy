@@ -7,14 +7,14 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
 
 import javax.annotation.Resource;
 
+import org.springframework.http.MediaType;
+
+import org.junit.*;
+import org.springframework.test.web.servlet.ResultActions;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -36,12 +36,9 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String xtifyToken = "dsfhosduyajdfy78cyuaidyfo67vc6754g5";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("XTIFY_TOKEN", xtifyToken)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("XTIFY_TOKEN", xtifyToken))
+                   .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
         User found = userRepository.findOne(dto.userName, communityUrl);
 
@@ -62,11 +59,8 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String apiVersion = "6.5";
         String communityUrl = "o2";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
         User found = userRepository.findOne(dto.userName, communityUrl);
 
@@ -84,22 +78,16 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
         String storedToken = dto.userToken;
         String userName = dto.userName;
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
+        ResultActions accountCheckCall =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+                   .andExpect(status().isOk());
         checkAccountCheck(resultActions, accountCheckCall);
     }
 
@@ -112,23 +100,17 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String xtifyToken = "dsfhosduyajdfy78cyuaidyfo67vc6754g5";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("XTIFY_TOKEN", xtifyToken)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("XTIFY_TOKEN", xtifyToken))
+                   .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
         String storedToken = dto.userToken;
         String userName = dto.userName;
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
+        ResultActions accountCheckCall =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+                   .andExpect(status().isOk());
         checkAccountCheck(resultActions, accountCheckCall);
 
         DeviceUserData found = deviceUserDataRepository.findByXtifyToken(xtifyToken);
@@ -145,12 +127,9 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String appsFlyerUid = "1234-5678-9000-0000";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APPSFLYER_UID", appsFlyerUid)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("APPSFLYER_UID", appsFlyerUid))
+                   .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
 
         User registered = userRepository.findOne(dto.userName, communityUrl);
@@ -168,11 +147,8 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String apiVersion = "6.1";
         String communityUrl = "o2";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
 
         User one = userRepository.findOne(dto.userName, communityUrl);
@@ -189,12 +165,9 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String xtifyToken = "dsfhosduyajdfy78cyuaidyfo67vc6754g5";
 
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("XTIFY_TOKEN", xtifyToken)
-        ).andExpect(status().isOk());
+        ResultActions resultActions =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("XTIFY_TOKEN", xtifyToken))
+                   .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
 
         User one = userRepository.findOne(dto.userName, communityUrl);
@@ -209,10 +182,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String apiVersion = "5.0";
         String communityUrl = "o2";
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isInternalServerError()).andDo(print());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_UID", deviceUID)).andExpect(status().isInternalServerError()).andDo(print());
     }
 
     @Test
@@ -221,10 +191,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String apiVersion = "5.3";
         String communityUrl = "o2";
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_UID", deviceUID)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -233,11 +200,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "3.5";
         String communityUrl = "o2";
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isNotFound());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID)).andExpect(status().isNotFound());
     }
 
 
@@ -248,34 +211,17 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String apiVersion = "3.6";
         String communityUrl = "o2";
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", "CNBETA")
-                        .param("API_VERSION", "V1.1")
-                        .param("COMMUNITY_NAME", "o2")
-                        .param("DEVICE_MODEL", "model")
-        ).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_XML)).andDo(print());
+            post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("APP_VERSION", "CNBETA").param("API_VERSION", "V1.1")
+                                                                           .param("COMMUNITY_NAME", "o2").param("DEVICE_MODEL", "model")).andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_XML)).andDo(print());
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", "CNBETA")
-                        .param("API_VERSION", "V1.1")
-                        .param("COMMUNITY_NAME", "o2")
-                        .param("DEVICE_MODEL", "model")
-                        .header("Accept","application/json")
-        ).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(print());
+            post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("APP_VERSION", "CNBETA").param("API_VERSION", "V1.1")
+                                                                           .param("COMMUNITY_NAME", "o2").param("DEVICE_MODEL", "model").header("Accept", "application/json"))
+               .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(print());
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", "CNBETA")
-                        .param("API_VERSION", "V1.1")
-                        .param("COMMUNITY_NAME", "o2")
-                        .param("DEVICE_MODEL", "model")
-                        .header("Accept","*/*")
-        ).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_XML)).andDo(print());
+            post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("APP_VERSION", "CNBETA").param("API_VERSION", "V1.1")
+                                                                           .param("COMMUNITY_NAME", "o2").param("DEVICE_MODEL", "model").header("Accept", "*/*")).andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_XML)).andDo(print());
 
     }
 

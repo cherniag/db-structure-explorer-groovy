@@ -4,24 +4,21 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.jsmpp.bean.DeliverSm;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import org.jsmpp.bean.DeliverSm;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/21/13
- * Time: 10:32 AM
+ * User: Alexsandr_Kolpakov Date: 10/21/13 Time: 10:32 AM
  */
 @RunWith(PowerMockRunner.class)
 public class VFNZUserDetailsUpdaterTest {

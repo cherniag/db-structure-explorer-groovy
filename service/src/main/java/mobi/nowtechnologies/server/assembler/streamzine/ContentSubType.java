@@ -20,7 +20,7 @@ public enum ContentSubType {
 
     public static ContentSubType of(Enum<?> subType) {
         for (ContentSubType contentSubType : values()) {
-            if(contentSubType.subType == subType) {
+            if (contentSubType.subType == subType) {
                 return contentSubType;
             }
         }

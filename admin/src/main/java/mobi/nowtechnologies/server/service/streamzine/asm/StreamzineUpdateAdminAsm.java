@@ -3,14 +3,25 @@ package mobi.nowtechnologies.server.service.streamzine.asm;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
-import mobi.nowtechnologies.server.dto.streamzine.*;
+import mobi.nowtechnologies.server.dto.streamzine.BlockDto;
+import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
+import mobi.nowtechnologies.server.dto.streamzine.NarrowBlockDto;
+import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
+import mobi.nowtechnologies.server.dto.streamzine.UpdateDto;
+import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.InformationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsStoryDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
@@ -21,15 +32,20 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-
 public class StreamzineUpdateAdminAsm {
+
     private MessageSource messageSource;
     private DeepLinkInfoService deepLinkInfoService;
     private UserRepository userRepository;
@@ -109,7 +125,7 @@ public class StreamzineUpdateAdminAsm {
     }
 
     public List<UserDto> toUserDtos(List<User> users) {
-        List<UserDto> userDtos =  new ArrayList<UserDto>();
+        List<UserDto> userDtos = new ArrayList<UserDto>();
         for (User user : users) {
             UserDto userDto = new UserDto();
             userDto.setId(user.getId());
@@ -133,12 +149,12 @@ public class StreamzineUpdateAdminAsm {
         block.changePosition(blockDto.getPosition());
         block.setExpanded(blockDto.isExpanded());
 
-        if(blockDto.isIncluded()) {
+        if (blockDto.isIncluded()) {
             block.include();
         }
 
         AccessPolicy accessPolicy = deepLinkInfoService.tryToHandleSecuredTile(blockDto);
-        if(accessPolicy != null) {
+        if (accessPolicy != null) {
             block.setAccessPolicy(accessPolicy);
         }
         return block;
@@ -150,7 +166,7 @@ public class StreamzineUpdateAdminAsm {
         for (int i = 0; i < blockDtos.size(); i++) {
             OrdinalBlockDto blockDto = blockDtos.get(i);
 
-            if(blockDto.getShapeType() == ShapeType.NARROW) {
+            if (blockDto.getShapeType() == ShapeType.NARROW) {
                 NarrowBlockDto dto = new NarrowBlockDto();
                 dto.setShapeType(ShapeType.NARROW);
                 dto.setFirst(blockDto);
@@ -169,7 +185,7 @@ public class StreamzineUpdateAdminAsm {
 
         List<OrdinalBlockDto> dtos = new ArrayList<OrdinalBlockDto>(amount);
 
-        for(int index = 0; index < amount; index++) {
+        for (int index = 0; index < amount; index++) {
             final Block block = update.getBlocks().get(index);
 
             OrdinalBlockDto blockDto = new OrdinalBlockDto();
@@ -197,7 +213,7 @@ public class StreamzineUpdateAdminAsm {
         blockDto.setVip(block.getAccessPolicy() != null && block.getAccessPolicy().isVipMediaContent());
 
         final DeeplinkInfo info = block.getDeeplinkInfo();
-        if(info instanceof MusicPlayListDeeplinkInfo) {
+        if (info instanceof MusicPlayListDeeplinkInfo) {
             final MusicType playlist = MusicType.PLAYLIST;
 
             MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo = (MusicPlayListDeeplinkInfo) info;
@@ -208,7 +224,7 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
         }
 
-        if(info instanceof MusicTrackDeeplinkInfo) {
+        if (info instanceof MusicTrackDeeplinkInfo) {
             final MusicType track = MusicType.TRACK;
 
             MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = (MusicTrackDeeplinkInfo) info;
@@ -221,7 +237,7 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));
         }
 
-        if(info instanceof ManualCompilationDeeplinkInfo) {
+        if (info instanceof ManualCompilationDeeplinkInfo) {
             final MusicType musicType = MusicType.MANUAL_COMPILATION;
 
             ManualCompilationDeeplinkInfo i = (ManualCompilationDeeplinkInfo) info;
@@ -232,7 +248,7 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, musicType));
         }
 
-        if(info instanceof InformationDeeplinkInfo) {
+        if (info instanceof InformationDeeplinkInfo) {
             InformationDeeplinkInfo i = (InformationDeeplinkInfo) info;
 
             final LinkLocationType linkType = i.getLinkType();
@@ -243,16 +259,18 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setContentTypeTitle(getMessage(ContentType.PROMOTIONAL, linkType));
         }
 
-        if(info instanceof NewsStoryDeeplinkInfo) {
+        if (info instanceof NewsStoryDeeplinkInfo) {
             final NewsType list = NewsType.STORY;
 
             NewsStoryDeeplinkInfo i = (NewsStoryDeeplinkInfo) info;
             blockDto.setKey(list.name());
-            blockDto.setValue((i.getMessage() == null) ? null : i.getMessage().getId().toString());
+            blockDto.setValue((i.getMessage() == null) ?
+                              null :
+                              i.getMessage().getId().toString());
             blockDto.setContentTypeTitle(getMessage(ContentType.NEWS, list));
         }
 
-        if(info instanceof NewsListDeeplinkInfo) {
+        if (info instanceof NewsListDeeplinkInfo) {
             final NewsType story = NewsType.LIST;
 
             NewsListDeeplinkInfo i = (NewsListDeeplinkInfo) info;
@@ -265,13 +283,13 @@ public class StreamzineUpdateAdminAsm {
     }
 
     private FileNameAliasDto getBadgeFilenameDto(Long badgeId) {
-        if(badgeId == null) {
+        if (badgeId == null) {
             return null;
         }
 
         FilenameAlias filenameAlias = filenameAliasRepository.findOne(badgeId);
 
-        if(filenameAlias == null) {
+        if (filenameAlias == null) {
             return null;
         } else {
             FileNameAliasDto dto = new FileNameAliasDto();
@@ -293,12 +311,12 @@ public class StreamzineUpdateAdminAsm {
     }
 
     private DeepLinkInfoService.ApplicationPageData buildForExternalAd(InformationDeeplinkInfo i) {
-            return new DeepLinkInfoService.ApplicationPageData(i.getUrl(), i.getOpener());
+        return new DeepLinkInfoService.ApplicationPageData(i.getUrl(), i.getOpener());
     }
 
     private DeepLinkInfoService.ApplicationPageData buildForInternalAd(InformationDeeplinkInfo i) {
         final String action = i.getAction();
-        if(action == null) {
+        if (action == null) {
             return new DeepLinkInfoService.ApplicationPageData(i.getUrl());
         } else {
             return new DeepLinkInfoService.ApplicationPageData(i.getUrl(), action);

@@ -12,16 +12,16 @@ public enum Gender {
         this.key = key;
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public static Gender restore(String value) {
         for (Gender gender : values()) {
-            if(gender.key.equals(value)) {
+            if (gender.key.equals(value)) {
                 return gender;
             }
         }
         return null;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

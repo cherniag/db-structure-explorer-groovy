@@ -1,8 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "user_banned")
@@ -23,8 +29,9 @@ public class UserBanned {
     private boolean giveAnyPromotion;
 
     public UserBanned(User user) {
-        if (user == null)
+        if (user == null) {
             throw new IllegalArgumentException("user is null");
+        }
 
         this.user = user;
         this.userId = user.getId();
@@ -39,8 +46,9 @@ public class UserBanned {
     }
 
     public void setUser(User user) {
-        if (user == null)
+        if (user == null) {
             throw new IllegalArgumentException("user is null");
+        }
 
         this.user = user;
         this.userId = user.getId();
@@ -66,22 +74,17 @@ public class UserBanned {
         this.description = description;
     }
 
-    public void setGiveAnyPromotion(boolean giveAnyPromotion) {
-        this.giveAnyPromotion = giveAnyPromotion;
-    }
-
     public boolean isGiveAnyPromotion() {
         return giveAnyPromotion;
     }
 
+    public void setGiveAnyPromotion(boolean giveAnyPromotion) {
+        this.giveAnyPromotion = giveAnyPromotion;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("userId", userId)
-                .append("timestamp", timestamp)
-                .append("description", description)
-                .append("giveAnyPromotion", giveAnyPromotion)
-                .toString();
+        return new ToStringBuilder(this).append("userId", userId).append("timestamp", timestamp).append("description", description).append("giveAnyPromotion", giveAnyPromotion).toString();
     }
 
 

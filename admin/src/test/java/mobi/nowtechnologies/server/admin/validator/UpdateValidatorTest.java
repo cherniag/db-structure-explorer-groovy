@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.admin.validator;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
@@ -19,27 +18,29 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.MessageSource;
-import org.springframework.validation.Errors;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
+import com.google.common.collect.Lists;
+
+import org.springframework.context.MessageSource;
+import org.springframework.validation.Errors;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
 import static org.mockito.Mockito.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
 
 @RunWith(PowerMockRunner.class)
 public class UpdateValidatorTest {
+
     private static final String HL_UK = "hl_uk";
 
     @Mock
@@ -60,7 +61,7 @@ public class UpdateValidatorTest {
     FilenameAliasRepository filenameAliasRepository;
 
     @InjectMocks
-    UpdateValidator updateValidator ;
+    UpdateValidator updateValidator;
 
     @Mock
     OrdinalBlockDto blockDto;
@@ -148,9 +149,9 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenTracksAreTheSame(){
+    public void shouldNotValidateWhenTracksAreTheSame() {
         // given
-        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "1#"+MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "1#" + MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicTrackBlock, musicTrackBlock);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
@@ -164,10 +165,10 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldValidateWhenTracksAreNotTheSame(){
+    public void shouldValidateWhenTracksAreNotTheSame() {
         // given
-        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "1#"+MINI_PLAYER_ONLY);
-        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "2#"+MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "1#" + MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "2#" + MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicTrackBlock1, musicTrackBlock2);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
@@ -181,9 +182,9 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldValidateWhenTrackIsNotIncluded(){
+    public void shouldValidateWhenTrackIsNotIncluded() {
         // given
-        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "#"+MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "#" + MINI_PLAYER_ONLY);
         musicTrackBlock1.setIncluded(false);
         UpdateIncomingDto update = createUpdate(musicTrackBlock1);
 
@@ -198,7 +199,7 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenTrackIsIncludedButTrackIsNull(){
+    public void shouldNotValidateWhenTrackIsIncludedButTrackIsNull() {
         // given
         String value = "#" + MINI_PLAYER_ONLY;
         OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, value);
@@ -214,9 +215,9 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenPlaylistsAreTheSame(){
+    public void shouldNotValidateWhenPlaylistsAreTheSame() {
         // given
-        OrdinalBlockDto musicPlaylistBlock = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#"+MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicPlaylistBlock = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#" + MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock, musicPlaylistBlock);
 
         //when
@@ -227,9 +228,9 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenPlaylistIsIncludedButItIsNull(){
+    public void shouldNotValidateWhenPlaylistIsIncludedButItIsNull() {
         // given
-        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "#"+ MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "#" + MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock1);
 
         //when
@@ -240,9 +241,9 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldValidateWhenPlaylistIsNotIncluded(){
+    public void shouldValidateWhenPlaylistIsNotIncluded() {
         // given
-        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "#"+ MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "#" + MINI_PLAYER_ONLY);
         when(musicPlaylistBlock1.isIncluded()).thenReturn(false);
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock1);
 
@@ -254,10 +255,10 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldValidateWhenPlaylistsAreNotTheSame(){
+    public void shouldValidateWhenPlaylistsAreNotTheSame() {
         // given
-        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#"+ MINI_PLAYER_ONLY);
-        OrdinalBlockDto musicPlaylistBlock2 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_2#"+ MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#" + MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicPlaylistBlock2 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_2#" + MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock1, musicPlaylistBlock2);
 
         //when
@@ -268,7 +269,7 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenPlayerTypeIsWrong(){
+    public void shouldNotValidateWhenPlayerTypeIsWrong() {
         // given
         OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#wongPlayerType");
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock1);
@@ -385,7 +386,7 @@ public class UpdateValidatorTest {
         return user;
     }
 
-    private UpdateIncomingDto createUpdate(OrdinalBlockDto ... blocks) {
+    private UpdateIncomingDto createUpdate(OrdinalBlockDto... blocks) {
         UpdateIncomingDto updateIncomingDtoMock = mock(UpdateIncomingDto.class);
         when(updateIncomingDtoMock.getBlocks()).thenReturn(new ArrayList<OrdinalBlockDto>(Arrays.asList(blocks)));
         return updateIncomingDtoMock;

@@ -20,10 +20,8 @@ public @interface AuthenticatedUser {
     String AUTHENTICATED_USER_REQUEST_ATTRIBUTE = "AUTHENTICATED_USER_REQUEST_ATTRIBUTE";
 
     /**
-     * Whether the attribute is required.
-     * <p>Default is {@code true}, leading to an exception thrown in case
-     * of the attribute missing in the request. Switch this to {@code false}
-     * if you prefer a {@code null} in case of the attribute missing.
+     * Whether the attribute is required. <p>Default is {@code true}, leading to an exception thrown in case of the attribute missing in the request. Switch this to {@code false} if you prefer a
+     * {@code null} in case of the attribute missing.
      */
     boolean required() default true;
 }

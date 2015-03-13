@@ -13,8 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/3/2014
+ * Author: Gennadii Cherniaiev Date: 7/3/2014
  */
 @Component
 public class PhoneNumberCreator {

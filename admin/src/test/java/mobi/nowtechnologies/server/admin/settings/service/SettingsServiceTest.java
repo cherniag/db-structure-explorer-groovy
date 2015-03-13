@@ -4,26 +4,30 @@ import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.behavior.*;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.CommunityConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ContentUserStatusBehavior;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
 import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static mobi.nowtechnologies.server.dto.context.ContentBehaviorType.DISABLED;
+import static mobi.nowtechnologies.server.dto.context.ContentBehaviorType.ENABLED;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @Ignore
 public class SettingsServiceTest {
+
     @InjectMocks
     SettingsService settingsService;
     @Mock
@@ -38,7 +42,7 @@ public class SettingsServiceTest {
     BehaviorInfoService behaviorInfoService;
 
     String communityUrl = "url";
-    int communityId=17;
+    int communityId = 17;
 
     Community c = mock(Community.class);
     CommunityConfig communityConfig = mock(CommunityConfig.class);
@@ -86,9 +90,7 @@ public class SettingsServiceTest {
         //
         // when
         //
-        SettingsDto dto = new SettingsDto();
-        // enabled
-        dto.setEnabled(false);
+        SettingsDto dto = new SettingsDto(BehaviorConfigType.FREEMIUM);
         // referrals
         dto.getReferralDto().setRequired(1);
         dto.getReferralDto().getDurationInfoDto().fromDuration(Duration.forPeriod(2, DurationUnit.WEEKS));
@@ -112,18 +114,18 @@ public class SettingsServiceTest {
         dto.getPlaylistTypeSettings().get(ChartBehaviorType.SHUFFLED).getMaxTracks().setNumber(16);
         dto.getPlaylistTypeSettings().get(ChartBehaviorType.SHUFFLED).getMaxTracks().getDurationInfoDto().fromDuration(Duration.forPeriod(17, DurationUnit.MONTHS));
 
-        dto.getFavourites().put(UserStatusType.FREE_TRIAL, true);
-        dto.getFavourites().put(UserStatusType.LIMITED, true);
-        dto.getFavourites().put(UserStatusType.SUBSCRIBED, true);
-        dto.getAds().put(UserStatusType.FREE_TRIAL, false);
-        dto.getAds().put(UserStatusType.LIMITED, false);
-        dto.getAds().put(UserStatusType.SUBSCRIBED, false);
+        dto.getFavourites().put(UserStatusType.FREE_TRIAL, DISABLED);
+        dto.getFavourites().put(UserStatusType.LIMITED, DISABLED);
+        dto.getFavourites().put(UserStatusType.SUBSCRIBED, DISABLED);
+        dto.getAds().put(UserStatusType.FREE_TRIAL, ENABLED);
+        dto.getAds().put(UserStatusType.LIMITED, ENABLED);
+        dto.getAds().put(UserStatusType.SUBSCRIBED, ENABLED);
 
         createEmptyPlaceholdersForChartId(90, dto);
         for (UserStatusType userStatusType : UserStatusType.values()) {
             for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
-//                dto.getPlaylistSettings().get(90).get(userStatusType).get(chartBehaviorType).setLocked( userStatusType==UserStatusType.SUBSCRIBED );
-//                dto.getPlaylistSettings().get(90).get(userStatusType).get(chartBehaviorType).setAction("action-" + chartBehaviorType + "-" + userStatusType);
+                //                dto.getPlaylistSettings().get(90).get(userStatusType).get(chartBehaviorType).setLocked( userStatusType==UserStatusType.SUBSCRIBED );
+                //                dto.getPlaylistSettings().get(90).get(userStatusType).get(chartBehaviorType).setAction("action-" + chartBehaviorType + "-" + userStatusType);
             }
         }
 
@@ -184,13 +186,13 @@ public class SettingsServiceTest {
     }
 
     private void createEmptyPlaceholdersForChartId(int chartId, SettingsDto dto) {
-//        dto.getPlaylistSettings().put(chartId, Maps.<UserStatusType, Map<ChartBehaviorType, PlaylistInfo>>newHashMap());
-//        for (UserStatusType userStatusType : UserStatusType.values()) {
-//            HashMap<ChartBehaviorType, PlaylistInfo> playlistInfos = new HashMap<ChartBehaviorType, PlaylistInfo>();
-//            for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
-//                playlistInfos.put(chartBehaviorType, new PlaylistInfo());
-//            }
-//            dto.getPlaylistSettings().get(chartId).put(userStatusType, playlistInfos);
-//        }
+        //        dto.getPlaylistSettings().put(chartId, Maps.<UserStatusType, Map<ChartBehaviorType, PlaylistInfo>>newHashMap());
+        //        for (UserStatusType userStatusType : UserStatusType.values()) {
+        //            HashMap<ChartBehaviorType, PlaylistInfo> playlistInfos = new HashMap<ChartBehaviorType, PlaylistInfo>();
+        //            for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
+        //                playlistInfos.put(chartBehaviorType, new PlaylistInfo());
+        //            }
+        //            dto.getPlaylistSettings().get(chartId).put(userStatusType, playlistInfos);
+        //        }
     }
 }

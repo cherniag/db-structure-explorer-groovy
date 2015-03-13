@@ -1,18 +1,21 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-import static junit.framework.Assert.assertEquals;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
  * Created by Oleg Artomov on 10/3/2014.

@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public interface CommunityResourceBundleMessageSource {
-	
-	String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale);
+
+    String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale);
 
     String getMessage(String community, String code, Object[] args, Locale locale);
 

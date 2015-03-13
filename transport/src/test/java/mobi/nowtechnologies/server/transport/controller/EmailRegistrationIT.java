@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.Response;
@@ -14,13 +12,11 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.web.servlet.MvcResult;
+import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.ANDROID;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.PENDING_ACTIVATION;
+import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
+import static mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,35 +24,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.*;
-import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.ANDROID;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.PENDING_ACTIVATION;
-import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
-import static mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import org.apache.commons.io.FileUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.junit.*;
+import org.springframework.test.web.servlet.MvcResult;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class EmailRegistrationIT extends AbstractControllerTestIT {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    @Qualifier("serviceMessageSource")
-    private CommunityResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private ActivationEmailRepository activationEmailRepository;
-
-    @Value("${sms.temporaryFolder}")
-    private File temporaryFolder;
 
     private static final String DEVICE_UID_1 = "htc1";
     private static final String DEVICE_UID_2 = "htc2";
     private static final String EMAIL_1 = "a@gmail.com";
     private static final String EMAIL_2 = "b@gmail.com";
     private static final String DISABLED = "_disabled_at_";
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    @Qualifier("serviceMessageSource")
+    private CommunityResourceBundleMessageSource messageSource;
+    @Autowired
+    private ActivationEmailRepository activationEmailRepository;
+    @Value("${sms.temporaryFolder}")
+    private File temporaryFolder;
 
     @Test
     public void testNewUser() throws Exception {
@@ -86,8 +85,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         long time = System.currentTimeMillis();
 
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
-        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
+        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -120,8 +118,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         long time = System.currentTimeMillis();
 
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
-        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
+        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         user = userRepository.findOne(DEVICE_UID_1, user.getCommunityRewriteUrl());
 
@@ -143,8 +140,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         long time = System.currentTimeMillis();
         MvcResult mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
-        ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0]), time, EMAIL_1, user.getDeviceType().getName());
+        ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0]), time, EMAIL_1, user.getDeviceType().getName());
 
         userOnAnotherDevice = userService.findByName(userOnAnotherDevice.getUserName());
         assertEquals(PENDING_ACTIVATION, userOnAnotherDevice.getActivationStatus());
@@ -181,8 +177,8 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         registeredUser = userService.findByName(registeredUser.getUserName());
         assertEquals(PENDING_ACTIVATION, registeredUser.getActivationStatus());
 
-        ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0]), time, EMAIL_2, activatedUser.getDeviceType().getName());
+        ActivationEmail activationEmail =
+            checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0]), time, EMAIL_2, activatedUser.getDeviceType().getName());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -210,8 +206,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         long time = System.currentTimeMillis();
 
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
-        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
+        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         user = userService.findByName(user.getUserName());
         assertEquals(PENDING_ACTIVATION, user.getActivationStatus());
@@ -254,37 +249,27 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private String signUpDevice(String deviceUID) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post("/hl_uk/5.3/SIGN_UP_DEVICE")
-                .param("DEVICE_TYPE", ANDROID)
-                .param("DEVICE_UID", deviceUID))
-                .andExpect(status().isOk())
-                .andExpect(xpath("/response/user/status").string(LIMITED.name()))
-                .andExpect(xpath("/response/user/deviceType").string(ANDROID)).andReturn();
+        MvcResult mvcResult = mockMvc.perform(post("/hl_uk/5.3/SIGN_UP_DEVICE").param("DEVICE_TYPE", ANDROID).param("DEVICE_UID", deviceUID)).andExpect(status().isOk())
+                                     .andExpect(xpath("/response/user/status").string(LIMITED.name())).andExpect(xpath("/response/user/deviceType").string(ANDROID)).andReturn();
         return getUserToken(mvcResult);
     }
 
     private String getUserToken(MvcResult mvcResult) {
-        AccountCheckDto accCheckDto = (AccountCheckDto) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0];
+        AccountCheckDto accCheckDto = (AccountCheckDto) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0];
         return accCheckDto.userToken;
     }
 
     private void applyInitPromo(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL")
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("EMAIL_ID", activationEmail.getId().toString())
-                .param("EMAIL", activationEmail.getEmail())
-                .param("TOKEN", activationEmail.getToken())
-                .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isOk());
+        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("EMAIL_ID", activationEmail.getId().toString())
+                                                        .param("EMAIL", activationEmail.getEmail()).param("TOKEN", activationEmail.getToken()).param("DEVICE_UID", activationEmail.getDeviceUID()))
+               .andExpect(status().isOk());
     }
 
     private MvcResult emailGenerate(User user, String email) throws Exception {
         MvcResult mvcResult;
-        mvcResult = mockMvc.perform(post("/hl_uk/4.0/EMAIL_GENERATE.json")
-                .param("EMAIL", email)
-                .param("USER_NAME", user.getUserName())
-                .param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk()).andReturn();
+        mvcResult =
+            mockMvc.perform(post("/hl_uk/4.0/EMAIL_GENERATE.json").param("EMAIL", email).param("USER_NAME", user.getUserName()).param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk())
+                   .andReturn();
         return mvcResult;
     }
 
@@ -297,13 +282,8 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private void applyInitPromoError(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL")
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("EMAIL_ID", activationEmail.getId().toString())
-                .param("EMAIL", EMAIL_2)
-                .param("TOKEN", "ttt")
-                .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isInternalServerError());
+        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("EMAIL_ID", activationEmail.getId().toString()).param("EMAIL", EMAIL_2)
+                                                        .param("TOKEN", "ttt").param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isInternalServerError());
     }
 
     private void checkActivatedUser(User user, String firstUserEmail) {
@@ -313,25 +293,15 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private void checkGetNews(User user, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(
-                post("/hl_uk/5.5/GET_NEWS.json")
-                        .param("USER_NAME", user.getUserName())
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", user.getDeviceUID())
-        ).andExpect(status().isOk()).andExpect(jsonPath("$.response..items").exists()).
-                andExpect(jsonPath("$.response..news").exists()).
-                andExpect(jsonPath("$.response..user").exists());
+        mockMvc.perform(post("/hl_uk/5.5/GET_NEWS.json").param("USER_NAME", user.getUserName()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", user.getDeviceUID()))
+               .andExpect(status().isOk()).andExpect(jsonPath("$.response..items").exists()).
+            andExpect(jsonPath("$.response..news").exists()).
+                   andExpect(jsonPath("$.response..user").exists());
     }
 
     private void checkGetChart(User user, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(
-                post("/hl_uk/5.5/GET_CHART.json")
-                        .param("USER_NAME", user.getUserName())
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", user.getDeviceUID())
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061_2"));
+        mockMvc.perform(post("/hl_uk/5.5/GET_CHART.json").param("USER_NAME", user.getUserName()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", user.getDeviceUID()))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061_2"));
     }
 
 

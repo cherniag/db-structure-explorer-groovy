@@ -2,31 +2,32 @@ package mobi.nowtechnologies.server.web.subscription;
 
 /** data displayed in payments page */
 public class PaymentPageData implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
 
-	private SubscriptionState subscriptionState = new SubscriptionState();
-	private SubscriptionTexts subscriptionTexts = new SubscriptionTexts();
-	
-	public PaymentPageData(SubscriptionState subscriptionState, SubscriptionTexts subscriptionTexts) {
-		super();
-		this.subscriptionState = subscriptionState;
-		this.subscriptionTexts = subscriptionTexts;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public SubscriptionState getSubscriptionState() {
-		return subscriptionState;
-	}
+    private SubscriptionState subscriptionState = new SubscriptionState();
+    private SubscriptionTexts subscriptionTexts = new SubscriptionTexts();
 
-	public void setSubscriptionState(SubscriptionState subscriptionState) {
-		this.subscriptionState = subscriptionState;
-	}
+    public PaymentPageData(SubscriptionState subscriptionState, SubscriptionTexts subscriptionTexts) {
+        super();
+        this.subscriptionState = subscriptionState;
+        this.subscriptionTexts = subscriptionTexts;
+    }
 
-	public SubscriptionTexts getSubscriptionTexts() {
-		return subscriptionTexts;
-	}
+    public SubscriptionState getSubscriptionState() {
+        return subscriptionState;
+    }
 
-	public void setSubscriptionTexts(SubscriptionTexts subscriptionTexts) {
-		this.subscriptionTexts = subscriptionTexts;
-	}
+    public void setSubscriptionState(SubscriptionState subscriptionState) {
+        this.subscriptionState = subscriptionState;
+    }
+
+    public SubscriptionTexts getSubscriptionTexts() {
+        return subscriptionTexts;
+    }
+
+    public void setSubscriptionTexts(SubscriptionTexts subscriptionTexts) {
+        this.subscriptionTexts = subscriptionTexts;
+    }
 
 }

@@ -1,19 +1,19 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.BasicSMSMessageProcessor;
-import org.jsmpp.bean.DeliverSm;
 
 import java.util.Collections;
 import java.util.Set;
 
+import com.sentaca.spring.smpp.mo.MOMessage;
+import org.jsmpp.bean.DeliverSm;
+
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/10/13
- * Time: 10:26 AM
+ * User: Alexsandr_Kolpakov Date: 10/10/13 Time: 10:26 AM
  */
 public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessage> {
+
     public static final String STOP_MSG = "stop";
     public static final String OPERATOR_NAME = "vf";
 

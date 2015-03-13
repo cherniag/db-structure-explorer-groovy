@@ -13,11 +13,13 @@ import mobi.nowtechnologies.applicationtests.features.common.transformers.dictio
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository
@@ -30,6 +32,8 @@ import javax.annotation.Resource
 import java.text.SimpleDateFormat
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertFalse
+
 /**
  * @author kots
  * @since 8/14/2014.
@@ -140,16 +144,19 @@ class FacebookSuccessFeature {
     def "userDetails filed contains correct facebook details"() {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
-            def facebookInfo = phoneState.lastFacebookInfo.userDetails
-            def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
+            def expected = composer.parseToken(phoneState.facebookAccessToken)
+            assertEquals(phoneState.facebookUserId, expected.id)
 
-            assertEquals(dateFormat.parse(facebookInfo.birthDay), dateFormat.parse(facebookProfile.getBirthday()))
-            assertEquals(facebookInfo.email, phoneState.email)
-            assertEquals(facebookInfo.userName, facebookProfile.username)
-            assertEquals(facebookInfo.firstName, facebookProfile.firstName)
-            assertEquals(facebookInfo.surname, facebookProfile.lastName)
-            assertEquals(facebookInfo.gender.toLowerCase(), facebookProfile.gender)
-            assertEquals(facebookInfo.location, FacebookUserInfoGenerator.CITY)
+            def actual = phoneState.lastFacebookInfo.userDetails
+
+            assertEquals(expected.id, actual.userName)
+            assertEquals(expected.id, actual.facebookId)
+            assertEquals(dateFormat.parse(expected.getBirthday()), dateFormat.parse(actual.birthDay))
+            assertEquals(expected.firstName, actual.firstName)
+            assertEquals(expected.lastName, actual.surname)
+            assertEquals(expected.gender, actual.gender.toLowerCase())
+            assertEquals(FacebookUserInfoGenerator.CITY, actual.location)
+            assertEquals(phoneState.email, actual.email)
         }
     }
 
@@ -197,17 +204,45 @@ class FacebookSuccessFeature {
     def "In database user has facebook details the same as specified in facebook account"() {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
+            def expected = composer.parseToken(phoneState.facebookAccessToken)
+            assertEquals(phoneState.facebookUserId, expected.id)
+
             def user = userDbService.findUser(phoneState, it)
-            def facebookUserInfo = fbDetailsRepository.findByUser(user)
-            def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
-            assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
-            assertEquals(facebookUserInfo.getFirstName(), FacebookUserInfoGenerator.FIRST_NAME)
-            assertEquals(facebookUserInfo.getBirthday().getTime(), dateFormat.parse(facebookProfile.getBirthday()).getTime())
-            assertEquals(facebookUserInfo.getSurname(), FacebookUserInfoGenerator.SURNAME)
-            assertEquals(facebookUserInfo.getCity(), FacebookUserInfoGenerator.CITY)
-            assertEquals(facebookUserInfo.getCountry(), FacebookUserInfoGenerator.COUNTRY)
-            assertEquals(facebookUserInfo.getFacebookId(), phoneState.getFacebookUserId())
-            assertEquals(facebookUserInfo.getUserName(), phoneState.getEmail())
+            def actual = fbDetailsRepository.findByUser(user)
+
+            assertEquals(expected.id, actual.getFacebookId())
+            assertEquals(expected.id, actual.getUserName())
+
+            assertEquals(phoneState.getEmail(), actual.getEmail())
+            assertEquals(FacebookUserInfoGenerator.FIRST_NAME, actual.getFirstName())
+            assertEquals(dateFormat.parse(expected.getBirthday()).getTime(), actual.getBirthday().getTime())
+            assertEquals(FacebookUserInfoGenerator.SURNAME, actual.getSurname())
+            assertEquals(FacebookUserInfoGenerator.CITY, actual.getCity())
+            assertEquals(FacebookUserInfoGenerator.COUNTRY, actual.getCountry())
+        }
+    }
+
+    @Given('^Registered user with (.+) using (.+) format for (.+) above (.+) and (.+)$')
+    def "Registered user with given devices using given format for given versions above version and given communities"(
+            @Transform(DictionaryTransformer.class) Word devices,
+            @Transform(DictionaryTransformer.class) Word formats,
+            @Transform(DictionaryTransformer.class) Word versions,
+            String aboveVersion,
+            @Transform(DictionaryTransformer.class) Word communities) {
+
+        def above = ApiVersions.from(versions.list()).above(aboveVersion)
+        currentUserDevices = userDeviceDataService.table(above, communities.set(), devices.set(), formats.set(RequestFormat))
+
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel { deviceSet.singup(it) }
+    }
+
+    @Then('^User receives additional facebook profile image url in the SIGN_IN_FACEBOOK response$')
+    def "User receives additional facebook profile image url in the SIGN_IN_FACEBOOK response"() {
+        runner.parallel {
+            def lastFacebookInfo = deviceSet.getPhoneState(it).lastFacebookInfo
+            assertEquals(AppTestFacebookOperationsAdaptor.TEST_PROFILE_IMAGE_URL, lastFacebookInfo.userDetails.facebookProfileImageUrl)
+            assertFalse(lastFacebookInfo.userDetails.facebookProfileImageSilhouette)
         }
     }
 

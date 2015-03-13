@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import java.util.Arrays;
 
 public class XmlNewsDto {
+
     public NewsDetailDto[] item;
 
     public NewsDetailDto[] getNewsDetailDtos() {

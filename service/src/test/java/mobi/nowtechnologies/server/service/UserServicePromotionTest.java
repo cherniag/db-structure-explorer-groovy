@@ -4,22 +4,19 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/15/2014
+ * Author: Gennadii Cherniaiev Date: 4/15/2014
  */
 @RunWith(MockitoJUnitRunner.class)
 public class UserServicePromotionTest {
@@ -38,7 +35,7 @@ public class UserServicePromotionTest {
 
     @Before
     public void setUp() throws Exception {
-        AutoOptInRuleService autoOptInRuleService = new AutoOptInRuleService(){
+        AutoOptInRuleService autoOptInRuleService = new AutoOptInRuleService() {
             @Override
             public RuleServiceSupport<AutoOptInTriggerType> getRuleServiceSupport() {
                 return ruleServiceSupportMock;

@@ -7,12 +7,11 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import static java.lang.System.currentTimeMillis;
 
 /**
- * User: gch
- * Date: 12/17/13
+ * User: gch Date: 12/17/13
  */
 public class TaskFactory {
 
-    public static SendChargeNotificationTask createSendChargeNotificationTask(){
+    public static SendChargeNotificationTask createSendChargeNotificationTask() {
         SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask();
         sendChargeNotificationTask.setExecutionTimestamp(currentTimeMillis() + 1000L);
         sendChargeNotificationTask.setCreationTimestamp(currentTimeMillis());

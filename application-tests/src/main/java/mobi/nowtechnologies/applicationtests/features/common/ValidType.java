@@ -1,17 +1,18 @@
 package mobi.nowtechnologies.applicationtests.features.common;
 
-import com.google.common.hash.Hashing;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.Assert;
-
 import java.nio.charset.Charset;
 import java.util.UUID;
+
+import com.google.common.hash.Hashing;
+import org.apache.commons.lang.StringUtils;
+
+import org.springframework.util.Assert;
 
 public enum ValidType {
     Valid, NotValid;
 
     public String decide(String data) {
-        if(this == NotValid) {
+        if (this == NotValid) {
             return spoil(data);
         } else {
             return data;

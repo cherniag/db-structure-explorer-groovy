@@ -1,21 +1,28 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 @Entity
 @Table(name = "sz_deeplink_man_compilation")
 public class ManualCompilationDeeplinkInfo extends DeeplinkInfo {
 
     @OneToMany(mappedBy = "manualCompilationDeeplinkInfo",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+               fetch = FetchType.EAGER,
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)
     @OrderBy("position")
     private List<ManualCompilationItem> manualCompilationItems = new ArrayList<ManualCompilationItem>();
 
@@ -24,14 +31,14 @@ public class ManualCompilationDeeplinkInfo extends DeeplinkInfo {
         contentType = ContentType.MUSIC;
     }
 
+    protected ManualCompilationDeeplinkInfo() {
+    }
+
     private void toManualCompilationItems(List<Media> medias) {
         int position = 0;
         for (Media media : medias) {
             manualCompilationItems.add(new ManualCompilationItem(this, media, position++));
         }
-    }
-
-    protected ManualCompilationDeeplinkInfo(){
     }
 
     public List<Media> getMedias() {
@@ -57,7 +64,6 @@ public class ManualCompilationDeeplinkInfo extends DeeplinkInfo {
         }
         return mediaIds;
     }
-
 
 
     @Override

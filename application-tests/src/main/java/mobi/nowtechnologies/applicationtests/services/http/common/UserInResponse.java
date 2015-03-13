@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 8/20/2014.
  */
 public class UserInResponse {
+
     private String displayName;
     private Integer subBalance;
     private String status;

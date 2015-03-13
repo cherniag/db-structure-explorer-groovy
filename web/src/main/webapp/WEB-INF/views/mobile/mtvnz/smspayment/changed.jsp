@@ -3,7 +3,10 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="root-container">
+<div class="page-container">
+    <div class="vf-nav-header">
+    </div>
+
     <div class="message">
         <s:message code="subscription.success.title" />
     </div>

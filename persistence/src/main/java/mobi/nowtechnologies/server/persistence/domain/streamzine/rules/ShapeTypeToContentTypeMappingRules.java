@@ -2,13 +2,15 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.springframework.util.Assert;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.MUSIC;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.NEWS;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.PROMOTIONAL;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.*;
+import org.springframework.util.Assert;
 
 public enum ShapeTypeToContentTypeMappingRules {
     WIDE_RULES(ShapeType.WIDE, MUSIC, /*SOCIAL,*/ NEWS, PROMOTIONAL),

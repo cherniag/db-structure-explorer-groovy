@@ -1,40 +1,63 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.Artist;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Label;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
+import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
+import mobi.nowtechnologies.server.persistence.repository.LabelRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
-import mobi.nowtechnologies.server.trackrepo.dto.*;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
+import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 // @author Alexander Kolpakov (akolpakov)
 public class TrackRepoServiceImpl implements TrackRepoService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoServiceImpl.class);
 
-	private Set<Long> pullingTrackSet = Collections.synchronizedSet(new HashSet<Long>());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoServiceImpl.class);
 
-	private TrackRepositoryClient client;
-	private MediaRepository mediaRepository;
-	private MediaFileRepository mediaFileRepository;
-	private ArtistRepository artistRepository;
-	private GenreRepository genreRepository;
+    private Set<Long> pullingTrackSet = Collections.synchronizedSet(new HashSet<Long>());
+
+    private TrackRepositoryClient client;
+    private MediaRepository mediaRepository;
+    private MediaFileRepository mediaFileRepository;
+    private ArtistRepository artistRepository;
+    private GenreRepository genreRepository;
     private long iTunesLinkFormatCutoverTimeMillis;
 
     private LabelRepository labelRepository;
@@ -48,20 +71,20 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     public void setClient(TrackRepositoryClient client) {
-		this.client = client;
-	}
+        this.client = client;
+    }
 
-	public void setMediaRepository(MediaRepository mediaRepository) {
-		this.mediaRepository = mediaRepository;
-	}
+    public void setMediaRepository(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
+    }
 
-	public void setMediaFileRepository(MediaFileRepository mediaFileRepository) {
-		this.mediaFileRepository = mediaFileRepository;
-	}
+    public void setMediaFileRepository(MediaFileRepository mediaFileRepository) {
+        this.mediaFileRepository = mediaFileRepository;
+    }
 
-	public void setArtistRepository(ArtistRepository artistRepository) {
-		this.artistRepository = artistRepository;
-	}
+    public void setArtistRepository(ArtistRepository artistRepository) {
+        this.artistRepository = artistRepository;
+    }
 
     public void setGenreRepository(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
@@ -79,7 +102,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
     @Override
     public IngestWizardDataDto selectDrops(IngestWizardDataDto input) {
-        LOGGER.debug("input selectDrops(): [{}]", new Object[] { input });
+        LOGGER.debug("input selectDrops(): [{}]", new Object[] {input});
 
         IngestWizardDataDto data = client.selectDrops(input);
 
@@ -89,7 +112,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
     @Override
     public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto input) {
-        LOGGER.debug("input selectTrackDrops(): [{}]", new Object[] { input });
+        LOGGER.debug("input selectTrackDrops(): [{}]", new Object[] {input});
 
         IngestWizardDataDto data = client.selectTrackDrops(input);
 
@@ -99,9 +122,9 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
     @Override
     public Boolean commitDrops(IngestWizardDataDto data) {
-        LOGGER.debug("input commitDrops(): [{}]", new Object[] { data });
+        LOGGER.debug("input commitDrops(): [{}]", new Object[] {data});
 
-        Boolean result= client.commitDrops(data);
+        Boolean result = client.commitDrops(data);
 
         LOGGER.debug("output commitDrops(): [{}]", result);
         return result;
@@ -110,7 +133,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     @Override
     @Transactional(readOnly = true)
     public PageListDto<TrackDto> find(String criteria, Pageable page) {
-        LOGGER.debug("input find(criteria, page): [{}]", new Object[] { criteria, page });
+        LOGGER.debug("input find(criteria, page): [{}]", new Object[] {criteria, page});
 
         PageListDto<TrackDto> tracks = client.search(criteria, page);
 
@@ -120,26 +143,26 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         return tracks;
     }
 
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public TrackDto pull(TrackDto config) {
-		LOGGER.debug("input pull(track): [{}]", config);
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public TrackDto pull(TrackDto config) {
+        LOGGER.debug("input pull(track): [{}]", config);
 
-		TrackDto track = null;
-		try {
-			if (config == null || config.getId() == null) {
-				throw new IllegalArgumentException("Given track is illegal");
-			}
+        TrackDto track = null;
+        try {
+            if (config == null || config.getId() == null) {
+                throw new IllegalArgumentException("Given track is illegal");
+            }
 
-			Long id = config.getId();
+            Long id = config.getId();
 
-			pullingTrackSet.add(id);
+            pullingTrackSet.add(id);
 
-			track = client.pullTrack(id);
+            track = client.pullTrack(id);
 
-			if (track == null) {
-				throw new ServiceException("Pulled track is null");
-			}
+            if (track == null) {
+                throw new ServiceException("Pulled track is null");
+            }
 
             if (track.getPublishDate() == null) {
                 throw new ServiceException("Pulled track is not published (publish date is null)");
@@ -157,7 +180,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             track.setAmazonUrl(config.getAmazonUrl());
             track.setAreArtistUrls(config.getAreArtistUrls());
 
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException("tracks.pull.error", "Couldn't pull track");
         } finally {
@@ -168,10 +191,10 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
         LOGGER.info("output pull(track): [{}]", track);
 
-		return track;
-	}
+        return track;
+    }
 
-    protected Media createOrUpdateMedia(TrackDto track, TrackDto config){
+    protected Media createOrUpdateMedia(TrackDto track, TrackDto config) {
         Media media = mediaRepository.findByTrackId(config.getId());
 
         if (media == null) {
@@ -199,7 +222,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
         // Building media files
         ResourceFileDto audioFileDto = track.getFile(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL);
-        if(audioFileDto != null){
+        if (audioFileDto != null) {
             media.setPurchasedFile(createMediaFile(audioFileDto));
 
             media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
@@ -215,7 +238,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         }
 
         ResourceFileDto videoFileDto = track.getFile(FileType.VIDEO, AudioResolution.RATE_ORIGINAL);
-        if(videoFileDto != null){
+        if (videoFileDto != null) {
             media.setAudioFile(createMediaFile(videoFileDto));
         }
 
@@ -223,7 +246,9 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         media.setImageFileSmall(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_21)));
         media.setImgFileResolution(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL)));
 
-        Date publishDate = track.getPublishDate() != null ? track.getPublishDate() : new Date();
+        Date publishDate = track.getPublishDate() != null ?
+                           track.getPublishDate() :
+                           new Date();
         media.setPublishDate((int) (publishDate.getTime() / 1000));
 
         mediaRepository.save(media);
@@ -235,9 +260,11 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
     private Label getLabel(TrackDto trackDto) {
         String label = trackDto.getLabel();
-        if (!StringUtils.isEmpty(label)){
-          Label result =  labelRepository.findByName(label);
-          return result != null ? result : createAndSaveLabel(label);
+        if (!StringUtils.isEmpty(label)) {
+            Label result = labelRepository.findByName(label);
+            return result != null ?
+                   result :
+                   createAndSaveLabel(label);
         }
         return null;
     }
@@ -250,11 +277,12 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     private String getiTunesURL(TrackDto sourceTrackDto) {
-        if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis){
+        if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis) {
             return sourceTrackDto.getItunesUrl();
-        }else{
-            return "http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (sourceTrackDto.getItunesUrl() != null ? sourceTrackDto.getItunesUrl().replace("&", "%26") : "")
-                    + "%26partnerId=2003";
+        } else {
+            return "http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (sourceTrackDto.getItunesUrl() != null ?
+                                                                                       sourceTrackDto.getItunesUrl().replace("&", "%26") :
+                                                                                       "") + "%26partnerId=2003";
         }
     }
 
@@ -289,136 +317,143 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-	public TrackDto encode(TrackDto config) {
-		LOGGER.debug("input encode(track): [{}]", config);
+    public TrackDto encode(TrackDto config) {
+        LOGGER.debug("input encode(track): [{}]", config);
 
-		TrackDto track = null;
-		try {
-			if (config == null || config.getId() == null) {
-				throw new IllegalArgumentException("Given track is illegal");
-			}
+        TrackDto track = null;
+        try {
+            if (config == null || config.getId() == null) {
+                throw new IllegalArgumentException("Given track is illegal");
+            }
 
-			Media media = mediaRepository.findByTrackId(config.getId());
-			if (media != null) {
-				media.setPublishDate(0);
-				mediaRepository.save(media);
-			}
+            Media media = mediaRepository.findByTrackId(config.getId());
+            if (media != null) {
+                media.setPublishDate(0);
+                mediaRepository.save(media);
+            }
 
-			track = client.encodeTrack(config.getId(), config.getResolution() == AudioResolution.RATE_96 ? true : false, config.getLicensed());
-			track.setPublishArtist(track.getArtist());
-			track.setPublishTitle(track.getTitle());
-			track.setInfo(getArtistInfo(track.getArtist()));
-		} catch (Exception e) {
+            track = client.encodeTrack(config.getId(), config.getResolution() == AudioResolution.RATE_96 ?
+                                                       true :
+                                                       false, config.getLicensed());
+            track.setPublishArtist(track.getArtist());
+            track.setPublishTitle(track.getTitle());
+            track.setInfo(getArtistInfo(track.getArtist()));
+        } catch (Exception e) {
             LOGGER.error("Exception encoding track {}: {}", config, e.getMessage(), e);
             throw new ExternalServiceException("tracks.encode.error", "Couldn't encode track");
         }
 
-		LOGGER.info("output encode(id): [{}]", track);
-		return track;
-	}
+        LOGGER.info("output encode(id): [{}]", track);
+        return track;
+    }
 
-	@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public MediaFile createMediaFile(ResourceFileDto fileDto) {
         LOGGER.info("createMediaFile fileDto is {}", fileDto);
-        if (fileDto == null)
+        if (fileDto == null) {
             return null;
+        }
 
-		String fullFileName = fileDto.getFullFilename();
-		MediaFile file = mediaFileRepository.getByName(fullFileName);
+        String fullFileName = fileDto.getFullFilename();
+        MediaFile file = mediaFileRepository.getByName(fullFileName);
 
-		if (file == null) {
-			file = new MediaFile();
-			file.setFilename(fullFileName);
-			mobi.nowtechnologies.server.persistence.domain.FileType fileType = new mobi.nowtechnologies.server.persistence.domain.FileType();
-			fileType.setI(FileType.valueOf(fileDto.getType()).getId().byteValue());
-			file.setFileType(fileType);
+        if (file == null) {
+            file = new MediaFile();
+            file.setFilename(fullFileName);
+            mobi.nowtechnologies.server.persistence.domain.FileType fileType = new mobi.nowtechnologies.server.persistence.domain.FileType();
+            fileType.setI(FileType.valueOf(fileDto.getType()).getId().byteValue());
+            file.setFileType(fileType);
 
-            file.setDuration(fileDto.getDuration() != null ? fileDto.getDuration() : 0);
-		}
+            file.setDuration(fileDto.getDuration() != null ?
+                             fileDto.getDuration() :
+                             0);
+        }
 
-		file.setSize(fileDto.getSize());
+        file.setSize(fileDto.getSize());
         LOGGER.debug("save MediaFile {}", file);
         mediaFileRepository.save(file);
 
-		return file;
-	}
+        return file;
+    }
 
-	@Override
-	public PageListDto<TrackDto> find(SearchTrackDto criteria, Pageable page) {
-		LOGGER.debug("input find(criteria, page): [{}]", new Object[] { criteria, page });
+    @Override
+    public PageListDto<TrackDto> find(SearchTrackDto criteria, Pageable page) {
+        LOGGER.debug("input find(criteria, page): [{}]", new Object[] {criteria, page});
 
-		PageListDto<TrackDto> tracks = client.search(criteria, page);
+        PageListDto<TrackDto> tracks = client.search(criteria, page);
 
-		fillTracks(tracks);
+        fillTracks(tracks);
 
-		LOGGER.info("output find(tracks): [{}]", tracks);
-		return tracks;
-	}
-	
-	@Transactional(readOnly = true)
-	protected String getArtistInfo(String artistName) {
-		Pageable one = new PageRequest(0, 1);
-		List<Artist> artists = artistRepository.getByNames(artistName, one);
-		if (artists == null || artists.size() == 0) {
-			return "";
-		} else {
-			Artist artist = artists.get(0);
-			return artist.getInfo() != null ? artist.getInfo() : "";
-		}
-	}
+        LOGGER.info("output find(tracks): [{}]", tracks);
+        return tracks;
+    }
 
-	@Transactional(readOnly = true)
-	protected void fillTracks(PageListDto<TrackDto> tracks) {
-		Map<String, TrackDto> map = new HashMap<String, TrackDto>();
-		for (TrackDto track : tracks.getList()) {
-				
-			track.setInfo(getArtistInfo(track.getArtist()));
-			track.setPublishArtist(track.getArtist());
-			track.setPublishTitle(track.getTitle());
+    @Transactional(readOnly = true)
+    protected String getArtistInfo(String artistName) {
+        Pageable one = new PageRequest(0, 1);
+        List<Artist> artists = artistRepository.getByNames(artistName, one);
+        if (artists == null || artists.size() == 0) {
+            return "";
+        } else {
+            Artist artist = artists.get(0);
+            return artist.getInfo() != null ?
+                   artist.getInfo() :
+                   "";
+        }
+    }
 
-			if (pullingTrackSet.contains(track.getId()))
-				track.setStatus(TrackStatus.PUBLISHING);
-			else if (track.getStatus() == TrackStatus.ENCODED || track.getStatus() == TrackStatus.PUBLISHED)
-				map.put(track.getIsrc(), track);
+    @Transactional(readOnly = true)
+    protected void fillTracks(PageListDto<TrackDto> tracks) {
+        Map<String, TrackDto> map = new HashMap<String, TrackDto>();
+        for (TrackDto track : tracks.getList()) {
 
-		}
+            track.setInfo(getArtistInfo(track.getArtist()));
+            track.setPublishArtist(track.getArtist());
+            track.setPublishTitle(track.getTitle());
 
-		if (map.size() > 0)
-		{
-			List<Media> medias = mediaRepository.findByIsrcs(map.keySet());
+            if (pullingTrackSet.contains(track.getId())) {
+                track.setStatus(TrackStatus.PUBLISHING);
+            } else if (track.getStatus() == TrackStatus.ENCODED || track.getStatus() == TrackStatus.PUBLISHED) {
+                map.put(track.getIsrc(), track);
+            }
 
-			for (Media media : medias) {
-				TrackDto track = map.get(media.getIsrc());
-				if (media.getPublishDate() > 0) {
-					track.setStatus(TrackStatus.PUBLISHED);
-					track.setPublishDate(new Date(media.getPublishDate() * 1000L));
-					track.setPublishTitle(media.getTitle());
-					track.setInfo(media.getArtist().getInfo());
-					track.setPublishArtist(media.getArtistName());
-					track.setAreArtistUrls(media.getAreArtistUrls());
-					final String amazonUrl = media.getAmazonUrl();
-					if (amazonUrl != null && !amazonUrl.isEmpty()) {
-						track.setAmazonUrl(amazonUrl);
-					}
+        }
+
+        if (map.size() > 0) {
+            List<Media> medias = mediaRepository.findByIsrcs(map.keySet());
+
+            for (Media media : medias) {
+                TrackDto track = map.get(media.getIsrc());
+                if (media.getPublishDate() > 0) {
+                    track.setStatus(TrackStatus.PUBLISHED);
+                    track.setPublishDate(new Date(media.getPublishDate() * 1000L));
+                    track.setPublishTitle(media.getTitle());
+                    track.setInfo(media.getArtist().getInfo());
+                    track.setPublishArtist(media.getArtistName());
+                    track.setAreArtistUrls(media.getAreArtistUrls());
+                    final String amazonUrl = media.getAmazonUrl();
+                    if (amazonUrl != null && !amazonUrl.isEmpty()) {
+                        track.setAmazonUrl(amazonUrl);
+                    }
                     track.setItunesUrl(media.getiTunesUrl());
-					if (media.getiTunesUrl() != null && !"".equals(media.getiTunesUrl())) {
-						try {
-							Matcher m = Pattern.compile("url=.*\\%26").matcher(media.getiTunesUrl());
-							if (m.find()) {
-								String url = m.group();
-								if (url != null && !"".equals(url)) {
-									url = url.substring(4, url.length() - 3).replace("%26", "&");
-									track.setItunesUrl(url);
-								}
-							}
-						} catch (Exception e) {
-							LOGGER.warn("Can't get iTunes URL from media for original value: " + media.getiTunesUrl(), e);
-						}
-					}
-				}
-			}
-		}
-	}
+                    if (media.getiTunesUrl() != null && !"".equals(media.getiTunesUrl())) {
+                        try {
+                            Matcher m = Pattern.compile("url=.*\\%26").matcher(media.getiTunesUrl());
+                            if (m.find()) {
+                                String url = m.group();
+                                if (url != null && !"".equals(url)) {
+                                    url = url.substring(4, url.length() - 3).replace("%26", "&");
+                                    track.setItunesUrl(url);
+                                }
+                            }
+                        } catch (Exception e) {
+                            LOGGER.warn("Can't get iTunes URL from media for original value: " + media.getiTunesUrl(), e);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     public Map<String, List<TrackDto>> encodeTracks(List<TrackDto> tracks) {
@@ -441,7 +476,9 @@ public class TrackRepoServiceImpl implements TrackRepoService {
                     mediaRepository.save(media);
                 }
 
-                track = client.encodeTrack(track.getId(), track.getResolution() == AudioResolution.RATE_96 ? true : false, track.getLicensed());
+                track = client.encodeTrack(track.getId(), track.getResolution() == AudioResolution.RATE_96 ?
+                                                          true :
+                                                          false, track.getLicensed());
                 track.setPublishArtist(track.getArtist());
                 track.setPublishTitle(track.getTitle());
                 track.setInfo(getArtistInfo(track.getArtist()));

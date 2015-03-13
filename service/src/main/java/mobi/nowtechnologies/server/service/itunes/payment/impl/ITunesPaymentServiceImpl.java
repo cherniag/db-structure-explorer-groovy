@@ -9,7 +9,11 @@ import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentLock;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.ITunesPaymentLockRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
@@ -17,17 +21,18 @@ import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.service.payment.SubmittedPaymentService;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
 
 /**
  * Created by zam on 1/16/2015.
@@ -61,9 +66,9 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
     }
 
     @Override
-    public PaymentPolicy getCurrentSubscribedPaymentPolicy(User user){
+    public PaymentPolicy getCurrentSubscribedPaymentPolicy(User user) {
         SubmittedPayment latest = submittedPaymentService.getLatest(user);
-        if(latest != null && latest.getNextSubPayment() > timeService.nowSeconds()){
+        if (latest != null && latest.getNextSubPayment() > timeService.nowSeconds()) {
             return latest.getPaymentPolicy();
         }
         return null;
@@ -101,7 +106,9 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
         submittedPayment.setPaymentPolicy(paymentPolicy);
 
         boolean isFirstPayment = user.getLastSuccessfulPaymentTimeMillis() == 0;
-        submittedPayment.setType(isFirstPayment ? FIRST : REGULAR);
+        submittedPayment.setType(isFirstPayment ?
+                                 FIRST :
+                                 REGULAR);
 
         submittedPayment = submittedPaymentService.save(submittedPayment);
 

@@ -1,19 +1,14 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import com.sentaca.spring.smpp.mo.MOMessage;
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.junit.Before;
-import org.junit.Test;
+
+import com.sentaca.spring.smpp.mo.MOMessage;
 import org.smslib.Message;
 
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+import org.junit.*;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/7/13
- * Time: 2:13 PM
+ * User: Alexsandr_Kolpakov Date: 10/7/13 Time: 2:13 PM
  */
 public class VFNZSmsMessageParserTest {
 
@@ -64,7 +59,7 @@ public class VFNZSmsMessageParserTest {
         Assert.assertEquals("+6421111111", result.getPhoneNumber());
     }
 
-    private MOMessage createMessage(String message){
+    private MOMessage createMessage(String message) {
         return new MOMessage("5803", "6421111111", message, Message.MessageEncodings.ENC8BIT);
     }
 }

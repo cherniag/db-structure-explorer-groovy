@@ -2,7 +2,13 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
-import mobi.nowtechnologies.server.dto.streamzine.*;
+import mobi.nowtechnologies.server.dto.streamzine.AccessPolicyDto;
+import mobi.nowtechnologies.server.dto.streamzine.BaseContentItemDto;
+import mobi.nowtechnologies.server.dto.streamzine.DeeplinkType;
+import mobi.nowtechnologies.server.dto.streamzine.DeeplinkValueItemDto;
+import mobi.nowtechnologies.server.dto.streamzine.IdListItemDto;
+import mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto;
+import mobi.nowtechnologies.server.dto.streamzine.VisualBlock;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
@@ -16,17 +22,18 @@ import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
-import org.springframework.transaction.annotation.Transactional;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
+import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class StreamzineUpdateAsm {
+
     private DeepLinkUrlFactory deepLinkUrlFactory;
     private DeepLinkInfoService deepLinkInfoService;
     private BadgeMappingRepository badgeMappingRepository;
@@ -37,15 +44,19 @@ public class StreamzineUpdateAsm {
     public void setDeepLinkUrlFactory(DeepLinkUrlFactory deepLinkUrlFactory) {
         this.deepLinkUrlFactory = deepLinkUrlFactory;
     }
+
     public void setDeepLinkInfoService(DeepLinkInfoService deepLinkInfoService) {
         this.deepLinkInfoService = deepLinkInfoService;
     }
+
     public void setBadgeMappingRepository(BadgeMappingRepository badgeMappingRepository) {
         this.badgeMappingRepository = badgeMappingRepository;
     }
+
     public void setCommunityRepository(CommunityRepository communityRepository) {
         this.communityRepository = communityRepository;
     }
+
     public void setResolutionRepository(ResolutionRepository resolutionRepository) {
         this.resolutionRepository = resolutionRepository;
     }
@@ -76,7 +87,7 @@ public class StreamzineUpdateAsm {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         DeeplinkType deeplinkType = getDeeplinkType(block);
 
-        if(deeplinkInfo instanceof ManualCompilationDeeplinkInfo) {
+        if (deeplinkInfo instanceof ManualCompilationDeeplinkInfo) {
             IdListItemDto dto = new IdListItemDto(generateId(block), deeplinkType);
             dto.setLinkValue(deepLinkUrlFactory.create((ManualCompilationDeeplinkInfo) deeplinkInfo));
 
@@ -96,24 +107,23 @@ public class StreamzineUpdateAsm {
     private void assignValuesToItemDto(BaseContentItemDto dto, Block block, Community community, Resolution resolution) {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         ShapeType shapeType = block.getShapeType();
-        boolean allowedToAssignBadge =
-                BadgeMappingRules.allowed(shapeType, deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
+        boolean allowedToAssignBadge = BadgeMappingRules.allowed(shapeType, deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
 
         dto.setImage(block.getCoverUrl());
-        if(allowedToAssignBadge && block.getBadgeId() != null) {
+        if (allowedToAssignBadge && block.getBadgeId() != null) {
             dto.setBadgeIcon(badgesService.getBadgeFileName(block.getBadgeId(), community, resolution));
         }
-        if(hasTitle(shapeType) && !isEmpty(block.getTitle())){
+        if (hasTitle(shapeType) && !isEmpty(block.getTitle())) {
             dto.setTitle(block.getTitle());
         }
-        if(hasSubTitle(shapeType) && !isEmpty(block.getSubTitle())) {
+        if (hasSubTitle(shapeType) && !isEmpty(block.getSubTitle())) {
             dto.setSubTitle(block.getSubTitle());
         }
     }
 
     private DeeplinkType getDeeplinkType(Block block) {
         DeeplinkType deeplinkType = DeeplinkType.DEEPLINK;
-        if (block.getDeeplinkInfo() instanceof ManualCompilationDeeplinkInfo){
+        if (block.getDeeplinkInfo() instanceof ManualCompilationDeeplinkInfo) {
             deeplinkType = DeeplinkType.ID_LIST;
         }
         return deeplinkType;
@@ -125,7 +135,7 @@ public class StreamzineUpdateAsm {
 
     private VisualBlock convertToVisualBlock(Block block, BaseContentItemDto contentItemDto) {
         VisualBlock visualBlock = new VisualBlock(block.getShapeType(), contentItemDto.getId());
-        if(block.getAccessPolicy() != null) {
+        if (block.getAccessPolicy() != null) {
             visualBlock.setPolicyDto(convertToPolicyDto(block.getAccessPolicy()));
         }
         return visualBlock;

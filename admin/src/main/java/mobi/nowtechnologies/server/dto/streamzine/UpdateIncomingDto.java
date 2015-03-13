@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class UpdateIncomingDto {
+
     @JsonProperty(value = "id")
     private long id;
     @JsonProperty(value = "timestamp")
@@ -42,7 +43,7 @@ public class UpdateIncomingDto {
         this.userNames = userNames;
     }
 
-    public void addUserName(String userName){
+    public void addUserName(String userName) {
         this.userNames.add(userName);
     }
 
@@ -52,11 +53,6 @@ public class UpdateIncomingDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("timestamp", timestamp)
-                .append("userNames", userNames)
-                .append("blocks", blocks)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("timestamp", timestamp).append("userNames", userNames).append("blocks", blocks).toString();
     }
 }

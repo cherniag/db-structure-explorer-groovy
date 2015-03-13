@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoIT;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -13,35 +11,43 @@ import mobi.nowtechnologies.server.trackrepo.factory.TrackFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
-import org.junit.Before;
-import org.junit.Test;
+
+import javax.annotation.Resource;
+
+import java.util.Collection;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.List;
-
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 // Created by Oleg Artomov on 6/25/2014.
 public class TrackServiceIT extends AbstractTrackRepoIT {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Resource TrackRepository trackRepository;
-    @Resource FileRepository fileRepository;
-    @Resource(name = "trackRepo.TrackService") TrackService trackService;
-    @Value("${trackRepo.encode.destination}") org.springframework.core.io.Resource publishDir;
-    @Value("${trackRepo.pull.cdn.container.src}") String privateContainerName;
-    @Value("${trackRepo.pull.cdn.container.dest}") String publicContainerName;
-    @Resource CloudFileService cloudFileService;
+    @Resource
+    TrackRepository trackRepository;
+    @Resource
+    FileRepository fileRepository;
+    @Resource(name = "trackRepo.TrackService")
+    TrackService trackService;
+    @Value("${trackRepo.encode.destination}")
+    org.springframework.core.io.Resource publishDir;
+    @Value("${trackRepo.pull.cdn.container.src}")
+    String privateContainerName;
+    @Value("${trackRepo.pull.cdn.container.dest}")
+    String publicContainerName;
+    @Resource
+    CloudFileService cloudFileService;
 
     private boolean isFileInCloudExists(String containerName, String fileName) {
         logger.info("Check file in cloud: {}", fileName);
@@ -147,7 +153,7 @@ public class TrackServiceIT extends AbstractTrackRepoIT {
         Track track = trackRepository.findOne(resultEncoding.getId());
         assertEquals(TrackStatus.PUBLISHED, track.getStatus());
         assertNotNull(track.getPublishDate());
-        assertEquals(curTime-curTime%100000, track.getPublishDate().getTime()-track.getPublishDate().getTime()%100000);
+        assertEquals(curTime - curTime % 100000, track.getPublishDate().getTime() - track.getPublishDate().getTime() % 100000);
         waitWhileCloudProcessCopying();
         checkFilesExistsInCloudAfterPull(resultEncoding);
     }
@@ -159,14 +165,14 @@ public class TrackServiceIT extends AbstractTrackRepoIT {
         SearchTrackDto criteria = new SearchTrackDto();
         criteria.setTrackIds(Lists.newArrayList(prepared.getId().intValue()));
         PageRequest request = new PageRequest(0, 1);
-        Page<Track> result =  trackService.find(criteria, request);
+        Page<Track> result = trackService.find(criteria, request);
         assertEquals(result.getNumberOfElements(), 1);
         Track track = trackRepository.findOne(prepared.getId());
         assertEquals(result.getContent().get(0), track);
     }
 
     @Before
-    public void beforeEachTest(){
+    public void beforeEachTest() {
         assertFalse(privateContainerName.contentEquals(publicContainerName));
     }
 

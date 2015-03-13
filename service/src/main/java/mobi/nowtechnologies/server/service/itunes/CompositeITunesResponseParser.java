@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.server.service.itunes;
 
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CompositeITunesResponseParser implements ITunesResponseParser {
 

@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.Set;
+
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-
-import java.util.Set;
 
 public class HazelcastService {
 
@@ -11,9 +11,10 @@ public class HazelcastService {
 
     public HazelcastInstance getHazelcastInstance() {
         Set<HazelcastInstance> instances = Hazelcast.getAllHazelcastInstances();
-        if (instances.isEmpty())
+        if (instances.isEmpty()) {
             return Hazelcast.newHazelcastInstance(null);
-        else
+        } else {
             return instances.iterator().next();
+        }
     }
 }

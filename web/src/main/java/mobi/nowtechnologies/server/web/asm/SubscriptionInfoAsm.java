@@ -7,13 +7,14 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.web.controller.SubscriptionInfo;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class SubscriptionInfoAsm {
+
     private TimeService timeService;
     private ITunesPaymentService iTunesPaymentService;
 
@@ -30,6 +31,7 @@ public class SubscriptionInfoAsm {
         info.setCurrentPaymentPolicy(currentPaymentPolicyDto);
 
         List<PaymentPolicyDto> included = filterPaymentPolicyDTOs(paymentPolicyDtos, isIos);
+        Collections.sort(included, new PaymentPolicyDto.ByDurationAsc());
         info.addPaymentPolicyDto(included);
 
         return info;
@@ -44,7 +46,7 @@ public class SubscriptionInfoAsm {
             return new PaymentPolicyDto(user.getCurrentPaymentDetails().getPaymentPolicy());
         } else if (hasITunesSubscription(user)) {
             PaymentPolicy currentPaymentPolicy = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
-            if(currentPaymentPolicy!=null) {
+            if (currentPaymentPolicy != null) {
                 return new PaymentPolicyDto(currentPaymentPolicy);
             }
         }

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 public class FileNameAliasDto {
+
     private long id;
 
     private String fileName;

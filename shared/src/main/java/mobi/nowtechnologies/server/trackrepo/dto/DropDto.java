@@ -4,12 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: sanya
- * Date: 7/15/13
- * Time: 2:52 PM
+ * Created with IntelliJ IDEA. User: sanya Date: 7/15/13 Time: 2:52 PM
  */
 public class DropDto {
+
     private String ingestor;
     private String name;
     private Date date;
@@ -58,8 +56,9 @@ public class DropDto {
 
     public boolean hasAnySelected() {
         for (DropTrackDto drop : tracks) {
-            if(drop.getIngest() != null && drop.getIngest())
+            if (drop.getIngest() != null && drop.getIngest()) {
                 return true;
+            }
         }
 
         return false;
@@ -68,11 +67,11 @@ public class DropDto {
     @Override
     public String toString() {
         return "DropDto{" +
-                "ingestor='" + ingestor + '\'' +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", tracks=" + tracks +
-                ", selected=" + selected +
-                "} " + super.toString();
+               "ingestor='" + ingestor + '\'' +
+               ", name='" + name + '\'' +
+               ", date=" + date +
+               ", tracks=" + tracks +
+               ", selected=" + selected +
+               "} " + super.toString();
     }
 }

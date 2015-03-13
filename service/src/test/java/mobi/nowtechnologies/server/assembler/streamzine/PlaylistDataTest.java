@@ -1,16 +1,19 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
-import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import static mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData.TOKEN;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
-import static org.hamcrest.core.Is.is;
+
+import com.google.common.base.Joiner;
+
+import org.junit.*;
+import org.junit.runner.*;
 import static org.junit.Assert.*;
+
+import static org.hamcrest.core.Is.is;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class PlaylistDataTest {
@@ -131,7 +134,7 @@ public class PlaylistDataTest {
     }
 
     @Test
-     public void shouldToValueString() {
+    public void shouldToValueString() {
         //given
         Integer chartId = Integer.MAX_VALUE;
         PlayerType playerType = MINI_PLAYER_ONLY;

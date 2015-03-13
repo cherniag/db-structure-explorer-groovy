@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.applicationtests.services.repeat;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import javax.annotation.PostConstruct;
 
 @Service
 public class RepeatService {
@@ -15,7 +15,7 @@ public class RepeatService {
     @Value("${repeats.retry.count}")
     private int retryCount;
 
-    public <T> T repeat(Repeatable<T> repeatable){
+    public <T> T repeat(Repeatable<T> repeatable) {
         T result = null;
 
         for (int i = 0; i < retryCount; i++) {
@@ -23,7 +23,7 @@ public class RepeatService {
 
             delay();
 
-            if(!repeatable.again()) {
+            if (!repeatable.again()) {
                 return result;
             }
         }

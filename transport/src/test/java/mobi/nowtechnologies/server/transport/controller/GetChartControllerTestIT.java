@@ -1,33 +1,50 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.ResultActions;
+import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 
 import javax.annotation.Resource;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import static junit.framework.Assert.assertTrue;
-import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import org.junit.*;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.ResultActions;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
-    private static final String OLD_ITUNES_URL_O2 = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
-    private static final String OLD_ITUNES_URL_HL_UK = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_hl_uk%26ct%3Dct_for_hl_uk";
+    private static final String OLD_ITUNES_URL_O2 =
+        "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
+    private static final String OLD_ITUNES_URL_HL_UK =
+        "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_hl_uk%26ct%3Dct_for_hl_uk";
     private static final String NEW_ITUNES_URL_O2 = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
 
     @Resource
@@ -68,13 +85,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         ResultActions resultActions = mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("WIDTHXHEIGHT", widthHeight)
-        ).andExpect(status().isOk());
+            get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                          .param("WIDTHXHEIGHT", widthHeight)).andExpect(status().isOk());
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultJson = aHttpServletResponse.getContentAsString();
@@ -87,12 +99,9 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         assertTrue(resultJson.contains("\"chart\""));
         assertTrue(resultJson.contains("\"user\""));
 
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
+        ResultActions accountCheckCall =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+                   .andExpect(status().isOk());
         checkAccountCheck(resultActions, accountCheckCall);
     }
 
@@ -111,20 +120,14 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("WIDTHXHEIGHT", widthHeight)
-        )            .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'HOT_TRACKS')].locked").value(false))
-        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'OTHER_CHART')].locked").value(false))
-        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FOURTH_CHART')].locked").value(true))
-        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FIFTH_CHART')].locked").value(false))
-        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'VIDEO_CHART')].locked").value(false))
-        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'BASIC_CHART')].locked").value(false));
+            get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                          .param("WIDTHXHEIGHT", widthHeight)).andDo(print()).andExpect(status().isOk())
+               .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'HOT_TRACKS')].locked").value(false))
+               .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'OTHER_CHART')].locked").value(false))
+               .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FOURTH_CHART')].locked").value(true))
+               .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FIFTH_CHART')].locked").value(false))
+               .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'VIDEO_CHART')].locked").value(false))
+               .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'BASIC_CHART')].locked").value(false));
     }
 
     @Test
@@ -140,12 +143,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+                                             .andExpect(status().isOk());
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultJson = aHttpServletResponse.getContentAsString();
@@ -158,12 +157,9 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         assertTrue(resultJson.contains("\"chart\""));
         assertTrue(resultJson.contains("\"user\""));
 
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
+        ResultActions accountCheckCall =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+                   .andExpect(status().isOk());
         checkAccountCheck(resultActions, accountCheckCall);
     }
 
@@ -180,12 +176,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+                                             .andExpect(status().isOk());
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultJson = aHttpServletResponse.getContentAsString();
@@ -198,12 +190,9 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         assertTrue(resultJson.contains("\"chart\""));
         assertTrue(resultJson.contains("\"user\""));
 
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
+        ResultActions accountCheckCall =
+            mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+                   .andExpect(status().isOk());
         checkAccountCheck(resultActions, accountCheckCall);
     }
 
@@ -240,17 +229,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         chartDetailRepository.save(hotDetail);
 
         ResultActions resultActions = mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("WIDTHXHEIGHT", widthHeight)
-                )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("response.data[1].chart.playlists[0].playlistTitle").value("Title"))
-            .andExpect(jsonPath("response.data[1].chart.playlists[0].imageTitle").value("Image Title"))
-            .andExpect(jsonPath("response.data[1].chart.playlists[0].badge_icon").value("badge_picture_IOS_640x960"));
+            get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                          .param("WIDTHXHEIGHT", widthHeight)).andExpect(status().isOk())
+                                             .andExpect(jsonPath("response.data[1].chart.playlists[0].playlistTitle").value("Title"))
+                                             .andExpect(jsonPath("response.data[1].chart.playlists[0].imageTitle").value("Image Title"))
+                                             .andExpect(jsonPath("response.data[1].chart.playlists[0].badge_icon").value("badge_picture_IOS_640x960"));
 
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
@@ -276,7 +259,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
         BadgeMapping mapping = BadgeMapping.specific(resolution, community, originalUploadedFile);
-        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + deviceType + "_" + width + "x" + height, "title for " + fileName, new Dimensions(iconWidth, iconHeight)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + deviceType + "_" + width + "x" + height, "title for " + fileName, new Dimensions(iconWidth, iconHeight))
+                                     .forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
 
         badgeMappingRepository.saveAndFlush(mapping);
 
@@ -296,18 +280,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
-                .andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_2"))
-                .andExpect(xpath("/response/chart/track[duration=10000]").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+               .andExpect(status().isOk()).andDo(print()).andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
+               .andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_2")).andExpect(xpath("/response/chart/track[duration=10000]").exists())
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists()).andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
@@ -323,18 +300,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", apiVersion)
-                        .param("COMMUNITY_NAME", apiVersion)
-        ).andExpect(status().isOk())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                      .param("APP_VERSION", apiVersion).param("COMMUNITY_NAME", apiVersion)).andExpect(status().isOk())
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+               .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist()).andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
@@ -350,20 +320,12 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", apiVersion)
-                        .param("COMMUNITY_NAME", apiVersion)
-        ).andExpect(status().isOk())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                      .param("APP_VERSION", apiVersion).param("COMMUNITY_NAME", apiVersion)).andExpect(status().isOk())
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+               .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist()).andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
+               .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist()).andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
@@ -379,19 +341,10 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         generateChartAllTypesForO2();
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", apiVersion)
-                        .param("API_VERSION", apiVersion)
-                        .param("COMMUNITY_NAME", apiVersion)
-        ).andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist())
-                .andExpect(xpath("/response/chart/bonusTrack").exists());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                      .param("APP_VERSION", apiVersion).param("API_VERSION", apiVersion).param("COMMUNITY_NAME", apiVersion)).andExpect(status().isOk())
+               .andDo(print()).andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist()).andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
+               .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist()).andExpect(xpath("/response/chart/bonusTrack").exists());
     }
 
     @Test
@@ -405,12 +358,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isUnauthorized());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+               .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -422,12 +371,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isInternalServerError());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+               .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -439,12 +384,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+               .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -458,13 +399,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
-                post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk())
-                .andExpect(xpath("/response/errorMessage/errorCode").number(601d));
+            post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").number(601d));
     }
 
     @Test
@@ -476,12 +412,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isNotFound());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
+               .andExpect(status().isNotFound());
     }
 
 
@@ -502,24 +434,13 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         userRepository.saveAndFlush(user);
         generateChartAllTypesForHL();
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", apiVersion)
-                        .param("API_VERSION", apiVersion)
-                        .param("COMMUNITY_NAME", apiVersion)
-        ).andDo(print())
-                .andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath("//chart/playlist").nodeCount(7))
-                .andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(2))
-                .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
+                                                                      .param("APP_VERSION", apiVersion).param("API_VERSION", apiVersion).param("COMMUNITY_NAME", apiVersion)).andDo(print())
+               .andExpect(status().isOk()).andDo(print()).andExpect(xpath("//chart/playlist").nodeCount(7)).andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
+               .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1)).andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
+               .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(2)).andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
+               .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
+               .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());
     }
 
     private List<ChartDetail> generateChartAllTypesForO2() {

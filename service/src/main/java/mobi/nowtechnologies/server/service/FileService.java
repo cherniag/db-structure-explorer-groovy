@@ -1,13 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Rendition;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.MediaDeliveryEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
-import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
-import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import mobi.nowtechnologies.common.util.TrackIdGenerator;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
@@ -16,22 +8,36 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.EnumSet;
+import java.util.List;
+
+import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Rendition;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.MediaDeliveryEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.*;
-import java.util.EnumSet;
-import java.util.List;
-
-import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 import static org.apache.commons.lang.StringUtils.containsAny;
 import static org.apache.commons.lang.Validate.isTrue;
 import static org.apache.commons.lang.Validate.notNull;
+
+import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
@@ -40,14 +46,12 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
  * @author Maksym Chernolevskyi (maksym)
  */
 public class FileService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class.getName());
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER = java.util.logging.Logger.getLogger("BrightcoveLog");
-
-    private UserService userService;
-
     private static final String POINT = ".";
     private static final String UNDERSCORE = "_";
-
+    private UserService userService;
     private Resource storePath;
     private MediaService mediaService;
 
@@ -74,26 +78,6 @@ public class FileService {
 
     public void setMediaRepository(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
-    }
-
-    public static enum FileType {
-        IMAGE_LARGE("image"),
-        IMAGE_SMALL("image"),
-        IMAGE_RESOLUTION("image"),
-        HEADER("header"),
-        AUDIO("audio"),
-        VIDEO("video"),
-        PURCHASED("purchased");
-
-        private String folderName;
-
-        FileType(String folderName) {
-            this.folderName = folderName;
-        }
-
-        public String getFolderName() {
-            return folderName;
-        }
     }
 
     public void init() {
@@ -135,7 +119,7 @@ public class FileService {
         Media media = mediaService.findByIsrc(mediaIsrc);
 
         notNull(media, "error finding filename in db, mediaId=" + mediaIsrc + ", fileType=" + fileType +
-                ", resolution=" + resolution + ", userId=" + userId);
+                       ", resolution=" + resolution + ", userId=" + userId);
         String mediaFileName = getFileName(media, fileType, user.getDeviceTypeId());
 
         File file = getFileFromLocalStorage(mediaIsrc, fileType, resolution, mediaFileName);
@@ -152,16 +136,15 @@ public class FileService {
             isTrue(!containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
 
             StringBuilder builder = new StringBuilder(mediaFileName);
-            builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE
-                    + resolution);
+            builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE + resolution);
             builder.insert(0, folderPath + SEPARATOR);
             fileName = new File(builder.toString());
-        } else{
+        } else {
             fileName = new File(folderPath, mediaFileName);
         }
         File file = fileName;
         isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
-                "], path="+file.getAbsolutePath());
+                              "], path=" + file.getAbsolutePath());
         return file;
     }
 
@@ -169,13 +152,11 @@ public class FileService {
         try {
             Pair<String, Long> stringLongPair = TrackIdGenerator.parseUniqueTrackId(trackId);
             return mediaRepository.findByTrackId(stringLongPair.getRight());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error("Problem with track id [{}]", trackId, e);
             return mediaService.findByIsrc(trackId);
         }
     }
-
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public InputStream getFileStreamForMedia(Media media, String mediaId, String resolution, String mediaFileName, FileType fileType, User user) {
@@ -195,8 +176,9 @@ public class FileService {
     }
 
     private void logEvents(Media media, FileType fileType, User user) {
-        if (fileType.equals(FileType.PURCHASED))
+        if (fileType.equals(FileType.PURCHASED)) {
             mediaService.logMediaEvent(user.getId(), media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
+        }
 
         if (fileType.equals(FileType.HEADER)) {
             LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", user.getId(), media.getI());
@@ -215,7 +197,7 @@ public class FileService {
         Media media = getMediaByTrackId(trackId);
 
         notNull(media, "error finding filename in db, mediaId=" + trackId + ", fileType=" + fileType +
-                ", resolution=" + resolution + ", userId=" + userId);
+                       ", resolution=" + resolution + ", userId=" + userId);
 
         return media;
     }
@@ -235,7 +217,7 @@ public class FileService {
         notNull(mediaIsrc, "The parameter mediaIsrc is null");
         notNull(fileType, "The parameter fileType is null");
 
-        LOGGER.debug("input parameters mediaIsrc, fileType, resolution, userId, outputStream: [{}], [{}]", new Object[]{mediaIsrc, fileType, resolution, userId});
+        LOGGER.debug("input parameters mediaIsrc, fileType, resolution, userId, outputStream: [{}], [{}]", new Object[] {mediaIsrc, fileType, resolution, userId});
         User user = userService.findById(userId);
         File file = getFile(mediaIsrc, fileType, resolution, user);
         LOGGER.debug("Output parameter file=[{}]", file);
@@ -251,27 +233,33 @@ public class FileService {
 						null : media.getAudioPreviewFile().getFilename();
                   */
                 return media.getAudioFile() == null ?
-                        null : media.getAudioFile().getFilename();
+                       null :
+                       media.getAudioFile().getFilename();
             case HEADER:
                   /* Christophe: no longer return preview for iPhone
-			if (deviceTypeId == DeviceType.IOS)
+            if (deviceTypeId == DeviceType.IOS)
 				return media.getHeaderPreviewFile() == null ?
 						null : media.getHeaderPreviewFile().getFilename();
                     */
                 return media.getHeaderFile() == null ?
-                        null : media.getHeaderFile().getFilename();
+                       null :
+                       media.getHeaderFile().getFilename();
             case IMAGE_LARGE:
                 return media.getImageFIleLarge() == null ?
-                        null : media.getImageFIleLarge().getFilename();
+                       null :
+                       media.getImageFIleLarge().getFilename();
             case IMAGE_SMALL:
                 return media.getImageFileSmall() == null ?
-                        null : media.getImageFileSmall().getFilename();
+                       null :
+                       media.getImageFileSmall().getFilename();
             case IMAGE_RESOLUTION:
                 return media.getImgFileResolution() == null ?
-                        null : media.getImgFileResolution().getFilename();
+                       null :
+                       media.getImgFileResolution().getFilename();
             case PURCHASED:
                 return media.getPurchasedFile() == null ?
-                        null : media.getPurchasedFile().getFilename();
+                       null :
+                       media.getPurchasedFile().getFilename();
             default:
                 return null;
         }
@@ -282,7 +270,9 @@ public class FileService {
     }
 
     public String getContentType(String name) {
-        return name.endsWith(".jpg") ? IMAGE_JPEG_VALUE : APPLICATION_OCTET_STREAM_VALUE;
+        return name.endsWith(".jpg") ?
+               IMAGE_JPEG_VALUE :
+               APPLICATION_OCTET_STREAM_VALUE;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -318,12 +308,16 @@ public class FileService {
         LOGGER.debug("Get video url for isrc=" + mediaIsrc);
 
         boolean isWindowsPhoneUser = DeviceType.WINDOWS_PHONE.equals(user.getDeviceType().getName());
-        MediaDeliveryEnum mediaDelivery = isWindowsPhoneUser ? MediaDeliveryEnum.HTTP : MediaDeliveryEnum.HTTP_IOS;
+        MediaDeliveryEnum mediaDelivery = isWindowsPhoneUser ?
+                                          MediaDeliveryEnum.HTTP :
+                                          MediaDeliveryEnum.HTTP_IOS;
 
         Video video = brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.RENDITIONS), null, mediaDelivery);
         String url = video.getFlvUrl();
         if (isWindowsPhoneUser) {
-            url = url != null && url.endsWith(TranscodeEncodeToEnum.MP4.name().toLowerCase()) ? url : null;
+            url = url != null && url.endsWith(TranscodeEncodeToEnum.MP4.name().toLowerCase()) ?
+                  url :
+                  null;
             if (url == null) {
                 List<Rendition> renditions = video.getRenditions();
                 if (renditions != null) {
@@ -336,7 +330,27 @@ public class FileService {
             }
         }
 
-        LOGGER.debug("Return video url=[{}] for isrc=[{}]", new Object[]{video.getFlvUrl(), mediaIsrc});
+        LOGGER.debug("Return video url=[{}] for isrc=[{}]", new Object[] {video.getFlvUrl(), mediaIsrc});
         return url;
+    }
+
+    public static enum FileType {
+        IMAGE_LARGE("image"),
+        IMAGE_SMALL("image"),
+        IMAGE_RESOLUTION("image"),
+        HEADER("header"),
+        AUDIO("audio"),
+        VIDEO("video"),
+        PURCHASED("purchased");
+
+        private String folderName;
+
+        FileType(String folderName) {
+            this.folderName = folderName;
+        }
+
+        public String getFolderName() {
+            return folderName;
+        }
     }
 }

@@ -6,7 +6,6 @@
 
     <bean id="trackRepo.cloudHttpClient" class="org.apache.http.impl.client.DefaultHttpClient"/>
 
-
     <bean id="trackRepo.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
 		<property name="userName" value="${cloudFile.userName}" />
 		<property name="password" value="${cloudFile.password}" />
@@ -22,13 +21,7 @@
 	</bean>
     
     <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl">
-        <property name="encodeScript" value="${trackRepo.encode.script}" />
         <property name="itunesScript" value="${trackRepo.itunes.script}" />
-		<property name="publishDir" value="${trackRepo.pull.publish}" />
-		<property name="neroHome" value="${trackRepo.encode.nero.home}" />
-		<property name="workDir" value="${trackRepo.encode.workdir}" />
-		<property name="classpath" value="${trackRepo.encode.classpath}" />
-		<property name="privateKey" value="${trackRepo.encode.privkey}" />
 		<property name="trackRepository" ref="trackRepository" />
 		<property name="cloudFileService" ref="trackRepo.CloudFileService" />		
 		<property name="srcPullContainer" value="${trackRepo.pull.cdn.container.src}" />
@@ -61,10 +54,15 @@
         <property name="mosRoot" value="${trackRepo.ingest.mos.root}" />
 	</bean>
 
-    <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl">
+    <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl" destroy-method="destroy">
 		<property name="trackRepository" ref="trackRepository" />
 		<property name="ingestionLogRepository" ref="ingestionLogRepository" />
 		<property name="parserFactory" ref="trackRepo.ParserFactory" />
+		<property name="executorService">
+			<bean class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
+				<constructor-arg value="#{T(mobi.nowtechnologies.server.trackrepo.ingest.Ingestors).values().length}" />
+			</bean>
+		</property>
 	</bean>
 	
     <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
@@ -79,7 +77,6 @@
 	<bean id="service.RestTemplate"  class="org.springframework.web.client.RestTemplate" />
 	
 	<bean id="service.encode.imageGenerator" class="mobi.nowtechnologies.server.trackrepo.utils.image.ShellImageGeneratorImpl">
-		<property name="imagesDir" value="${trackRepo.encode.workdir}/files/image/"/>
 		<property name="commandResizeImage" ref="service.encode.resizeImage"/>
 		<property name="commandCoverPreviewImage" ref="service.encode.coverPreviewImage"/>
 		<property name="convertPath" value="${trackrepo.encode.convertPath}"/>
@@ -140,12 +137,6 @@
 		<property name="imageGenerator" ref="service.encode.imageGenerator"/>
 		<property name="commandUITS" ref="service.encode.uitsAdapter"/>
 		<property name="workDir" value="${trackRepo.encode.workdir}/"/>
-		<property name="purchasedDir" value="${trackRepo.encode.workdir}/files/purchased/"/>
-		<property name="imageDir" value="${trackRepo.encode.workdir}/files/image/"/>
-		<property name="headerDir" value="${trackRepo.encode.workdir}/files/header/"/>
-		<property name="audioDir" value="${trackRepo.encode.workdir}/files/audio/"/>
-		<property name="encodedDir" value="${trackRepo.encode.workdir}/files/encoded/"/>
-		<property name="previewDir" value="${trackRepo.encode.workdir}/files/preview/"/>
 		<property name="neroHome" value="${trackRepo.encode.nero.home}"/>
 		<property name="cloudUploadFileManager" ref="service.encode.cloudUploadFileManager"/>
 	</bean>

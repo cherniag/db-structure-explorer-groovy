@@ -1,10 +1,20 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import com.google.common.io.Closeables;
-import com.rackspacecloud.client.cloudfiles.FilesClient;
-import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Map;
+
+import com.google.common.io.Closeables;
+import com.rackspacecloud.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.FilesException;
+import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
@@ -13,12 +23,9 @@ import org.apache.http.HttpException;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -89,18 +96,16 @@ public class CloudFileServiceImpl implements CloudFileService {
     }
 
     @Override
-    public InputStream getInputStream(String destinationContainer, String fileName) throws  FilesNotFoundException{
+    public InputStream getInputStream(String destinationContainer, String fileName) throws FilesNotFoundException {
         LOGGER.info("get InputStream for file file in container [] by fileName", destinationContainer, fileName);
         Assert.hasText(fileName);
         login();
         try {
             return filesClient.getObjectAsStream(destinationContainer, fileName);
-        }
-        catch (FilesNotFoundException e) {
+        } catch (FilesNotFoundException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception while getInputStream on cloud {}: {}", fileName, e.getMessage(), e);
             throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
         }
@@ -115,11 +120,9 @@ public class CloudFileServiceImpl implements CloudFileService {
         try {
             filesClient.getObjectMetaData(destinationContainer, fileName);
             return true;
-        }
-        catch (FilesNotFoundException e) {
+        } catch (FilesNotFoundException e) {
             return false;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception while fileExists on cloud {}: {}", fileName, e.getMessage(), e);
             throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
         }
@@ -146,7 +149,9 @@ public class CloudFileServiceImpl implements CloudFileService {
     public void uploadFromStream(InputStream stream, String fileName, Map metadata) {
         Assert.notNull(stream);
 
-        Map map = MapUtils.isEmpty(metadata) ? Collections.EMPTY_MAP : metadata;
+        Map map = MapUtils.isEmpty(metadata) ?
+                  Collections.EMPTY_MAP :
+                  metadata;
         LOGGER.info("Updating file on cloud with name {} and data {}", fileName, map);
 
         login();
@@ -192,6 +197,9 @@ public class CloudFileServiceImpl implements CloudFileService {
                 filesClient.copyObject(srcContainerName, srcFileName, targetContainerName, targetFileName);
                 LOGGER.info("File {} has been copied", srcFileName);
                 return true;
+            } catch (FilesException fe) {
+                LOGGER.error("Can't copy file [{}] from source container [{}] as [{}] file to target container [{}]. Some http error occurred with {} http status code.", srcFileName, srcContainerName,
+                             targetFileName, targetContainerName, fe.getHttpStatusCode(), fe);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -249,6 +257,10 @@ public class CloudFileServiceImpl implements CloudFileService {
         return filesURL;
     }
 
+    public void setFilesURL(String filesURL) {
+        this.filesURL = filesURL;
+    }
+
     public HttpClient getHttpClient() {
         return httpClient;
     }
@@ -287,10 +299,6 @@ public class CloudFileServiceImpl implements CloudFileService {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
-    }
-
-    public void setFilesURL(String filesURL) {
-        this.filesURL = filesURL;
     }
 
     public void setFilesClient(FilesClient filesClient) {

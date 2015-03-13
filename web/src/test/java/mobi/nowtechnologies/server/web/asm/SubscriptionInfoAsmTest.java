@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.web.asm;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
@@ -11,27 +10,29 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.web.controller.SubscriptionInfo;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.MessageSource;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.springframework.context.MessageSource;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SubscriptionInfoAsmTest {
+
     final int paypalId = 1;
     final int iosId = 2;
     final int notPaypalId = 3;
@@ -146,6 +147,36 @@ public class SubscriptionInfoAsmTest {
         assertEquals(false, subscriptionInfo.isPremium());
     }
 
+    @Test
+    public void testCreateSubscriptionInfoOrder() throws Exception {
+        // given
+        PaymentPolicyDto paymentPolicy1 = createPaypal();
+        when(paymentPolicy1.getSubcost()).thenReturn(new BigDecimal("4"));
+        when(paymentPolicy1.getDuration()).thenReturn(1);
+        when(paymentPolicy1.getDurationUnit()).thenReturn(DurationUnit.MONTHS);
+
+        PaymentPolicyDto paymentPolicy2 = createPaypal();
+        when(paymentPolicy2.getSubcost()).thenReturn(new BigDecimal("1"));
+        when(paymentPolicy2.getDuration()).thenReturn(1);
+        when(paymentPolicy2.getDurationUnit()).thenReturn(DurationUnit.WEEKS);
+
+        PaymentPolicyDto paymentPolicy3 = createPaypal();
+        when(paymentPolicy3.getSubcost()).thenReturn(new BigDecimal("10"));
+        when(paymentPolicy3.getDuration()).thenReturn(6);
+        when(paymentPolicy3.getDurationUnit()).thenReturn(DurationUnit.MONTHS);
+
+        List<PaymentPolicyDto> policies = Lists.newArrayList(paymentPolicy1, paymentPolicy2, paymentPolicy3);
+
+        // when
+        User user = makeNotPremiumAndroidUser();
+        SubscriptionInfo subscriptionInfo = subscriptionInfoAsm.createSubscriptionInfo(user, policies);
+
+        // then
+        assertEquals(paymentPolicy2, subscriptionInfo.getPaymentPolicyDTOs().get(0));
+        assertEquals(paymentPolicy1, subscriptionInfo.getPaymentPolicyDTOs().get(1));
+        assertEquals(paymentPolicy3, subscriptionInfo.getPaymentPolicyDTOs().get(2));
+    }
+
     //
     // internals
     //
@@ -206,6 +237,8 @@ public class SubscriptionInfoAsmTest {
         PaymentPolicyDto ios = mock(PaymentPolicyDto.class);
         when(ios.getId()).thenReturn(paypalId);
         when(ios.getPaymentType()).thenReturn("PAY_PAL");
+        when(ios.getDuration()).thenReturn(1);
+        when(ios.getDurationUnit()).thenReturn(WEEKS);
         return ios;
     }
 
@@ -213,6 +246,8 @@ public class SubscriptionInfoAsmTest {
         PaymentPolicyDto ios = mock(PaymentPolicyDto.class);
         when(ios.getId()).thenReturn(notPaypalId);
         when(ios.getPaymentType()).thenReturn("NOT_PAY_PAL");
+        when(ios.getDuration()).thenReturn(1);
+        when(ios.getDurationUnit()).thenReturn(MONTHS);
         return ios;
     }
 

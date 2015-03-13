@@ -7,85 +7,84 @@ import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class SubmittedPaymentDto {
-	
-	public static final String SUBMITTED_PAYMENT_DTO_LIST = "SUBMITTED_PAYMENT_DTO_LIST";
 
-	private Long id;
-	
-	private String internalTxId;
-	
-	private Date date;
+    public static final String SUBMITTED_PAYMENT_DTO_LIST = "SUBMITTED_PAYMENT_DTO_LIST";
 
-	private String gateway;
-	
-	private BigDecimal amount;
-	
-	private CurrencyCode currencyCode;
-	
-	private String descriptionError;
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    private String internalTxId;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private Date date;
 
-	public String getInternalTxId() {
-		return internalTxId;
-	}
+    private String gateway;
 
-	public void setInternalTxId(String internalTxId) {
-		this.internalTxId = internalTxId;
-	}
+    private BigDecimal amount;
 
-	public Date getDate() {
-		return date;
-	}
+    private CurrencyCode currencyCode;
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    private String descriptionError;
 
-	public String getGateway() {
-		return gateway;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setGateway(String gateway) {
-		this.gateway = gateway;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public String getInternalTxId() {
+        return internalTxId;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setInternalTxId(String internalTxId) {
+        this.internalTxId = internalTxId;
+    }
 
-	public CurrencyCode getCurrencyCode() {
-		return currencyCode;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public void setCurrencyCode(CurrencyCode currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public String getDescriptionError() {
-		return descriptionError;
-	}
+    public String getGateway() {
+        return gateway;
+    }
 
-	public void setDescriptionError(String descriptionError) {
-		this.descriptionError = descriptionError;
-	}
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
+    }
 
-	@Override
-	public String toString() {
-		return "SubmittedPaymentDto [id=" + id + ", internalTxId=" + internalTxId + ", amount=" + amount + ", currencyCode=" + currencyCode + ", date=" + date
-				+ ", descriptionError=" + descriptionError + ", gateway=" + gateway + "]";
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public CurrencyCode getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(CurrencyCode currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public String getDescriptionError() {
+        return descriptionError;
+    }
+
+    public void setDescriptionError(String descriptionError) {
+        this.descriptionError = descriptionError;
+    }
+
+    @Override
+    public String toString() {
+        return "SubmittedPaymentDto [id=" + id + ", internalTxId=" + internalTxId + ", amount=" + amount + ", currencyCode=" + currencyCode + ", date=" + date + ", descriptionError=" +
+               descriptionError + ", gateway=" + gateway + "]";
+    }
 }

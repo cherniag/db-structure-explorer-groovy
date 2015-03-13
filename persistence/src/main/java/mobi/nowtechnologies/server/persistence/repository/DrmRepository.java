@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 // @author Alexander Kolpakov (akolpakov)
 public interface DrmRepository extends JpaRepository<Drm, Integer> {
 
-	@Query(value = "select distinct d from Drm d where d.user.id = :userId and d.media.id = :mediaId")
-	Drm findByUserAndMedia(@Param("userId")Integer userId, @Param("mediaId")Integer mediaId);
+    @Query(value = "select distinct d from Drm d where d.user.id = :userId and d.media.id = :mediaId")
+    Drm findByUserAndMedia(@Param("userId") Integer userId, @Param("mediaId") Integer mediaId);
 }

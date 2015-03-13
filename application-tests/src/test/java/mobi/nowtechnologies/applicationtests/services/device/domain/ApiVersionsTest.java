@@ -1,12 +1,11 @@
 package mobi.nowtechnologies.applicationtests.services.device.domain;
 
-import com.google.common.collect.Lists;
-import org.junit.Test;
-
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ApiVersionsTest {
 

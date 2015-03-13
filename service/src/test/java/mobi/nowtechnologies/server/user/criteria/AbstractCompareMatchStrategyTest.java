@@ -1,21 +1,21 @@
 package mobi.nowtechnologies.server.user.criteria;
 
-import org.junit.Test;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/10/2014
+ * Author: Gennadii Cherniaiev Date: 4/10/2014
  */
 public abstract class AbstractCompareMatchStrategyTest<T extends Number & Comparable<T>> {
+
     protected String description;
     protected T first;
-    private CompareMatchStrategy<T> matchStrategy;
     protected boolean matchResult;
     protected Class<?> exceptionClass;
+    private CompareMatchStrategy<T> matchStrategy;
 
     public AbstractCompareMatchStrategyTest(String description, T first, CompareMatchStrategy<T> second, boolean matchResult, Class<?> exceptionClass) {
         this.matchResult = matchResult;

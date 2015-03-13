@@ -5,12 +5,18 @@ import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
 import mobi.nowtechnologies.server.dto.streamzine.mapping.ContentWithSubTypesMappingDto;
 import mobi.nowtechnologies.server.dto.streamzine.mapping.ShapeTypeMappingDto;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.*;
-
 public class TypesMappingAsm {
+
     private MessageSource messageSource;
 
     public List<ShapeTypeMappingDto> toDtos(Collection<TypesMappingInfoItem> typesMappingInfoItems) {

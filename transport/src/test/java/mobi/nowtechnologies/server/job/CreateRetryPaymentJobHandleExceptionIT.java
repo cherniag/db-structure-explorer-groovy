@@ -4,45 +4,54 @@ import mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.aop.SMSNotification;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.MIG_SMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.SAGEPAY_CREDITCARD_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+
+import javax.annotation.Resource;
+
+import java.io.UnsupportedEncodingException;
+
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.TaskRejectedException;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
-
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/17/2014
+ * Author: Gennadii Cherniaiev Date: 4/17/2014
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextHierarchy({
-        @ContextConfiguration(locations = {
-                "classpath:transport-root-test.xml", "classpath:jobs-test.xml"}),
-        @ContextConfiguration(locations = {
-                "classpath:transport-servlet-test.xml"})})
+@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml", "classpath:jobs-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
 public class CreateRetryPaymentJobHandleExceptionIT {
 
     private static final String UNKNOWN_EXCEPTION = "Unknown exception";

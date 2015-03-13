@@ -1,33 +1,30 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import com.sentaca.spring.smpp.mt.MTMessage;
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+
+import com.sentaca.spring.smpp.mt.MTMessage;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/7/13
- * Time: 4:07 PM
+ * User: Alexsandr_Kolpakov Date: 10/7/13 Time: 4:07 PM
  */
 
 @RunWith(PowerMockRunner.class)
 public class VFNZSMSGatewayServiceImplTest {
+
     private VFNZSMSGatewayServiceImpl fixture;
 
     @Mock
     private SMPPServiceImpl smppServiceMock;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         fixture = new VFNZSMSGatewayServiceImpl();
         fixture.setSmppService(smppServiceMock);
     }
@@ -41,7 +38,7 @@ public class VFNZSMSGatewayServiceImplTest {
         ArgumentMatcher<MTMessage> msgMatcher = new ArgumentMatcher<MTMessage>() {
             @Override
             public boolean matches(Object o) {
-                MTMessage arg = (MTMessage)o;
+                MTMessage arg = (MTMessage) o;
 
                 Assert.assertEquals(msg, arg.getContent());
                 Assert.assertEquals(dest, arg.getDestinationAddress());
@@ -69,7 +66,7 @@ public class VFNZSMSGatewayServiceImplTest {
         ArgumentMatcher<MTMessage> msgMatcher = new ArgumentMatcher<MTMessage>() {
             @Override
             public boolean matches(Object o) {
-                MTMessage arg = (MTMessage)o;
+                MTMessage arg = (MTMessage) o;
 
                 Assert.assertEquals(msg, arg.getContent());
                 Assert.assertEquals(dest, arg.getDestinationAddress());

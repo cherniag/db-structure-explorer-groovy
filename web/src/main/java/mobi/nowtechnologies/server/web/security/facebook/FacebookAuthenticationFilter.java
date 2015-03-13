@@ -2,8 +2,21 @@ package mobi.nowtechnologies.server.web.security.facebook;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
+import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,153 +32,143 @@ import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Map;
-
-import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
-
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
+@Deprecated
 public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-	public static final String REGISTRATION = "registration";
+    public static final String REGISTRATION = "registration";
 
-	private static final String FACEBOOK_ACCESS_CODE_PARAMETER_NAME = "code";
+    private static final String FACEBOOK_ACCESS_CODE_PARAMETER_NAME = "code";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FacebookAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FacebookAuthenticationFilter.class);
 
-	private String redirectUrl;
+    private String redirectUrl;
 
-	private String loginRequestParameterName;
+    private String loginRequestParameterName;
 
-	private String passwordRequestParameterName;
-	
-	private String defaultTargetUrlForOldUser;
-	
-	private String defaultTargetUrlForNewUser;
-	
-	private CommunityResourceBundleMessageSource messageSource;
+    private String passwordRequestParameterName;
 
-	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException,
-			ServletException {
-		LOGGER.debug("input parameters request, response: [{}], [{}]", request, response);
-		
-		String clientId = messageSource.getDecryptedMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppId", null, null);
-		String clientSecret = messageSource.getDecryptedMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppSecret", null, null);
-		FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(clientId, clientSecret);
-		OAuth2Operations oAuthOperations = connectionFactory.getOAuthOperations();
+    private String defaultTargetUrlForOldUser;
 
-		String code = request.getParameter(FACEBOOK_ACCESS_CODE_PARAMETER_NAME);
-		Authentication authentication = null;
-		String redirectUri = getRedirectUri(request);
-		
-		if (code == null) {
-			OAuth2Parameters parameters = new OAuth2Parameters();
-			
-			parameters.setRedirectUri(redirectUri);
-			parameters.setScope("email");
-			String buildAuthorizeUrl = oAuthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, parameters);
-			response.sendRedirect(buildAuthorizeUrl);
-		} else {
-			AccessGrant accessGrant = oAuthOperations.exchangeForAccess(code, redirectUri, null);
-			Connection<Facebook> connection = connectionFactory.createConnection(accessGrant);
+    private String defaultTargetUrlForNewUser;
 
-			Facebook facebook = connection.getApi();
-			FacebookProfile facebookProfile = facebook.userOperations().getUserProfile();
+    private CommunityResourceBundleMessageSource messageSource;
 
-			authentication = new FacebookAuthenticationToken(facebookProfile, null);
-			AuthenticationManager authenticationManager = getAuthenticationManager();
-			authentication = authenticationManager.authenticate(authentication);
+    protected FacebookAuthenticationFilter(String defaultFilterProcessesUrl) {
+        super(defaultFilterProcessesUrl);
+    }
 
-			final UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
-			final String userName = userDetailsImpl.getUsername();
-			final String password = userDetailsImpl.getPassword();
-			
-			SimpleUrlAuthenticationSuccessHandler simpleUrlAuthenticationSuccessHandler = (SimpleUrlAuthenticationSuccessHandler)getSuccessHandler();
-			
-			if (userDetailsImpl.isNewUser())
-				simpleUrlAuthenticationSuccessHandler.setDefaultTargetUrl(defaultTargetUrlForNewUser);
-			else
-				simpleUrlAuthenticationSuccessHandler.setDefaultTargetUrl(defaultTargetUrlForOldUser);
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+        LOGGER.debug("input parameters request, response: [{}], [{}]", request, response);
 
-			request = new HttpServletRequestWrapper(request) {
-				private Map parameterMap;
+        String clientId = messageSource.getDecryptedMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppId", null, null);
+        String clientSecret = messageSource.getDecryptedMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppSecret", null, null);
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(clientId, clientSecret);
+        OAuth2Operations oAuthOperations = connectionFactory.getOAuthOperations();
 
-				@Override
-				public Map getParameterMap() {
-					if (parameterMap == null) {
-						parameterMap = super.getParameterMap();
+        String code = request.getParameter(FACEBOOK_ACCESS_CODE_PARAMETER_NAME);
+        Authentication authentication = null;
+        String redirectUri = getRedirectUri(request);
 
-						parameterMap.put(loginRequestParameterName, userName);
-						parameterMap.put(passwordRequestParameterName, password);
-					}
-					return parameterMap;
-				}
+        if (code == null) {
+            OAuth2Parameters parameters = new OAuth2Parameters();
 
-				@Override
-				public Enumeration getParameterNames() {
-					return Collections.enumeration(getParameterMap().keySet());
-				}
+            parameters.setRedirectUri(redirectUri);
+            parameters.setScope("email");
+            String buildAuthorizeUrl = oAuthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, parameters);
+            response.sendRedirect(buildAuthorizeUrl);
+        } else {
+            AccessGrant accessGrant = oAuthOperations.exchangeForAccess(code, redirectUri, null);
+            Connection<Facebook> connection = connectionFactory.createConnection(accessGrant);
 
-				@Override
-				public String[] getParameterValues(String name) {
-					return (String[]) getParameterMap().values().toArray(new String[0]);
-				}
+            Facebook facebook = connection.getApi();
+            FacebookProfile facebookProfile = facebook.userOperations().getUserProfile();
 
-				@Override
-				public String getParameter(String name) {
-					return (String) getParameterMap().get(name);
-				}
-			};
-		}
-		LOGGER.debug("Output parameter authentication=[{}]", authentication);
+            authentication = new FacebookAuthenticationToken(facebookProfile, null);
+            AuthenticationManager authenticationManager = getAuthenticationManager();
+            authentication = authenticationManager.authenticate(authentication);
 
-		return authentication;
-	}
+            final UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
+            final String userName = userDetailsImpl.getUsername();
+            final String password = userDetailsImpl.getPassword();
 
-	private String getRedirectUri(HttpServletRequest request) {
-		redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
-		
-		String registrationValue=request.getParameter(REGISTRATION);
-		
-		String redirectUri = redirectUrl;
-		if(registrationValue!=null) {
-			redirectUri =messageSource.getMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortalPlusRegistration", null, "", null);;
-		}
-		return redirectUri;
-	}
+            SimpleUrlAuthenticationSuccessHandler simpleUrlAuthenticationSuccessHandler = (SimpleUrlAuthenticationSuccessHandler) getSuccessHandler();
 
-	protected FacebookAuthenticationFilter(String defaultFilterProcessesUrl) {
-		super(defaultFilterProcessesUrl);
-	}
-	
-	public void setLoginRequestParameterName(String loginRequestParameterName) {
-		this.loginRequestParameterName = loginRequestParameterName;
-	}
+            if (userDetailsImpl.isNewUser()) {
+                simpleUrlAuthenticationSuccessHandler.setDefaultTargetUrl(defaultTargetUrlForNewUser);
+            } else {
+                simpleUrlAuthenticationSuccessHandler.setDefaultTargetUrl(defaultTargetUrlForOldUser);
+            }
 
-	public void setPasswordRequestParameterName(String passwordRequestParameterName) {
-		this.passwordRequestParameterName = passwordRequestParameterName;
-	}
-	
-	public void setDefaultTargetUrlForNewUser(String defaultTargetUrlForNewUser) {
-		this.defaultTargetUrlForNewUser = defaultTargetUrlForNewUser;
-	}
-	
-	public void setDefaultTargetUrlForOldUser(String defaultTargetUrlForOldUser) {
-		this.defaultTargetUrlForOldUser = defaultTargetUrlForOldUser;
-	}
+            request = new HttpServletRequestWrapper(request) {
+                private Map parameterMap;
 
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
+                @Override
+                public Map getParameterMap() {
+                    if (parameterMap == null) {
+                        parameterMap = super.getParameterMap();
+
+                        parameterMap.put(loginRequestParameterName, userName);
+                        parameterMap.put(passwordRequestParameterName, password);
+                    }
+                    return parameterMap;
+                }
+
+                @Override
+                public Enumeration getParameterNames() {
+                    return Collections.enumeration(getParameterMap().keySet());
+                }
+
+                @Override
+                public String[] getParameterValues(String name) {
+                    return (String[]) getParameterMap().values().toArray(new String[0]);
+                }
+
+                @Override
+                public String getParameter(String name) {
+                    return (String) getParameterMap().get(name);
+                }
+            };
+        }
+        LOGGER.debug("Output parameter authentication=[{}]", authentication);
+
+        return authentication;
+    }
+
+    private String getRedirectUri(HttpServletRequest request) {
+        redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
+
+        String registrationValue = request.getParameter(REGISTRATION);
+
+        String redirectUri = redirectUrl;
+        if (registrationValue != null) {
+            redirectUri = messageSource.getMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortalPlusRegistration", null, "", null);
+            ;
+        }
+        return redirectUri;
+    }
+
+    public void setLoginRequestParameterName(String loginRequestParameterName) {
+        this.loginRequestParameterName = loginRequestParameterName;
+    }
+
+    public void setPasswordRequestParameterName(String passwordRequestParameterName) {
+        this.passwordRequestParameterName = passwordRequestParameterName;
+    }
+
+    public void setDefaultTargetUrlForNewUser(String defaultTargetUrlForNewUser) {
+        this.defaultTargetUrlForNewUser = defaultTargetUrlForNewUser;
+    }
+
+    public void setDefaultTargetUrlForOldUser(String defaultTargetUrlForOldUser) {
+        this.defaultTargetUrlForOldUser = defaultTargetUrlForOldUser;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
 }

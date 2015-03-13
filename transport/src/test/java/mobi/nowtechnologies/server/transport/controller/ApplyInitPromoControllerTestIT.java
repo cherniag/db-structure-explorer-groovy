@@ -8,30 +8,35 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.*;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import javax.annotation.Resource;
-
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
-import static org.junit.Assert.assertFalse;
+
+import javax.annotation.Resource;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+
+import org.junit.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
+public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
 
     @Resource
     private UserStatusRepository userStatusRepository;
@@ -58,12 +63,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
         user = userService.findByName(user.getMobile());
@@ -75,12 +76,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(0)).handleUserUpdate(any(User.class));
 
-        mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", user.getMobile())
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", user.getMobile()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
     }
 
     @Test
@@ -101,8 +98,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                User user = (User)invocation.getArguments()[0];
-                junit.framework.Assert.assertNotNull(user);
+                User user = (User) invocation.getArguments()[0];
+                Assert.assertNotNull(user);
 
                 return null;
             }
@@ -110,12 +107,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
         user = userService.findByName(user.getMobile());
@@ -129,13 +122,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
 
-        mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", user.getMobile())
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).
-                andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", user.getMobile()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).
+            andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
 
     }
 
@@ -157,8 +146,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                User user = (User)invocation.getArguments()[0];
-                junit.framework.Assert.assertNotNull(user);
+                User user = (User) invocation.getArguments()[0];
+                Assert.assertNotNull(user);
 
                 return null;
             }
@@ -166,12 +155,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
         user = userService.findByName(user.getMobile());
@@ -185,12 +170,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
 
-        mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", user.getMobile())
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", user.getMobile()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
 
     }
 
@@ -213,12 +194,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk());
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk());
 
         //when
         User mobileUser = userService.findByName("+447111111111");
@@ -258,13 +235,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
 
         //then
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", oldUserName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", oldUserName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
+                                                                                              .param("OTAC_TOKEN", otac)).andExpect(status().isOk());
 
         //when
         User mobileUser = userService.findByName(userName);
@@ -302,12 +274,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isForbidden());
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isForbidden());
 
         //when
         user = userService.findByName(userName);
@@ -317,7 +285,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void applyInitPromo_whenUserReInstallAppWithNewPhoneNumber_then_ReturnAUserWithNewPhoneNumber() throws Exception {
-    	//given
+        //given
         String userName = "999a72f8864fd5c23957beef9d99656568";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
@@ -334,12 +302,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk());
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk());
 
         user = userService.findByName(user.getMobile());
 
@@ -363,12 +327,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isUnauthorized());
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -382,12 +342,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         //then
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isInternalServerError());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -401,12 +357,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         //then
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -422,12 +374,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isNotFound());
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isNotFound());
     }
 
 
@@ -453,12 +401,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         reactivationUserInfoRepository.save(reactivationUserInfo);
         //then
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk());
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk());
 
         user = userService.findByName(user.getMobile());
 
@@ -487,12 +431,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_XML_PATH + "/firstActivation").booleanValue(true));
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_XML_PATH + "/firstActivation").booleanValue(true));
     }
 
 
@@ -514,15 +454,11 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").value(true));
+            post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
+               .andExpect(status().isOk()).andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").value(true));
     }
 
-    private User prepareUserForApplyInitPromo(String userName){
+    private User prepareUserForApplyInitPromo(String userName) {
         User user = userService.findByName(userName);
 
         user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);

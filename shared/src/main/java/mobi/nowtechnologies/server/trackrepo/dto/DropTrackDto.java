@@ -3,13 +3,10 @@ package mobi.nowtechnologies.server.trackrepo.dto;
 import mobi.nowtechnologies.server.trackrepo.enums.DropTrackType;
 
 /**
- * Created with IntelliJ IDEA.
- * User: sanya
- * Date: 7/15/13
- * Time: 2:52 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: sanya Date: 7/15/13 Time: 2:52 PM To change this template use File | Settings | File Templates.
  */
 public class DropTrackDto {
+
     private String productCode;
     private String title;
     private String artist;
@@ -77,13 +74,13 @@ public class DropTrackDto {
     @Override
     public String toString() {
         return "DropTrackDto{" +
-                "productCode='" + productCode + '\'' +
-                ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                ", isrc='" + isrc + '\'' +
-                ", exists=" + exists +
-                ", type=" + type +
-                ", ingest=" + ingest +
-                "} " + super.toString();
+               "productCode='" + productCode + '\'' +
+               ", title='" + title + '\'' +
+               ", artist='" + artist + '\'' +
+               ", isrc='" + isrc + '\'' +
+               ", exists=" + exists +
+               ", type=" + type +
+               ", ingest=" + ingest +
+               "} " + super.toString();
     }
 }

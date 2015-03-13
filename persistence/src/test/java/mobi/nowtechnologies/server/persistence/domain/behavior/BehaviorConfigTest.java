@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.persistence.domain.behavior;
 
-import com.google.common.collect.Sets;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Sets;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class BehaviorConfigTest {
+
     BehaviorConfig config = new BehaviorConfig();
 
     @Test
@@ -33,11 +34,7 @@ public class BehaviorConfigTest {
     @Test
     public void testGetChartBehavior() throws Exception {
         // given
-        config.chartBehaviors = Sets.newHashSet(
-                createChartBehavior(ChartBehaviorType.NORMAL),
-                createChartBehavior(ChartBehaviorType.PREVIEW),
-                createChartBehavior(ChartBehaviorType.SHUFFLED)
-        );
+        config.chartBehaviors = Sets.newHashSet(createChartBehavior(ChartBehaviorType.NORMAL), createChartBehavior(ChartBehaviorType.PREVIEW), createChartBehavior(ChartBehaviorType.SHUFFLED));
         // when
         ChartBehavior chartBehavior = config.getChartBehavior(ChartBehaviorType.NORMAL);
         // then
@@ -47,11 +44,8 @@ public class BehaviorConfigTest {
     @Test
     public void testGetContentUserStatusBehavior() throws Exception {
         // given
-        config.contentUserStatusBehaviors = Sets.newHashSet(
-                createContentUserStatusBehavior(UserStatusType.FREE_TRIAL),
-                createContentUserStatusBehavior(UserStatusType.LIMITED),
-                createContentUserStatusBehavior(UserStatusType.SUBSCRIBED)
-        );
+        config.contentUserStatusBehaviors = Sets.newHashSet(createContentUserStatusBehavior(UserStatusType.FREE_TRIAL), createContentUserStatusBehavior(UserStatusType.LIMITED),
+                                                            createContentUserStatusBehavior(UserStatusType.SUBSCRIBED));
         // when
         ContentUserStatusBehavior contentUserStatusBehavior = config.getContentUserStatusBehavior(UserStatusType.SUBSCRIBED);
         // then

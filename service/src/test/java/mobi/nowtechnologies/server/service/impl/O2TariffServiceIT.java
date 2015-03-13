@@ -1,27 +1,17 @@
 package mobi.nowtechnologies.server.service.impl;
 
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
+import mobi.nowtechnologies.server.service.o2.impl.O2TariffServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway;
+import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.O2_3G_CONTRACT;
+import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.O2_4G_BOLTON;
+import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.O2_4G_CONTRACT;
+import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.O2_4G_CONTRACT2;
 
 import javax.xml.bind.JAXBElement;
 
-import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.*;
-import static org.mockito.Mockito.*;
+import java.util.List;
 
-import mobi.nowtechnologies.server.service.o2.impl.O2TariffServiceImpl;
-import mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
-
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltons;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
 import uk.co.o2.soa.managepostpayboltonsdata_2.MyCurrentBoltonsType;
@@ -30,12 +20,23 @@ import uk.co.o2.soa.managepostpaytariffdata_2.GetContractResponse;
 import uk.co.o2.soa.managepostpaytariffdata_2.ServiceContractType;
 import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 
 /**
  * lach : 17/07/2013 : 11:41
  */
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class O2TariffServiceIT {
@@ -110,8 +111,7 @@ public class O2TariffServiceIT {
 
         when(webServiceGateway.sendAndReceive(anyString(), argThat(new ArgumentMatcher<JAXBElement<GetContract>>() {
             public boolean matches(Object argument) {
-                return argument != null && ((JAXBElement<GetContract>) argument).getValue().getCustomerId().getMsisdn()
-                        .equals(phone);
+                return argument != null && ((JAXBElement<GetContract>) argument).getValue().getCustomerId().getMsisdn().equals(phone);
             }
         }))).thenReturn(response);
     }
@@ -126,8 +126,7 @@ public class O2TariffServiceIT {
 
         when(webServiceGateway.sendAndReceive(anyString(), argThat(new ArgumentMatcher<Object>() {
             public boolean matches(Object argument) {
-                return argument != null && ((JAXBElement<GetCurrentBoltons>) argument).getValue().getCustomerId().getMsisdn()
-                        .equals(phone);
+                return argument != null && ((JAXBElement<GetCurrentBoltons>) argument).getValue().getCustomerId().getMsisdn().equals(phone);
             }
         }))).thenReturn(response);
     }

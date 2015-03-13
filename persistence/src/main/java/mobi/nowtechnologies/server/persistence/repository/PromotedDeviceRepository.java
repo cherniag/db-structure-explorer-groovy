@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PromotedDeviceRepository extends JpaRepository<PromotedDevice, String> {
 
-	PromotedDevice findByDeviceUIDAndCommunity(String deviceUID, Community community);
+    PromotedDevice findByDeviceUIDAndCommunity(String deviceUID, Community community);
 }

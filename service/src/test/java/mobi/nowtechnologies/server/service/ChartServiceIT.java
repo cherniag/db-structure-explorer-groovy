@@ -1,45 +1,71 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.List;
-
-import static java.util.Arrays.asList;
+import mobi.nowtechnologies.server.persistence.domain.Artist;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.FileType;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Label;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
+import mobi.nowtechnologies.server.persistence.repository.LabelRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.BASIC_CHART;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.FIFTH_CHART;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
+
+import javax.annotation.Resource;
+
+import java.util.List;
+import static java.util.Arrays.asList;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 // @author Titov Mykhaylo (titov) on 13.11.2014.
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml","/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class ChartServiceIT {
 
-    @Resource(name = "service.ChartService") ChartService chartService;
-    @Resource ChartDetailRepository chartDetailRepository;
-    @Resource CommunityRepository communityRepository;
-    @Resource ChartRepository chartRepository;
-    @Resource GenreRepository genreRepository;
-    @Resource MediaRepository mediaRepository;
-    @Resource ArtistRepository artistRepository;
-    @Resource MediaFileRepository mediaFileRepository;
-    @Resource LabelRepository labelRepository;
+    @Resource(name = "service.ChartService")
+    ChartService chartService;
+    @Resource
+    ChartDetailRepository chartDetailRepository;
+    @Resource
+    CommunityRepository communityRepository;
+    @Resource
+    ChartRepository chartRepository;
+    @Resource
+    GenreRepository genreRepository;
+    @Resource
+    MediaRepository mediaRepository;
+    @Resource
+    ArtistRepository artistRepository;
+    @Resource
+    MediaFileRepository mediaFileRepository;
+    @Resource
+    LabelRepository labelRepository;
 
     @Test
-    public void shouldReturnDuplicatedMediaChartDetails(){
+    public void shouldReturnDuplicatedMediaChartDetails() {
         //given
         String communityUrl = "g";
         long selectedTimeMillis = 3L;
@@ -52,7 +78,9 @@ public class ChartServiceIT {
         Genre rockGenre = genreRepository.save(new Genre().withName("Rock"));
         Label label = labelRepository.findOne(1L);
 
-        Media media = mediaRepository.save(new Media().withIsrc("isrc").withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile).withGenre(rockGenre).withLabel(label).withTrackId(666L));
+        Media media = mediaRepository.save(
+            new Media().withIsrc("isrc").withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile)
+                       .withGenre(rockGenre).withLabel(label).withTrackId(666L));
 
         Community community = communityRepository.save(new Community().withRewriteUrl(communityUrl).withName(communityUrl));
 
@@ -60,21 +88,25 @@ public class ChartServiceIT {
 
         long chart1FirstUpdatePublishTimeMillis = 1L;
         chartDetailRepository.save(new ChartDetail().withChart(chart1).withPosition(1).withPublishTime(chart1FirstUpdatePublishTimeMillis));
-        ChartDetail chartDetailOfFirstUpdateChart1 = chartDetailRepository.save(new ChartDetail().withChart(chart1).withPosition(1).withPublishTime(chart1FirstUpdatePublishTimeMillis).withMedia(media));
+        ChartDetail chartDetailOfFirstUpdateChart1 =
+            chartDetailRepository.save(new ChartDetail().withChart(chart1).withPosition(1).withPublishTime(chart1FirstUpdatePublishTimeMillis).withMedia(media));
 
         long chart1SecondUpdatePublishTimeMillis = 5L;
         chartDetailRepository.save(new ChartDetail().withChart(chart1).withPosition(1).withPublishTime(chart1SecondUpdatePublishTimeMillis));
-        ChartDetail chartDetailOfSecondUpdateChart1 = chartDetailRepository.save(new ChartDetail().withChart(chart1).withPosition(1).withPublishTime(chart1SecondUpdatePublishTimeMillis).withMedia(media));
+        ChartDetail chartDetailOfSecondUpdateChart1 =
+            chartDetailRepository.save(new ChartDetail().withChart(chart1).withPosition(1).withPublishTime(chart1SecondUpdatePublishTimeMillis).withMedia(media));
 
         Chart chart2 = chartRepository.save(new Chart().withCommunity(community).withName("chart 2").withGenre(rockGenre).withChartType(FIFTH_CHART));
 
         long chart2FirstUpdatePublishTimeMillis = 2L;
         chartDetailRepository.save(new ChartDetail().withChart(chart2).withPosition(2).withPublishTime(chart2FirstUpdatePublishTimeMillis));
-        ChartDetail chartDetailOfFirstUpdateChart2 = chartDetailRepository.save(new ChartDetail().withChart(chart2).withPosition(1).withPublishTime(chart2FirstUpdatePublishTimeMillis).withMedia(media));
+        ChartDetail chartDetailOfFirstUpdateChart2 =
+            chartDetailRepository.save(new ChartDetail().withChart(chart2).withPosition(1).withPublishTime(chart2FirstUpdatePublishTimeMillis).withMedia(media));
 
         long chart2SecondUpdatePublishTimeMillis = 6L;
         chartDetailRepository.save(new ChartDetail().withChart(chart2).withPosition(2).withPublishTime(chart2SecondUpdatePublishTimeMillis));
-        ChartDetail chartDetailOfSecondUpdateChart2 = chartDetailRepository.save(new ChartDetail().withChart(chart2).withPosition(1).withPublishTime(chart2SecondUpdatePublishTimeMillis).withMedia(media));
+        ChartDetail chartDetailOfSecondUpdateChart2 =
+            chartDetailRepository.save(new ChartDetail().withChart(chart2).withPosition(1).withPublishTime(chart2SecondUpdatePublishTimeMillis).withMedia(media));
 
         List<Integer> mediaIds = asList(333, media.getI(), 999);
 

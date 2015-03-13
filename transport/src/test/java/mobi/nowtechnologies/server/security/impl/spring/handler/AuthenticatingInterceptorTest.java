@@ -2,16 +2,16 @@ package mobi.nowtechnologies.server.security.impl.spring.handler;
 
 import mobi.nowtechnologies.server.security.AuthenticationService;
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.MissingServletRequestParameterException;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

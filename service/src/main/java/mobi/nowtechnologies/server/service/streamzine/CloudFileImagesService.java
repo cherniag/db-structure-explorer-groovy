@@ -4,10 +4,11 @@ import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.file.image.ImageCloudFileMetadata;
 import mobi.nowtechnologies.server.service.file.image.ImageInfo;
 import mobi.nowtechnologies.server.service.file.image.ImageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by oar on 2/25/14.

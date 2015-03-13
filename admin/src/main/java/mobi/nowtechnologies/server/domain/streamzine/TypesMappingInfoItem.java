@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TypesMappingInfoItem {
+
     private ShapeType shapeType;
 
     private Map<ContentType, List<Enum<?>>> typeWithSubtypes = new HashMap<ContentType, List<Enum<?>>>();
@@ -31,18 +32,26 @@ public class TypesMappingInfoItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         TypesMappingInfoItem that = (TypesMappingInfoItem) o;
 
-        if (shapeType != that.shapeType) return false;
+        if (shapeType != that.shapeType) {
+            return false;
+        }
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return shapeType != null ? shapeType.hashCode() : 0;
+        return shapeType != null ?
+               shapeType.hashCode() :
+               0;
     }
 }

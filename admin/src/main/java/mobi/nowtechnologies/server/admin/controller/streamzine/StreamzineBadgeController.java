@@ -8,6 +8,11 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+
+import javax.annotation.Resource;
+
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
-import java.util.List;
-
 @Controller
 @RequestMapping("/streamzine/badges")
 public class StreamzineBadgeController {
+
     @Resource
     private BadgesService badgesService;
     @Resource
@@ -37,9 +40,8 @@ public class StreamzineBadgeController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public ModelAndView updateBadgeName(
-            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl,
-            @RequestParam(value = "id") long id, @RequestParam(value = "newName") String newName) {
+    public ModelAndView updateBadgeName(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl, @RequestParam(value = "id") long id,
+                                        @RequestParam(value = "newName") String newName) {
         badgesService.update(id, newName);
 
         return getBadges(communityRewriteUrl);

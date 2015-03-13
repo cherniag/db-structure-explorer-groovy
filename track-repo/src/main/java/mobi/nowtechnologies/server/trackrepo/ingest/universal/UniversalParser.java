@@ -1,7 +1,27 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.universal;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import mobi.nowtechnologies.server.trackrepo.ingest.*;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import mobi.nowtechnologies.server.trackrepo.ingest.DtdLoader;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import static java.util.Locale.ENGLISH;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -14,28 +34,20 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static java.util.Locale.ENGLISH;
-
 public class UniversalParser extends IParser {
+
+    private final static String OLD_XML_NAMESPACE_PATTERN = "xmlns=\"http://www.digiplug.com/dsc/%s\"";
+    private final static String NEW_XML_NAMESPACE_PATTERN = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " + "xsi:noNamespaceSchemaLocation=\"http://www.digiplug.com/dsc/%s\"";
     private static final Logger LOGGER = LoggerFactory.getLogger(UniversalParser.class);
-    private PeriodFormatter durationFormatter;
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", ENGLISH);
     protected SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+    private Pattern OLD_XML_NAMESPACE_REGEXP_PATTERN = Pattern.compile("xmlns=\"http://www.digiplug.com/dsc/(.*?)\"");
+    private PeriodFormatter durationFormatter;
 
     public UniversalParser(String root) throws FileNotFoundException {
         super(root);
 
-        durationFormatter = new PeriodFormatterBuilder()
-                .appendHours().appendSuffix(":")
-                .appendMinutes().appendSuffix(":")
-                .appendSeconds().toFormatter();
+        durationFormatter = new PeriodFormatterBuilder().appendHours().appendSuffix(":").appendMinutes().appendSuffix(":").appendSeconds().toFormatter();
 
         LOGGER.info("Universal parser loading from " + root);
     }
@@ -52,7 +64,9 @@ public class UniversalParser extends IParser {
         for (File file : files) {
             if (file.getName().endsWith(".xml")) {
                 try {
-                    LOGGER.debug("Loading [{}]",  file.getPath());
+                    preprocess(file);
+
+                    LOGGER.debug("Loading [{}]", file.getPath());
 
                     Document document = builder.build(file);
                     Element product = document.getRootElement();
@@ -69,6 +83,32 @@ public class UniversalParser extends IParser {
         return resultDropTracksWithMetadata;
     }
 
+    /*
+     * The method is intended to replace input xml namespace
+     * from: xmlns="http://www.digiplug.com/dsc/umgistd-1_4_5"
+     * to: xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.digiplug.com/dsc/umgistd-1_4_5".
+     *
+     * Method takes into account that namespace version other than umgistd-1_4_5 could be be sent and properly replaces it.
+     *
+     * Xml namespace schema is needed to avoid parser failure.
+     */
+    private void preprocess(File file) throws IOException {
+        LOGGER.debug("Replacing xml namespaces.");
+
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        String inputData = new String(bytes);
+
+        Matcher matcher = OLD_XML_NAMESPACE_REGEXP_PATTERN.matcher(inputData);
+
+        while (matcher.find()) {
+            String version = matcher.group(1);
+
+            String outputData = inputData.replaceFirst(String.format(OLD_XML_NAMESPACE_PATTERN, version), String.format(NEW_XML_NAMESPACE_PATTERN, version));
+
+            Files.write(file.toPath(), outputData.getBytes());
+        }
+    }
+
     private void addProductMetadata(String code, Map<String, List<DropAssetFile>> fulfillmentFiles, Element product, Map<String, DropTrack> resultDropTracks) {
         String country = product.getChildText("territory");
         String provider = product.getChildText("prd_label_name");
@@ -80,8 +120,7 @@ public class UniversalParser extends IParser {
         Date startDate = parseStartDate(releaseDate);
         String year = parseYear(startDate);
 
-        @SuppressWarnings("unchecked")
-		List<Element> tracks = product.getChild("tracks").getChildren("track");
+        @SuppressWarnings("unchecked") List<Element> tracks = product.getChild("tracks").getChildren("track");
         for (Element track : tracks) {
             String isrc = track.getAttributeValue("isrc");
 
@@ -116,7 +155,7 @@ public class UniversalParser extends IParser {
     private void insertIntoDropTrackDropAssetFiles(Map<String, List<DropAssetFile>> fulfillmentFiles, DropTrack data, String key) {
         if (fulfillmentFiles.containsKey(key)) {
             for (DropAssetFile dropAssetFile : fulfillmentFiles.get(key)) {
-                if(!data.files.contains(dropAssetFile)){
+                if (!data.files.contains(dropAssetFile)) {
                     data.files.add(dropAssetFile);
                 }
             }
@@ -140,12 +179,16 @@ public class UniversalParser extends IParser {
         String trackExplicit = track.getChildText("track_explicit");
         boolean explicit = "Y".equals(prdExplicit);
 
-        return !"".equals(trackExplicit) ? "Y".equals(trackExplicit) : explicit;
+        return !"".equals(trackExplicit) ?
+               "Y".equals(trackExplicit) :
+               explicit;
     }
 
     private DropTrack.Type parseType(Element product) {
         String type = product.getChildText("type");
-        return "new".equalsIgnoreCase(type) ? DropTrack.Type.INSERT : DropTrack.Type.UPDATE;
+        return "new".equalsIgnoreCase(type) ?
+               DropTrack.Type.INSERT :
+               DropTrack.Type.UPDATE;
     }
 
     private Date parseStartDate(String releaseDate) {
@@ -173,8 +216,7 @@ public class UniversalParser extends IParser {
     }
 
     private String parseArtist(Element track) {
-    	@SuppressWarnings("unchecked")
-        List<Element> artists = track.getChild("track_contributors").getChildren("artist_name");
+        @SuppressWarnings("unchecked") List<Element> artists = track.getChild("track_contributors").getChildren("artist_name");
         boolean firstArtist = true;
         String artist = "";
         for (Element artistElement : artists) {
@@ -201,9 +243,8 @@ public class UniversalParser extends IParser {
             try {
                 Document document = (Document) builder.build(fulfillment);
                 Element rootNode = document.getRootElement();
-                
-                @SuppressWarnings("unchecked")
-                List<Element> products = rootNode.getChild("products").getChildren("product");
+
+                @SuppressWarnings("unchecked") List<Element> products = rootNode.getChild("products").getChildren("product");
                 for (Element product : products) {
                     result.putAll(parseProduct(drop.name, product));
                 }
@@ -262,7 +303,9 @@ public class UniversalParser extends IParser {
         assetFile.md5 = file.getChildText("checksum");
         assetFile.file = file.getChildText("file_name");
         assetFile.type = getAssetType(isExcerpt, fileType, type, subType);
-        assetFile.isrc = assetFile.type == AssetFile.FileType.IMAGE ? null : isrc;
+        assetFile.isrc = assetFile.type == AssetFile.FileType.IMAGE ?
+                         null :
+                         isrc;
         assetFile.duration = parseDuration(assetFileEl);
 
         return assetFile;
@@ -271,22 +314,26 @@ public class UniversalParser extends IParser {
     private Integer parseDuration(Element assetFileEl) {
         String length = assetFileEl.getChildText("track_length");
 
-        return length != null ? (int)durationFormatter.parsePeriod(length).toDurationFrom(new DateTime(0)).getMillis()
-                              : null;
+        return length != null ?
+               (int) durationFormatter.parsePeriod(length).toDurationFrom(new DateTime(0)).getMillis() :
+               null;
     }
 
     private AssetFile.FileType getAssetType(boolean isExcerpt, String fileType, String assetType, String assetSubType) {
         if ("mp3".equalsIgnoreCase(fileType)) {
-            if (!isExcerpt)
+            if (!isExcerpt) {
                 return AssetFile.FileType.DOWNLOAD;
+            }
         } else if ("mp4".equalsIgnoreCase(fileType)) {
             if ("Video".equals(assetType) && "Video".equals(assetSubType)) {
-                if (!isExcerpt)
+                if (!isExcerpt) {
                     return AssetFile.FileType.VIDEO;
-            } else if (!isExcerpt)
+                }
+            } else if (!isExcerpt) {
                 return AssetFile.FileType.MOBILE;
-            else
+            } else {
                 return AssetFile.FileType.PREVIEW;
+            }
         } else if ("jpg".equalsIgnoreCase(fileType) && "Images".equals(assetType) && "Cover Art".equals(assetSubType)) {
             return AssetFile.FileType.IMAGE;
         }
@@ -319,12 +366,12 @@ public class UniversalParser extends IParser {
     public List<DropData> getDrops(boolean auto) {
         List<DropData> result = new ArrayList<DropData>();
         File deliveries = new File(root + "/Delivery_Messages");
-        if(!deliveries.exists()){
-        	LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", deliveries.getAbsolutePath());
-        	return result;
+        if (!deliveries.exists()) {
+            LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", deliveries.getAbsolutePath());
+            return result;
         }
         LOGGER.info("Checking manifests in " + root + "/Delivery_Messages: found " + deliveries.listFiles().length);
-        
+
         File[] fulfillmentFiles = deliveries.listFiles();
         for (File file : fulfillmentFiles) {
             LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());

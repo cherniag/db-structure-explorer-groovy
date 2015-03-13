@@ -2,22 +2,24 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import org.junit.Test;
 
 import javax.annotation.Resource;
 
-import static junit.framework.Assert.assertNotNull;
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 // @author: Titov Mykhaylo (titov) 17.10.13 10:30
-public class UserGroupRepositoryIT  extends AbstractRepositoryIT{
+public class UserGroupRepositoryIT extends AbstractRepositoryIT {
 
-    @Resource UserGroupRepository userGroupRepository;
-    @Resource CommunityRepository communityRepository;
+    @Resource
+    UserGroupRepository userGroupRepository;
+    @Resource
+    CommunityRepository communityRepository;
 
     @Test
-    public void shouldFindByCommunityRewriteUrl(){
+    public void shouldFindByCommunityRewriteUrl() {
         //given
         Community community = communityRepository.save(new Community().withRewriteUrl("g").withName("g"));
         UserGroup userGroup = userGroupRepository.save(new UserGroup().withCommunity(community));

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
@@ -10,16 +8,19 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.validator.constraints.NotEmpty;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import java.util.Comparator;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.NotEmpty;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
+
     public static final Comparator<OrdinalBlockDto> COMPARATOR = new Comparator<OrdinalBlockDto>() {
         @Override
         public int compare(OrdinalBlockDto o1, OrdinalBlockDto o2) {
@@ -140,12 +141,13 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         this.data = data;
     }
 
-    public void setContentTypeTitle(String contentTypeTitle) {
-        this.contentTypeTitle = contentTypeTitle;
-    }
     // for the ui json (themyleaf)
     public String getContentTypeTitle() {
         return contentTypeTitle;
+    }
+
+    public void setContentTypeTitle(String contentTypeTitle) {
+        this.contentTypeTitle = contentTypeTitle;
     }
 
     public String provideKeyString() {
@@ -177,61 +179,50 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         return badgeId;
     }
 
-    public void setBadgeFileNameAlias(FileNameAliasDto badgeFileNameAlias) {
-        this.badgeFileNameAlias = badgeFileNameAlias;
-    }
     // for the ui json (themyleaf)
     public FileNameAliasDto getBadgeFileNameAlias() {
         return badgeFileNameAlias;
     }
 
+    public void setBadgeFileNameAlias(FileNameAliasDto badgeFileNameAlias) {
+        this.badgeFileNameAlias = badgeFileNameAlias;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("title", title)
-                .append("subTitle", subTitle)
-                .append("coverUrl", coverUrl)
-                .append("position", position)
-                .append("contentType", contentType)
-                .append("key", key)
-                .append("value", value)
-                .append("data", data)
-                .append("vip", vip)
-                .append("expanded", expanded)
-                .append("contentTypeTitle", contentTypeTitle)
-                .append("badgeId", badgeId)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("title", title).append("subTitle", subTitle).append("coverUrl", coverUrl).append("position", position)
+                                        .append("contentType", contentType).append("key", key).append("value", value).append("data", data).append("vip", vip).append("expanded", expanded)
+                                        .append("contentTypeTitle", contentTypeTitle).append("badgeId", badgeId).toString();
     }
 
 
-    private DeepLinkInfoService.ApplicationPageData getApplicationPageData(){
-        if (isNull(applicationPageData)){
+    private DeepLinkInfoService.ApplicationPageData getApplicationPageData() {
+        if (isNull(applicationPageData)) {
             applicationPageData = new DeepLinkInfoService.ApplicationPageData(defaultString(value));
         }
-        return  applicationPageData;
+        return applicationPageData;
     }
 
     @JsonIgnore
-    public String getValueOpener(){
-        if(key.equals(LinkLocationType.EXTERNAL_AD.name())|| key.equals(LinkLocationType.INTERNAL_AD.name()) ) {
+    public String getValueOpener() {
+        if (key.equals(LinkLocationType.EXTERNAL_AD.name()) || key.equals(LinkLocationType.INTERNAL_AD.name())) {
             return getApplicationPageData().getAction();
         }
         return null;
     }
 
     @JsonIgnore
-    public String getValuePlayerType(){
-        if(key.equals(MusicType.PLAYLIST.name())) {
+    public String getValuePlayerType() {
+        if (key.equals(MusicType.PLAYLIST.name())) {
             return new PlaylistData(value).getPlayerTypeString();
-        }else if(key.equals(MusicType.TRACK.name())){
+        } else if (key.equals(MusicType.TRACK.name())) {
             return new TrackData(value).getPlayerTypeString();
         }
         return null;
     }
 
     @JsonIgnore
-    public String getValueLink(){
+    public String getValueLink() {
         return getApplicationPageData().getUrl();
     }
 }

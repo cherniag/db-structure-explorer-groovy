@@ -6,37 +6,34 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.*;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
+import org.apache.commons.lang.time.DateUtils;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+
+import org.junit.*;
+import org.junit.rules.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
 public class StreamzineUpdateServiceTest {
-    @InjectMocks
-    StreamzineUpdateService streamzineUpdateServiceFixture;
-
-    @Mock
-    StreamzineUpdateRepository streamzineUpdateRepositoryMock;
-
-    private Answer<Object> streamzineUpdateRepositoryUpdateAndFlushAnswer;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
+    @InjectMocks
+    StreamzineUpdateService streamzineUpdateServiceFixture;
+    @Mock
+    StreamzineUpdateRepository streamzineUpdateRepositoryMock;
+    private Answer<Object> streamzineUpdateRepositoryUpdateAndFlushAnswer;
     @Captor
     private ArgumentCaptor<Date> from;
     @Captor

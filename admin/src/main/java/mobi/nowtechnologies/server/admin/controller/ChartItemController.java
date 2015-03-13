@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.admin.controller;
 
 
-import mobi.nowtechnologies.server.admin.asm.DuplicatedMediaAcrossNearestChartsDtoAssembler;
 import mobi.nowtechnologies.server.admin.asm.ChartAsm;
+import mobi.nowtechnologies.server.admin.asm.DuplicatedMediaAcrossNearestChartsDtoAssembler;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
+import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
@@ -13,27 +14,41 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
+import static mobi.nowtechnologies.server.shared.web.utils.RequestUtils.getCommunityURL;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
-import static mobi.nowtechnologies.server.shared.web.utils.RequestUtils.getCommunityURL;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -52,19 +67,21 @@ public class ChartItemController extends AbstractCommonController {
     private ChartService chartService;
     private Map<ChartType, String> viewByChartType;
     private ChartAsm chartAsm;
-    @Resource private DuplicatedMediaAcrossNearestChartsDtoAssembler duplicatedMediaAcrossNearestChartsDtoAssembler;
+    @Resource
+    private DuplicatedMediaAcrossNearestChartsDtoAssembler duplicatedMediaAcrossNearestChartsDtoAssembler;
 
     @ModelAttribute("chartFilesURL")
     public String getFilesURL() {
         return chartFilesURL;
     }
 
+    public void setFilesURL(String filesURL) {
+        this.filesURL = filesURL;
+    }
+
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = GET)
-    public ModelAndView getChartItemsPage(
-                                @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
-                                @PathVariable("chartId") Integer chartId,
-                                @RequestParam(value = "changePosition", required = false) boolean changePosition,
-                                Locale locale) {
+    public ModelAndView getChartItemsPage(@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+                                          @PathVariable("chartId") Integer chartId, @RequestParam(value = "changePosition", required = false) boolean changePosition, Locale locale) {
         LOGGER.info("input parameters chartId=[{}], selectedPublishDateTime=[{}], changePosition=[{}]", chartId, selectedPublishDateTime, changePosition);
 
         Chart chart = chartService.getChartById(chartId);
@@ -78,14 +95,11 @@ public class ChartItemController extends AbstractCommonController {
         allChannels = new LinkedList<String>(allChannels);
         Collections.sort((List<String>) allChannels);
 
-        return new ModelAndView(viewByChartType.get(chart.getType()))
-                .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDTOs)
-                .addObject("selectedPublishDateTime", selectedPublishDateTime)
-                .addObject("filesURL", filesURL)
-                .addObject("chartFilesURL", chartFilesURL)
-                .addObject("allChannels", allChannels)
-                .addObject("chart", chartDto)
-                .addObject("chartType", VIDEO_CHART.equals(chart.getType()) ? "video" : "media");
+        return new ModelAndView(viewByChartType.get(chart.getType())).addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDTOs).addObject("selectedPublishDateTime", selectedPublishDateTime)
+                                                                     .addObject("filesURL", filesURL).addObject("chartFilesURL", chartFilesURL).addObject("allChannels", allChannels)
+                                                                     .addObject("chart", chartDto).addObject("chartType", VIDEO_CHART.equals(chart.getType()) ?
+                                                                                                                          "video" :
+                                                                                                                          "media");
     }
 
     protected List<String> getInitChannels(Locale locale) {
@@ -97,8 +111,9 @@ public class ChartItemController extends AbstractCommonController {
             String[] items = channels.split(",");
             for (int i = 0; i < items.length; i++) {
                 String item = items[i].trim();
-                if (!item.isEmpty())
+                if (!item.isEmpty()) {
                     channelList.add(item);
+                }
             }
         }
 
@@ -106,9 +121,9 @@ public class ChartItemController extends AbstractCommonController {
     }
 
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = POST)
-    public ModelAndView updateChartItems(
-                                @RequestBody List<ChartItemDto> chartItems,
-                                @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
+    public ModelAndView updateChartItems(@RequestBody List<ChartItemDto> chartItems,
+                                         @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+                                         @PathVariable("chartId") Integer chartId) {
 
         LOGGER.debug("input parameters request updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId): [{}], [{}], [{}]", chartItems, selectedPublishDateTime, chartId);
 
@@ -118,18 +133,16 @@ public class ChartItemController extends AbstractCommonController {
     }
 
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{mediaType}/list", method = GET)
-    public ModelAndView getMediaList(
-                                @RequestParam(value = "q", required = false) String searchWords,
-                                @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
-                                @PathVariable("chartId") Integer chartId,
-                                @PathVariable("mediaType") String mediaType) {
+    public ModelAndView getMediaList(@RequestParam(value = "q", required = false) String searchWords,
+                                     @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId,
+                                     @PathVariable("mediaType") String mediaType) {
 
         LOGGER.debug("input parameters request searchWords, selectedPublishDateTime, chartId, mediaType : [{}], [{}], [{}], [{}]", searchWords, selectedPublishDateTime, chartId, mediaType);
 
         List<Media> medias = getMedias(searchWords, mediaType);
         List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtosFromMedia(selectedPublishDateTime, chartId, medias);
 
-        PageRequest pageRequest  = new PageRequest(0, 10000);
+        PageRequest pageRequest = new PageRequest(0, 10000);
         Map<Integer, String> terCodes = new HashMap<Integer, String>();
 
         for (Media m : medias) {
@@ -143,8 +156,9 @@ public class ChartItemController extends AbstractCommonController {
                     terCodes.put(m.getI(), trackDtoPageListDto.getList().get(0).getTerritoryCodes());
 
                     for (ChartItemDto chartItemDto : chartItemDtos) {
-                        if (chartItemDto.getMediaDto().getId().intValue() == m.getI().intValue())
+                        if (chartItemDto.getMediaDto().getId().intValue() == m.getI().intValue()) {
                             chartItemDto.setCode(trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                        }
                     }
                 }
             }
@@ -160,10 +174,8 @@ public class ChartItemController extends AbstractCommonController {
     }
 
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{newPublishDateTime}", method = POST)
-    public ModelAndView updateChartItems(HttpServletResponse response,
-                                         @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
-                                         @PathVariable("newPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date newPublishDateTime,
-                                         @PathVariable("chartId") Integer chartId) {
+    public ModelAndView updateChartItems(HttpServletResponse response, @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+                                         @PathVariable("newPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date newPublishDateTime, @PathVariable("chartId") Integer chartId) {
 
         LOGGER.debug("input parameters response, selectedPublishDateTime, newPublishDateTime, chartId: [{}], [{}], [{}], [{}]", response, selectedPublishDateTime, newPublishDateTime, chartId);
 
@@ -183,10 +195,8 @@ public class ChartItemController extends AbstractCommonController {
     }
 
     @RequestMapping(value = "/chartsNEW/{excludedChartId}/{selectedDateTime}/", params = "mediaId", method = GET)
-    public ModelAndView getDuplicatedTracksForUpdatesAcrossCommunityPlayLists(
-            @PathVariable @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedDateTime,
-            @PathVariable int excludedChartId,
-            @RequestParam("mediaId") List<Integer> mediaIds){
+    public ModelAndView getDuplicatedTracksForUpdatesAcrossCommunityPlayLists(@PathVariable @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedDateTime, @PathVariable int excludedChartId,
+                                                                              @RequestParam("mediaId") List<Integer> mediaIds) {
 
         List<ChartDetail> duplicatedMediaChartDetails = chartService.getDuplicatedMediaChartDetails(getCommunityURL(), excludedChartId, selectedDateTime.getTime(), mediaIds);
 
@@ -194,11 +204,14 @@ public class ChartItemController extends AbstractCommonController {
     }
 
     public List<Media> getMedias(String searchWords, String mediaType) {
-        if(!hasText(searchWords)) return Collections.<Media>emptyList();
-        if("media".equals(mediaType))
+        if (!hasText(searchWords)) {
+            return Collections.<Media>emptyList();
+        }
+        if ("media".equals(mediaType)) {
             return mediaService.getMusic(searchWords);
-        else
+        } else {
             return mediaService.getVideo(searchWords);
+        }
     }
 
     public void setChartService(ChartService chartService) {
@@ -215,10 +228,6 @@ public class ChartItemController extends AbstractCommonController {
 
     public void setMediaService(MediaService mediaService) {
         this.mediaService = mediaService;
-    }
-
-    public void setFilesURL(String filesURL) {
-        this.filesURL = filesURL;
     }
 
     public void setChartFilesURL(String chartFilesURL) {

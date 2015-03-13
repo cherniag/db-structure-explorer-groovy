@@ -1,34 +1,35 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.Refund;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.RefundRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActionReason;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
+
+import java.util.Date;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Date;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
 /**
- * User: Titov Mykhaylo (titov)
- * 16.07.13 9:02
+ * User: Titov Mykhaylo (titov) 16.07.13 9:02
  */
 
 @RunWith(PowerMockRunner.class)
@@ -46,7 +47,7 @@ public class RefundServiceImplTest {
     private ActionReason actionReason;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         userOnOldBoughtPeriodMock = mock(User.class);
         newPaymentPolicyMock = mock(PaymentPolicy.class);
 
@@ -56,7 +57,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void shouldLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(){
+    public void shouldLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio() {
 
         given().userOnAudionOldBoughtPeriod().and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         whenLogSkippedBoughtPeriod();
@@ -64,7 +65,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(){
+    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio() {
 
         given().userNotOnAudionOldBoughtPeriod().and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         whenLogSkippedBoughtPeriod();
@@ -72,7 +73,7 @@ public class RefundServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldDoNotLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GNotVideoAudio(){
+    public void shouldDoNotLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GNotVideoAudio() {
 
         given().userOnAudionOldBoughtPeriod().and().refundDirection(null);
         whenLogSkippedBoughtPeriod();
@@ -80,35 +81,35 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void shouldLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G(){
+    public void shouldLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G() {
         given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_4G).and().refundDirection(USER_DOWNGRADED_TARIFF);
         whenLogSkippedBoughtPeriod();
         then().logSkippedBoughtPeriod();
     }
 
     @Test
-    public void shouldDoNotLogSkippedVideoAudioBoughtPeriodOnVideoAudioActivation(){
+    public void shouldDoNotLogSkippedVideoAudioBoughtPeriodOnVideoAudioActivation() {
         given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_4G).and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
-    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom4GTo3G(){
+    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom4GTo3G() {
         given().userOnAudionOldBoughtPeriod().and().oldTariff(_4G).and().refundDirection(USER_DOWNGRADED_TARIFF);
         whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
-    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo3G(){
+    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo3G() {
         given().userOnAudionOldBoughtPeriod().and().oldTariff(_3G).and().refundDirection(USER_DOWNGRADED_TARIFF);
         whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
-    public void shouldLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4G(){
+    public void shouldLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4G() {
         given().userOnAudionOldBoughtPeriod().and().oldTariff(_3G).and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         whenLogSkippedBoughtPeriod();
         then().logSkippedBoughtPeriod();
@@ -166,7 +167,7 @@ public class RefundServiceImplTest {
             public Refund answer(InvocationOnMock invocation) throws Throwable {
                 return (Refund) invocation.getArguments()[0];
             }
-        }).when(refundRepositoryMock).save((Refund)any());
+        }).when(refundRepositoryMock).save((Refund) any());
     }
 
     private void with4GVideoAudioSubscription(boolean with4GVideoAudioSubscription) {
@@ -212,15 +213,15 @@ public class RefundServiceImplTest {
     }
 
 
-    private RefundServiceImplTest given(){
+    private RefundServiceImplTest given() {
         return this;
     }
 
-    private RefundServiceImplTest and(){
+    private RefundServiceImplTest and() {
         return this;
     }
 
-    private RefundServiceImplTest then(){
+    private RefundServiceImplTest then() {
         return this;
     }
 

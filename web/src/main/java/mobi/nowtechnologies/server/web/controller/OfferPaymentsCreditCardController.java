@@ -1,13 +1,5 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.service.CountryService;
 import mobi.nowtechnologies.server.service.OfferService;
@@ -19,6 +11,14 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto.Action;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.PaymentsCreditCardValidator;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import java.util.List;
+import java.util.Locale;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -36,105 +36,104 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class OfferPaymentsCreditCardController extends CommonController {
-	
-	public static final String VIEW_PAYMENTS_CREDITCARD = "offer/payments/creditcard";
-	public static final String VIEW_PAYMENTS_CREDITCARD_PREVIEW = "offer/payments/creditcard_preview";
-	public static final String VIEW_PAYMENTS_CREDITCARD_DETAILS = "offer/payments/creditcard_details";
-	public static final String VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL = "offer/payments/creditcard_details_successful";
-	public static final String VIEW_CREATE_PAYMENT_DETAIL_FAIL = "offer/payments/creditcard_details_fail";
 
-	public static final String PAGE_PAYMENTS_CREDITCARD = "offers/{offerId}/payments/creditcard.html";
-	public static final String PAGE_CREATE_PAYMENT_DETAILS = "offers/{offerId}/payments/creditcard_details.html";
+    public static final String VIEW_PAYMENTS_CREDITCARD = "offer/payments/creditcard";
+    public static final String VIEW_PAYMENTS_CREDITCARD_PREVIEW = "offer/payments/creditcard_preview";
+    public static final String VIEW_PAYMENTS_CREDITCARD_DETAILS = "offer/payments/creditcard_details";
+    public static final String VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL = "offer/payments/creditcard_details_successful";
+    public static final String VIEW_CREATE_PAYMENT_DETAIL_FAIL = "offer/payments/creditcard_details_fail";
 
-	private CountryService countryService;
-	private PaymentDetailsService paymentDetailsService;
-	private OfferService offerService;
+    public static final String PAGE_PAYMENTS_CREDITCARD = "offers/{offerId}/payments/creditcard.html";
+    public static final String PAGE_CREATE_PAYMENT_DETAILS = "offers/{offerId}/payments/creditcard_details.html";
 
-	@InitBinder(CreditCardDto.NAME)
-	public void initBinder(HttpServletRequest request, WebDataBinder binder) {
-		binder.setValidator(new PaymentsCreditCardValidator());
-	}
+    private CountryService countryService;
+    private PaymentDetailsService paymentDetailsService;
+    private OfferService offerService;
 
-	@RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.GET)
-	public ModelAndView getCreditCardPaymentsPage(@PathVariable(OfferDto.OFFER_ID) Integer offerId) {
-		ModelAndView modelAndView = new ModelAndView(VIEW_PAYMENTS_CREDITCARD);
+    @InitBinder(CreditCardDto.NAME)
+    public void initBinder(HttpServletRequest request, WebDataBinder binder) {
+        binder.setValidator(new PaymentsCreditCardValidator());
+    }
 
-		OfferDto offer = offerService.getOfferDto(offerId);
-		
-		modelAndView.addObject(CreditCardDto.NAME, new CreditCardDto());
-		modelAndView.addAllObjects(CreditCardDto.staticData);
-		List<Country> countries = countryService.getAllCountries();
-		modelAndView.addObject("countries", countries);
-		modelAndView.addObject(OfferDto.OFFER_DTO, offer);
+    @RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.GET)
+    public ModelAndView getCreditCardPaymentsPage(@PathVariable(OfferDto.OFFER_ID) Integer offerId) {
+        ModelAndView modelAndView = new ModelAndView(VIEW_PAYMENTS_CREDITCARD);
 
-		return modelAndView;
-	}
+        OfferDto offer = offerService.getOfferDto(offerId);
 
-	@RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.POST)
-	public ModelAndView postCreditCardPaymentsPreview(@PathVariable(OfferDto.OFFER_ID) Integer offerId, @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result) {
-		ModelAndView modelAndView = new ModelAndView();
-		
-		OfferDto offer = offerService.getOfferDto(offerId);
-	
-		modelAndView.addAllObjects(CreditCardDto.staticData);
-		List<Country> countries = countryService.getAllCountries();
-		modelAndView.addObject("countries", countries);
-		modelAndView.addObject(OfferDto.OFFER_DTO, offer);
+        modelAndView.addObject(CreditCardDto.NAME, new CreditCardDto());
+        modelAndView.addAllObjects(CreditCardDto.staticData);
+        List<Country> countries = countryService.getAllCountries();
+        modelAndView.addObject("countries", countries);
+        modelAndView.addObject(OfferDto.OFFER_DTO, offer);
 
-		if (result.hasErrors() || creditCardDto.getAction() == Action.EDIT) {
-			creditCardDto.setAction(Action.PREVIEW);
-			modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD);
-		} else {
-			creditCardDto.setAction(Action.EDIT);
-			modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD_PREVIEW);
-		}
+        return modelAndView;
+    }
 
-		return modelAndView;
-	}
+    @RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.POST)
+    public ModelAndView postCreditCardPaymentsPreview(@PathVariable(OfferDto.OFFER_ID) Integer offerId, @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result) {
+        ModelAndView modelAndView = new ModelAndView();
 
-	@RequestMapping(value = PAGE_CREATE_PAYMENT_DETAILS, method = RequestMethod.POST)
-	public ModelAndView buyByCreditCardPaymentDetails(
-			@PathVariable(OfferDto.OFFER_ID) Integer offerId,
-			HttpServletResponse response,
-			@Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto,
-			BindingResult result, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-		ModelAndView modelAndView = new ModelAndView();
+        OfferDto offer = offerService.getOfferDto(offerId);
 
-		if (result.hasErrors()) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
-		} else {
-			paymentDetailsService.buyByCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId(), offerId);
-			modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
-		}
+        modelAndView.addAllObjects(CreditCardDto.staticData);
+        List<Country> countries = countryService.getAllCountries();
+        modelAndView.addObject("countries", countries);
+        modelAndView.addObject(OfferDto.OFFER_DTO, offer);
 
-		return modelAndView;
-	}
+        if (result.hasErrors() || creditCardDto.getAction() == Action.EDIT) {
+            creditCardDto.setAction(Action.PREVIEW);
+            modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD);
+        } else {
+            creditCardDto.setAction(Action.EDIT);
+            modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD_PREVIEW);
+        }
 
-	@ExceptionHandler(value = ServiceException.class)
-	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	public ModelAndView handlerException(ServiceException serviceException, HttpServletRequest request, HttpServletResponse response, Locale locale) {
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
+        return modelAndView;
+    }
 
-		final String message = messageSource.getMessage(serviceException.getErrorCodeForMessageLocalization(), null, locale);
-		if (serviceException instanceof ExternalServiceException)
-			modelAndView.addObject("external_error", message);
-		else
-			modelAndView.addObject("internal_error", message);
+    @RequestMapping(value = PAGE_CREATE_PAYMENT_DETAILS, method = RequestMethod.POST)
+    public ModelAndView buyByCreditCardPaymentDetails(@PathVariable(OfferDto.OFFER_ID) Integer offerId, HttpServletResponse response,
+                                                      @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
+                                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+        ModelAndView modelAndView = new ModelAndView();
 
-		return modelAndView;
-	}
+        if (result.hasErrors()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
+        } else {
+            paymentDetailsService.buyByCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId(), offerId);
+            modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
+        }
 
-	public void setCountryService(CountryService countryService) {
-		this.countryService = countryService;
-	}
+        return modelAndView;
+    }
 
-	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-		this.paymentDetailsService = paymentDetailsService;
-	}
+    @ExceptionHandler(value = ServiceException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handlerException(ServiceException serviceException, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
 
-	public void setOfferService(OfferService offerService) {
-		this.offerService = offerService;
-	}
+        final String message = messageSource.getMessage(serviceException.getErrorCodeForMessageLocalization(), null, locale);
+        if (serviceException instanceof ExternalServiceException) {
+            modelAndView.addObject("external_error", message);
+        } else {
+            modelAndView.addObject("internal_error", message);
+        }
+
+        return modelAndView;
+    }
+
+    public void setCountryService(CountryService countryService) {
+        this.countryService = countryService;
+    }
+
+    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
+        this.paymentDetailsService = paymentDetailsService;
+    }
+
+    public void setOfferService(OfferService offerService) {
+        this.offerService = offerService;
+    }
 }

@@ -1,30 +1,27 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import com.sentaca.spring.smpp.mo.MOMessage;
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.service.UserService;
-import org.jsmpp.bean.DeliverSm;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.smslib.Message;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import com.sentaca.spring.smpp.mo.MOMessage;
+import org.jsmpp.bean.DeliverSm;
+import org.smslib.Message;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.mockito.Mockito.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/21/13
- * Time: 11:28 AM
+ * User: Alexsandr_Kolpakov Date: 10/21/13 Time: 11:28 AM
  */
 @RunWith(PowerMockRunner.class)
 public class VFNZUnsubscribeProccessorTest {
+
     private VFNZUnsubscribeProccessor fixture;
 
     @Mock

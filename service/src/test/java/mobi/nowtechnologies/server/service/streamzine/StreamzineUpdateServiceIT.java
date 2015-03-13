@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
@@ -10,35 +9,41 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.Notifi
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
 
 import javax.annotation.Resource;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
-import static org.hamcrest.CoreMatchers.*;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
+@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class StreamzineUpdateServiceIT {
 
     @Resource
-    private StreamzineUpdateRepository streamzineUpdateRepository;
-    @Resource
     public StreamzineUpdateService streamzineUpdateService;
+    @Resource
+    private StreamzineUpdateRepository streamzineUpdateRepository;
     @Resource
     private CommunityRepository communityRepository;
 
@@ -121,9 +126,9 @@ public class StreamzineUpdateServiceIT {
         Community community = findCommunity("hl_uk");
         Date selectedUpdateDate = DateUtils.addDays(new Date(), 100);
         Date pastDateWithinInterval = DateUtils.addDays(selectedUpdateDate, -10);
-        Date pastDateOutOfInterval  = DateUtils.addDays(selectedUpdateDate, -50);
+        Date pastDateOutOfInterval = DateUtils.addDays(selectedUpdateDate, -50);
         Date futureDateWithinInterval = DateUtils.addDays(selectedUpdateDate, 10);
-        Date futureDateOutOfInterval  = DateUtils.addDays(selectedUpdateDate, 50);
+        Date futureDateOutOfInterval = DateUtils.addDays(selectedUpdateDate, 50);
 
         streamzineUpdateService.create(futureDateWithinInterval, community);
         streamzineUpdateService.create(futureDateOutOfInterval, community);
@@ -173,7 +178,7 @@ public class StreamzineUpdateServiceIT {
 
     private Update createWithBlock(Update from, Block block, Community community) {
         Update incoming = new Update(from.getDate(), community);
-        for (User user: from.getUsers()){
+        for (User user : from.getUsers()) {
             incoming.addUser(user);
         }
         incoming.addBlock(block);
@@ -189,7 +194,7 @@ public class StreamzineUpdateServiceIT {
     }
 
     @Test
-    public void testIsAvailableOnlyForThisCommunities(){
+    public void testIsAvailableOnlyForThisCommunities() {
         streamzineUpdateService.checkAvailability("mtv1");
         streamzineUpdateService.checkAvailability("hl_uk");
     }

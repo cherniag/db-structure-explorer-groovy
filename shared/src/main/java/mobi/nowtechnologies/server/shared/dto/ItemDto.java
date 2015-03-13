@@ -1,59 +1,60 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.Pattern;
+
 import java.math.BigDecimal;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 public class ItemDto {
-	private Integer id;
 
-	@NotEmpty
-	@Pattern(regexp = ".{1,255}")
-	private String title;
+    private Integer id;
 
-	private BigDecimal price;
-	
-	private Integer typeId;
+    @NotEmpty
+    @Pattern(regexp = ".{1,255}")
+    private String title;
 
-	public Integer getId() {
-		return id;
-	}
+    private BigDecimal price;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private Integer typeId;
 
-	public String getTitle() {
-		return title;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public BigDecimal getPrice() {
-		return price;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public Integer getTypeId() {
-		return typeId;
-	}
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-	public void setTypeId(Integer typeId) {
-		this.typeId = typeId;
-	}
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
-	@Override
-	public String toString() {
-		return "ItemDto [id=" + id + ", title=" + title + ", price=" + price + ", typeId=" + typeId + "]";
-	}
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemDto [id=" + id + ", title=" + title + ", price=" + price + ", typeId=" + typeId + "]";
+    }
 }

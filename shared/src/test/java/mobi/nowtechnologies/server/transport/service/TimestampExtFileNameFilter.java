@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.server.transport.service;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-
 import java.io.File;
 import java.io.FilenameFilter;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
 /**
-* Created by oar on 12/23/13.
-*/
+ * Created by oar on 12/23/13.
+ */
 public class TimestampExtFileNameFilter implements FilenameFilter {
+
     private long cutoff;
 
     public TimestampExtFileNameFilter(long cutoff) {

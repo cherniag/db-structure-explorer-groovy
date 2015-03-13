@@ -5,15 +5,18 @@ import mobi.nowtechnologies.server.service.payment.request.MigRequest;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import org.apache.http.NameValuePair;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+
 public class MigPostService extends PostService {
+
     public static final String MIG = "MIG";
 
     @Resource
@@ -25,18 +28,17 @@ public class MigPostService extends PostService {
         model.put(MigRequest.MigRequestParam.OADCTYPE.toString(), extractField(nameValuePairs, MigRequest.MigRequestParam.OADCTYPE));
         model.put(MigRequest.MigRequestParam.MESSAGEID.toString(), extractField(nameValuePairs, MigRequest.MigRequestParam.MESSAGEID));
 
-        dbMailService.sendMessage(MIG,
-                extractField(nameValuePairs, MigRequest.MigRequestParam.NUMBERS),
-                extractField(nameValuePairs, MigRequest.MigRequestParam.OADC),
-                extractField(nameValuePairs, MigRequest.MigRequestParam.BODY),
-                model
-        );
+        dbMailService.sendMessage(MIG, extractField(nameValuePairs, MigRequest.MigRequestParam.NUMBERS), extractField(nameValuePairs, MigRequest.MigRequestParam.OADC),
+                                  extractField(nameValuePairs, MigRequest.MigRequestParam.BODY), model);
 
         return new BasicResponse() {
-            @Override public int getStatusCode() {
+            @Override
+            public int getStatusCode() {
                 return HttpServletResponse.SC_OK;
             }
-            @Override public String getMessage() {
+
+            @Override
+            public String getMessage() {
                 return MigResponse.SUCCESSFUL_RESPONSE_START;
             }
         };
@@ -44,7 +46,7 @@ public class MigPostService extends PostService {
 
     private String extractField(List<NameValuePair> nameValuePairs, MigRequest.MigRequestParam paramType) {
         for (NameValuePair nameValuePair : nameValuePairs) {
-            if(paramType.toString().equals(nameValuePair.getName())) {
+            if (paramType.toString().equals(nameValuePair.getName())) {
                 return nameValuePair.getValue();
             }
         }

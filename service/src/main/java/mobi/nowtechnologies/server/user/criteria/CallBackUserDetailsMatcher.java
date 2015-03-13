@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.user.criteria;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/11/2014
+ * Author: Gennadii Cherniaiev Date: 4/11/2014
  */
 public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CallBackUserDetailsMatcher.class);
     private UserDetailHolder<T> userDetailHolder;
     private MatchStrategy<T> matchStrategy;
@@ -31,13 +32,11 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("userDetailHolder", userDetailHolder)
-                .append("matchStrategy", matchStrategy)
-                .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("userDetailHolder", userDetailHolder).append("matchStrategy", matchStrategy).toString();
     }
 
-    public static abstract class UserDetailHolder<T>{
+    public static abstract class UserDetailHolder<T> {
+
         private String detailName;
 
         protected UserDetailHolder(String detailName) {

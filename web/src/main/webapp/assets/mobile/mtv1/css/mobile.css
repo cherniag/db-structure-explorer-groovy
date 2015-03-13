@@ -370,22 +370,6 @@ body {
     display: table;
 }
 
-.go-premium-header-logo {
-    display: table-cell;
-    vertical-align: middle;
-    background: url(../imgs/badge_mtv.png) no-repeat center;
-    background-size: 100% auto;
-}
-
-.go-premium-header-ad {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.go-premium-header-title {
-    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
-}
-
 .go-premium-body-title {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
     display: block;
@@ -563,7 +547,7 @@ body {
 /**
 ** GO PREMIUM SECTION - NEW
 **/
-.subscription_root_container {
+.subscribe_root_container {
     background: url(../imgs/bgs/bg.png) no-repeat;
     background-size: cover;
     position: absolute;
@@ -573,34 +557,66 @@ body {
     bottom: 0;
 }
 
-.subscription_header_block {
-    background-color: #FFFFFF;
+.subscribe_content_container {
+    position: absolute;
+    background-color: #ffffff;
 }
 
-.go-premium-header-title-options{
+.subscribe_header_block {
+    background-color: #F5E15E;
+}
+
+.subscribe_header_mtv_logo {
+    background: url(../imgs/mtvtrax_header_logo.png) no-repeat center;
+    background-size: 100% auto;
+    position: absolute;
+    top: 0;
+}
+
+.mtv_tracks_styled_title {
+    color: #ffffff;
+    background-color: #000000;
+    display: inline-block;
+}
+
+.subscribe_header_ad_title {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    text-align: center;
+    vertical-align: middle;
+    margin: 0 auto;
 }
 
-.subscription_option_container{
-    background-color: #FFFFFF;
+.subscribe_header_premium_banner {
+    background: url(../imgs/subscribe_premium_banner.png) no-repeat center;
+    background-size: 100% auto;
 }
 
-.subscription_premium_logo{
-    background: url(../imgs/label_premium.png) no-repeat;
-    background-size: 100%;
-    margin: 0 auto 0;
-    width: 58%;
+.subscribe_description_block {
+
 }
 
-.subscription_pass_logo{
-    background: url(../imgs/label_pass.png) no-repeat;
-    background-size: 100%;
-    margin: 0 auto 0;
-    width: 64%;
+.subscribe_description_item{
+    font-family: 'NimbusSanTOTLig', Arial, sans-serif;
 }
 
-.subscription_option_price_message{
-    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+.subscribe_description_item_logo {
+    background: url(../imgs/subscribe_description_item_logo.png) no-repeat center;
+    background-size: 100% auto;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.subscribe_description_item_text {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.subscribe_option_holder{
+
+}
+
+.subscribe_option_discount_text{
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
     text-align: center;
 }
 
@@ -631,6 +647,71 @@ body {
 }
 
 @media all and (max-width: 3000px) {
+    .subscribe_content_container_device {
+        top: 70px;
+        right: 20px;
+        left: 20px;
+        bottom: 20px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 84px;
+        padding-bottom: 44px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 106px;
+        height: 124px;
+        left: 14px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 16px 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 32px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 52px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 468px;
+        height: 100px;
+        margin: 20px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 12px 0 48px 32px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 16px;
+        font-size: 32px;
+        line-height: 100%;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 36px;
+        height: 36px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 10px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 20px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 30px;
+        margin: 10px auto 0;
+        font-size: 20px;
+    }
+
     .go-premium-button-close-device {
         width: 72px;
         height: 72px;
@@ -670,16 +751,6 @@ body {
         height: 400px;
     }
 
-    .go-premium-header-title-device {
-        font-size: 60px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 268px;
-        height: 268px;
-    }
-
     .go-premium-text-message-wrapper-device {
         width: 90%;
         margin: 0 auto 20px;
@@ -715,54 +786,11 @@ body {
         margin-top:20px;
     }
 
-    .subscription_header_block_device {
-        margin: 20px 20px 0;
-        padding: 10px;
-
-    }
-
-    .go-premium-header-logo-device {
-        width: 146px;
-        height: 146px;
-    }
-
-    .go-premium-header-ad {
-        padding-left: 40px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 40px;
-    }
-
-    .go-premium-header-title-options-device {
-        font-size: 36px;
-    }
-
-    .subscription_option_container_device {
-        margin: 20px 20px 0;
-        padding-top: 36px;
-        padding-bottom: 36px;
-    }
-
-    .subscription_premium_logo_device {
-        height: 86px;
-    }
-
-    .subscription_option_price_message_device {
-        font-size: 28px;
-        margin: 30px auto 30px;
-        width: 80%;
-    }
-
     .subscribe-button-device {
         margin: 0 60px 0;
         padding: 20px 0 20px 0;
         border-radius: 60px;
         font-size: 28px;
-    }
-
-    .subscription_pass_logo_device {
-        height: 80px;
     }
 
     .error-title {
@@ -808,16 +836,6 @@ body {
         margin-top:75px;
         width: 236px;
         height: 380px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 60px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 268px;
-        height: 268px;
     }
 
     .go-premium-success-salutation-container-device {
@@ -883,16 +901,6 @@ body {
         height: 322px;
     }
 
-    .go-premium-header-title-device {
-        font-size: 45px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 156px;
-        height: 156px;
-    }
-
     .go-premium-success-salutation-container-device {
         margin-top:-400px;
     }
@@ -927,10 +935,6 @@ body {
         height: 390px;
     }
 
-    .go-premium-header-title-options-device {
-        font-size: 32px;
-    }
-
     .error-title {
         font-size: 35px;
      }
@@ -942,6 +946,70 @@ body {
 }
 
 @media all and (max-width: 640px) {
+    .subscribe_content_container_device {
+        top: 60px;
+        right: 18px;
+        left: 18px;
+        bottom: 18px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 70px;
+        padding-bottom: 38px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 92px;
+        height: 108px;
+        left: 12px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 16px 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 26px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 42px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 396px;
+        height: 84px;
+        margin: 18px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 10px 0 40px 28px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 14px;
+        font-size: 26px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 30px;
+        height: 30px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 9px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 18px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 24px;
+        margin: 9px auto 0;
+        font-size: 18px;
+    }
+
     .go-premium-button-close-device {
         width: 50px;
         height: 50px;
@@ -974,16 +1042,6 @@ body {
 
     .go-premium-body-button-up {
         margin: 30px 50px 0 50px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 34px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 140px;
-        height: 140px;
     }
 
     .go-premium-success-salutation-container-device {
@@ -1020,30 +1078,6 @@ body {
         height: 310px;
     }
 
-    .subscription_header_block_device{
-        margin: 18px 18px 0;
-        padding: 10px;
-    }
-
-    .subscription_premium_logo_device{
-        height: 70px;
-    }
-
-    .subscription_pass_logo_device{
-        height: 64px;
-    }
-
-    .subscription_option_container_device{
-        margin: 18px 18px 0;
-        padding-top: 32px;
-        padding-bottom: 32px;
-    }
-
-    .subscription_option_price_message_device{
-        font-size: 22px;
-        margin: 28px auto 28px;
-    }
-
     .subscribe-button-device{
         margin: 0 40px 0;
         padding: 18px 0 18px 0;
@@ -1063,6 +1097,74 @@ body {
 
 @media all and (max-width: 480px) {
 
+    .subscribe_content_container_device {
+        top: 46px;
+        right: 14px;
+        left: 14px;
+        bottom: 14px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 56px;
+        padding-bottom: 30px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 70px;
+        height: 82px;
+        left: 10px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 10px 3px;
+    }
+
+    .mtv_tracks_styled_title_device_ios{
+        padding-top: 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 22px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 34px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 312px;
+        height: 66px;
+        margin: 14px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 10px 0 32px 22px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 10px;
+        font-size: 22px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 24px;
+        height: 24px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 6px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 14px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 20px;
+        margin: 6px auto 0;
+        font-size: 14px;
+    }
+
     .go-premium-header {
         margin-top: 15px;
     }
@@ -1079,7 +1181,6 @@ body {
 
     .go-premium-text-message-device {
         font-size: 16px;
-        line-height: 100%;
     }
 
     .go-premium-body-title-device {
@@ -1120,16 +1221,6 @@ body {
         margin-top: 35px;
     }
 
-    .go-premium-header-title-device {
-        font-size: 22px;
-        line-height: 110%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 130px;
-        height: 130px;
-    }
-
     .go-premium-text-message-wrapper-device {
         width: 90%;
         margin: 0 auto 30px;
@@ -1165,54 +1256,11 @@ body {
         margin-top:10px;
     }
 
-    .subscription_header_block_device{
-        margin: 13px 13px 0;
-        padding: 8px;
-    }
-
-    .go-premium-header-logo-device{
-        width: 97px;
-        height: 97px;
-    }
-
-    .go-premium-header-ad{
-        padding-left: 26px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 26px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-title-options-device {
-        font-size: 23px;
-        line-height: 120%;
-    }
-
-    .subscription_option_container_device{
-        margin: 13px 13px 0;
-        padding-top: 20px;
-        padding-bottom: 20px;
-    }
-
-    .subscription_premium_logo_device{
-        height: 56px;
-    }
-
-    .subscription_option_price_message_device{
-        font-size: 17px;
-        margin: 20px auto 20px;
-    }
-
     .subscribe-button-device{
         margin: 0 40px 0;
         padding: 15px 0 15px 0;
         border-radius: 40px;
         font-size: 20px;
-    }
-
-    .subscription_pass_logo_device{
-        height: 52px;
     }
 
     .error-title {
@@ -1229,7 +1277,121 @@ body {
     }
 }
 
+@media all and (max-width: 440px) {
+    .subscribe_content_container_device {
+        top: 42px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 52px;
+        padding-bottom: 28px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 64px;
+        height: 74px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 20px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 30px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 286px;
+        height: 60px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 10px 0 30px 20px ;
+    }
+
+    .subscribe_description_item_device {
+        font-size: 20px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 22px;
+        height: 22px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 18px;
+    }
+}
+
 @media all and (max-width: 400px){
+
+    .subscribe_content_container_device {
+        top: 38px;
+        right: 12px;
+        left: 12px;
+        bottom: 12px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 46px;
+        padding-bottom: 24px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 58px;
+        height: 68px;
+        left: 8px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 8px 2px;
+    }
+
+    .mtv_tracks_styled_title_device_ios{
+        padding-top: 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 18px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 28px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 260px;
+        height: 56px;
+        margin: 12px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 6px 0 26px 18px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 8px;
+        font-size: 18px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 20px;
+        height: 20px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 6px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 12px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 16px;
+        margin: 6px auto 0;
+        font-size: 12px;
+    }
 
     .go-premium-unsubscribe-title-device{
         font-size: 20px;
@@ -1240,55 +1402,11 @@ body {
         height: 210px;
     }
 
-    .subscription_header_block_device{
-        margin: 11px 11px 0;
-        padding: 5px;
-    }
-
-    .go-premium-header-logo-device{
-        width: 80px;
-        height: 80px;
-    }
-
-    .go-premium-header-ad{
-        padding-left: 22px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 22px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-title-options-device {
-        font-size: 20px;
-        line-height: 120%;
-    }
-
-    .subscription_option_container_device{
-        margin: 11px 11px 0;
-        padding-top: 20px;
-        padding-bottom: 20px;
-    }
-
-    .subscription_premium_logo_device{
-        /*width: 210px;*/
-        height: 46px;
-    }
-
-    .subscription_option_price_message_device{
-        font-size: 15px;
-        margin: 16px auto 16px;
-    }
-
     .subscribe-button-device{
         margin: 0 33px 0;
         padding: 13px 0 13px 0;
         border-radius: 36px;
         font-size: 19px;
-    }
-
-    .subscription_pass_logo_device{
-        height: 42px;
     }
 
     .go-premium-success-notification-container {
@@ -1298,6 +1416,66 @@ body {
 }
 
 @media all and (max-width: 360px) {
+
+    .subscribe_content_container_device {
+        top: 35px;
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 42px;
+        padding-bottom: 22px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 53px;
+        height: 62px;
+        left: 7px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 16px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 26px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 234px;
+        height: 50px;
+        margin: 10px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 6px 0 24px 16px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 8px;
+        font-size: 16px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 18px;
+        height: 18px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 5px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 10px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 15px;
+        margin: 5px auto 0;
+        font-size: 10px;
+    }
 
     .go-premium-unsubscribe-logo-device{
         height: 175px;
@@ -1320,42 +1498,6 @@ body {
         margin-top: 35px;
     }
 
-    .subscription_header_block_device{
-        margin: 10px 10px 0;
-    }
-
-    .go-premium-header-logo-device{
-        width: 73px;
-        height: 73px;
-    }
-
-    .go-premium-header-ad{
-        padding-left: 20px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 20px;
-    }
-
-    .go-premium-header-title-options-device {
-        font-size: 18px;
-    }
-
-    .subscription_option_container_device{
-        margin: 10px 10px 0;
-        padding-top: 18px;
-        padding-bottom: 18px;
-    }
-
-    .subscription_premium_logo_device{
-        height: 42px;
-    }
-
-    .subscription_option_price_message_device{
-        font-size: 14px;
-        margin: 15px auto 15px;
-    }
-
     .subscribe-button-device{
         margin: 0 30px 0;
         padding: 12px 0 12px 0;
@@ -1363,12 +1505,69 @@ body {
         font-size: 17px;
     }
 
-    .subscription_pass_logo_device{
-        height: 38px;
-    }
 }
 
 @media all and (max-width: 320px) {
+    .subscribe_content_container_device {
+        top: 20px;
+        right: 8px;
+        left: 8px;
+        bottom: 8px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 38px;
+        padding-bottom: 20px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 48px;
+        height: 56px;
+        left: 6px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 14px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 24px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 208px;
+        height: 46px;
+        margin: 8px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 6px 0 20px 14px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 16px;
+        height: 16px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 4px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 6px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 14px;
+        margin: 4px auto 0;
+        font-size: 8px;
+    }
+
     .go-premium-button-close-device {
         width: 22px;
         height: 22px;
@@ -1383,7 +1582,6 @@ body {
 
     .go-premium-text-message-device {
         font-size: 16px;
-        line-height: 100%;
     }
 
     .go-premium-body-title-device {
@@ -1425,16 +1623,6 @@ body {
         margin-top: 38px;
     }
 
-    .go-premium-header-title-device {
-        font-size: 20px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 90px;
-        height: 90px;
-    }
-
     .go-premium-text-message-wrapper-device {
         width: 100%;
         margin: 0 auto;
@@ -1471,46 +1659,11 @@ body {
         margin-left:20px;
     }
 
-    .subscription_header_block_device{
-        padding: 2px;
-    }
-
-    .go-premium-header-logo-device{
-        width: 68px;
-        height: 68px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 19px;
-    }
-
-    .go-premium-header-title-options-device {
-        font-size: 17px;
-    }
-
-    .subscription_option_container_device{
-        padding-top: 14px;
-        padding-bottom: 14px;
-    }
-
-    .subscription_option_price_message_device{
-        font-size: 13px;
-        margin: 14px auto 14px;
-    }
-
-    .subscription_premium_logo_device{
-        height: 36px;
-    }
-
-    .subscription_pass_logo_device{
-        height: 35px;
-    }
-
     .subscribe-button-device{
         margin: 0 28px 0;
-        padding: 8px 0 8px 0;
+        padding: 11px 0 11px 0;
         border-radius: 24px;
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .error-title {
@@ -1527,7 +1680,99 @@ body {
     }
 }
 
+@media all and (max-height: 480px) and (max-width: 320px){
+    .subscribe_content_container_device {
+        top: 15px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 38px;
+        padding-bottom: 18px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 200px;
+        height: 44px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 22px;
+    }
+
+    .subscribe_description_item_device {
+        padding: 5px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 5px;
+    }
+}
+
 @media all and (max-width: 240px) {
+    .subscribe_content_container_device {
+        top: 24px;
+        right: 6px;
+        left: 6px;
+        bottom: 6px;
+    }
+
+    .subscribe_header_block_device {
+        padding-top: 28px;
+        padding-bottom: 14px;
+    }
+
+    .subscribe_header_mtv_logo_device {
+        width: 36px;
+        height: 42px;
+        left: 4px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 1px 6px 1px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 10px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 18px;
+    }
+
+    .subscribe_header_premium_banner_device {
+        width: 156px;
+        height: 34px;
+        margin: 6px auto 0;
+    }
+
+    .subscribe_description_block_device {
+        margin: 4px 0 16px 10px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 6px;
+        font-size: 10px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 12px;
+        height: 12px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 4px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 6px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 10px;
+        margin: 4px auto 0;
+        font-size: 6px;
+    }
+
     .go-premium-button-close-device {
         width: 20px;
         height: 20px;
@@ -1568,16 +1813,6 @@ body {
         margin: 8px 50px 0 50px;
     }
 
-    .go-premium-header-title-device {
-        font-size: 16px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-logo-device {
-        width: 70px;
-        height: 70px;
-    }
-
     .go-premium-text-message-wrapper-device {
         width: 100%;
         margin: 0 auto;
@@ -1616,44 +1851,6 @@ body {
         width: 60%;
     }
 
-    .subscription_header_block_device {
-        margin: 8px 8px 0;
-        padding: 4px;
-
-    }
-
-    .go-premium-header-logo-device {
-        width: 50px;
-        height: 50px;
-    }
-
-    .go-premium-header-ad {
-        padding-left: 13px;
-    }
-
-    .go-premium-header-title-device {
-        font-size: 13px;
-    }
-
-    .go-premium-header-title-options-device {
-        font-size: 12px;
-    }
-
-    .subscription_option_container_device {
-        margin: 8px 8px 0;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-
-    .subscription_premium_logo_device {
-        height: 30px;
-    }
-
-    .subscription_option_price_message_device {
-        font-size: 9px;
-        margin: 10px auto 10px;
-    }
-
     .subscribe-button-device {
         margin: 0 20px 0;
         padding: 8px 0 8px 0;
@@ -1661,9 +1858,6 @@ body {
         font-size: 11px;
     }
 
-    .subscription_pass_logo_device {
-        height: 27px;
-    }
     .go-premium-unsubscribe-title-device{
         font-size: 12px;
         margin: 8px auto 8px;

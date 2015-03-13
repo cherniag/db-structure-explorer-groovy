@@ -19,10 +19,6 @@ public class OAuth2ForbiddenException extends ServiceException {
         return new OAuth2ForbiddenException(SocialErrorCodes.INVALID_FACEBOOK_USER_ID);
     }
 
-    public static OAuth2ForbiddenException emptyFacebookEmail() {
-        return new OAuth2ForbiddenException(SocialErrorCodes.EMPTY_FACEBOOK_EMAIL);
-    }
-
     public static OAuth2ForbiddenException invalidGooglePlusToken() {
         return new OAuth2ForbiddenException(SocialErrorCodes.INVALID_GOOGLE_PLUS_TOKEN);
     }
@@ -43,7 +39,7 @@ public class OAuth2ForbiddenException extends ServiceException {
         INVALID_GOOGLE_PLUS_TOKEN("760", "invalid authorization token"),
         INVALID_GOOGLE_PLUS_USER_ID("761", "invalid user google plus id"),
         EMPTY_GOOGLE_PLUS_EMAIL("762", "email is not specified");
-        
+
         private final String errorCode;
         private final String message;
 

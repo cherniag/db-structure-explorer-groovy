@@ -13,45 +13,54 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryHttpClientImpl;
-import mobi.nowtechnologies.server.trackrepo.dto.*;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
+import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.shared.testcases.TestCase;
 import mobi.nowtechnologies.shared.testcases.TestCases;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.runners.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 // @author Alexander Kolpakov (akolpakov)
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRepoServiceImplTest {
+
     static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoServiceImplTest.class);
 
     static final String ENCODE_METHOD = "encode";
@@ -69,10 +78,14 @@ public class TrackRepoServiceImplTest {
 
     @Mock
     TrackRepositoryHttpClientImpl client;
-    @Mock ArtistRepository artistRepository;
-    @Mock MediaRepository mediaRepository;
-    @Mock GenreRepository genreRepository;
-    @Mock MediaFileRepository mediaFileRepository;
+    @Mock
+    ArtistRepository artistRepository;
+    @Mock
+    MediaRepository mediaRepository;
+    @Mock
+    GenreRepository genreRepository;
+    @Mock
+    MediaFileRepository mediaFileRepository;
     TrackRepoServiceImpl fixture;
 
     @Test
@@ -269,7 +282,7 @@ public class TrackRepoServiceImplTest {
         TrackDto expectedTrack = testcase.getOutput(0);
         Iterator<ResourceFileDto> i = expectedTrack.getFiles().iterator();
         int j = 0;
-        while(i.hasNext() && j < 7){
+        while (i.hasNext() && j < 7) {
             i.next();
             i.remove();
             j++;
@@ -286,12 +299,12 @@ public class TrackRepoServiceImplTest {
         verify(mediaRepository, times(1)).save(any(Media.class));
         verify(genreRepository, times(1)).getByName(anyString());
         verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_ORIGINAL.getSuffix()+"."+FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc()+AudioResolution.RATE_ORIGINAL.getSuffix()+"."+FileType.DOWNLOAD.getExt()));
-        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc()+AudioResolution.RATE_PREVIEW.getSuffix()+"."+FileType.MOBILE_AUDIO.getExt()));
-        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc()+AudioResolution.RATE_PREVIEW.getSuffix()+"."+FileType.MOBILE_HEADER.getExt()));
+        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_22.getSuffix() + "." + FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_21.getSuffix() + "." + FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_ORIGINAL.getSuffix() + "." + FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_ORIGINAL.getSuffix() + "." + FileType.DOWNLOAD.getExt()));
+        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_PREVIEW.getSuffix() + "." + FileType.MOBILE_AUDIO.getExt()));
+        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_PREVIEW.getSuffix() + "." + FileType.MOBILE_HEADER.getExt()));
         verify(mediaFileRepository, times(4)).save(any(MediaFile.class));
         verify(artistRepository, times(1)).getByName(any(String.class));
         verify(artistRepository, times(1)).save(any(Artist.class));
@@ -338,7 +351,9 @@ public class TrackRepoServiceImplTest {
             public List<Artist> answer(InvocationOnMock invocation) throws Throwable {
                 String name = (String) invocation.getArguments()[0];
                 Artist artist = mapArtistByRealName.get(name, 0);
-                return artist != null ? Collections.singletonList(artist) : Collections.<Artist>emptyList();
+                return artist != null ?
+                       Collections.singletonList(artist) :
+                       Collections.<Artist>emptyList();
             }
         });
         when(artistRepository.getByName(any(String.class))).thenAnswer(new Answer<Artist>() {

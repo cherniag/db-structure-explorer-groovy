@@ -1,23 +1,20 @@
 package mobi.nowtechnologies.server.service.validator;
 
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.runners.*;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 9/27/13
- * Time: 5:30 PM
+ * User: Alexsandr_Kolpakov Date: 9/27/13 Time: 5:30 PM
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GBCellNumberValidatorTest {
+
     private GBCellNumberValidator fixture;
 
     @Before
-    public void setUp(){
-         fixture = new GBCellNumberValidator();
+    public void setUp() {
+        fixture = new GBCellNumberValidator();
     }
 
     @Test

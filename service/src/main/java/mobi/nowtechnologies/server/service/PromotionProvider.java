@@ -6,10 +6,10 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class PromotionProvider {
@@ -21,7 +21,7 @@ public class PromotionProvider {
     private PromotionRepository promotionRepository;
     private CommunityResourceBundleMessageSource messageSource;
 
-    final public PromotionProxy getPromotionProxyByPropertyName(String propertyName, String communityName){
+    final public PromotionProxy getPromotionProxyByPropertyName(String propertyName, String communityName) {
         String promotionCode = messageSource.getMessage(communityName, propertyName, null, null);
         notNull(promotionCode, "The parameter promotionCode is null");
         notNull(communityName, "The parameter communityName is null");
@@ -29,8 +29,8 @@ public class PromotionProvider {
 
         Community community = communityService.getCommunityByName(communityName);
         UserGroup userGroup = entityService.findByProperty(UserGroup.class, UserGroup.Fields.communityId.toString(), community.getId());
-        PromotionProxy answer = new PromotionProxy(promotionRepository,promotionCode,userGroup);
-        notNull(answer.getPromotion(),"Promotion with promo code = "+ promotionCode+" should exist");
+        PromotionProxy answer = new PromotionProxy(promotionRepository, promotionCode, userGroup);
+        notNull(answer.getPromotion(), "Promotion with promo code = " + promotionCode + " should exist");
         return answer;
     }
 
@@ -50,7 +50,7 @@ public class PromotionProvider {
         this.messageSource = messageSource;
     }
 
-    public static class PromotionProxy{
+    public static class PromotionProxy {
 
         private final PromotionRepository repository;
         private final String promoCode;
@@ -63,7 +63,7 @@ public class PromotionProvider {
         }
 
 
-        public Promotion getPromotion(){
+        public Promotion getPromotion() {
             return repository.getPromotionByPromoCode(promoCode, userGroup, ADD_FREE_WEEKS_PROMOTION);
         }
 

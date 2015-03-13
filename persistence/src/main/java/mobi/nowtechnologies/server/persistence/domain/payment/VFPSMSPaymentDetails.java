@@ -7,14 +7,14 @@ import javax.persistence.Entity;
 @DiscriminatorValue(PaymentDetails.VF_PSMS_TYPE)
 public class VFPSMSPaymentDetails extends PSMSPaymentDetails {
 
-	@Override
-	public String getPaymentType() {
-		return PaymentDetails.VF_PSMS_TYPE;
-	}
+    @Override
+    public String getPaymentType() {
+        return PaymentDetails.VF_PSMS_TYPE;
+    }
 
-	@Override
-	public String toString() {
-		return "VFPSMSPaymentDetails ["+ super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "VFPSMSPaymentDetails [" + super.toString() + "]";
+    }
 
 }

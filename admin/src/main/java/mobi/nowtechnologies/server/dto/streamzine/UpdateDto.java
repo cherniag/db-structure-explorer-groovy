@@ -1,8 +1,14 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class UpdateDto {
+
     private Date date;
     private long id;
     private List<String> userNames = new ArrayList<String>();
@@ -37,19 +43,19 @@ public class UpdateDto {
         blocks.addAll(blockDtos);
     }
 
-    public void setCanEdit(boolean canEdit) {
-        this.canEdit = canEdit;
-    }
-
     public boolean isCanEdit() {
         return canEdit;
+    }
+
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
     }
 
     public List<String> getUserNames() {
         return userNames;
     }
 
-    public void addUserName(String userName){
+    public void addUserName(String userName) {
         this.userNames.add(userName);
     }
 }

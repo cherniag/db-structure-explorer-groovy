@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.streamzine;
 
-import cucumber.api.Transform;
-import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
@@ -15,19 +10,27 @@ import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import org.apache.commons.lang.time.DateUtils;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import cucumber.api.Transform;
+import cucumber.api.java.After;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.Assert.*;
 
 @Component
 public class GetStreamzineNotSupportedCommunityFeature extends AbstractStreamzineFeature {
+
     private Map<UserDeviceData, ResponseEntity<StandardResponse>> errorResponses = new HashMap<UserDeviceData, ResponseEntity<StandardResponse>>();
 
     private Map<UserDeviceData, Update> updates = new HashMap<UserDeviceData, Update>();
@@ -39,10 +42,8 @@ public class GetStreamzineNotSupportedCommunityFeature extends AbstractStreamzin
     // Given and After
     //
     @Given("^First time user with device using (.+) format for (.+) and (.+) and for (.+) available$")
-    public void firstTimeUserUsingFormat(@Transform(DictionaryTransformer.class) Word requestFormats,
-                                         @Transform(DictionaryTransformer.class) Word versions,
-                                         @Transform(DictionaryTransformer.class) Word communities,
-                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
+    public void firstTimeUserUsingFormat(@Transform(DictionaryTransformer.class) Word requestFormats, @Transform(DictionaryTransformer.class) Word versions,
+                                         @Transform(DictionaryTransformer.class) Word communities, @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         apiVersions = ApiVersions.from(versions.list());
         currentUserDevices = super.initUserData(requestFormats.set(RequestFormat.class), versions, communities, devices);
     }
@@ -73,14 +74,9 @@ public class GetStreamzineNotSupportedCommunityFeature extends AbstractStreamzin
             PhoneState state = deviceSet.getPhoneState(data);
             UserDataCreator.TimestampTokenData token = userDataCreator.createUserToken(state.getLastAccountCheckResponse().userToken);
 
-            ResponseEntity<StandardResponse> response = deviceSet.getStreamzine(
-                    "some_unknown_community",
-                    data,
-                    token.getTimestampToken(),
-                    token.getTimestamp(),
-                    validResolution,
-                    state.getLastFacebookInfo().getUserName(),
-                    StandardResponse.class, apiVersions);
+            ResponseEntity<StandardResponse> response = deviceSet
+                .getStreamzine("some_unknown_community", data, token.getTimestampToken(), token.getTimestamp(), validResolution, state.getLastFacebookInfo().getUserName(), StandardResponse.class,
+                               apiVersions);
 
             errorResponses.put(data, response);
         }

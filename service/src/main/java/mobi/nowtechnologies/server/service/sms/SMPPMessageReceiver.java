@@ -6,11 +6,10 @@ import com.sentaca.spring.smpp.mo.MessageReceiver;
 import org.smslib.smpp.AbstractSMPPGateway;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 11/4/13
- * Time: 2:06 PM
+ * User: Alexsandr_Kolpakov Date: 11/4/13 Time: 2:06 PM
  */
 public class SMPPMessageReceiver extends MessageReceiver {
+
     private DeliverSmMessageProcessor deliverSmMessageProcessor;
 
     public SMPPMessageReceiver(DeliverSmMessageProcessor deliverSmMessageProcessor) {
@@ -21,7 +20,7 @@ public class SMPPMessageReceiver extends MessageReceiver {
     @Override
     public void init(JSMPPGateway jsmppGateway) {
         if (deliverSmMessageProcessor != null) {
-            ((SMSMessageProcessorContainer)deliverSmMessageProcessor).setJsmppGateway((AbstractSMPPGateway) jsmppGateway);
+            ((SMSMessageProcessorContainer) deliverSmMessageProcessor).setJsmppGateway((AbstractSMPPGateway) jsmppGateway);
         }
     }
 

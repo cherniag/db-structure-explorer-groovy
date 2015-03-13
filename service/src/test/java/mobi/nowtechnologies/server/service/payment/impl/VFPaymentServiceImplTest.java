@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -15,38 +14,39 @@ import mobi.nowtechnologies.server.service.payment.response.PaymentSystemRespons
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.aop.framework.AopContext;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
+
+import org.springframework.aop.framework.AopContext;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/22/13
- * Time: 1:27 PM
+ * User: Alexsandr_Kolpakov Date: 10/22/13 Time: 1:27 PM
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({AopContext.class})
 public class VFPaymentServiceImplTest {
+
     private VFPaymentServiceImpl fixture;
 
     @Mock
@@ -126,7 +126,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setSourceAddr("+642111111111");
-        deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD",  "000", "It is test").getBytes());
+        deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD", "000", "It is test").getBytes());
 
         VFResponse vfResponse = VFResponse.futureResponse().parse(deliverSm);
 
@@ -138,7 +138,7 @@ public class VFPaymentServiceImplTest {
         vfpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         pendingPayment.setPaymentDetails(vfpsmsPaymentDetails);
 
-        PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+"+deliverSm.getSourceAddr());
+        PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
 
@@ -147,7 +147,7 @@ public class VFPaymentServiceImplTest {
 
         fixture.process(vfResponse);
 
-        verify(userServiceMock, times(1)).findByMobile("+"+deliverSm.getSourceAddr());
+        verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(1)).getPendingPayments(user.getId());
         verify(fixture, times(1)).commitPayment(pendingPayment, vfResponse);
 
@@ -160,7 +160,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setSourceAddr("642111111111");
-        deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD",  "000", "It is test").getBytes());
+        deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD", "000", "It is test").getBytes());
 
         VFResponse vfResponse = VFResponse.futureResponse().parse(deliverSm);
 
@@ -172,13 +172,13 @@ public class VFPaymentServiceImplTest {
         vfpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         pendingPayment.setPaymentDetails(vfpsmsPaymentDetails);
 
-        PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+"+deliverSm.getSourceAddr());
+        PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
 
         fixture.process(vfResponse);
 
-        verify(userServiceMock, times(1)).findByMobile("+"+deliverSm.getSourceAddr());
+        verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(1)).getPendingPayments(user.getId());
         verify(fixture, times(0)).commitPayment(pendingPayment, vfResponse);
     }
@@ -188,7 +188,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setSourceAddr("642111111111");
-        deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD",  "000", "It is test").getBytes());
+        deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD", "000", "It is test").getBytes());
 
         VFResponse vfResponse = VFResponse.futureResponse().parse(deliverSm);
 
@@ -200,18 +200,18 @@ public class VFPaymentServiceImplTest {
         vfpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         pendingPayment.setPaymentDetails(vfpsmsPaymentDetails);
 
-        PowerMockito.doReturn(Collections.emptyList()).when(userServiceMock).findByMobile("+"+deliverSm.getSourceAddr());
+        PowerMockito.doReturn(Collections.emptyList()).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
 
         fixture.process(vfResponse);
 
-        verify(userServiceMock, times(1)).findByMobile("+"+deliverSm.getSourceAddr());
+        verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(0)).getPendingPayments(user.getId());
         verify(fixture, times(0)).commitPayment(pendingPayment, vfResponse);
     }
 
-    protected String buildMessage(String msgId, String sub, String dlvrd,String submitDate, String doneDate, String stat, String err, String text){
-        return "id:"+msgId+" sub:"+sub+" dlvrd:"+dlvrd+" submit date:"+submitDate+" done date:"+doneDate+" stat:"+stat+" err:"+err+" Text:"+text;
+    protected String buildMessage(String msgId, String sub, String dlvrd, String submitDate, String doneDate, String stat, String err, String text) {
+        return "id:" + msgId + " sub:" + sub + " dlvrd:" + dlvrd + " submit date:" + submitDate + " done date:" + doneDate + " stat:" + stat + " err:" + err + " Text:" + text;
     }
 }

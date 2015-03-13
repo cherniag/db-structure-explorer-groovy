@@ -1,11 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features;
 
-import cucumber.api.Transform;
-import cucumber.api.java.After;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
@@ -21,18 +15,28 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import cucumber.api.Transform;
+import cucumber.api.java.After;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.apache.commons.lang3.StringUtils;
+
+import org.springframework.stereotype.Component;
 
 import static org.junit.Assert.*;
 
 @Component
 public class XtifyOnSignupFeature {
+
     @Resource
     private PartnerDeviceSet partnerDeviceSet;
     @Resource
@@ -48,18 +52,14 @@ public class XtifyOnSignupFeature {
     private List<UserDeviceData> userDeviceDatas;
 
     @Given("^First time user with device using JSON and XML formats for ([\\w\\.]+) version and (.+) and for (.+) available$")
-    public void firstTimeUser(String version,
-                                @Transform(DictionaryTransformer.class) Word communities,
-                                @Transform(DictionaryTransformer.class) Word devices) {
+    public void firstTimeUser(String version, @Transform(DictionaryTransformer.class) Word communities, @Transform(DictionaryTransformer.class) Word devices) {
         userDeviceDatas = userDeviceDataService.table(Arrays.asList(version), communities.set(), devices.set());
         runner = runnerService.create(userDeviceDatas);
     }
 
     @Given("^First time user with device using JSON and XML formats for (.+) above (.+) and (.+) and for (.+) available$")
-    public void firstTimeUserAbove(@Transform(DictionaryTransformer.class) Word versions,
-                              String aboveVersion,
-                              @Transform(DictionaryTransformer.class) Word communities,
-                              @Transform(DictionaryTransformer.class) Word devices) {
+    public void firstTimeUserAbove(@Transform(DictionaryTransformer.class) Word versions, String aboveVersion, @Transform(DictionaryTransformer.class) Word communities,
+                                   @Transform(DictionaryTransformer.class) Word devices) {
         List<String> above = ApiVersions.from(versions.set()).above(aboveVersion);
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), devices.set());
         runner = runnerService.create(userDeviceDatas);

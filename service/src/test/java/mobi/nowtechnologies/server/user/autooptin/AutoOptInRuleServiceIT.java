@@ -1,6 +1,12 @@
 package mobi.nowtechnologies.server.user.autooptin;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
@@ -8,15 +14,6 @@ import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
@@ -24,13 +21,21 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/9/2014
+ * Author: Gennadii Cherniaiev Date: 4/9/2014
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
@@ -128,7 +133,7 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-     public void checkWhenOldUserIsNotLimited() throws Exception {
+    public void checkWhenOldUserIsNotLimited() throws Exception {
         User user = createMatchingUser();
         user.getOldUser().setStatus(new UserStatus(UserStatus.SUBSCRIBED));
 
@@ -274,7 +279,7 @@ public class AutoOptInRuleServiceIT {
         return userGroup;
     }
 
-    private User getOldUser(){
+    private User getOldUser() {
         User oldUser = new User();
         oldUser.setStatus(new UserStatus(UserStatus.LIMITED));
         oldUser.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);

@@ -1,7 +1,12 @@
 package mobi.nowtechnologies.server.service.chart;
 
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Drm;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.AppConstants;
@@ -9,47 +14,64 @@ import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import org.springframework.web.util.UriComponentsBuilder;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 3/11/14
+ * Author: Gennadii Cherniaiev Date: 3/11/14
  */
 public class ChartDetailsConverter {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailsConverter.class);
     private static final String URL_PARAMETER = "&url=";
     private CommunityResourceBundleMessageSource messageSource;
     private long iTunesLinkFormatCutoverTimeMillis;
     private BadgesService badgesService;
 
-    public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
-		if (chartDetails == null)
-			throw new PersistenceException("The parameter chartDetails is null");
-		if (defaultAmazonUrl == null)
-			throw new NullPointerException("The parameter defaultAmazonUrl is null");
+    static String replacePathSegmentInUrl(String url, int index, String newValue) {
+        LOGGER.debug("url=[{}], index=[{}], newValue=[{}]", url, index, newValue);
+        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
 
-		LOGGER.debug("input parameters chartDetails: [{}]", new Object[] { chartDetails });
-		List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
-		for (ChartDetail chartDetail : chartDetails) {
-			chartDetailDtos.add(toChartDetailDto(chartDetail, community, defaultAmazonUrl));
-		}
-		LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
-		return chartDetailDtos;
-	}
+        ArrayList<String> pathSegments = new ArrayList<>(original.build().getPathSegments());
+        pathSegments.set(index, newValue);
+
+        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+
+        return original.build().toString();
+    }
+
+    public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
+        if (chartDetails == null) {
+            throw new PersistenceException("The parameter chartDetails is null");
+        }
+        if (defaultAmazonUrl == null) {
+            throw new NullPointerException("The parameter defaultAmazonUrl is null");
+        }
+
+        LOGGER.debug("input parameters chartDetails: [{}]", new Object[] {chartDetails});
+        List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
+        for (ChartDetail chartDetail : chartDetails) {
+            chartDetailDtos.add(toChartDetailDto(chartDetail, community, defaultAmazonUrl));
+        }
+        LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
+        return chartDetailDtos;
+    }
 
     public ChartDetailDto toChartDetailDto(ChartDetail chartDetail, Community community, String defaultAmazonUrl) {
         ChartDetailDto chartDetailDto = new ChartDetailDto();
-        Media media =  chartDetail.getMedia();
+        Media media = chartDetail.getMedia();
 
         Drm drm = getDrm(media);
 
@@ -78,7 +100,9 @@ public class ChartDetailsConverter {
         chartDetailDto.setTitle(media.getTitle());
         chartDetailDto.setTrackSize(headerSize + audioSize - 2);
         chartDetailDto.setChartDetailVersion(chartDetail.getVersionAsPrimitive());
-        chartDetailDto.setHeaderVersion(headerFile != null ? headerFile.getVersionAsPrimitive() : 0);
+        chartDetailDto.setHeaderVersion(headerFile != null ?
+                                        headerFile.getVersionAsPrimitive() :
+                                        0);
         chartDetailDto.setAudioVersion(media.getAudioFile().getVersionAsPrimitive());
         chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersionAsPrimitive());
         chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersionAsPrimitive());
@@ -99,8 +123,12 @@ public class ChartDetailsConverter {
         LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
 
         PlaylistDto playlistDto = new PlaylistDto();
-        playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
-        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
+        playlistDto.setId(chartDetail.getChart().getI() != null ?
+                          chartDetail.getChart().getI() :
+                          null);
+        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ?
+                                     chartDetail.getTitle() :
+                                     chartDetail.getChart().getName());
         playlistDto.setSubtitle(chartDetail.getSubtitle());
         playlistDto.setImage(chartDetail.getImageFileName());
         playlistDto.setImageTitle(chartDetail.getImageTitle());
@@ -109,12 +137,12 @@ public class ChartDetailsConverter {
         playlistDto.setSwitchable(switchable);
         playlistDto.setType(chartDetail.getChartType());
 
-        if(chartDetail.getBadgeId() != null && resolution != null){
+        if (chartDetail.getBadgeId() != null && resolution != null) {
             String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
             playlistDto.setBadgeIcon(badgeFileName);
         }
 
-        if(isPlayListLockSupported){
+        if (isPlayListLockSupported) {
             playlistDto.setLocked(areAllTracksLocked);
         }
 
@@ -126,8 +154,12 @@ public class ChartDetailsConverter {
         ChartType chartType = chart.getType();
 
         byte position = chartDetail.getPosition();
-        byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte) (position + 40) : position;
-        pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte) (position + 50) : pos;
+        byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ?
+                   (byte) (position + 40) :
+                   position;
+        pos = chartType == ChartType.OTHER_CHART && position <= 50 ?
+              (byte) (position + 50) :
+              pos;
         return pos;
     }
 
@@ -140,13 +172,13 @@ public class ChartDetailsConverter {
     }
 
     private String getAmazonUrl(String mediaAmazonUrl, String defaultAmazonUrl, String communityRewriteUrlParameter) {
-        if(isBlank(mediaAmazonUrl)) {
+        if (isBlank(mediaAmazonUrl)) {
             mediaAmazonUrl = defaultAmazonUrl;
         }
 
         String newCountryCode = getCountryCode(communityRewriteUrlParameter);
 
-        if(isBlank(mediaAmazonUrl) || isBlank(newCountryCode)) {
+        if (isBlank(mediaAmazonUrl) || isBlank(newCountryCode)) {
             return mediaAmazonUrl;
         }
 
@@ -158,38 +190,26 @@ public class ChartDetailsConverter {
         }
     }
 
-    static String replacePathSegmentInUrl(String url, int index, String newValue) {
-        LOGGER.debug("url=[{}], index=[{}], newValue=[{}]", url, index, newValue);
-        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
-
-        ArrayList<String> pathSegments = new ArrayList<>(original.build().getPathSegments());
-        pathSegments.set(index, newValue);
-
-        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
-
-        return original.build().toString();
-    }
-
     private String getCountryCode(String communityRewriteUrlParameter) {
         return messageSource.getMessage(communityRewriteUrlParameter, "itunes.urlCountryCode", null, null);
     }
 
     private String getITunesUrl(String existingITunesUrl, String communityRewriteUrl) {
         String countryCode = getCountryCode(communityRewriteUrl);
-        if(isBlank(existingITunesUrl) || isBlank(countryCode)) {
+        if (isBlank(existingITunesUrl) || isBlank(countryCode)) {
             return existingITunesUrl;
         }
 
         try {
             String decodedITunesUrl = URLDecoder.decode(existingITunesUrl, "UTF-8");
-            if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis){
-                if(hasOldPartnerFormat(decodedITunesUrl)){
+            if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis) {
+                if (hasOldPartnerFormat(decodedITunesUrl)) {
                     decodedITunesUrl = getUrlParameterValue(decodedITunesUrl);
                 }
                 String newUrlValue = enrichWithAffiliateCampaignParameters(decodedITunesUrl, communityRewriteUrl);
                 String withCountryCode = replacePathSegmentInUrl(newUrlValue, 0, countryCode);
                 return getEncodedUTF8Text(withCountryCode);
-            }else{
+            } else {
                 return replaceCountryPathToUrlParameter(countryCode, decodedITunesUrl);
             }
         } catch (Exception e) {
@@ -212,13 +232,13 @@ public class ChartDetailsConverter {
 
         String affiliateToken = messageSource.getMessage(communityRewriteUrlParameter, "itunes.affiliate.token", null, null, null);
         LOGGER.debug("Affiliate token is [{}]", affiliateToken);
-        if (!StringUtils.isEmpty(affiliateToken)){
+        if (!StringUtils.isEmpty(affiliateToken)) {
             iTunesUriComponentsBuilder.queryParam("at", affiliateToken);
         }
 
         String campaignToken = messageSource.getMessage(communityRewriteUrlParameter, "itunes.campaign.token", null, null, null);
         LOGGER.debug("Campaign token is [{}]", campaignToken);
-        if (!StringUtils.isEmpty(campaignToken)){
+        if (!StringUtils.isEmpty(campaignToken)) {
             iTunesUriComponentsBuilder.queryParam("ct", campaignToken);
         }
         return iTunesUriComponentsBuilder.build().toString();
@@ -236,8 +256,9 @@ public class ChartDetailsConverter {
     private String getEncodedUTF8Text(String text) {
         try {
             String encodedText = null;
-            if (StringUtils.isNotBlank(text))
+            if (StringUtils.isNotBlank(text)) {
                 encodedText = URLEncoder.encode(text, AppConstants.UTF_8);
+            }
             return encodedText;
         } catch (UnsupportedEncodingException e) {
             LOGGER.error(e.getMessage(), e);

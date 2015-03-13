@@ -2,6 +2,7 @@ package mobi.nowtechnologies.applicationtests.configuration;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -9,12 +10,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Configuration
-@PropertySource({
-        "classpath:env.properties",
-        "classpath:application-tests/persistence.properties",
-        "classpath:db.properties",
-        "classpath:common.properties"
-})
+@PropertySource({"classpath:env.properties", "classpath:application-tests/persistence.properties", "classpath:db.properties", "classpath:common.properties"})
 public class PropertyPlaceholderConfiguration {
 
     @Bean

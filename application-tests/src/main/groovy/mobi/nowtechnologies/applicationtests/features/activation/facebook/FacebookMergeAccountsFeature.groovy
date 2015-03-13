@@ -15,7 +15,7 @@ import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator
-import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository
 import org.springframework.stereotype.Component

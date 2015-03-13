@@ -1,127 +1,127 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.Pattern;
-import java.util.Date;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class AccountDto {
-	
-	public static final String ACCOUNT_DTO = "accountDto";
-	
-	@Pattern(regexp="^(07(\\d ?){9})$")
-	private String phoneNumber;
-	
-	private long timeOfMovingToLimitedStatus;
-	
-	private String email;
-	
-	private Subscription subscription;
 
-	@Pattern(regexp=".{6,20}")
-	private String currentPassword;
-	
-	@NotEmpty
-	@Pattern(regexp=".{6,20}")
-	private String newPassword;
+    public static final String ACCOUNT_DTO = "accountDto";
 
-	@NotEmpty
-	@Pattern(regexp=".{6,20}")
-	private String confirmPassword;
-	
-	private String potentialPromotion; 
+    @Pattern(regexp = "^(07(\\d ?){9})$")
+    private String phoneNumber;
 
-	private Integer subBalance;
-	
-	public enum Subscription{
-		freeTrialSubscription, subscribedSubscription, unsubscribedSubscription;
-		
-		public String toString() {
-			return name();
-		};
-		
-	}
-	
-	public String getEmail() {
-		return email;
-	}
+    private long timeOfMovingToLimitedStatus;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    private String email;
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
+    private Subscription subscription;
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
+    @Pattern(regexp = ".{6,20}")
+    private String currentPassword;
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    @NotEmpty
+    @Pattern(regexp = ".{6,20}")
+    private String newPassword;
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
+    @NotEmpty
+    @Pattern(regexp = ".{6,20}")
+    private String confirmPassword;
 
-	public long getTimeOfMovingToLimitedStatus() {
-		return timeOfMovingToLimitedStatus;
-	}
+    private String potentialPromotion;
 
-	public void setTimeOfMovingToLimitedStatus(long timeOfMovingToLimitedStatus) {
-		this.timeOfMovingToLimitedStatus = timeOfMovingToLimitedStatus;
-	}
+    private Integer subBalance;
 
-	public String getCurrentPassword() {
-		return currentPassword;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setCurrentPassword(String currentPassword) {
-		this.currentPassword = currentPassword;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
+    public Subscription getSubscription() {
+        return subscription;
+    }
 
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public String getNewPassword() {
-		return newPassword;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public String getPotentialPromotion() {
-		return potentialPromotion;
-	}
+    public long getTimeOfMovingToLimitedStatus() {
+        return timeOfMovingToLimitedStatus;
+    }
 
-	public void setPotentialPromotion(String potentialPromotion) {
-		this.potentialPromotion = potentialPromotion;
-	}
+    public void setTimeOfMovingToLimitedStatus(long timeOfMovingToLimitedStatus) {
+        this.timeOfMovingToLimitedStatus = timeOfMovingToLimitedStatus;
+    }
 
-	public Integer getSubBalance() {
-		return subBalance;
-	}
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
 
-	public void setSubBalance(Integer subBalance) {
-		this.subBalance = subBalance;
-	}
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
 
-	@Override
-	public String toString() {
-		return "AccountDto [email=" + email + ", timeOfMovingToLimitedStatus=" + timeOfMovingToLimitedStatus + ", phoneNumber=" + phoneNumber
-				+ ", subscription=" + subscription +", potentialPromotion="+potentialPromotion+ "]";
-	}
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getPotentialPromotion() {
+        return potentialPromotion;
+    }
+
+    public void setPotentialPromotion(String potentialPromotion) {
+        this.potentialPromotion = potentialPromotion;
+    }
+
+    public Integer getSubBalance() {
+        return subBalance;
+    }
+
+    public void setSubBalance(Integer subBalance) {
+        this.subBalance = subBalance;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountDto [email=" + email + ", timeOfMovingToLimitedStatus=" + timeOfMovingToLimitedStatus + ", phoneNumber=" + phoneNumber + ", subscription=" + subscription +
+               ", potentialPromotion=" + potentialPromotion + "]";
+    }
+
+    public enum Subscription {
+        freeTrialSubscription, subscribedSubscription, unsubscribedSubscription;
+
+        public String toString() {
+            return name();
+        }
+
+        ;
+
+    }
 
 }

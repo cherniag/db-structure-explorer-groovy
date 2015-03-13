@@ -1,9 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Drm;
+import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
+import mobi.nowtechnologies.server.persistence.domain.DrmType;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -12,10 +20,23 @@ import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static java.util.Collections.emptyList;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.joda.time.DateTimeZone.UTC;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,18 +45,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static org.joda.time.DateTimeZone.UTC;
-
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
  */
 public class ChartService implements ApplicationContextAware {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartService.class);
 
     private UserService userService;
@@ -49,10 +64,9 @@ public class ChartService implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDto processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution,
-                                                             boolean isPlayListLockSupported) {
-        LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], isPlayListLockSupported=[{}]",
-                user, createDrmIfNotExists, fetchLocked, resolution, isPlayListLockSupported);
+    public ChartDto processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution, boolean isPlayListLockSupported) {
+        LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], isPlayListLockSupported=[{}]", user, createDrmIfNotExists, fetchLocked, resolution,
+                     isPlayListLockSupported);
 
         user = userService.getUserWithSelectedCharts(user.getId());
         Community community = user.getUserGroup().getCommunity();
@@ -66,10 +80,12 @@ public class ChartService implements ApplicationContextAware {
         List<ChartDetail> charts = getChartsByCommunity(null, rewriteUrlParameter, null);
 
         Map<ChartType, Integer> chartGroups = new HashMap<ChartType, Integer>();
-        for(ChartDetail chart:charts){
+        for (ChartDetail chart : charts) {
             Integer count = chartGroups.get(chart.getChart().getType());
-            count = count != null ? count : 0;
-            chartGroups.put(chart.getChart().getType(), count+1);
+            count = count != null ?
+                    count :
+                    0;
+            chartGroups.put(chart.getChart().getType(), count + 1);
         }
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
@@ -77,7 +93,7 @@ public class ChartService implements ApplicationContextAware {
         GetChartContentManager supporter = resolveChartSupporter(rewriteUrlParameter);
         for (ChartDetail chart : charts) {
             ChartSupportResult result = supporter.support(user, chartGroups, chart);
-            if (result.isSupport()){
+            if (result.isSupport()) {
                 List<ChartDetail> chartDetailTree = chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked);
                 chartDetails.addAll(chartDetailTree);
 
@@ -110,7 +126,7 @@ public class ChartService implements ApplicationContextAware {
 
     private boolean areAllTracksLocked(List<ChartDetail> chartDetailTree) {
         for (ChartDetail chartDetail : chartDetailTree) {
-            if(chartDetail.getLocked() == null || !chartDetail.getLocked()){
+            if (chartDetail.getLocked() == null || !chartDetail.getLocked()) {
                 return false;
             }
         }
@@ -141,15 +157,16 @@ public class ChartService implements ApplicationContextAware {
         String communityName = user.getUserGroup().getCommunity().getName();
         LOGGER.debug("input parameters communityName: [{}]", communityName);
 
-        if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
+        if ((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial()) {
             return Collections.EMPTY_LIST;
+        }
 
         List<Chart> charts = chartRepository.getByCommunityName(communityName);
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
         for (Chart chart : charts) {
             List<Media> lockedItems = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
-            for(Media lockedItem : lockedItems){
+            for (Media lockedItem : lockedItems) {
                 ChartDetail chartDetail = new ChartDetail();
                 chartDetail.setMedia(lockedItem);
                 chartDetails.add(chartDetail);
@@ -175,12 +192,15 @@ public class ChartService implements ApplicationContextAware {
         LOGGER.debug("input parameters communityURL=[{}], communityName=[{}], chartType=[{}]", communityURL, communityName, chartType);
 
         List<Chart> charts = emptyList();
-        if (communityURL != null)
-            charts = chartType != null ? chartRepository.getByCommunityURLAndChartType(communityURL, chartType)
-                    : chartRepository.getByCommunityURL(communityURL);
-        else if(communityName != null)
-            charts = chartType != null ? chartRepository.getByCommunityNameAndChartType(communityName, chartType)
-                    :chartRepository.getByCommunityName(communityName);
+        if (communityURL != null) {
+            charts = chartType != null ?
+                     chartRepository.getByCommunityURLAndChartType(communityURL, chartType) :
+                     chartRepository.getByCommunityURL(communityURL);
+        } else if (communityName != null) {
+            charts = chartType != null ?
+                     chartRepository.getByCommunityNameAndChartType(communityName, chartType) :
+                     chartRepository.getByCommunityName(communityName);
+        }
 
         List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
 
@@ -189,7 +209,7 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(readOnly = true)
-    public List<ChartDetail> getChartsByCommunityAndPublishTime(String communityRewriteUrl, Date publishDate){
+    public List<ChartDetail> getChartsByCommunityAndPublishTime(String communityRewriteUrl, Date publishDate) {
         LOGGER.debug("input parameters communityURL [{}], publishDate [{}]", communityRewriteUrl, publishDate);
         List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
         List<ChartDetail> chartDetails = getChartDetails(charts, publishDate, false);
@@ -199,13 +219,17 @@ public class ChartService implements ApplicationContextAware {
 
     @Transactional(readOnly = true)
     public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
-        LOGGER.debug("input parameters charts: [{}]", new Object[]{charts});
+        LOGGER.debug("input parameters charts: [{}]", new Object[] {charts});
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
-        if (isNull(charts)) return chartDetails;
+        if (isNull(charts)) {
+            return chartDetails;
+        }
 
         for (Chart chart : charts) {
-            Long lastPublishTimeMillis = isNotNull(selectedPublishDateTime)? selectedPublishDateTime.getTime() : new Date().getTime();
+            Long lastPublishTimeMillis = isNotNull(selectedPublishDateTime) ?
+                                         selectedPublishDateTime.getTime() :
+                                         new Date().getTime();
             ChartDetail chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
             if (isNull(chartDetail)) {
                 lastPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(lastPublishTimeMillis, chart.getI());
@@ -232,12 +256,13 @@ public class ChartService implements ApplicationContextAware {
         Collections.sort(chartDetails, new Comparator<ChartDetail>() {
             @Override
             public int compare(ChartDetail o1, ChartDetail o2) {
-                if (o1.getPosition() > o2.getPosition())
+                if (o1.getPosition() > o2.getPosition()) {
                     return 1;
-                else if (o1.getPosition() < o2.getPosition())
+                } else if (o1.getPosition() < o2.getPosition()) {
                     return -1;
-                else
+                } else {
                     return 0;
+                }
             }
         });
 
@@ -247,7 +272,7 @@ public class ChartService implements ApplicationContextAware {
 
     @Transactional(readOnly = true)
     public Chart getChartById(Integer chartId) {
-        LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] { chartId });
+        LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] {chartId});
 
         Chart chart = chartRepository.findOne(chartId);
 
@@ -259,10 +284,12 @@ public class ChartService implements ApplicationContextAware {
     public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
         LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
 
-        if (chartId == null)
+        if (chartId == null) {
             throw new NullPointerException("The parameter chartId is null");
-        if (selectedPublishDateTime == null)
+        }
+        if (selectedPublishDateTime == null) {
             throw new NullPointerException("The parameter selectedPublishDateTime is null");
+        }
 
         boolean success = chartDetailService.deleteChartItems(chartId, selectedPublishDateTime.getTime());
 
@@ -274,15 +301,15 @@ public class ChartService implements ApplicationContextAware {
     public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
         LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
-        if(chartDetail != null){
-            if(isChartDetailAlreadyPresent(chartDetail)){
+        if (chartDetail != null) {
+            if (isChartDetailAlreadyPresent(chartDetail)) {
                 ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
                 chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
             }
 
             chartDetail = chartDetailRepository.save(chartDetail);
 
-            if (null != imageFile && !imageFile.isEmpty()){
+            if (null != imageFile && !imageFile.isEmpty()) {
                 cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
             }
 
@@ -304,11 +331,11 @@ public class ChartService implements ApplicationContextAware {
         Chart chart = chartRepository.findOne(playlistId);
         User user = userService.getUserWithSelectedCharts(userId);
 
-        if(user != null && chart != null){
+        if (user != null && chart != null) {
             List<Chart> playLists = new ArrayList<Chart>();
-            if(user.getSelectedCharts() != null){
+            if (user.getSelectedCharts() != null) {
                 for (Chart playlist : user.getSelectedCharts()) {
-                    if(playlist.getType() != chart.getType()){
+                    if (playlist.getType() != chart.getType()) {
                         playLists.add(playlist);
                     }
                 }
@@ -328,32 +355,34 @@ public class ChartService implements ApplicationContextAware {
     @Transactional(readOnly = true)
     public List<ChartDetail> getDuplicatedMediaChartDetails(String communityUrl, int excludedChartId, long selectedTimeMillis, List<Integer> mediaIds) {
 
-        LOGGER.info("Attempt to find duplicated tracks among given tracks across all charts' updates of [{}] community for [{}] date with [{}] chart updates exclusion", communityUrl, new DateTime(selectedTimeMillis, UTC), excludedChartId);
+        LOGGER.info("Attempt to find duplicated tracks among given tracks across all charts' updates of [{}] community for [{}] date with [{}] chart updates exclusion", communityUrl,
+                    new DateTime(selectedTimeMillis, UTC), excludedChartId);
 
-        if(mediaIds.isEmpty()){
+        if (mediaIds.isEmpty()) {
             return emptyList();
         }
 
         List<Chart> charts = chartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = chartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
-        if(isNull(featureUpdateOfExcludedChartPublishTimeMillis)){
+        if (isNull(featureUpdateOfExcludedChartPublishTimeMillis)) {
             featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
         }
 
         List<ChartDetail> duplicatedMediaChartDetails = new ArrayList<ChartDetail>();
         for (Chart chart : charts) {
             Long lastUpdatePublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, chart.getI());
-            Long featureUpdatePublishTimeMillis = chartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, chart.getI());
+            Long featureUpdatePublishTimeMillis =
+                chartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, chart.getI());
 
             List<Long> publishTimeMillisList = new ArrayList<Long>(2);
-            if(isNotNull(lastUpdatePublishTimeMillis)){
+            if (isNotNull(lastUpdatePublishTimeMillis)) {
                 publishTimeMillisList.add(lastUpdatePublishTimeMillis);
             }
-            if(isNotNull(featureUpdatePublishTimeMillis)){
+            if (isNotNull(featureUpdatePublishTimeMillis)) {
                 publishTimeMillisList.add(featureUpdatePublishTimeMillis);
             }
-            if(!publishTimeMillisList.isEmpty()){
+            if (!publishTimeMillisList.isEmpty()) {
                 duplicatedMediaChartDetails.addAll(chartDetailRepository.getDuplicatedMediaChartDetails(chart, publishTimeMillisList, mediaIds));
             }
         }

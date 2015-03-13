@@ -3,36 +3,32 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.junit.Test;
 
+import org.junit.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-public class CommonControllerTestIT extends AbstractControllerTestIT{
+public class CommonControllerTestIT extends AbstractControllerTestIT {
 
     @Test
     public void shouldThrowActivationStatusException_onAccountCheck() throws Exception {
-    	String userName = "+447111111114";
-		String apiVersion = "3.9";
-		String communityName = "o2";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-		
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		user.setActivationStatus(ActivationStatus.REGISTERED);
-		userService.updateUser(user);
-		
-		mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isForbidden()).andDo(print()).andExpect(xpath("/response/errorMessage/errorCode").number(604d));
+        String userName = "+447111111114";
+        String apiVersion = "3.9";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setActivationStatus(ActivationStatus.REGISTERED);
+        userService.updateUser(user);
+
+        mockMvc.perform(
+            post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isForbidden()).andDo(print()).andExpect(xpath("/response/errorMessage/errorCode").number(604d));
     }
 
     @Test
@@ -46,13 +42,8 @@ public class CommonControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
-                post("/some_key/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk())
-                .andExpect(xpath("/response/errorMessage/errorCode").number(601d));
+            post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").number(601d));
     }
 
     @Test
@@ -66,12 +57,7 @@ public class CommonControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
-                post("/some_key/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk())
-                .andExpect(xpath("/response/errorMessage/errorCode").number(601d));
+            post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").number(601d));
     }
 }

@@ -4,11 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
-import org.junit.Test;
-
-import javax.annotation.Resource;
-
-import static junit.framework.Assert.*;
 import static mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
@@ -18,11 +13,15 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
+import javax.annotation.Resource;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * User: Titov Mykhaylo (titov)
- * 12.07.13 10:08
+ * User: Titov Mykhaylo (titov) 12.07.13 10:08
  */
-public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
+public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
 
     @Resource(name = "paymentPolicyRepository")
     PaymentPolicyRepository paymentPolicyRepository;
@@ -53,12 +52,13 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldReturnOneDefaultO2PsmsPaymentPolicy(){
+    public void shouldReturnOneDefaultO2PsmsPaymentPolicy() {
         //given
-        paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(O2).withMediaType(AUDIO).withContract(PAYG).withSegment(BUSINESS).withTariff(_3G).withDefault(true));
+        paymentPolicy = paymentPolicyRepository
+            .save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(O2).withMediaType(AUDIO).withContract(PAYG).withSegment(BUSINESS).withTariff(_3G).withDefault(true));
 
         //when
-        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
+        PaymentPolicy actualPaymentPolicy = paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
         assertNotNull(actualPaymentPolicy);
@@ -66,12 +66,13 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
     }
 
     @Test
-    public void shouldReturnOneDefaultO2PsmsPaymentPolicyWithNullProviderSegmentContract(){
+    public void shouldReturnOneDefaultO2PsmsPaymentPolicyWithNullProviderSegmentContract() {
         //given
-        paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(null).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true));
+        paymentPolicy = paymentPolicyRepository
+            .save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(null).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true));
 
         //when
-        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
+        PaymentPolicy actualPaymentPolicy = paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
         assertNotNull(actualPaymentPolicy);
@@ -79,19 +80,21 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
     }
 
     @Test
-    public void testGetPaymentPoliciesForOnlinePolicy(){
+    public void testGetPaymentPoliciesForOnlinePolicy() {
         //given
-        paymentPolicy = paymentPolicyRepository.save(
-                createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true)).withOnline(true);
+        paymentPolicy = paymentPolicyRepository
+            .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
+            .withOnline(true);
         PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
         assertEquals(result, paymentPolicy);
     }
 
     @Test
-    public void testGetPaymentPoliciesForNotOnlinePolicy(){
+    public void testGetPaymentPoliciesForNotOnlinePolicy() {
         //given
-        paymentPolicy = paymentPolicyRepository.save(
-                createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true)).withOnline(false);
+        paymentPolicy = paymentPolicyRepository
+            .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
+            .withOnline(false);
         PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
         assertNull(result);
     }

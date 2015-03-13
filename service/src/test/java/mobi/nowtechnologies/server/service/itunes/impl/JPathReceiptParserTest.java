@@ -1,24 +1,22 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
-import com.jayway.jsonpath.JsonPath;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
-import org.apache.commons.fileupload.util.Streams;
-import org.junit.Assert;
-import org.junit.Test;
+import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 
 import java.io.InputStream;
+
+import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.fileupload.util.Streams;
+
+import org.junit.*;
 
 public class JPathReceiptParserTest {
 
     @Test
     public void parseValidAutoRenewableReceipt() throws Exception {
-        JPathReceiptParser jPathReceiptParser = create(
-                JsonPath.compile("$.status"),
-                JsonPath.compile("$.latest_receipt_info.product_id"),
-                JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
-                JsonPath.compile("$.latest_receipt_info.expires_date"),
-                null);
+        JPathReceiptParser jPathReceiptParser =
+            create(JsonPath.compile("$.status"), JsonPath.compile("$.latest_receipt_info.product_id"), JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
+                   JsonPath.compile("$.latest_receipt_info.expires_date"), null);
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/renewable.json");
         String json = Streams.asString(inputStream);
 
@@ -33,12 +31,8 @@ public class JPathReceiptParserTest {
 
     @Test
     public void parseValidOneTimeReceipt() throws Exception {
-        JPathReceiptParser jPathReceiptParser = create(
-                JsonPath.compile("$.status"),
-                JsonPath.compile("$.receipt.product_id"),
-                JsonPath.compile("$.receipt.original_transaction_id"),
-                null,
-                JsonPath.compile("$.receipt.purchase_date_ms"));
+        JPathReceiptParser jPathReceiptParser =
+            create(JsonPath.compile("$.status"), JsonPath.compile("$.receipt.product_id"), JsonPath.compile("$.receipt.original_transaction_id"), null, JsonPath.compile("$.receipt.purchase_date_ms"));
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/onetime.json");
         String json = Streams.asString(inputStream);
 
@@ -53,12 +47,9 @@ public class JPathReceiptParserTest {
 
     @Test(expected = ITunesResponseParserException.class)
     public void parseOnetimeAsAutoRenewableReceipt() throws Exception {
-        JPathReceiptParser jPathReceiptParser = create(
-                JsonPath.compile("$.status"),
-                JsonPath.compile("$.latest_receipt_info.product_id"),
-                JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
-                JsonPath.compile("$.latest_receipt_info.expires_date"),
-                null);
+        JPathReceiptParser jPathReceiptParser =
+            create(JsonPath.compile("$.status"), JsonPath.compile("$.latest_receipt_info.product_id"), JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
+                   JsonPath.compile("$.latest_receipt_info.expires_date"), null);
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/onetime.json");
         String json = Streams.asString(inputStream);
 
@@ -67,12 +58,9 @@ public class JPathReceiptParserTest {
 
     @Test
     public void parseExpiredReceipt() throws Exception {
-        JPathReceiptParser jPathReceiptParser = create(
-                JsonPath.compile("$.status"),
-                JsonPath.compile("$.latest_receipt_info.product_id"),
-                JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
-                JsonPath.compile("$.latest_receipt_info.expires_date"),
-                null);
+        JPathReceiptParser jPathReceiptParser =
+            create(JsonPath.compile("$.status"), JsonPath.compile("$.latest_receipt_info.product_id"), JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
+                   JsonPath.compile("$.latest_receipt_info.expires_date"), null);
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/expired.json");
         String json = Streams.asString(inputStream);
 
@@ -82,7 +70,7 @@ public class JPathReceiptParserTest {
     }
 
 
-    private JPathReceiptParser create(JsonPath statusPath, JsonPath productIdPath, JsonPath originalTransactionIdPath, JsonPath expireTimestampPath, JsonPath purchaseTimestampPath){
+    private JPathReceiptParser create(JsonPath statusPath, JsonPath productIdPath, JsonPath originalTransactionIdPath, JsonPath expireTimestampPath, JsonPath purchaseTimestampPath) {
         JPathReceiptParser jPathReceiptParser = new JPathReceiptParser();
         jPathReceiptParser.setStatusPath(statusPath);
         jPathReceiptParser.setProductIdPath(productIdPath);

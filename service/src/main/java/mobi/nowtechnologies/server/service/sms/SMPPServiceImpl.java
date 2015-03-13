@@ -1,5 +1,9 @@
 package mobi.nowtechnologies.server.service.sms;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.sentaca.spring.smpp.BindConfiguration;
 import com.sentaca.spring.smpp.SMPPService;
 import com.sentaca.spring.smpp.SMSCGatewayConfiguration;
@@ -14,18 +18,14 @@ import org.smslib.GatewayException;
 import org.smslib.OutboundMessage;
 import org.smslib.Service;
 import org.smslib.TimeoutException;
+
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/14/13
- * Time: 7:20 PM
+ * User: Alexsandr_Kolpakov Date: 10/14/13 Time: 7:20 PM
  */
 public class SMPPServiceImpl extends SMPPService {
+
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private Set<SMSCGatewayConfiguration> gatewaysConfigurations = new HashSet<SMSCGatewayConfiguration>();
@@ -33,7 +33,7 @@ public class SMPPServiceImpl extends SMPPService {
     private OutboundMessageCreator outboundMessageCreator = new SMPPOutboundMessageCreator();
     private boolean useQueueManager;
 
-    public SMPPServiceImpl(){
+    public SMPPServiceImpl() {
         super.setAutoStart(false);
         super.setOutboundMessageCreator(outboundMessageCreator);
         super.setSmppMonitoringAgent(smppMonitoringAgent);
@@ -42,20 +42,20 @@ public class SMPPServiceImpl extends SMPPService {
     @Override
     public void afterPropertiesSet() {
         try {
-                Assert.notEmpty(gatewaysConfigurations, "Gateways must not be empty.");
-                Assert.notNull(smppMonitoringAgent, "smppMonitoringAgent must not be null, use default LoggingSMPPMonitoringAgent or NoopSMPPMonitoringAgent.");
-                Assert.notNull(outboundMessageCreator, "outboundMessageCreator must not be null, use DefaultOutboundMessageCreator or your own implementatin.");
+            Assert.notEmpty(gatewaysConfigurations, "Gateways must not be empty.");
+            Assert.notNull(smppMonitoringAgent, "smppMonitoringAgent must not be null, use default LoggingSMPPMonitoringAgent or NoopSMPPMonitoringAgent.");
+            Assert.notNull(outboundMessageCreator, "outboundMessageCreator must not be null, use DefaultOutboundMessageCreator or your own implementatin.");
 
-                // add gateways
-                for (SMSCGatewayConfiguration configuration : gatewaysConfigurations) {
-                    SMPPBindConfiguration bindConfiguration = (SMPPBindConfiguration)configuration.getSmscConfig();
-                    for (int i = 0; i < bindConfiguration.getConnectionPoolSize(); i++) {
-                        Service.getInstance().addGateway(createGateway(configuration.getSmscConfig(), configuration.getMessageReceiver(), configuration.isUseUdhiInSubmitSm()));
-                    }
+            // add gateways
+            for (SMSCGatewayConfiguration configuration : gatewaysConfigurations) {
+                SMPPBindConfiguration bindConfiguration = (SMPPBindConfiguration) configuration.getSmscConfig();
+                for (int i = 0; i < bindConfiguration.getConnectionPoolSize(); i++) {
+                    Service.getInstance().addGateway(createGateway(configuration.getSmscConfig(), configuration.getMessageReceiver(), configuration.isUseUdhiInSubmitSm()));
                 }
+            }
 
-                // and fire-it-up
-                Service.getInstance().startService();
+            // and fire-it-up
+            Service.getInstance().startService();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -66,10 +66,12 @@ public class SMPPServiceImpl extends SMPPService {
         outboundMessage.setGatewayId("*");
         smppMonitoringAgent.onMessageSend(message, outboundMessage);
         Service instance = Service.getInstance();
-        boolean result = useQueueManager ? instance.queueMessage(outboundMessage) : instance.sendMessage(outboundMessage);
+        boolean result = useQueueManager ?
+                         instance.queueMessage(outboundMessage) :
+                         instance.sendMessage(outboundMessage);
 
-        if(!result){
-            if(instance.getServiceStatus() != Service.ServiceStatus.STARTED){
+        if (!result) {
+            if (instance.getServiceStatus() != Service.ServiceStatus.STARTED) {
                 LOGGER.error("Can't send message cause SMPP Service is not STARTED");
             }
 
@@ -86,7 +88,7 @@ public class SMPPServiceImpl extends SMPPService {
         this.gatewaysConfigurations = gatewaysConfigurations;
     }
 
-    protected SMPPGateway createGateway(BindConfiguration cfg, MessageReceiver receiver, boolean isUseUdhiInSubmitSm){
+    protected SMPPGateway createGateway(BindConfiguration cfg, MessageReceiver receiver, boolean isUseUdhiInSubmitSm) {
         return new SMPPGateway(cfg, receiver, smppMonitoringAgent, isUseUdhiInSubmitSm);
     }
 

@@ -4,9 +4,9 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class BadgeMappingRulesTest {
 

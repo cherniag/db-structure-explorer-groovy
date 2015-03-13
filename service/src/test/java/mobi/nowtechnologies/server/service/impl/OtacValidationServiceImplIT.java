@@ -6,23 +6,23 @@ import mobi.nowtechnologies.server.service.impl.details.NullProviderDetailsExtra
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.impl.details.ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.impl.details.VfNzProviderDetailsExtractor;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
-import static junit.framework.Assert.assertTrue;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import static org.junit.Assert.*;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 30.09.13 17:20
+ * User: Titov Mykhaylo (titov) 30.09.13 17:20
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class OtacValidationServiceImplIT {
@@ -47,19 +47,19 @@ public class OtacValidationServiceImplIT {
     private NullProviderDetailsExtractor alwaysNullDetailsExtractor;
 
 
-    private void resolveExtractorForCommunity(Community community, ProviderDetailsExtractor detailsExtractor){
+    private void resolveExtractorForCommunity(Community community, ProviderDetailsExtractor detailsExtractor) {
         assertTrue(detailsExtractor == otacValidationService.resolveDetailsExtractorForCommunity(community));
     }
 
     @Test
-    public void checkResolvingForCommunity(){
+    public void checkResolvingForCommunity() {
         resolveExtractorForCommunity(communityRepository.findByName("o2"), o2ProviderDetailsExtractor);
         resolveExtractorForCommunity(communityRepository.findByName("vf_nz"), vfnzProviderDetailsExtractor);
-        resolveExtractorForCommunity( new Community().withName("ANYTHING"), null);
+        resolveExtractorForCommunity(new Community().withName("ANYTHING"), null);
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void checkNoDetailsExtractorForCommunity(){
+    public void checkNoDetailsExtractorForCommunity() {
         otacValidationService.validate("AA", "AA", new Community().withName("ANYTHING"));
     }
 

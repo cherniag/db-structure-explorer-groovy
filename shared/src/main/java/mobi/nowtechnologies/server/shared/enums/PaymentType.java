@@ -15,18 +15,19 @@ public enum PaymentType {
         this.type = type;
     }
 
+    public static PaymentType valueOfByType(String type) {
+        PaymentType[] paymentTypes = values();
+        for (int s = 0; s < paymentTypes.length; s++) {
+            if (paymentTypes[s].equals(type)) {
+                return paymentTypes[s];
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return type;
-    }
-    
-    public static PaymentType valueOfByType(String type){
-    	PaymentType[] paymentTypes = values();
-    	for (int s = 0; s < paymentTypes.length; s++) {
-			if(paymentTypes[s].equals(type))
-				return paymentTypes[s];
-		}
-    	
-    	return null;
     }
 }

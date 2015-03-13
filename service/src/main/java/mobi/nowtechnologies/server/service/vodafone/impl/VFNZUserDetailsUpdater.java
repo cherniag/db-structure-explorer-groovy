@@ -6,17 +6,18 @@ import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.sms.BasicSMSMessageProcessor;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
 import org.jsmpp.bean.DeliverSm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscriberData> implements UserDetailsUpdater<VFNZSubscriberData> {
 
-public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscriberData> implements UserDetailsUpdater<VFNZSubscriberData>{
     Logger LOGGER = LoggerFactory.getLogger(VFNZUserDetailsUpdater.class);
-    
+
     private String providerNumber;
-    
+
     private BasicUserDetailsUpdater<VFNZSubscriberData> userDetailsUpdater = new BasicUserDetailsUpdater<VFNZSubscriberData>() {
         @Override
         public User setUserFieldsFromSubscriberData(User user, VFNZSubscriberData subsriberData) {
@@ -24,7 +25,7 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
         }
     };
 
-    public void setUserService(UserService userService){
+    public void setUserService(UserService userService) {
         userDetailsUpdater.setUserService(userService);
     }
 
@@ -34,9 +35,9 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
 
     public User setUserFieldsFromSubscriberData(User user, VFNZSubscriberData subsriberData) {
         LOGGER.info("Attempt to set user fields from subscriber data [{}], [{}]", user, subsriberData);
-        VFNZSubscriberData data = (VFNZSubscriberData)subsriberData;
+        VFNZSubscriberData data = (VFNZSubscriberData) subsriberData;
 
-        if(isNull(data)){
+        if (isNull(data)) {
             user.setProvider(ProviderType.VF);
         } else {
             user.setProvider(data.getProvider());

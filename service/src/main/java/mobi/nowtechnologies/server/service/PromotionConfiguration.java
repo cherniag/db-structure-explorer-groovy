@@ -4,19 +4,18 @@ import mobi.nowtechnologies.server.service.configuration.Configuration;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.user.rules.Rule;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 
 import java.util.Map;
 import java.util.SortedSet;
 
-import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
-
-public class PromotionConfiguration extends Configuration<PromotionService.PromotionTriggerType,PromotionProvider.PromotionProxy, PromotionRuleBuilder> {
+public class PromotionConfiguration extends Configuration<PromotionService.PromotionTriggerType, PromotionProvider.PromotionProxy, PromotionRuleBuilder> {
 
     private PromotionProvider promotionProvider;
 
     @Override
     protected RuleServiceSupport<PromotionService.PromotionTriggerType> createRuleServiceSupport(Map<PromotionService.PromotionTriggerType, SortedSet<Rule>> actionRules) {
-        return  new RuleServiceSupport<>(actionRules);
+        return new RuleServiceSupport<>(actionRules);
     }
 
     @Override
@@ -30,22 +29,12 @@ public class PromotionConfiguration extends Configuration<PromotionService.Promo
         PromotionProvider.PromotionProxy promotion4G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.4g.promoCode", O2_COMMUNITY_REWRITE_URL);
 
         rule(PromotionService.PromotionTriggerType.AUTO_OPT_IN).priority(10).match(
-                and(
-                        is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
-                        is(userTariff(), equalTo(Tariff._3G)),
-                        not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()))),
-                        campaignUser("O2reengagement")
-                )
-        ).result(promotion3G);
+            and(is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)), is(userTariff(), equalTo(Tariff._3G)), not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()))),
+                campaignUser("O2reengagement"))).result(promotion3G);
 
         rule(PromotionService.PromotionTriggerType.AUTO_OPT_IN).priority(9).match(
-                and(
-                        is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
-                        is(userTariff(), equalTo(Tariff._4G)),
-                        not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId()))),
-                        campaignUser("O2reengagement")
-                )
-        ).result(promotion4G);
+            and(is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)), is(userTariff(), equalTo(Tariff._4G)), not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId()))),
+                campaignUser("O2reengagement"))).result(promotion4G);
     }
 
 

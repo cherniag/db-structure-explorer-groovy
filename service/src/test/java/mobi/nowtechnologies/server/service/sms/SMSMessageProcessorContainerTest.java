@@ -1,25 +1,24 @@
 package mobi.nowtechnologies.server.service.sms;
 
-import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberData;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberDataParser;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.jsmpp.bean.DeliverSm;
-import org.junit.Before;
-import org.junit.Test;
-import org.smslib.Message;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.sentaca.spring.smpp.mo.MOMessage;
+import org.jsmpp.bean.DeliverSm;
+import org.smslib.Message;
+
+import org.junit.*;
 import static org.mockito.Mockito.*;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/7/13
- * Time: 5:34 PM
+ * User: Alexsandr_Kolpakov Date: 10/7/13 Time: 5:34 PM
  */
 public class SMSMessageProcessorContainerTest {
+
     private SMSMessageProcessorContainer fixture;
     private VFNZSubscriberDataParser parserSpy;
 

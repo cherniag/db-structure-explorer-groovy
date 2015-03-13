@@ -1,36 +1,42 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.util.List;
 import java.util.UUID;
-
 import static java.lang.System.currentTimeMillis;
-import static org.hamcrest.CoreMatchers.*;
+
+import com.google.common.collect.Iterables;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 
 /**
- * User: gch
- * Date: 12/17/13
+ * User: gch Date: 12/17/13
  */
 @Ignore
 public class TaskRepositoryTestIT extends AbstractRepositoryIT {
+
     public static final String SEND_CHARGE_NOTIFICATION_TASK_NAME = SendChargeNotificationTask.class.getSimpleName();
     public static final String WRONG_TASK_NAME = "WRONG";
     public static final int WRONG_USER_ID = 1500;
@@ -168,7 +174,7 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
         long newExecutionTimestamp = executionTimestamp + 1000L;
         taskRepository.updateExecutionTimestamp(taskId, newExecutionTimestamp);
         entityManager.clear();
-        SendChargeNotificationTask savedTask = (SendChargeNotificationTask)taskRepository.findOne(taskId);
+        SendChargeNotificationTask savedTask = (SendChargeNotificationTask) taskRepository.findOne(taskId);
         assertEquals(newExecutionTimestamp, savedTask.getExecutionTimestamp());
     }
 

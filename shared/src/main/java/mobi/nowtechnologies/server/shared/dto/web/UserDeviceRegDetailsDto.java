@@ -5,21 +5,20 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserDeviceRegDetailsDto {
 
-	public static final String NAME = "UserDeviceRegDetailsDto";
+    public static final String NAME = "UserDeviceRegDetailsDto";
 
-	@NotEmpty
-	private String deviceUID;
-	
-	private String deviceModel;
+    @NotEmpty
+    private String deviceUID;
 
-	@NotEmpty
-	private String deviceType;
+    private String deviceModel;
 
-	private String ipAddress;
+    @NotEmpty
+    private String deviceType;
+
+    private String ipAddress;
 
     private String communityUri;
 
@@ -33,45 +32,45 @@ public class UserDeviceRegDetailsDto {
         return this;
     }
 
-    public void setCommunityUri(String communityUri) {
-        this.communityUri = communityUri;
-    }
-
     public String getCommunityUri() {
         return communityUri;
     }
 
+    public void setCommunityUri(String communityUri) {
+        this.communityUri = communityUri;
+    }
+
     public String getIpAddress() {
-		return ipAddress;
-	}
+        return ipAddress;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	public String getDeviceUID() {
-		return deviceUID;
-	}
+    public String getDeviceUID() {
+        return deviceUID;
+    }
 
-	public void setDEVICE_UID(String deviceUID) {
-		this.deviceUID = deviceUID;
-	}
+    public void setDEVICE_UID(String deviceUID) {
+        this.deviceUID = deviceUID;
+    }
 
-	public String getDeviceType() {
-		return deviceType;
-	}
+    public String getDeviceType() {
+        return deviceType;
+    }
 
-	public void setDEVICE_TYPE(String deviceType) {
-		this.deviceType = deviceType;
-	}
+    public void setDEVICE_TYPE(String deviceType) {
+        this.deviceType = deviceType;
+    }
 
-	public String getDeviceModel() {
-		return deviceModel;
-	}
+    public String getDeviceModel() {
+        return deviceModel;
+    }
 
-	public void setDEVICE_MODEL(String deviceModel) {
-		this.deviceModel = deviceModel;
-	}
+    public void setDEVICE_MODEL(String deviceModel) {
+        this.deviceModel = deviceModel;
+    }
 
     public String getXtifyToken() {
         return xtifyToken;
@@ -106,13 +105,7 @@ public class UserDeviceRegDetailsDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("deviceUID", deviceUID)
-                .append("deviceType", deviceType)
-                .append("ipAddress", ipAddress)
-                .append("communityUri", communityUri)
-                .append("xtifyToken", xtifyToken)
-                .append("appsFlyerUid", appsFlyerUid)
-                .toString();
+        return new ToStringBuilder(this).append("deviceUID", deviceUID).append("deviceType", deviceType).append("ipAddress", ipAddress).append("communityUri", communityUri)
+                                        .append("xtifyToken", xtifyToken).append("appsFlyerUid", appsFlyerUid).toString();
     }
 }

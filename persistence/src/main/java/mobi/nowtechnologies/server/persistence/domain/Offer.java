@@ -1,13 +1,28 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.*;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -16,141 +31,136 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "offers")
 public class Offer {
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	private Integer id;
 
-	@JoinColumn(name = "community_id")
-	@ManyToOne(optional = false)
-	private Community community;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Integer id;
 
-	@Column(name = "community_id", insertable = false, updatable = false)
-	private int communityId;
+    @JoinColumn(name = "community_id")
+    @ManyToOne(optional = false)
+    private Community community;
 
-	@Column(nullable = false)
-	private String title;
+    @Column(name = "community_id", insertable = false, updatable = false)
+    private int communityId;
 
-	private BigDecimal price;
+    @Column(nullable = false)
+    private String title;
 
-	private String currency;
+    private BigDecimal price;
 
-	@Column(nullable = false)
-	private String coverFileName;
+    private String currency;
 
-	@Column(nullable = false)
-	private String description;
+    @Column(nullable = false)
+    private String coverFileName;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
-	private Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
+    @Column(nullable = false)
+    private String description;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
-	@JoinTable(name = "offer_items", joinColumns = @JoinColumn(name = "offer_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "item_id", referencedColumnName = "i"))
-	private List<Item> items = new LinkedList<Item>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    private Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
 
-	public Integer getId() {
-		return id;
-	}
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @JoinTable(name = "offer_items", joinColumns = @JoinColumn(name = "offer_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "item_id", referencedColumnName = "i"))
+    private List<Item> items = new LinkedList<Item>();
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Community getCommunity() {
-		return community;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setCommunity(Community community) {
-		this.community = community;
-	}
+    public Community getCommunity() {
+        return community;
+    }
 
-	public int getCommunityId() {
-		return communityId;
-	}
+    public void setCommunity(Community community) {
+        this.community = community;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public int getCommunityId() {
+        return communityId;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public BigDecimal getPrice() {
-		return price;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-	public Set<AbstractFilterWithCtiteria> getFilterWithCtiteria() {
-		return filterWithCtiteria;
-	}
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
-	public void setFilterWithCtiteria(Set<AbstractFilterWithCtiteria> filterWithCtiteria) {
-		this.filterWithCtiteria = filterWithCtiteria;
-	}
+    public Set<AbstractFilterWithCtiteria> getFilterWithCtiteria() {
+        return filterWithCtiteria;
+    }
 
-	public List<Item> getItems() {
-		return items;
-	}
+    public void setFilterWithCtiteria(Set<AbstractFilterWithCtiteria> filterWithCtiteria) {
+        this.filterWithCtiteria = filterWithCtiteria;
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Media> getMediaItems()
-	{
-		final List<Media> mediaList;
-		if (items != null && !items.isEmpty()) {
-			mediaList = new LinkedList<Media>();
+    public List<Item> getItems() {
+        return items;
+    }
 
-			for (Item item : items) {
-				if (item.getType().equals(ItemType.MEDIA))
-					mediaList.add((Media) item);
-			}
-		} else
-			mediaList = Collections.EMPTY_LIST;
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
 
-		return mediaList;
-	}
+    @SuppressWarnings("unchecked")
+    public List<Media> getMediaItems() {
+        final List<Media> mediaList;
+        if (items != null && !items.isEmpty()) {
+            mediaList = new LinkedList<Media>();
 
-	public void setItems(List<Item> items) {
-		this.items = items;
-	}
+            for (Item item : items) {
+                if (item.getType().equals(ItemType.MEDIA)) {
+                    mediaList.add((Media) item);
+                }
+            }
+        } else {
+            mediaList = Collections.EMPTY_LIST;
+        }
 
-	public String getCurrency() {
-		return currency;
-	}
+        return mediaList;
+    }
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+    public String getCurrency() {
+        return currency;
+    }
 
-	public String getCoverFileName() {
-		return coverFileName;
-	}
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
-	public void setCoverFileName(String coverFileName) {
-		this.coverFileName = coverFileName;
-	}
+    public String getCoverFileName() {
+        return coverFileName;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setCoverFileName(String coverFileName) {
+        this.coverFileName = coverFileName;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("communityId", communityId)
-                .append("title", title)
-                .append("price", price)
-                .append("currency", currency)
-                .append("coverFileName", coverFileName)
-                .append("description", description)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("communityId", communityId).append("title", title).append("price", price).append("currency", currency)
+                                        .append("coverFileName", coverFileName).append("description", description).toString();
     }
 
 

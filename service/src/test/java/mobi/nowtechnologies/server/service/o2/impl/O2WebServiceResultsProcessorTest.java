@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import org.junit.Test;
+import static mobi.nowtechnologies.server.service.o2.impl.O2WebServiceResultsProcessor.is4GTariffId;
 
-import static mobi.nowtechnologies.server.service.o2.impl.O2WebServiceResultsProcessor.*;
-import static org.hamcrest.core.Is.is;
+import org.junit.*;
 import static org.junit.Assert.*;
+
+import static org.hamcrest.core.Is.is;
 
 public class O2WebServiceResultsProcessorTest {
 

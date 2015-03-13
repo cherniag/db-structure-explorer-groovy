@@ -1,19 +1,27 @@
 package mobi.nowtechnologies.server.trackrepo.uits;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.core.io.Resource;
+
 
 public class UITS {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IMP4Manager mp4Manager;
@@ -21,8 +29,7 @@ public class UITS {
     private Resource privateKey;
 
     public void process(String inputFileName, String audioFileName, String headerFileName, String encodedFileName, boolean encrypt) {
-        logger.debug("Start process : inputFileName {}, audioFileName {}, headerFileName {}, encodedFileName {}, encrypt {}",
-                inputFileName, audioFileName, headerFileName, encodedFileName, encrypt);
+        logger.debug("Start process : inputFileName {}, audioFileName {}, headerFileName {}, encodedFileName {}, encrypt {}", inputFileName, audioFileName, headerFileName, encodedFileName, encrypt);
 
         UitsParameters params = createUitsParameters();
 
@@ -83,7 +90,7 @@ public class UITS {
         return params;
     }
 
-     public void setMp4Manager(IMP4Manager iMp4Manager) {
+    public void setMp4Manager(IMP4Manager iMp4Manager) {
         this.mp4Manager = iMp4Manager;
     }
 

@@ -12,26 +12,36 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPortalService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+
+import javax.annotation.Resource;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Service
 public class SubscriptionService {
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource(name = "mno.RestTemplate")
     RestTemplate restTemplate;
@@ -48,6 +58,8 @@ public class SubscriptionService {
     @Resource
     UserStatusRepository userStatusRepository;
     @Resource
+    PaymentPolicyRepository paymentPolicyRepository;
+    @Resource
     PayPalHttpService payPalHttpService;
     @Resource
     JobService jobService;
@@ -55,6 +67,7 @@ public class SubscriptionService {
     RepeatService repeatService;
     @Resource
     PhoneNumberCreator phoneNumberCreator;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     //
     // API
@@ -81,7 +94,7 @@ public class SubscriptionService {
         assertTrue(afterPayment.getNextSubPayment() > currentUser.getNextSubPayment());
     }
 
-    public void limitAccess(User user, Date now){
+    public void limitAccess(User user, Date now) {
         final long millis = now.getTime();
         final int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(millis);
 
@@ -110,5 +123,29 @@ public class SubscriptionService {
         }
     }
 
+    @Transactional(value = "applicationTestsTransactionManager")
+    public void setCurrentPaymentDetailsStatus(User user, PaymentDetailsStatus paymentDetailsStatus) {
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+        if (currentPaymentDetails == null) {
+            currentPaymentDetails = new PaymentDetails();
+            currentPaymentDetails.setOwner(user);
+
+            List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(user.getCommunity(),
+                    user.getProvider(),
+                    user.getSegment(),
+                    user.getContract(),
+                    user.getTariff(),
+                    Arrays.asList(AUDIO, VIDEO_AND_AUDIO));
+            if (CollectionUtils.isNotEmpty(paymentPolicies)) {
+                currentPaymentDetails.setPaymentPolicy(paymentPolicies.get(0));
+            }
+
+            user.setCurrentPaymentDetails(currentPaymentDetails);
+        }
+        currentPaymentDetails.setActivated(true);
+        currentPaymentDetails.setLastPaymentStatus(paymentDetailsStatus);
+        paymentDetailsRepository.save(currentPaymentDetails);
+        userRepository.save(user);
+    }
 
 }

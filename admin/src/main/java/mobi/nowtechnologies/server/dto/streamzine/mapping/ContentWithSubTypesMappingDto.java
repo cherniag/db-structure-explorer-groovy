@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ContentWithSubTypesMappingDto {
+
     private String contentType;
     private String title;
 
@@ -34,9 +35,9 @@ public class ContentWithSubTypesMappingDto {
     @Override
     public String toString() {
         return "ContentWithSubTypesMappingDto{" +
-                "contentType='" + contentType + '\'' +
-                ", title='" + title + '\'' +
-                ", subTypes=" + subTypes +
-                '}';
+               "contentType='" + contentType + '\'' +
+               ", title='" + title + '\'' +
+               ", subTypes=" + subTypes +
+               '}';
     }
 }

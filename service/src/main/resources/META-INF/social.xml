@@ -9,9 +9,13 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
     <!-- Facebook -->
-    <bean id="service.facebookTemplateProvider" class="mobi.nowtechnologies.server.service.social.facebook.FacebookTemplateProviderImpl"/>
-    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.social.facebook.FacebookDataConverter"/>
-    <bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService"/>
+    <bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.FacebookOperationsAdaptor"/>
+    <bean id="service.FacebookClient" class="mobi.nowtechnologies.server.service.social.facebook.impl.FacebookClientImpl"/>
+
+    <bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService">
+        <property name="userId" value="${mobi.nowtechnologies.server.service.social.facebook.FacebookService.userId}"/>
+        <property name="userProfileImageUrlId" value="${mobi.nowtechnologies.server.service.social.facebook.FacebookService.userProfileImageUrlId}"/>
+    </bean>
 
     <!-- Email -->
     <bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">

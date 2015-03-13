@@ -10,13 +10,17 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+
+import javax.annotation.Resource;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
-import java.util.List;
-
 public class AccCheckService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
     @Resource(name = "service.UserService")
     private UserService userService;
     @Resource
@@ -30,9 +34,6 @@ public class AccCheckService {
     @Resource
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
-
-
     public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails, boolean withOneTimePayment) {
         return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone(), false, withOneTimePayment);
     }
@@ -42,7 +43,7 @@ public class AccCheckService {
     }
 
     private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation, boolean withUuid, boolean withOneTimePayment) {
-        if (firstActivation != null){
+        if (firstActivation != null) {
             LOGGER.info("First activation: {}", firstActivation);
         }
         user = userService.processAccountCheckCommandForAuthorizedUser(user.getId());

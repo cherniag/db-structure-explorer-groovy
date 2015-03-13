@@ -1,25 +1,26 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Drm;
-import org.junit.Test;
 
 import javax.annotation.Resource;
 
-import static junit.framework.Assert.assertNotNull;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
 
-public class DrmRepositoryIT extends AbstractRepositoryIT{
-	@Resource
-	private DrmRepository drmRepository;
+public class DrmRepositoryIT extends AbstractRepositoryIT {
 
-	@Test
-	public void testFindByUserAndMedia() {
-		Drm drm = drmRepository.findByUserAndMedia(1, 49);
-		
-		assertNotNull(drm);
-	}	
+    @Resource
+    private DrmRepository drmRepository;
+
+    @Test
+    public void testFindByUserAndMedia() {
+        Drm drm = drmRepository.findByUserAndMedia(1, 49);
+
+        assertNotNull(drm);
+    }
 }
