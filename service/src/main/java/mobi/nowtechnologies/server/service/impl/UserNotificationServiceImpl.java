@@ -548,10 +548,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
         boolean wasSmsSentSuccessfully = false;
 
-        if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
-            if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
-                if (availableCommunities.contains(communityUrl)) {
-
+        if (availableCommunities.contains(communityUrl)) {
+            if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
+                if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
                     String baseUrl = msgArgs != null ?
                                      msgArgs[0] :
                                      null;
@@ -585,13 +584,13 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                         LOGGER.info("The sms wasn't sent cause empty sms text message");
                     }
                 } else {
-                    LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
+                    LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
                 }
             } else {
-                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
+                LOGGER.info("The sms wasn't sent cause rejecting");
             }
         } else {
-            LOGGER.info("The sms wasn't sent cause rejecting");
+            LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
         }
 
         LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);

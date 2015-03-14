@@ -2641,7 +2641,7 @@ public class UserNotificationServiceImplTest {
 
         assertFalse(wasSmsSentSuccessfully);
 
-        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
+        verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.not.for.device.type");
         verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
         verify(responseEntiytMock, times(0)).getBody();
         verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
@@ -2803,7 +2803,7 @@ public class UserNotificationServiceImplTest {
 
         assertFalse(wasSmsSentSuccessfully);
 
-        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
+        verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.not.for.device.type");
         verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
         verify(responseEntiytMock, times(0)).getBody();
         verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
@@ -3207,7 +3207,7 @@ public class UserNotificationServiceImplTest {
 
         assertFalse(wasSmsSentSuccessfully);
 
-        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
+        verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.not.for.device.type");
         verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
         verify(responseEntiytMock, times(0)).getBody();
         verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
