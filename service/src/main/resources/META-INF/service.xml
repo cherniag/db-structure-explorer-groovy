@@ -214,11 +214,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 
-	<bean id="service.DeviceTypeService" class="mobi.nowtechnologies.server.service.DeviceTypeService">
-	</bean>
-
 	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
-		<property name="drmDao" ref="persistence.DrmDao" />
 		<property name="entityService" ref="service.EntityService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="drmRepository" ref="drmRepository" />

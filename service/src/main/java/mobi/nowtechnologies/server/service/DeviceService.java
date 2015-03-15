@@ -7,10 +7,7 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.NotPromotedDeviceRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotedDeviceRepository;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.isEmpty;
@@ -35,16 +32,6 @@ public class DeviceService {
         if (promotedDeviceRepository == null) {
             throw new Exception("The promoted Device Repository is null");
         }
-    }
-
-    public Map<String, Object> setDevice(int userId, String deviceType, String deviceUID) {
-        if (null == deviceType) {
-            throw new ServiceException("The parameter deviceType is null");
-        }
-        if (null == deviceUID) {
-            throw new ServiceException("The parameter deviceUID is null");
-        }
-        return DeviceTypeService.setDevice(userId, deviceType, deviceUID);
     }
 
     public boolean existsInPromotedList(Community community, String deviceUID) {
@@ -75,11 +62,10 @@ public class DeviceService {
      *
      * @param community
      * @param phoneNumber
-     * @param promoCode
      * @return
      */
-    public boolean isOtacPromotedDevicePhone(Community community, String phoneNumber, String promoCode) {
-        return isPromotedDevicePhone(community, phoneNumber, promoCode, DEFAULT_PROMO_PHONE_OTAC_MSG_CODE);
+    public boolean isOtacPromotedDevicePhone(Community community, String phoneNumber) {
+        return isPromotedDevicePhone(community, phoneNumber, null, DEFAULT_PROMO_PHONE_OTAC_MSG_CODE);
     }
 
     public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode) {

@@ -1,11 +1,8 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.User;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,59 +93,6 @@ public class DeviceTypeDao {
 
     public static DeviceType getIOSDeviceType() {
         return iOSDeviceType;
-    }
-
-    //TODO Add Transaction, refactoring
-    public static Map<String, Object> setDevice(int userId, String deviceType, String deviceUID) {
-        if (null == deviceType) {
-            throw new PersistenceException("The parameter deviceType is null");
-        }
-        if (null == deviceUID) {
-            throw new PersistenceException("The parameter deviceUID is null");
-        }
-
-        Map<String, Object> resultMap = new HashMap<String, Object>(2);
-
-        DeviceSet deviceSet = new DeviceSet();
-        User user = entityDao.findById(User.class, userId);
-        byte deviceTypeId = findIdByName(deviceType);
-        try {
-            if (-1 == deviceTypeId) {
-                throw new Exception("Unknown device type");
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            deviceSet.setStatus(DeviceSet.Status.FAIL);
-
-            resultMap.put(DEVICE_SET_RESULT_MAP_KEY, deviceSet);
-            resultMap.put(USER_RESULT_MAP_KEY, user);
-
-            return resultMap;
-        }
-
-        DeviceType deviceType2 = DEVICE_TYPE_MAP_ID_AS_KEY_AND_DEVICE_TYPE_VALUE.get(deviceTypeId);
-        user.setDeviceType(deviceType2);
-        user.setDeviceString(deviceUID);
-        user.setDeviceUID(deviceUID);
-
-        if (deviceType.equals(DeviceTypeDao.IOS)) {
-            user.setDeviceModel(deviceType);
-        }
-        entityDao.updateEntity(user);
-
-        deviceSet.setStatus(DeviceSet.Status.OK);
-
-        resultMap.put(DEVICE_SET_RESULT_MAP_KEY, deviceSet);
-        resultMap.put(USER_RESULT_MAP_KEY, user);
-
-        return resultMap;
-    }
-
-    public static byte findIdByName(String name) {
-        if (name == null) {
-            throw new PersistenceException("The parammeter name is null");
-        }
-        return entityDao.findByProperty(DeviceType.class, DeviceType.Fields.name.toString(), name).getI();
     }
 
     public static Map<Byte, String> getDeviceTypeMapWhitIdAsKey() {

@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.aop;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 
@@ -34,14 +33,7 @@ public class SMSNotification {
         this.userService = userService;
     }
 
-    /*@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
-    protected void startCreditCardPayment() {
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl.startPayment(..))")
-    protected void startPayPalPayment() {
-    }
-
+    /*
     @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.startPayment(..))")
     protected void startO2PSMSPayment() {
     }
@@ -49,10 +41,7 @@ public class SMSNotification {
     @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.commitPayment(..))")
     protected void startVFPSMSPayment() {
     }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
-    protected void startMigPayment() {
-    }*/
+    */
 
     /**
      * Sending sms after any payment system has spent all retries with failure
