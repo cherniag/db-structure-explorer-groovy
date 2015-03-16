@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -91,16 +90,6 @@ public class PaymentPolicyService {
             return getPaymentPolicy(paymentDetails.getPaymentPolicy(), paymentDetails.getPromotionPaymentPolicy());
         }
         return null;
-    }
-
-    public List<OfferPaymentPolicyDto> getOfferPaymentPolicyDto(String communityURL) {
-        LOGGER.debug("input parameters communityURL: [{}]", communityURL);
-
-        List<PaymentPolicy> paymentPolicies = paymentPolicyDao.getPaymentPolicies(communityURL, true);
-        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = PaymentPolicy.toOfferPaymentPolicyDtos(paymentPolicies);
-
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
-        return offerPaymentPolicyDtos;
     }
 
     @Transactional(readOnly = true)

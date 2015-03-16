@@ -57,13 +57,4 @@ public class PaymentPolicyDao extends JpaDaoSupport {
         return null;
     }
 
-    public List<PaymentPolicy> getPaymentPolicies(String communityURL, boolean availableInStore) {
-        LOGGER.debug("input parameters communityURL, availableInStore: [{}], [{}]", communityURL, availableInStore);
-        Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
-
-        List<PaymentPolicy> offerPaymentPolicies = getJpaTemplate().findByNamedQuery(PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE, new Object[] {community, availableInStore});
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicies);
-        return offerPaymentPolicies;
-    }
-
 }

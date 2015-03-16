@@ -47,7 +47,6 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
             newPaymentDetails = commitPaymentDetails(response, paymentDto, user, paymentPolicy, false);
 
             PendingPayment pendingPayment = new PendingPayment();
-            pendingPayment.setOfferId(paymentDto.getOfferId());
             pendingPayment.setAmount(new BigDecimal(paymentDto.getAmount()));
             pendingPayment.setCurrencyISO(paymentDto.getCurrency());
             pendingPayment.setPaymentSystem(PaymentDetails.SAGEPAY_CREDITCARD_TYPE);

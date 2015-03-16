@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
-import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -32,8 +31,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -110,18 +107,6 @@ public class PaymentPolicy {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_policy_type")
     private PaymentPolicyType paymentPolicyType;
-
-    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-        LOGGER.debug("input parameters paymentPolicies: [{}]", paymentPolicies);
-
-        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
-        for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
-        }
-
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
-        return offerPaymentPolicyDtos;
-    }
 
     public Integer getId() {
         return id;
@@ -217,15 +202,6 @@ public class PaymentPolicy {
 
     public void setPaymentPolicyType(PaymentPolicyType paymentPolicyType) {
         this.paymentPolicyType = paymentPolicyType;
-    }
-
-    public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
-        OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
-
-        offerPaymentPolicyDto.setPaymentType(paymentType);
-
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDto);
-        return offerPaymentPolicyDto;
     }
 
     public SegmentType getSegment() {

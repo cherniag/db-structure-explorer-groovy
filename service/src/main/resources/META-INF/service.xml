@@ -189,7 +189,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 
 		<property name="communityService" ref="service.communityService" />
-		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		
@@ -414,15 +413,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="filterService" ref="service.FilterService" />
 		<property name="communityService" ref="service.communityService" />
 		<property name="messageRepository" ref="messageRepository" />
-		<property name="cloudFileService" ref="service.CloudFileService" />
-	</bean>
-
-	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
-		<property name="filterService" ref="service.FilterService" />
-		<property name="offerRepository" ref="offerRepository" />
-		<property name="itemRepository" ref="itemRepository" />
-		<property name="userService" ref="service.UserService" />
-		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
 

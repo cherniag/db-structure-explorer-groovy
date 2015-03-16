@@ -114,30 +114,6 @@
     <bean class="mobi.nowtechnologies.server.web.controller.TermsController"/>
 
     <bean name="web.ErrorController" class="mobi.nowtechnologies.server.web.controller.ErrorController"/>
-
-    <bean name="web.OffersController" class="mobi.nowtechnologies.server.web.controller.OffersController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="filesURL" value="${cloudFile.filesURL}"/>
-        <property name="coverStorePath" value="${web.coverStorePath}"/>
-    </bean>
-
-    <bean name="web.OfferPaymentMethodsController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentMethodsController">
-        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
-    </bean>
-
-    <bean name="web.OfferPaymentsPayPalController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentsPayPalController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-    </bean>
-
-    <bean name="web.OfferPaymentsCreditCardController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentsCreditCardController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="countryService" ref="service.CountryService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-    </bean>
     
     <bean class="mobi.nowtechnologies.server.web.controller.VideoTrialController">
         <property name="userService" ref="service.UserService"/>

@@ -46,7 +46,6 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
         PayPalPaymentDetails newPaymentDetails = commitPaymentDetails(paymentDto.getToken(), user, paymentPolicy, false);
 
         PendingPayment pendingPayment = new PendingPayment();
-        pendingPayment.setOfferId(paymentDto.getOfferId());
         pendingPayment.setAmount(new BigDecimal(paymentDto.getAmount()));
         pendingPayment.setCurrencyISO(paymentDto.getCurrency());
         pendingPayment.setPaymentSystem(PaymentDetails.PAYPAL_TYPE);

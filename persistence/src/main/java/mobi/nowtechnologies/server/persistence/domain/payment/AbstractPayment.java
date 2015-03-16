@@ -48,7 +48,6 @@ public abstract class AbstractPayment {
     private int userId;
     @Embedded
     private Period period;
-    private Integer offerId;
     private String currencyISO;
     private String paymentSystem;
     @Enumerated(EnumType.STRING)
@@ -151,14 +150,6 @@ public abstract class AbstractPayment {
         return userId;
     }
 
-    public Integer getOfferId() {
-        return offerId;
-    }
-
-    public void setOfferId(Integer offerId) {
-        this.offerId = offerId;
-    }
-
     public PaymentDetails getPaymentDetails() {
         return paymentDetails;
     }
@@ -204,7 +195,7 @@ public abstract class AbstractPayment {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("i", i).append("internalTxId", internalTxId).append("externalTxId", externalTxId).append("amount", amount)
-                                                                          .append("timestamp", timestamp).append("userId", userId).append("period", period).append("offerId", offerId)
+                                                                          .append("timestamp", timestamp).append("userId", userId).append("period", period)
                                                                           .append("currencyISO", currencyISO).append("paymentSystem", paymentSystem).append("type", type)
                                                                           .append("paymentDetails", paymentDetails).append("paymentDetailsId", paymentDetailsId).toString();
     }

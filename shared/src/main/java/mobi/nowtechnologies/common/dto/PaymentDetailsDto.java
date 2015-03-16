@@ -7,7 +7,6 @@ public class PaymentDetailsDto {
     private String amount;
     private String currency;
     private String description;
-    private int offerId;
 
     // SagePay options
     private String txType;
@@ -225,14 +224,6 @@ public class PaymentDetailsDto {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public int getOfferId() {
-        return offerId;
-    }
-
-    public void setOfferId(int offerId) {
-        this.offerId = offerId;
     }
 
     public Integer getPaymentPolicyId() {

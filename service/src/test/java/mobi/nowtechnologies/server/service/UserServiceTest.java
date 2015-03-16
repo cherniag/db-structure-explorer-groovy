@@ -378,8 +378,8 @@ public class UserServiceTest {
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
@@ -393,8 +393,8 @@ public class UserServiceTest {
         assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
         assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP, null);
-        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP);
+        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -427,8 +427,8 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
@@ -442,8 +442,8 @@ public class UserServiceTest {
         assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
         assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -477,8 +477,8 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
@@ -492,8 +492,8 @@ public class UserServiceTest {
         assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
         assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -528,8 +528,8 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
@@ -543,8 +543,8 @@ public class UserServiceTest {
         assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
         assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -579,8 +579,8 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
@@ -594,8 +594,8 @@ public class UserServiceTest {
         assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
         assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -628,8 +628,8 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
@@ -643,8 +643,8 @@ public class UserServiceTest {
         assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
         assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -675,15 +675,15 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
         userServiceSpy.updateUser(userDto);
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -707,15 +707,15 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
         userServiceSpy.updateUser(userDto);
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -751,15 +751,15 @@ public class UserServiceTest {
         USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
         PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(new AccountLog());
-        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(new AccountLog());
+        PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(new AccountLog());
         PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
         userServiceSpy.updateUser(userDto);
 
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
     }
 
@@ -2632,7 +2632,7 @@ public class UserServiceTest {
 
         verify(refundServiceMock, times(1)).logSkippedBoughtPeriod(user, USER_DOWNGRADED_TARIFF);
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
     }
 
     @Test
@@ -2654,8 +2654,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(promotionServiceMock, times(1)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
     @Test
@@ -2677,8 +2677,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
     @Test
@@ -2700,8 +2700,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
     @Test
@@ -2722,8 +2722,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
     @Test
@@ -2744,8 +2744,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
     @Test
@@ -2766,8 +2766,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
 
@@ -2954,7 +2954,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 
     @Test
@@ -3790,7 +3790,7 @@ public class UserServiceTest {
         Mockito.doReturn(user.getLastPromo().getCode()).when(promotionServiceMock).getVideoCodeForO24GConsumer(user);
         Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         Mockito.doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
-        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
+        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
     }
 }

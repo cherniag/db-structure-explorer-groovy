@@ -123,12 +123,6 @@
 		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 	
-	<bean id="offerPaymentListener" class="mobi.nowtechnologies.server.service.listener.OfferPaymentListener">
-		<property name="offerService" ref="service.OfferService" />
-		<property name="drmService" ref="service.DrmService" />
-		<property name="accountLogService" ref="service.AccountLogService" />
-	</bean>
-	
 	<!-- O2 SOA -->
 	
 	 <bean id="service.messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
