@@ -7,8 +7,11 @@ import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.payment.PaymentEventNotifier;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
@@ -22,11 +25,14 @@ import java.util.HashSet;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 
-import org.springframework.aop.framework.AopContext;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
@@ -38,17 +44,15 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 /**
  * User: Alexsandr_Kolpakov Date: 10/22/13 Time: 1:27 PM
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({AopContext.class})
 public class VFPaymentServiceImplTest {
 
     private VFPaymentServiceImpl fixture;
-
+    
     @Mock
     private VFNZSMSGatewayServiceImpl gatewayServiceMock;
 
@@ -57,6 +61,15 @@ public class VFPaymentServiceImplTest {
 
     @Mock
     private PendingPaymentService pendingPaymentServiceMock;
+    
+    @Mock
+    private PaymentEventNotifier paymentEventNotifier;
+    
+    @Mock
+    private EntityService entityService;
+    
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Before
     public void setUp() throws Exception {
@@ -64,6 +77,9 @@ public class VFPaymentServiceImplTest {
         fixture.setGatewayService(gatewayServiceMock);
         fixture.setUserService(userServiceMock);
         fixture.setPendingPaymentService(pendingPaymentServiceMock);
+        fixture.setPaymentEventNotifier(paymentEventNotifier);
+        fixture.setEntityService(entityService);
+        fixture.setApplicationEventPublisher(applicationEventPublisher);
     }
 
     @Test
@@ -91,7 +107,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setDestAddress("5003");
-        fixture.setPaymentCodes(new HashSet(Arrays.asList(deliverSm.getDestAddress())));
+        fixture.setPaymentCodes(new HashSet<>(Arrays.asList(deliverSm.getDestAddress())));
 
         boolean result = fixture.supports(deliverSm);
 
@@ -103,7 +119,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setDestAddress("5000");
-        fixture.setPaymentCodes(new HashSet(Arrays.asList("5003")));
+        fixture.setPaymentCodes(new HashSet<>(Arrays.asList("5003")));
 
         boolean result = fixture.supports(deliverSm);
 
@@ -114,7 +130,7 @@ public class VFPaymentServiceImplTest {
     public void testSupports_NotSupported_NotDeliveryReceipt_Success() throws Exception {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setDestAddress("5003");
-        fixture.setPaymentCodes(new HashSet(Arrays.asList("5003")));
+        fixture.setPaymentCodes(new HashSet<>(Arrays.asList("5003")));
 
         boolean result = fixture.supports(deliverSm);
 
@@ -141,18 +157,20 @@ public class VFPaymentServiceImplTest {
         PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
+        Answer<?> answer  = new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        };
 
-        PowerMockito.mockStatic(AopContext.class);
-        PowerMockito.when(AopContext.currentProxy()).thenReturn(fixture);
+        when(entityService.updateEntity(any(SubmittedPayment.class))).thenAnswer(answer);
 
         fixture.process(vfResponse);
 
         verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(1)).getPendingPayments(user.getId());
-        verify(fixture, times(1)).commitPayment(pendingPayment, vfResponse);
-
-        verifyStatic(Mockito.times(1));
-        AopContext.currentProxy();
+        verify(applicationEventPublisher).publishEvent(any(ApplicationEvent.class));
     }
 
     @Test

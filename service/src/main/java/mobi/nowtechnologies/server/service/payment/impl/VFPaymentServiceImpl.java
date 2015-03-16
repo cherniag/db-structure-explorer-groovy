@@ -18,7 +18,6 @@ import java.util.Set;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 
-import org.springframework.aop.framework.AopContext;
 import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
@@ -95,7 +94,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
             PendingPayment pendingPayment = getPendingPayment(user.getId(), VF_PSMS_TYPE);
             if (pendingPayment != null) {
-                getThis().commitPayment(pendingPayment, data);
+                super.commitPayment(pendingPayment, data);
             }
         }
     }
@@ -111,7 +110,4 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         return null;
     }
 
-    private VFPaymentServiceImpl getThis() {
-        return ((VFPaymentServiceImpl) AopContext.currentProxy());
-    }
 }

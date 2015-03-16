@@ -95,7 +95,7 @@ public class EntityDao extends JpaDaoSupport {
             return merge;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new PersistenceException("Couldn't update entity");
+            throw new PersistenceException(e.getMessage(), e);
         }
     }
 

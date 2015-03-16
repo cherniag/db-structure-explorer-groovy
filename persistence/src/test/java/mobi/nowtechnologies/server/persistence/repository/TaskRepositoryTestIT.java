@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
@@ -11,17 +10,20 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import static java.lang.System.currentTimeMillis;
 
 import com.google.common.collect.Iterables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import org.junit.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -34,16 +36,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * User: gch Date: 12/17/13
  */
-@Ignore
+
 public class TaskRepositoryTestIT extends AbstractRepositoryIT {
 
     public static final String SEND_CHARGE_NOTIFICATION_TASK_NAME = SendChargeNotificationTask.class.getSimpleName();
     public static final String WRONG_TASK_NAME = "WRONG";
     public static final int WRONG_USER_ID = 1500;
-    @Autowired
+    @Resource
     private TaskRepository taskRepository;
 
-    @Autowired
+    @Resource
     private UserRepository userRepository;
 
     @Resource
@@ -55,16 +57,20 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private Set<String> supportedTypes = new HashSet<>();
+
     @Before
     public void setUp() {
         taskRepository.deleteAll();
         drmRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
+
+        supportedTypes.add("SendChargeNotificationTask");
     }
 
     @Test
     public void checkSendChargeNotificationTaskIsSavedSuccessfully() {
-        SendChargeNotificationTask task = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask task = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         task.setId(null);
         task.setUser(userRepository.findOne(110));
         repository.save(task);
@@ -75,7 +81,6 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
         assertThat(actual.getId(), is(task.getId()));
         assertThat(actual.getExecutionTimestamp(), is(task.getExecutionTimestamp()));
         assertThat(actual.getCreationTimestamp(), is(task.getCreationTimestamp()));
-        assertThat(actual.getTaskStatus(), is(task.getTaskStatus()));
     }
 
 
@@ -144,7 +149,7 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
         long totalCount = taskRepository.count();
         assertThat(totalCount, is(3l));
         Pageable pageable = new PageRequest(0, 5);
-        List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), pageable);
+        List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), supportedTypes, pageable);
         assertThat(taskList.size(), is(2));
         assertThat(taskList, hasItem(task1));
         assertThat(taskList, hasItem(task2));
@@ -152,16 +157,17 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     }
 
     @Test
+    @Ignore
     public void checkFetchingActiveTasksForExecutionWithLimit() {
         User user1 = createAndSaveUser();
         for (int i = 0; i < 20; i++) {
             createAndSaveSendChargeNotificationTask(user1, currentTimeMillis() - 1L);
         }
         Pageable pageable = new PageRequest(0, 8);
-        List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), pageable);
+        List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), supportedTypes, pageable);
         assertThat(taskList.size(), is(8));
         pageable = new PageRequest(0, 30);
-        taskList = taskRepository.findTasksToExecute(currentTimeMillis(), pageable);
+        taskList = taskRepository.findTasksToExecute(currentTimeMillis(), supportedTypes, pageable);
         assertThat(taskList.size(), is(20));
     }
 
@@ -203,9 +209,8 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     }
 
     private SendChargeNotificationTask createAndSaveSendChargeNotificationTask(User user, Long executionTimestamp) {
-        SendChargeNotificationTask task = TaskFactory.createSendChargeNotificationTask();
-        task.setUser(user);
-        task.setExecutionTimestamp(executionTimestamp);
+        SendChargeNotificationTask task = new SendChargeNotificationTask(new Date(), user);
+        ReflectionTestUtils.setField(task, "executionTimestamp", executionTimestamp);
         return (SendChargeNotificationTask) taskRepository.save(task);
     }
 

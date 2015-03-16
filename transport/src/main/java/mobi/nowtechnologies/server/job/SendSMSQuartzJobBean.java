@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.quartz.JobDataMap;
@@ -60,8 +59,12 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
 
         for (PaymentDetails paymentDetail : paymentDetails) {
             try {
-                userNotificationService.sendPaymentFailSMS(paymentDetail);
-            } catch (UnsupportedEncodingException e) {
+                if(paymentDetail.isCurrentAttemptFailed()){
+                    userNotificationService.sendPaymentFailSMS(paymentDetail);
+                } else {
+                    LOGGER.info("The payment fail sms wasn't sent cause current attempt isn't failed");
+                }
+            } catch (Exception e) {
                 LogUtils.putClassNameMDC(this.getClass());
                 LOGGER.error(e.getMessage(), e);
             } finally {

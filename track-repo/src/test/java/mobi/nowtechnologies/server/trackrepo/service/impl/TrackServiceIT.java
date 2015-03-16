@@ -30,6 +30,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 // Created by Oleg Artomov on 6/25/2014.
+@Ignore
 public class TrackServiceIT extends AbstractTrackRepoIT {
 
     Logger logger = LoggerFactory.getLogger(getClass());

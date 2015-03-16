@@ -8,8 +8,6 @@ import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
-import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
 
 import java.util.Collections;
@@ -32,8 +30,6 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 
     private UserService userService;
     private PromotionService promotionService;
-    private MigHttpService migHttpService;
-    private CommunityResourceBundleMessageSource messageSource;
     private UserNotificationService userNotificationService;
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -90,14 +86,6 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 
     public void setPromotionService(PromotionService promotionService) {
         this.promotionService = promotionService;
-    }
-
-    public void setMigHttpService(MigHttpService migHttpService) {
-        this.migHttpService = migHttpService;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
     }
 
     public void setUserNotificationService(UserNotificationService userNotificationService) {

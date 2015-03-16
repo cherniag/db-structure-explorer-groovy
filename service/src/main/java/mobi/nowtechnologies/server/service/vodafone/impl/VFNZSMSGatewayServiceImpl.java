@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.sms.SMPPMessage;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
-import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 
 import com.sentaca.spring.smpp.mt.MTMessage;
@@ -32,7 +31,7 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
 
     protected SMSResponse send(MTMessage messageObject) {
         LOGGER.debug("start sending sms [{}], [{}], [{}]", new Object[] {messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
-        boolean result = false;
+        SMSResponse result;
         try {
             result = smppService.sendMessage(messageObject);
         } catch (Exception e) {
@@ -40,18 +39,8 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
             throw new ServiceException(e.getMessage());
         }
 
-        SMSResponse response = generateResponse(result);
-        LOGGER.info("Sms was sent successfully ({}) from [{}] to [{}] with message [{}]", response.isSuccessful(), messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
-        return response;
-    }
-
-    private SMSResponse generateResponse(final boolean result){
-        return new SMSResponse() {
-            @Override
-            public boolean isSuccessful() {
-                return result;
-            }
-        };
+        LOGGER.info("Sms was sent result:{} from [{}] to [{}] with message [{}]", result, messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
+        return result;
     }
 
     public void setSmppService(SMPPServiceImpl smppService) {

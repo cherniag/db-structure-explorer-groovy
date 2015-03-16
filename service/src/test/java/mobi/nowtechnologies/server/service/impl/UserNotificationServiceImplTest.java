@@ -1376,7 +1376,7 @@ public class UserNotificationServiceImplTest {
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
 		assertNotNull(result);
 		assertEquals(true, result.get());
@@ -1437,7 +1437,7 @@ public class UserNotificationServiceImplTest {
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-        Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+        Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
         assertNotNull(result);
         assertEquals(true, result.get());
@@ -1492,7 +1492,7 @@ public class UserNotificationServiceImplTest {
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
@@ -1548,7 +1548,7 @@ public class UserNotificationServiceImplTest {
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
@@ -1604,7 +1604,7 @@ public class UserNotificationServiceImplTest {
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
         assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
@@ -1652,7 +1652,7 @@ public class UserNotificationServiceImplTest {
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
         assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
@@ -1703,7 +1703,7 @@ public class UserNotificationServiceImplTest {
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(o2PDPaymentDetails);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
@@ -1743,7 +1743,7 @@ public class UserNotificationServiceImplTest {
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(null);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());

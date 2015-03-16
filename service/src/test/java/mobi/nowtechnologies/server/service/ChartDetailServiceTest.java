@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Artist;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
 import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.Label;
@@ -47,11 +46,9 @@ public class ChartDetailServiceTest {
 
     private static ChartDetailService fixtureChartDetailService;
     private static ChartDetailRepository mockChartDetailRepository;
-    private static DrmService mockDrmService;
     private static MediaService mockMediaService;
     private List<ChartDetail> originalChartDetails;
     private List<Media> medias;
-    private List<Drm> drms;
     private MediaRepository mediaRepository;
 
     @Test
@@ -140,20 +137,6 @@ public class ChartDetailServiceTest {
         return media;
     }
 
-    private List<Drm> getDrms() {
-        if (drms == null) {
-            List<Media> medias = getMedias();
-            drms = new LinkedList<Drm>();
-            for (int i = 0; i < 5; i++) {
-                Drm drm = new Drm();
-                drm.setMedia(medias.get(i));
-                drms.add(drm);
-            }
-            drms = Collections.unmodifiableList(drms);
-        }
-        return drms;
-    }
-
     @Test
     public void testFindChartDetailTreeAndUpdateDrm_Success() throws Exception {
 
@@ -171,9 +154,7 @@ public class ChartDetailServiceTest {
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(nearestLatestPublishTimeMillis);
-        List<Drm> drms = getDrms();
 
-        Mockito.when(mockDrmService.findDrmAndDrmTypeTree(userId)).thenReturn(drms);
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
         Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(originalChartDetails);
 
@@ -215,9 +196,7 @@ public class ChartDetailServiceTest {
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(nearestLatestPublishTimeMillis);
-        List<Drm> drms = getDrms();
 
-        Mockito.when(mockDrmService.findDrmAndDrmTypeTree(userId)).thenReturn(drms);
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
         Mockito.when(mockChartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(originalChartDetails);
 
@@ -262,9 +241,7 @@ public class ChartDetailServiceTest {
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(0L);
-        List<Drm> drms = Collections.EMPTY_LIST;
 
-        Mockito.when(mockDrmService.findDrmAndDrmTypeTree(userId)).thenReturn(drms);
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
         Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(originalChartDetails);
 
@@ -306,9 +283,7 @@ public class ChartDetailServiceTest {
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(0L);
-        List<Drm> drms = getDrms();
 
-        Mockito.when(mockDrmService.findDrmAndDrmTypeTree(userId)).thenReturn(drms);
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
         Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(originalChartDetails);
 
@@ -731,7 +706,6 @@ public class ChartDetailServiceTest {
     @Before
     public void setUp() throws Exception {
         fixtureChartDetailService = new ChartDetailService();
-        mockDrmService = PowerMockito.mock(DrmService.class);
         mockChartDetailRepository = PowerMockito.mock(ChartDetailRepository.class);
         fixtureChartDetailService.setChartDetailRepository(mockChartDetailRepository);
         mediaRepository = PowerMockito.mock(MediaRepository.class);

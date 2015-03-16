@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPaymentFactory;
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -29,6 +28,7 @@ import javax.annotation.Resource;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -290,7 +290,7 @@ public class UserServiceTIT {
         user.setUserGroup(userGroup);
         entityDao.saveEntity(userGroup);
         entityDao.saveEntity(user);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setUser(user);
         taskRepository.save(sendChargeNotificationTask);
         List<UserTask> taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);

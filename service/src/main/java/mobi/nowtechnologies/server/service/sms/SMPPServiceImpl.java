@@ -12,6 +12,7 @@ import com.sentaca.spring.smpp.monitoring.LoggingSMPPMonitoringAgent;
 import com.sentaca.spring.smpp.monitoring.SMPPMonitoringAgent;
 import com.sentaca.spring.smpp.mt.MTMessage;
 import com.sentaca.spring.smpp.mt.OutboundMessageCreator;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smslib.GatewayException;
@@ -61,7 +62,7 @@ public class SMPPServiceImpl extends SMPPService {
         }
     }
 
-    public boolean sendMessage(MTMessage message) throws GatewayException, IOException, InterruptedException, TimeoutException {
+    public SMSResponse sendMessage(MTMessage message) throws GatewayException, IOException, InterruptedException, TimeoutException {
         final OutboundMessage outboundMessage = outboundMessageCreator.toOutboundMessage(message);
         outboundMessage.setGatewayId("*");
         smppMonitoringAgent.onMessageSend(message, outboundMessage);
@@ -69,6 +70,8 @@ public class SMPPServiceImpl extends SMPPService {
         boolean result = useQueueManager ?
                          instance.queueMessage(outboundMessage) :
                          instance.sendMessage(outboundMessage);
+        SMSServiceResponse smsResponse = new SMSServiceResponse();
+        smsResponse.isSuccessful = result;
 
         if (!result) {
             if (instance.getServiceStatus() != Service.ServiceStatus.STARTED) {
@@ -76,9 +79,10 @@ public class SMPPServiceImpl extends SMPPService {
             }
 
             LOGGER.error("SMS Message was sent with fails: " + outboundMessage.getFailureCause());
+            smsResponse.descriptionError = "Service status:" + instance.getServiceStatus() + ", Failure cause:" + outboundMessage.getFailureCause();
         }
 
-        return result;
+        return smsResponse;
     }
 
     @Override
@@ -94,5 +98,29 @@ public class SMPPServiceImpl extends SMPPService {
 
     public void setUseQueueManager(boolean useQueueManager) {
         this.useQueueManager = useQueueManager;
+    }
+
+    private static class SMSServiceResponse implements SMSResponse{
+        private boolean isSuccessful;
+        private String descriptionError;
+
+        @Override
+        public boolean isSuccessful() {
+            return isSuccessful;
+        }
+
+        @Override
+        public String getDescriptionError() {
+            return descriptionError;
+        }
+
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("isSuccessful", isSuccessful)
+                    .append("descriptionError", descriptionError)
+                    .toString();
+        }
     }
 }

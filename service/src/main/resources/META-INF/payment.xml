@@ -26,6 +26,7 @@
 		<property name="entityService" ref="service.EntityService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+        <property name="paymentEventNotifier" ref="commonPaymentEventNotifier"/>
 	</bean>
 	
 	<!-- SagePay Service -->
@@ -97,6 +98,7 @@
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="userService" ref="vf_nz.service.UserService" />
         <property name="pendingPaymentService" ref="service.PendingPaymentService" />
+        <property name="paymentEventNotifier" ref="vfPaymentEventNotifier"/>
         <property name="paymentCodes">
             <set>
                 <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
@@ -105,12 +107,34 @@
         </property>
     </bean>
 
+    <bean id="mtvnzPaymentSystemService" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService" parent="service.AbstractPaymentSystemService">
+        <property name="retriesOnError" value="${mtvnz.retriesOnError}" />
+        <property name="expireMillis" value="${mtvnz.pendingExpireMillis}" />
+        <property name="nzSubscriberInfoService" ref="service.NZSubscriberInfoService" />
+        <property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>
+        <property name="smsGatewayService" ref="vf_nz.service.VFNZSMSGatewayService"/>
+        <property name="paymentEventNotifier" ref="mtvnzPaymentEventNotifier"/>
+        <property name="messageSource" ref="serviceMessageSource"/>
+    </bean>
+
+    <bean id="commonPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.CommonPaymentEventNotifier">
+        <property name="userNotificationService" ref="service.UserNotificationService" />
+    </bean>
+
+    <bean id="mtvnzPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentEventNotifier">
+        <property name="taskService" ref="task.TaskService"/>
+    </bean>
+
+    <bean id="vfPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.VFPaymentEventNotifier"/>
+
+
 	<util:map id="service.map.paymentSystems" key-type="java.lang.String" value-type="mobi.nowtechnologies.server.service.payment.PaymentSystemService">
 		<entry key="sagePayCreditCard" value-ref="service.sagePayPaymentService" />
 		<entry key="payPal" value-ref="service.payPalPaymentService" />
 		<entry key="migSms" value-ref="service.migPaymentService" />
 		<entry key="o2Psms" value-ref="service.o2PaymentService" />	
 		<entry key="vfPsms" value-ref="service.vfPaymentService" />
+		<entry key="mtvnzPsms" value-ref="mtvnzPaymentSystemService" />
 	</util:map>
 	
 	<!-- Listeners -->
@@ -118,8 +142,6 @@
 	<bean id="subBalancePaymentListener" class="mobi.nowtechnologies.server.service.listener.SubBalancePaymentListener">
 		<property name="userService" ref="service.UserService" />
 		<property name="promotionService" ref="service.PromotionService" />
-		<property name="migHttpService" ref="service.migHttpService" />
-		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 	

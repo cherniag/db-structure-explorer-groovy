@@ -3,8 +3,19 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Offer;
+import mobi.nowtechnologies.server.persistence.domain.Operator;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -21,20 +32,24 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.CREDIT_CARD;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PREMIUM_USER;
+import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import java.util.List;
 import java.util.UUID;
 
-import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.*;
-import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.Validate.notNull;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -61,6 +76,16 @@ public class PaymentDetailsService {
     private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void setErrorStatus(PaymentDetails paymentDetails, String descriptionError, String errorCode){
+        LOGGER.debug("Set error status for {}, descriptionError: {}, errorCode: {}", paymentDetails, descriptionError, errorCode);
+        paymentDetails.setDescriptionError(descriptionError);
+        paymentDetails.setDescriptionError(errorCode);
+        paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+
+        paymentDetailsRepository.saveAndFlush(paymentDetails);
+    }
 
     public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
         this.paymentDetailsDao = paymentDetailsDao;

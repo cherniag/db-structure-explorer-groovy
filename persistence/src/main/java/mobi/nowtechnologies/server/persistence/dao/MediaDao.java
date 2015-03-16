@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.Drm;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 import java.util.List;
@@ -23,16 +21,6 @@ public class MediaDao extends JpaDaoSupport {
 
     public void setEntityDao(EntityDao entityDao) {
         this.entityDao = entityDao;
-    }
-
-    public boolean isBalanceOk(int userId, int mediaId) {
-        if (mediaId < 0) {
-            throw new PersistenceException("The parameter aMediaUID < 0");
-        }
-        Long status = (Long) getJpaTemplate()
-            .find("select count(*) from " + Media.class.getSimpleName() + " media, " + User.class.getSimpleName() + " user where media.price < (user.subBalance + user.freeBalance)" +
-                  " and user.id = ?1 and media.i = ?2", userId, mediaId).get(0);
-        return Long.valueOf(1L).equals(status);
     }
 
     public void conditionalUpdateByUserAndMedia(int userId, int mediaId) {
