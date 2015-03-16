@@ -1,12 +1,15 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 /**
@@ -27,5 +30,11 @@ public interface PaymentDetailsRepository extends JpaRepository<PaymentDetails, 
                    "and pd.lastFailedPaymentNotificationMillis is null " +
                    "and c.rewriteUrlParameter = ?1")
     List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable);
+
+    @Query("select pd from PaymentDetails pd where pd.owner = :user order by pd.creationTimestampMillis")
+    List<PaymentDetails> findPaymentDetailsByOwner(@Param("user") User user);
+
+    @Query("select pd from PaymentDetails pd where pd.owner.id = :userId and pd.lastPaymentStatus = :lastPaymentStatus")
+    List<PaymentDetails> findPaymentDetailsByOwnerIdAndLastPaymentStatus(@Param("userId") int userId, @Param("lastPaymentStatus") PaymentDetailsStatus status);
 
 }

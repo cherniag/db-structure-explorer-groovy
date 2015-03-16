@@ -234,7 +234,6 @@ public class PendingPaymentServiceImplTest {
         currentPaymentDetails.setPaymentPolicy(paymentPolicy);
         currentPaymentDetails.setLastPaymentStatus(status);
         user.setCurrentPaymentDetails(currentPaymentDetails);
-        user.addPaymentDetails(currentPaymentDetails);
         user.setSubBalance(subBalance);
         return user;
     }
@@ -253,7 +252,6 @@ public class PendingPaymentServiceImplTest {
         paymentPolicy.setPeriod(new Period().withDuration(10).withDurationUnit(WEEKS));
         currentPaymentDetails.setPaymentPolicy(paymentPolicy);
         currentPaymentDetails.setLastPaymentStatus(status);
-        user.addPaymentDetails(currentPaymentDetails);
         user.setCurrentPaymentDetails(currentPaymentDetails);
         user.setProvider(invalid ?
                          ProviderType.NON_O2 :

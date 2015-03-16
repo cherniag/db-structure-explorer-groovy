@@ -97,7 +97,6 @@ public class CreatePendingPaymentJobHandleExceptionIT {
     public void tearDown() throws Exception {
         submittedPaymentRepository.deleteAll();
         user.setCurrentPaymentDetails(null);
-        user.getPaymentDetailsList().clear();
         userRepository.save(user);
         paymentDetailsRepository.delete(paymentDetails);
         userRepository.delete(user);

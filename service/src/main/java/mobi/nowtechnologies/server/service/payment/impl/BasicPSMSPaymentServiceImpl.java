@@ -82,15 +82,10 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     public T commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
         LOGGER.info("Committing o2Psms payment details for user {} ...", user.getUserName());
 
-        T details = (T) user.getPaymentDetails(paymentDetailsClass);
-
-        if (details == null) {
-            details = createPaymentDetails(user, paymentPolicy);
-        }
+        T details = createPaymentDetails(user, paymentPolicy);
 
         details = (T) super.commitPaymentDetails(user, details);
 
-        paymentDetailsService.update(details);
         userService.updateUser(user);
 
         LOGGER.info("Done commitment of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});

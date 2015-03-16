@@ -114,7 +114,7 @@ public class PayPalPaymentServiceIT {
         assertTrue(paymentDetails.isActivated());
         assertEquals(user.getId(), paymentDetails.getOwner().getId());
         assertEquals(user.getCurrentPaymentDetails().getI(), paymentDetails.getI());
-        assertEquals(1, user.getPaymentDetailsList().size());
+        assertEquals(1, paymentDetailsService.getPaymentDetails(user).size());
     }
 
     @Test

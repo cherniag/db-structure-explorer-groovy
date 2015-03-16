@@ -167,7 +167,7 @@ public class PaymentDetailsService {
             } else if (dto.getPaymentType().equals(PAY_PAL)) {
                 paymentDetails = payPalPaymentService.createPaymentDetails(dto.getBillingAgreementDescription(), dto.getSuccessUrl(), dto.getFailUrl(), user, paymentPolicy);
             } else if (dto.getPaymentType().equals(PREMIUM_USER)) {
-                PaymentDetails pendingPaymentDetails = user.getPendingPaymentDetails();
+                PaymentDetails pendingPaymentDetails = getPendingPaymentDetails(user.getId());
                 if (null != pendingPaymentDetails) {
                     pendingPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
                     pendingPaymentDetails.setDescriptionError("Was not verified and replaced by another payment details");
@@ -254,10 +254,18 @@ public class PaymentDetailsService {
         return migPaymentService.commitPaymnetDetails(user, pin);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    @Transactional(readOnly = true)
     public PaymentDetails getPendingPaymentDetails(int userId) {
-        User user = userService.findById(userId);
-        return user.getPendingPaymentDetails();
+        List<PaymentDetails> detailsList = paymentDetailsRepository.findPaymentDetailsByOwnerIdAndLastPaymentStatus(userId, PaymentDetailsStatus.PENDING);
+        if(detailsList == null || detailsList.isEmpty()){
+            return null;
+        }
+        return detailsList.get(0);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentDetails> getPaymentDetails(User user) {
+        return paymentDetailsRepository.findPaymentDetailsByOwner(user);
     }
 
     @Transactional(readOnly = true)

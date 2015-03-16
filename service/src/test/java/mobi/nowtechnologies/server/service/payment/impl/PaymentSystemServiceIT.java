@@ -67,7 +67,7 @@ public class PaymentSystemServiceIT {
         currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
         currentPaymentDetails.setReleased(true);
         entityService.saveEntity(user);
-        user.addPaymentDetails(currentPaymentDetails);
+        currentPaymentDetails.setOwner(user);
         entityService.saveEntity(currentPaymentDetails);
 
         entityService.saveEntity(user);

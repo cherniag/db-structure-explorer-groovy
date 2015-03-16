@@ -151,6 +151,25 @@ public class VFPaymentServiceImplIT {
         assertEquals(0, pendingPayments.size());
     }
 
+    @Test
+    public void commitPaymentDetails() throws Exception {
+        final String userName = "+642102247312";
+        final String community = VF_NZ_COMMUNITY_REWRITE_URL;
+        final Integer paymentPolicyId = 231;
+
+        User user = userService.findByNameAndCommunity(userName, community);
+        user.setCurrentPaymentDetails(null);
+        userService.updateUser(user);
+        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
+
+        paymentService.commitPaymentDetails(user, paymentPolicy);
+
+        assertNotNull(user.getCurrentPaymentDetails());
+        assertTrue(user.getCurrentPaymentDetails().isActivated());
+        assertNotNull(user.getCurrentPaymentDetails().getI());
+        assertEquals(user.getCurrentPaymentDetails().getPaymentPolicy(), paymentPolicy);
+    }
+
     protected String buildMessage(String msgId, String sub, String dlvrd, String submitDate, String doneDate, String stat, String err, String text) {
         return "id:" + msgId + " sub:" + sub + " dlvrd:" + dlvrd + " submit date:" + submitDate + " done date:" + doneDate + " stat:" + stat + " err:" + err + " Text:" + text;
     }
