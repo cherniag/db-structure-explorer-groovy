@@ -23,7 +23,7 @@ public class ContextController extends CommonController {
     ContextDtoAsm contextDtoAsm;
 
     @RequestMapping(method = GET,
-                    value = {"**/{community}/{apiVersion:6\\.9}/CONTEXT", "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
+                    value = {"**/{community}/{apiVersion:6\\.10}/CONTEXT", "**/{community}/{apiVersion:6\\.9}/CONTEXT", "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
     public ModelAndView getContext(@AuthenticatedUser User user) throws Exception {
         return getContext(user, true);
     }

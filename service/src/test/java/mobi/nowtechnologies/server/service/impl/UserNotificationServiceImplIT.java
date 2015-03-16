@@ -53,10 +53,8 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
     @Qualifier("vf_nz.service.SmsProviderSpy")
     private VFNZSMSGatewayServiceImpl smsGatewayService;
 
-
     @Resource
     private PostsSaverPostService postsSaverPostService;
-
 
     @Value("${sms.temporaryFolder}")
     private File smsTemporaryFolder;

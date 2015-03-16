@@ -35,9 +35,6 @@
 		<property name="encodeManager" ref="service.encode.manager"/>
 	</bean>
 
-    <bean id="trackRepo.TrackServiceStub" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceStub" parent="trackRepo.TrackService">
-    </bean>
-
     <bean id="trackRepo.ParserFactory" class="mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory">
         <property name="sonyRoot" value="${trackRepo.ingest.sony.root}" />
         <property name="sonyDDEXRoot" value="${trackRepo.ingest.sony.ddex.root}" />

@@ -35,4 +35,19 @@ public class ApiVersionsTest {
         assertTrue(above.contains("5.2"));
         assertEquals(1, above.size());
     }
+
+    @Test
+    public void testBellowCase2() throws Exception {
+        // given
+        List<String> versions = Lists.newArrayList("6.0", "5.2", "6.1", "6.6", "6.10");
+
+        // when
+        List<String> above = ApiVersions.from(versions).bellow("6.6");
+
+        // then
+        assertTrue(above.contains("5.2"));
+        assertTrue(above.contains("6.0"));
+        assertTrue(above.contains("6.1"));
+        assertEquals(3, above.size());
+    }
 }

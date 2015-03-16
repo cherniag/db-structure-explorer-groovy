@@ -83,8 +83,10 @@ public class FileService {
     public void init() {
         notNull(storePath, "The parameter storePath is null");
 
-        this.brightcoveReadService = new ReadApi(BRIGHTCOVE_LOGGER);
+        setBrightcoveReadService(new ReadApi(BRIGHTCOVE_LOGGER));
     }
+
+    public void setBrightcoveReadService(ReadApi readApi) {this.brightcoveReadService = readApi;}
 
     public void setBrightcoveReadToken(String brightcoveReadToken) {
         this.brightcoveReadToken = brightcoveReadToken;
@@ -305,7 +307,7 @@ public class FileService {
 
     @Transactional(readOnly = true)
     public String getVideoURL(User user, String mediaIsrc) throws BrightcoveException {
-        LOGGER.debug("Get video url for isrc=" + mediaIsrc);
+        LOGGER.debug("Get video url for isrc={}", mediaIsrc);
 
         boolean isWindowsPhoneUser = DeviceType.WINDOWS_PHONE.equals(user.getDeviceType().getName());
         MediaDeliveryEnum mediaDelivery = isWindowsPhoneUser ?
