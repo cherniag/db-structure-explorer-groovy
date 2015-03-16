@@ -1,26 +1,33 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.DeviceTypeFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
+import org.joda.time.DateTime;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class MTVNZMessageNotificationServiceImplTest {
@@ -64,7 +71,7 @@ public class MTVNZMessageNotificationServiceImplTest {
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         //when
-        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, mtvnzCommunity, msgCodeBase,new String[]{"http://short.link", "0"});
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase,new String[]{"http://short.link", "0"});
 
         //then
         assertEquals(expectedMsg, result);
@@ -106,7 +113,7 @@ public class MTVNZMessageNotificationServiceImplTest {
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         //when
-        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, mtvnzCommunity, msgCodeBase, new String[]{"http://short.link", "1"});
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[]{"http://short.link", "1"});
 
         //then
         assertEquals(expectedMsg, result);
@@ -156,7 +163,7 @@ public class MTVNZMessageNotificationServiceImplTest {
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         //when
-        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase, msgArgs);
 
         //then
         assertEquals(expectedMsg, result);
@@ -207,7 +214,7 @@ public class MTVNZMessageNotificationServiceImplTest {
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         //when
-        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase, msgArgs);
 
         //then
         assertEquals(expectedMsg, result);
@@ -254,7 +261,7 @@ public class MTVNZMessageNotificationServiceImplTest {
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         //when
-        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase, msgArgs);
 
         //then
         assertEquals(expectedMsg, result);
@@ -302,7 +309,7 @@ public class MTVNZMessageNotificationServiceImplTest {
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         //when
-        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase, msgArgs);
 
         //then
         assertEquals(expectedMsg, result);

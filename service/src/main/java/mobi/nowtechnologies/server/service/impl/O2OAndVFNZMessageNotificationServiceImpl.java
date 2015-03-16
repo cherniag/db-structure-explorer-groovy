@@ -10,13 +10,13 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import javax.annotation.Resource;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // @author Titov Mykhaylo (titov) on 02.03.2015.
 public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotificationService{
@@ -27,7 +27,9 @@ public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotifica
     private CommunityResourceBundleMessageSource messageSource;
 
     @Override
-    public String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+    public String getMessage(User user, String msgCodeBase, String[] msgArgs) {
+        Community community = user.getCommunity();
+
         LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
 
         if (msgCodeBase == null)

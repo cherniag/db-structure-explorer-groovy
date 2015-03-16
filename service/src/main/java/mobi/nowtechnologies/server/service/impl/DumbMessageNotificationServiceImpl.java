@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
 
@@ -8,7 +7,7 @@ import mobi.nowtechnologies.server.service.MessageNotificationService;
 public class DumbMessageNotificationServiceImpl implements MessageNotificationService {
 
     @Override
-    public String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+    public String getMessage(User user, String msgCodeBase, String[] msgArgs) {
         return null;
     }
 }

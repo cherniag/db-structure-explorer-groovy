@@ -6,12 +6,12 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 import javax.annotation.Resource;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // @author Titov Mykhaylo (titov) on 02.03.2015.
 public class MTVNZMessageNotificationServiceImpl implements MessageNotificationService {
@@ -22,7 +22,9 @@ public class MTVNZMessageNotificationServiceImpl implements MessageNotificationS
     private CommunityResourceBundleMessageSource messageSource;
 
     @Override
-    public String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+    public String getMessage(User user, String msgCodeBase, String[] msgArgs) {
+        Community community = user.getCommunity();
+
         LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
 
         String msgCodeEnding = null;

@@ -17,35 +17,35 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 
 import java.util.Locale;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.mockito.*;
-import static org.junit.Assert.*;
-import static org.mockito.AdditionalMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-public class O2OrVFNZMessageNotificationServiceImplTest {
+public class O2OAndVFNZMessageNotificationServiceImplTest {
+    @InjectMocks
+    O2OAndVFNZMessageNotificationServiceImpl userNotificationImplSpy;
 
     @Mock
     CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
 
-    @InjectMocks
-    O2OAndVFNZMessageNotificationServiceImpl o2OrVFNZMessageNotificationServiceImpl;
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
-    public void testGetMessageCode_ProviderIsNotNullSegmentContractDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProviderIsNotNullSegmentContractDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -55,7 +55,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
 
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
-        user.setProvider(O2);
+        user.setProvider(ProviderType.O2);
         user.setSegment(null);
         user.setContract(null);
         user.setDeviceType(null);
@@ -65,21 +65,21 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ContractIsNotNullProvicerSegmentDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ContractIsNotNullProvicerSegmentDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -97,23 +97,23 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase  + ".for." + user.getContract();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getContract();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_SegmentIsNotNullContractProvicerDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_SegmentIsNotNullContractProvicerDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -131,23 +131,23 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase  + ".for." + user.getSegment();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getSegment();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_DeviceTypeIsNotNullSegmentContractProvicerAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_DeviceTypeIsNotNullSegmentContractProvicerAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -167,23 +167,23 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for."+ deviceType.getName();
+        final String expectedMsgCode = msgCodeBase + ".for." + deviceType.getName();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_DeviceTypeSegmentContractProviderAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_DeviceTypeSegmentContractProviderAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -195,7 +195,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
 
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
-        user.setProvider(NON_O2);
+        user.setProvider(ProviderType.NON_O2);
         user.setSegment(BUSINESS);
         user.setContract(PAYG);
         user.setDeviceType(deviceType);
@@ -205,21 +205,21 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ProviderIsNullDeviceTypeSegmentContractAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProviderIsNullDeviceTypeSegmentContractAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -241,21 +241,21 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ProvicerContractAreNullDeviceTypeSegmentAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProvicerContractAreNullDeviceTypeSegmentAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -277,21 +277,21 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getSegment() + "." + deviceType.getName();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_SegmentContractAreNullDeviceTypeProviderPaymentTypeAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_SegmentContractAreNullDeviceTypeProviderPaymentTypeAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -322,21 +322,21 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ChangedProvider_Success()
-            throws Exception {
+    public void testGetMessageCode_ChangedProvider_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -366,23 +366,24 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." +
+                                       paymentPolicy.getProvider().getKey();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ChangedSegment_Success()
-            throws Exception {
+    public void testGetMessageCode_ChangedSegment_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -413,23 +414,25 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment();
+        final String expectedMsgCode =
+            msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." +
+            paymentPolicy.getProvider().getKey() + "." + paymentPolicy.getSegment();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ChangedContract_Success()
-            throws Exception {
+    public void testGetMessageCode_ChangedContract_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -461,23 +464,25 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment()+"."+ paymentPolicy.getContract();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName() + "." +
+                                       user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() + "." + paymentPolicy.getSegment() + "." +
+                                       paymentPolicy.getContract();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
     @Test
-    public void testGetMessageCode_ProviderSegmentContractDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProviderSegmentContractDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -497,16 +502,16 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         final String expectedMsgCode = msgCodeBase;
         String expectedMsg = "";
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null)))
+            .thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
-        String result = o2OrVFNZMessageNotificationServiceImpl.getMessage(user, msgCodeBase, new String[0]);
+        String result = userNotificationImplSpy.getMessage(user, msgCodeBase, new String[0]);
 
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
-
 }

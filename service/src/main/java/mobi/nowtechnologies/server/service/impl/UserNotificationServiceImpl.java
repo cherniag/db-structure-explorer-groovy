@@ -8,13 +8,16 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PeriodMessageKeyBuilder;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.MessageNotificationService;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.UserNotificationService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
 import java.io.UnsupportedEncodingException;
@@ -34,15 +37,6 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -521,7 +515,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             return false;
         }
 
-        String message = getMessage(user, user.getCommunity(), messageKey, null);
+        String message = getMessage(user, messageKey, null);
 
         if (StringUtils.isBlank(message)) {
             LOGGER.error("The sms wasn't sent cause empty sms text message, community: {}, messageKey: {}", communityUrl, messageKey);
@@ -569,7 +563,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                         msgArgs[0] = url;
                     }
 
-                    String message = getMessage(user, community, msgCode, msgArgs);
+                    String message = getMessage(user, msgCode, msgArgs);
 
                     if (!StringUtils.isBlank(message)) {
                         String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
@@ -607,12 +601,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         return false;
     }
 
-    protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-        MessageNotificationService messageNotificationService = smsServiceFacade.getMessageNotificationService(community.getRewriteUrlParameter());
-        String msg = messageNotificationService.getMessage(user, community, msgCodeBase, msgArgs);
-        if (msg == null) {
-            LOGGER.warn("A user has not received sms notification because no message was found. getMessage( [{}], [{}])", user.getId(), msgCodeBase);
-        }
-        return msg;
+    protected String getMessage(User user, String msgCodeBase, String[] msgArgs) {
+        MessageNotificationService messageNotificationService = smsServiceFacade.getMessageNotificationService(user.getCommunity().getRewriteUrlParameter());
+        return messageNotificationService.getMessage(user, msgCodeBase, msgArgs);
     }
 }
