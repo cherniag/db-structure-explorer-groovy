@@ -545,10 +545,11 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         Community community = userGroup.getCommunity();
         String communityUrl = community.getRewriteUrlParameter();
 
-        if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
-            if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
-                if (availableCommunities.contains(communityUrl)) {
+        boolean wasSmsSentSuccessfully = false;
 
+        if (availableCommunities.contains(communityUrl)) {
+            if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
+                if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
                     String baseUrl = msgArgs != null ?
                                      msgArgs[0] :
                                      null;

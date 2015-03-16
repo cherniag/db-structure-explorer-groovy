@@ -11,13 +11,21 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import javax.annotation.Resource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMSource;
+
+import java.io.ByteArrayInputStream;
 
 import com.sentaca.spring.smpp.mo.MOMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.jsmpp.bean.DeliverSm;
 import org.smslib.Message;
+import org.w3c.dom.Document;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import org.junit.*;
 import org.mockito.invocation.*;
@@ -257,6 +265,22 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
+        RestTemplate restTemplate = new RestTemplate(){
+            @Override
+            public <T> T postForObject(String url, Object request, Class<T> responseType, Object... uriVariables) throws RestClientException {
+                try {
+                    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                    Document document = documentBuilder.parse(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><user><msisdn>+447111111114</msisdn></user>".getBytes()));
+
+                    return (T) new DOMSource(document);
+                } catch (Exception e) {
+                    throw new RestClientException(e.getMessage(), e);
+                }
+            }
+        };
+
+        o2Service.setRestTemplate(restTemplate);
         o2ProviderServiceSpy.setO2Service(o2Service);
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
@@ -472,6 +496,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
     }
 
 
+    @Override
     @After
     public void tireDown() {
         super.tireDown();

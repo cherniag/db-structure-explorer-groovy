@@ -9,6 +9,8 @@ import org.springframework.util.Assert;
 
 public class ApiVersions {
 
+    private static ApiVersionsComparator apiVersionsComparator = new ApiVersionsComparator();
+
     private List<String> versions = new ArrayList<>();
 
     private ApiVersions() {
@@ -17,7 +19,7 @@ public class ApiVersions {
     public static ApiVersions from(Collection<String> versions) {
         ApiVersions apiVersions = new ApiVersions();
         apiVersions.versions.addAll(versions);
-        Collections.sort(apiVersions.versions);
+        Collections.sort(apiVersions.versions, apiVersionsComparator);
         return apiVersions;
     }
 

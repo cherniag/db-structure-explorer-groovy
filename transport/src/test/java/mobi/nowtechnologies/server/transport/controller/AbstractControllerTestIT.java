@@ -16,6 +16,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.NEWS;
 
@@ -60,7 +61,7 @@ public abstract class AbstractControllerTestIT {
     @Autowired
     protected O2ProviderServiceImpl o2ProviderService;
     @Autowired
-    protected O2Service o2Service;
+    protected O2ServiceImpl o2Service;
     protected O2ProviderServiceImpl o2ProviderServiceSpy;
     protected UpdateO2UserTask updateO2UserTaskSpy;
     protected O2Service o2ServiceMock;

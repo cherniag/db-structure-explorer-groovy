@@ -36,7 +36,8 @@ public class ReferralController extends CommonController {
     private ReferralAsm referralAsm;
 
     @RequestMapping(method = POST,
-                    value = {"**/{community}/{apiVersion:6\\.9}/REFERRALS", "**/{community}/{apiVersion:6\\.8}/REFERRALS", "**/{community}/{apiVersion:6\\.7}/REFERRALS"})
+                    value = {"**/{community}/{apiVersion:6\\.10}/REFERRALS", "**/{community}/{apiVersion:6\\.9}/REFERRALS", "**/{community}/{apiVersion:6\\.8}/REFERRALS",
+                        "**/{community}/{apiVersion:6\\.7}/REFERRALS"})
     @ResponseStatus(value = HttpStatus.OK)
     public void saveReferrals(@AuthenticatedUser User user, @RequestBody List<ReferralDto> referralDtos) throws Exception {
         logger.info("REFERRALS started: userName [{}], referralDtos: [{}]", user.getUserName(), referralDtos);
