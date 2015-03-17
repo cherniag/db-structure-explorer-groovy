@@ -1,6 +1,6 @@
 
 create table mtv1FreeTrialUsersTempTable(
-  i unique int(10) unsigned NOT NULL,
+  i int(10) unsigned unique NOT NULL,
   freeTrialExpiredMillis bigint(20)
 );
 
