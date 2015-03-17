@@ -40,5 +40,8 @@ INSERT INTO tb_accountLog
 tb_users.i, @promoByPromoCodeAccountLogType, 0           , tb_users.freeTrialStartedTimestampMillis/1000, @promoCodeName
 from tb_users where tb_users.last_promo = @lastPromoCodeId;
 
+-- save result as csv file
+select i, userName from tb_users where last_promo = @lastPromoCodeId;
+
 commit;
 set autocommit = 1;
