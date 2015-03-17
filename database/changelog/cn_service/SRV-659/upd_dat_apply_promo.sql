@@ -35,6 +35,25 @@ where
   and tb_users.status = @limitedStatusId
   and (tb_paymentDetails.i is null or tb_paymentDetails.activated is false);
 
+select @promoByPromoCodeAccountLogType := i from tb_accountLogTypes where name = 'Promotion by promo code applied';
+
+INSERT INTO tb_accountLog
+(userUID  , transactionType                , balanceAfter, logTimestamp               , promoCode) SELECT
+tb_users.i, @promoByPromoCodeAccountLogType, 0           , @promoStrartUnixTimeSeconds, @promoCodeName
+from tb_users where
+  tb_users.last_promo = @lastPromoCodeId
+  and tb_users.freeTrialStartedTimestampMillis = @promoStrartUnixTimeMillis;
+
+set @currentUnixTimeMillis = UNIX_TIMESTAMP()*1000;
+
+INSERT INTO tb_accountLog
+(userUID  , transactionType                , balanceAfter, logTimestamp                        , promoCode) SELECT
+tb_users.i, @promoByPromoCodeAccountLogType, 0           , tb_users.freeTrialExpiredMillis/1000, @promoCodeName
+from tb_users where
+  tb_users.userGroup = @userGroupId
+  and tb_users.freeTrialExpiredMillis > @currentUnixTimeMillis
+  and tb_users.freeTrialExpiredMillis < @promoExpirationUnixTimeMillis;
+
 update tb_users
 set
   tb_users.nextSubPayment = @promoExpirationUnixTimeSeconds,
@@ -43,20 +62,8 @@ set
   tb_users.last_promo = @lastPromoCodeId
 where
   tb_users.userGroup = @userGroupId
-  and tb_users.freeTrialExpiredMillis>UNIX_TIMESTAMP()*1000
+  and tb_users.freeTrialExpiredMillis > @currentUnixTimeMillis
   and tb_users.freeTrialExpiredMillis < @promoExpirationUnixTimeMillis;
-
-select @promoByPromoCodeAccountLogType := i from tb_accountLogTypes where name = 'Promotion by promo code applied';
-
-INSERT INTO tb_accountLog
-(userUID  , transactionType                , balanceAfter, logTimestamp               , promoCode) SELECT
-tb_users.i, @promoByPromoCodeAccountLogType, 0           , @promoStrartUnixTimeSeconds, @promoCodeName
-from tb_users where tb_users.last_promo = @lastPromoCodeId and tb_users.freeTrialStartedTimestampMillis = @promoStrartUnixTimeMillis;
-
-INSERT INTO tb_accountLog
-(userUID  , transactionType                , balanceAfter, logTimestamp                        , promoCode) SELECT
-tb_users.i, @promoByPromoCodeAccountLogType, 0           , tb_users.freeTrialExpiredMillis/1000, @promoCodeName
-from tb_users where tb_users.last_promo = @lastPromoCodeId and tb_users.freeTrialStartedTimestampMillis != @promoStrartUnixTimeMillis;
 
 -- save result as csv file
 select i, userName from tb_users where last_promo = @lastPromoCodeId;
