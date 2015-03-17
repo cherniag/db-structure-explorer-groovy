@@ -26,7 +26,7 @@ public class DropsData {
         private String name;
         private Boolean selected = false;
         private IParser parser;
-        private Ingestors ingestor;
+        private Ingestor ingestor;
         private DropData drop;
         private IngestData ingestdata;
 
@@ -63,11 +63,11 @@ public class DropsData {
             this.drop = drop;
         }
 
-        public Ingestors getIngestor() {
+        public Ingestor getIngestor() {
             return ingestor;
         }
 
-        public void setIngestor(Ingestors ingestor) {
+        public void setIngestor(Ingestor ingestor) {
             this.ingestor = ingestor;
         }
 

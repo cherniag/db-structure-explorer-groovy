@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
+import mobi.nowtechnologies.server.trackrepo.ingest.Ingestor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -109,13 +110,13 @@ public class IngestServiceImplTest {
         audioDropFile.isrc = "dffffff";
         dropFiles.add(audioDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
 
         Assert.assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
     }
 
     @Test
@@ -140,14 +141,14 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
 
         Assert.assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(audioDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(fixture, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
     }
 
     @Test
@@ -167,14 +168,14 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
 
         Assert.assertTrue(result);
         Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(videoDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
     }
 
     @Test
@@ -198,13 +199,13 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
 
         Assert.assertFalse(result);
         Assert.assertEquals(null, track.getMediaFile());
         Assert.assertEquals(null, track.getCoverFile());
 
-        verify(fixture, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(fixture, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
     }
 
     @Test
@@ -225,7 +226,7 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true);
+        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.UNIVERSAL);
 
         Assert.assertTrue(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -252,7 +253,7 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, false);
+        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, false, Ingestor.UNIVERSAL);
 
         Assert.assertFalse(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -278,7 +279,7 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true);
+        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.UNIVERSAL);
 
         Assert.assertTrue(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
