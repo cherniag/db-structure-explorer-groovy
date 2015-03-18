@@ -38,7 +38,7 @@
         <input type="text"
                id="phone"
                class="mobile-input <c:if test="${not empty error}">mobile-input-error</c:if>" placeholder="<s:message code="enter.phone.hint" />"
-               maxlength="10"
+               maxlength="12"
                value="${phone}"
         />
     </div>
