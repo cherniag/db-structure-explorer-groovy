@@ -18,7 +18,8 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository
+import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.shared.dto.OAuthProvider
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
 import org.springframework.stereotype.Component
@@ -45,7 +46,7 @@ class GooglePlusSuccessFeature {
     UserDbService userDbService
 
     @Resource
-    GooglePlusUserInfoRepository googlePlusUserInfoRepository
+    SocialNetworkInfoRepository socialNetworkInfoRepository
 
     @Resource
     CommonAssertionsService commonAssertionsService
@@ -147,7 +148,7 @@ class GooglePlusSuccessFeature {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)
 
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
         }
@@ -183,13 +184,13 @@ class GooglePlusSuccessFeature {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)
             def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
-            assertEquals(googlePlusUserInfo.getDisplayName(), googlePlusProfile.getDisplayName())
-            assertEquals(googlePlusUserInfo.getFamilyName(), googlePlusProfile.getFamilyName())
-            assertEquals(googlePlusUserInfo.getGivenName(), googlePlusProfile.getGivenName())
-            assertEquals(googlePlusUserInfo.getGooglePlusId(), googlePlusProfile.getId())
+            assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())
+            assertEquals(googlePlusUserInfo.getLastName(), googlePlusProfile.getFamilyName())
+            assertEquals(googlePlusUserInfo.getFirstName(), googlePlusProfile.getGivenName())
+            assertEquals(googlePlusUserInfo.getSocialNetworkId(), googlePlusProfile.getId())
             assertEquals(googlePlusUserInfo.getLocation(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
         }
     }

@@ -5,12 +5,12 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
+import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
+import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
 import javax.annotation.Resource;
@@ -38,10 +38,7 @@ public class ReferralService {
     private UserService userService;
 
     @Resource
-    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
-
-    @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
+    private SocialNetworkInfoRepository socialNetworkInfoRepository;
 
     @Resource
     private UserReferralsSnapshotRepository userReferralsSnapshotRepository;
@@ -68,8 +65,8 @@ public class ReferralService {
     }
 
     @Transactional
-    public void acknowledge(User user, SocialInfo socialInfo) {
-        doAck(user, getContacts(socialInfo));
+    public void acknowledge(User user, SocialNetworkInfo socialNetworkInfo) {
+        doAck(user, getContacts(socialNetworkInfo));
     }
 
     private void doAck(User promoUser, List<String> contacts) {
@@ -107,16 +104,13 @@ public class ReferralService {
             User byContact = userService.findByName(contact);
             return byContact != null && byContact.getCommunityId().equals(community.getId());
         }
-        if (providerType == ProviderType.FACEBOOK) {
-            return !facebookUserInfoRepository.findByEmailOrSocialId(contact, community).isEmpty();
-        }
-        if (providerType == ProviderType.GOOGLE_PLUS) {
-            return !googlePlusUserInfoRepository.findByEmailOrSocialId(contact, community).isEmpty();
+        if (providerType == ProviderType.FACEBOOK || providerType == ProviderType.GOOGLE_PLUS) {
+            return !socialNetworkInfoRepository.findByEmailOrSocialId(contact, community, OAuthProvider.FACEBOOK).isEmpty();
         }
         throw new IllegalArgumentException("Not supported type: " + providerType + " to find by " + contact);
     }
 
-    private List<String> getContacts(SocialInfo socialInfo) {
-        return Arrays.asList(socialInfo.getSocialId(), socialInfo.getEmail());
+    private List<String> getContacts(SocialNetworkInfo socialNetworkInfo) {
+        return Arrays.asList(socialNetworkInfo.getSocialNetworkId(), socialNetworkInfo.getEmail());
     }
 }

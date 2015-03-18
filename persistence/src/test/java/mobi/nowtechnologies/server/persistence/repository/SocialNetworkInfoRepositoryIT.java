@@ -2,9 +2,9 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 
 import javax.annotation.Resource;
 
@@ -17,16 +17,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-/**
- * Created by oar on 2/10/14.
- */
-public class FacebookUserInfoRepositoryIT extends AbstractRepositoryIT {
+public class SocialNetworkInfoRepositoryIT extends AbstractRepositoryIT {
 
     @Resource(name = "userRepository")
     private UserRepository userRepository;
 
     @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
+    private SocialNetworkInfoRepository socialNetworkInfoRepository;
 
     @Resource
     private JdbcTemplate jdbcTemplate;
@@ -36,40 +33,39 @@ public class FacebookUserInfoRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testMapping() {
-        FacebookUserInfo fbUserInfo = new FacebookUserInfo();
+        SocialNetworkInfo fbUserInfo = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
         fbUserInfo.setUser(findUser());
         fbUserInfo.setFirstName("AA");
-        fbUserInfo.setFacebookId("ID");
+        fbUserInfo.setSocialNetworkId("ID");
         fbUserInfo.setUserName("userName");
         fbUserInfo.setEmail("AA@ukr.net");
-        facebookUserInfoRepository.saveAndFlush(fbUserInfo);
-        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from social_info"));
-        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from facebook_user_info"));
+        socialNetworkInfoRepository.saveAndFlush(fbUserInfo);
+        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from social_network_info"));
     }
 
     @Test
     public void testFindByEmailOrSocialId() throws Exception {
         final User user = findUser();
 
-        FacebookUserInfo fbUserInfo = new FacebookUserInfo();
+        SocialNetworkInfo fbUserInfo = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
         fbUserInfo.setUser(user);
         fbUserInfo.setFirstName("BB");
-        fbUserInfo.setFacebookId("ID0");
+        fbUserInfo.setSocialNetworkId("ID0");
         fbUserInfo.setUserName("userName");
         fbUserInfo.setEmail("BB@ukr.net");
-        facebookUserInfoRepository.saveAndFlush(fbUserInfo);
+        socialNetworkInfoRepository.saveAndFlush(fbUserInfo);
 
-        List<FacebookUserInfo> foundBySocialId = facebookUserInfoRepository.findByEmailOrSocialId("ID0", user.getUserGroup().getCommunity());
+        List<SocialNetworkInfo> foundBySocialId = socialNetworkInfoRepository.findByEmailOrSocialId("ID0", user.getUserGroup().getCommunity(), OAuthProvider.FACEBOOK);
         assertEquals(1, foundBySocialId.size());
-        assertEquals("ID0", foundBySocialId.get(0).getSocialId());
+        assertEquals("ID0", foundBySocialId.get(0).getSocialNetworkId());
 
 
-        List<FacebookUserInfo> foundByEmail = facebookUserInfoRepository.findByEmailOrSocialId("BB@ukr.net", user.getUserGroup().getCommunity());
+        List<SocialNetworkInfo> foundByEmail = socialNetworkInfoRepository.findByEmailOrSocialId("BB@ukr.net", user.getUserGroup().getCommunity(), OAuthProvider.FACEBOOK);
         assertEquals(1, foundByEmail.size());
         assertEquals("BB@ukr.net", foundBySocialId.get(0).getEmail());
 
         Community unknownCommunity = communityRepository.saveAndFlush(CommunityFactory.createCommunity("unknown"));
-        List<FacebookUserInfo> foundByWrongCommunity = facebookUserInfoRepository.findByEmailOrSocialId("BB@ukr.net", unknownCommunity);
+        List<SocialNetworkInfo> foundByWrongCommunity = socialNetworkInfoRepository.findByEmailOrSocialId("BB@ukr.net", unknownCommunity, OAuthProvider.FACEBOOK);
         assertTrue(foundByWrongCommunity.isEmpty());
     }
 

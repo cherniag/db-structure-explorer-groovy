@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
 
@@ -14,7 +14,7 @@ public interface FacebookClient {
     OAuth2ForbiddenException INVALID_FACEBOOK_TOKEN_EXCEPTION = OAuth2ForbiddenException.invalidFacebookToken();
     OAuth2ForbiddenException INVALID_FACEBOOK_USER_ID = OAuth2ForbiddenException.invalidFacebookUserId();
 
-    FacebookUserInfo getProfileUserInfo(String accessToken, String userId);
+    SocialNetworkInfo getProfileUserInfo(String accessToken, String userId);
 
     FacebookProfileImage getProfileImage(String accessToken, String userId);
 }

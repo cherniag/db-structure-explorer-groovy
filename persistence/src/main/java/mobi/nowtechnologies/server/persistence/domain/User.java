@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -217,7 +216,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Drm> drms;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<SocialInfo> socialInfo = new HashSet<SocialInfo>();
+    private Set<SocialNetworkInfo> socialNetworkInfo = new HashSet<SocialNetworkInfo>();
     private String facebookId;
     @Column(nullable = true)
     private String deviceUID;
@@ -1489,8 +1488,8 @@ public class User implements Serializable {
         this.uuid = uuid;
     }
 
-    public Set<SocialInfo> getSocialInfo() {
-        return socialInfo;
+    public Set<SocialNetworkInfo> getSocialNetworkInfo() {
+        return socialNetworkInfo;
     }
 
     public Community getCommunity() {

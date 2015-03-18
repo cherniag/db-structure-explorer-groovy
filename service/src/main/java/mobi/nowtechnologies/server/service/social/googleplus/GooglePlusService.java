@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.service.social.googleplus;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
+import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 
 import javax.annotation.Resource;
@@ -32,7 +33,7 @@ public class GooglePlusService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public GooglePlusUserInfo getAndValidateProfile(String accessToken, String googlePlusUserId) {
+    public SocialNetworkInfo getAndValidateProfile(String accessToken, String googlePlusUserId) {
         try {
             GoogleTemplate googleTemplate = googlePlusTemplateProvider.provide(accessToken);
             if (templateCustomizer != null) {
@@ -47,18 +48,18 @@ public class GooglePlusService {
         }
     }
 
-    private GooglePlusUserInfo convertForUser(Person personFromGooglePlus) {
-        GooglePlusUserInfo result = new GooglePlusUserInfo();
+    private SocialNetworkInfo convertForUser(Person personFromGooglePlus) {
+        SocialNetworkInfo result = new SocialNetworkInfo(OAuthProvider.GOOGLE);
         result.setEmail(personFromGooglePlus.getAccountEmail());
-        result.setGooglePlusId(personFromGooglePlus.getId());
+        result.setSocialNetworkId(personFromGooglePlus.getId());
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
-        result.setDisplayName(personFromGooglePlus.getDisplayName());
-        result.setPicture(extractImageUrl(personFromGooglePlus));
+        result.setUserName(personFromGooglePlus.getDisplayName());
+        result.setProfileImageUrl(extractImageUrl(personFromGooglePlus));
         result.setGender(Gender.restore(personFromGooglePlus.getGender()));
         result.setLocation(extractLocation(personFromGooglePlus));
-        result.setGivenName(personFromGooglePlus.getGivenName());
-        result.setFamilyName(personFromGooglePlus.getFamilyName());
-        result.setHomePage(buildHomepageUrl(personFromGooglePlus));
+        result.setFirstName(personFromGooglePlus.getGivenName());
+        result.setLastName(personFromGooglePlus.getFamilyName());
+        result.setProfileUrl(buildHomepageUrl(personFromGooglePlus));
         return result;
     }
 

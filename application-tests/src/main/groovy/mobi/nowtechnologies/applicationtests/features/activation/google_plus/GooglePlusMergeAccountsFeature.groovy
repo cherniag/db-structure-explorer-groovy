@@ -18,8 +18,6 @@ import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
 import org.springframework.stereotype.Component
@@ -54,12 +52,6 @@ class GooglePlusMergeAccountsFeature {
 
     @Resource
     AppTestGooglePlusTokenService appTestGooglePlusTokenService
-
-    @Resource
-    GooglePlusUserInfoRepository googlePlusUserInfoRepository
-
-    @Resource
-    FacebookUserInfoRepository fbDetailsRepository
 
     @Resource
     AppTestFacebookTokenService appTestFacebookTokenService

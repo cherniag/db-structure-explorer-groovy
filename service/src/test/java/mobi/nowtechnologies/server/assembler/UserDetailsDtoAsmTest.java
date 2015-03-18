@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.SocialInfoType;
@@ -28,9 +27,7 @@ public class UserDetailsDtoAsmTest {
     @Mock
     private RuleServiceSupport ruleServiceSupport;
     @Mock
-    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
-    @Mock
-    private FacebookUserInfoRepository facebookUserInfoRepository;
+    private SocialNetworkInfoRepository socialNetworkInfoRepository;
 
     @InjectMocks
     private UserDetailsDtoAsm userDetailsDtoAsm;
@@ -40,18 +37,18 @@ public class UserDetailsDtoAsmTest {
         User user = mock(User.class);
         when(user.getProvider()).thenReturn(ProviderType.GOOGLE_PLUS);
 
-        GooglePlusUserInfo googlePlusUserInfo = mock(GooglePlusUserInfo.class);
+        SocialNetworkInfo googlePlusUserInfo = mock(SocialNetworkInfo.class);
         when(googlePlusUserInfo.getEmail()).thenReturn("a@bc.com");
-        when(googlePlusUserInfo.getDisplayName()).thenReturn("Display Name");
-        when(googlePlusUserInfo.getPicture()).thenReturn("http://gp.com/1/1.jpg");
-        when(googlePlusUserInfo.getGooglePlusId()).thenReturn("000001");
-        when(googlePlusUserInfo.getGivenName()).thenReturn("Name");
-        when(googlePlusUserInfo.getFamilyName()).thenReturn("Surname");
+        when(googlePlusUserInfo.getUserName()).thenReturn("Display Name");
+        when(googlePlusUserInfo.getProfileImageUrl()).thenReturn("http://gp.com/1/1.jpg");
+        when(googlePlusUserInfo.getSocialNetworkId()).thenReturn("000001");
+        when(googlePlusUserInfo.getFirstName()).thenReturn("Name");
+        when(googlePlusUserInfo.getLastName()).thenReturn("Surname");
         when(googlePlusUserInfo.getGender()).thenReturn(Gender.FEMALE);
         when(googlePlusUserInfo.getLocation()).thenReturn("London");
         when(googlePlusUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
 
-        when(googlePlusUserInfoRepository.findByUser(user)).thenReturn(googlePlusUserInfo);
+        when(socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)).thenReturn(googlePlusUserInfo);
 
 
         // invoke
@@ -76,18 +73,18 @@ public class UserDetailsDtoAsmTest {
         User user = mock(User.class);
         when(user.getProvider()).thenReturn(ProviderType.FACEBOOK);
 
-        FacebookUserInfo facebookUserInfo = mock(FacebookUserInfo.class);
+        SocialNetworkInfo facebookUserInfo = mock(SocialNetworkInfo.class);
         when(facebookUserInfo.getUserName()).thenReturn("UserName");
         when(facebookUserInfo.getFirstName()).thenReturn("Name");
-        when(facebookUserInfo.getSurname()).thenReturn("Surname");
+        when(facebookUserInfo.getLastName()).thenReturn("Surname");
         when(facebookUserInfo.getEmail()).thenReturn("a@bc.com");
         when(facebookUserInfo.getProfileUrl()).thenReturn("http://fb.com/1/1.jpg");
-        when(facebookUserInfo.getFacebookId()).thenReturn("000001");
-        when(facebookUserInfo.getCity()).thenReturn("London");
+        when(facebookUserInfo.getSocialNetworkId()).thenReturn("000001");
+        when(facebookUserInfo.getLocation()).thenReturn("London");
         when(facebookUserInfo.getGender()).thenReturn(Gender.FEMALE);
         when(facebookUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
 
-        when(facebookUserInfoRepository.findByUser(user)).thenReturn(facebookUserInfo);
+        when(socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.FACEBOOK)).thenReturn(facebookUserInfo);
 
 
         // invoke

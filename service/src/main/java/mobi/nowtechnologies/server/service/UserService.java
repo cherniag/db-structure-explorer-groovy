@@ -576,7 +576,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getWithSocial(int id) {
         User byId = findById(id);
-        byId.getSocialInfo().size();
+        byId.getSocialNetworkInfo().size();
         return byId;
     }
 

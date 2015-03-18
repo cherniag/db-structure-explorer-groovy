@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
 
 import javax.annotation.Resource;
@@ -18,9 +18,9 @@ public class FacebookService {
     String userId;
     String userProfileImageUrlId;
 
-    public FacebookUserInfo getFacebookUserInfo(String accessToken, String inputFacebookId) {
-        FacebookUserInfo facebookProfileInfo = facebookClient.getProfileUserInfo(accessToken, userId);
-        if (!facebookProfileInfo.getFacebookId().equals(inputFacebookId)) {
+    public SocialNetworkInfo getFacebookUserInfo(String accessToken, String inputFacebookId) {
+        SocialNetworkInfo facebookProfileInfo = facebookClient.getProfileUserInfo(accessToken, userId);
+        if (!facebookProfileInfo.getSocialNetworkId().equals(inputFacebookId)) {
             log.warn("inputFacebookId should match id on Facebook!");
             throw FacebookClient.INVALID_FACEBOOK_USER_ID;
         }

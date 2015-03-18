@@ -6,7 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -92,26 +92,26 @@ public class PaymentsPayPalController extends CommonController {
 
         if (paymentEnabled) {
             User user = userService.getWithSocial(getSecurityContextDetails().getUserId());
-            List<SocialInfo> socialInfo = new ArrayList<SocialInfo>(user.getSocialInfo());
-            Assert.isTrue(!socialInfo.isEmpty(), "No social info for " + user.getId());
+            List<SocialNetworkInfo> socialNetworkInfo = new ArrayList<SocialNetworkInfo>(user.getSocialNetworkInfo());
+            Assert.isTrue(!socialNetworkInfo.isEmpty(), "No social info for " + user.getId());
 
             //to get predictable socialInfo from set
-            Collections.sort(socialInfo, new Comparator<SocialInfo>() {
+            Collections.sort(socialNetworkInfo, new Comparator<SocialNetworkInfo>() {
                 @Override
-                public int compare(SocialInfo o1, SocialInfo o2) {
-                    return o2.getSocialId().compareTo(o1.getSocialId());
+                public int compare(SocialNetworkInfo o1, SocialNetworkInfo o2) {
+                    return o2.getSocialNetworkId().compareTo(o1.getSocialNetworkId());
                 }
             });
 
-            SocialInfo first = socialInfo.iterator().next();
+            SocialNetworkInfo first = socialNetworkInfo.iterator().next();
             modelAndModel.addObject("customerName", getFormattedName(first));
-            modelAndModel.addObject("customerAvatar", first.getAvatarUrl());
+            modelAndModel.addObject("customerAvatar", first.getProfileImageUrl());
         }
     }
 
-    private String getFormattedName(SocialInfo socialInfo) {
+    private String getFormattedName(SocialNetworkInfo socialNetworkInfo) {
         final int maxLength = 15;
-        String customerName = socialInfo.getFirstName();
+        String customerName = socialNetworkInfo.getFirstName();
         if (customerName.length() > maxLength) {
             customerName = customerName.substring(0, maxLength) + "...";
         }

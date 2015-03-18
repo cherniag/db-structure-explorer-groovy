@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
@@ -145,9 +145,9 @@ public class ReferralServiceTest {
 
         UserGroup g = mock(UserGroup.class);
         Community c = mock(Community.class);
-        SocialInfo socialInfo = mock(SocialInfo.class);
-        when(socialInfo.getSocialId()).thenReturn("social.id.1");
-        when(socialInfo.getEmail()).thenReturn("user_name@dot.com");
+        SocialNetworkInfo socialNetworkInfo = mock(SocialNetworkInfo.class);
+        when(socialNetworkInfo.getSocialNetworkId()).thenReturn("social.id.1");
+        when(socialNetworkInfo.getEmail()).thenReturn("user_name@dot.com");
 
         User user = createUser("user_name@dot.com", 37, communityId);
         when(user.getId()).thenReturn(userId);
@@ -159,7 +159,7 @@ public class ReferralServiceTest {
         when(userReferralsSnapshotRepository.findAll(referralUserIds)).thenReturn(snapshots);
 
         // when
-        referralService.acknowledge(user, socialInfo);
+        referralService.acknowledge(user, socialNetworkInfo);
 
         // then
         verify(referralRepository).updateReferrals(contactsCaptor.capture(), eq(communityId), eq(ReferralState.ACTIVATED), eq(ReferralState.PENDING));

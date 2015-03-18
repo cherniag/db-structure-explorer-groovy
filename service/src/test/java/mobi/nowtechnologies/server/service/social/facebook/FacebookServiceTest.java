@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
 
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class FacebookServiceTest {
 
     @Mock
-    FacebookUserInfo facebookUserInfo;
+    SocialNetworkInfo facebookUserInfo;
     @Mock
     FacebookClient facebookClient;
 
@@ -29,13 +29,13 @@ public class FacebookServiceTest {
     public void testGetFacebookUserInfo() throws Exception {
         String accessToken = "accessToken";
 
-        when(facebookUserInfo.getFacebookId()).thenReturn("inputFacebookId");
+        when(facebookUserInfo.getSocialNetworkId()).thenReturn("inputFacebookId");
         when(facebookClient.getProfileUserInfo(accessToken, facebookService.userId)).thenReturn(facebookUserInfo);
         when(facebookClient.getProfileImage(accessToken, facebookService.userProfileImageUrlId)).thenReturn(new FacebookProfileImage(AppTestFacebookOperationsAdaptor.TEST_PROFILE_IMAGE_URL, false));
 
-        FacebookUserInfo actual = facebookService.getFacebookUserInfo(accessToken, facebookUserInfo.getFacebookId());
+        SocialNetworkInfo actual = facebookService.getFacebookUserInfo(accessToken, facebookUserInfo.getSocialNetworkId());
 
-        verify(facebookUserInfo, times(2)).getFacebookId();
+        verify(facebookUserInfo, times(2)).getSocialNetworkId();
         verify(facebookClient, times(1)).getProfileUserInfo(accessToken, facebookService.userId);
         verify(facebookClient, times(1)).getProfileImage(accessToken, facebookService.userProfileImageUrlId);
         verify(facebookUserInfo, times(1)).setProfileImageUrl(AppTestFacebookOperationsAdaptor.TEST_PROFILE_IMAGE_URL);
@@ -49,13 +49,13 @@ public class FacebookServiceTest {
     public void testGetFacebook_throwsOAuth2ForbiddenException() throws Exception {
         String inputFacebookId = "inputFacebookId";
         String accessToken = "accessToken";
-        when(facebookUserInfo.getFacebookId()).thenReturn("facebookId");
+        when(facebookUserInfo.getSocialNetworkId()).thenReturn("facebookId");
         when(facebookClient.getProfileUserInfo(accessToken, facebookService.userId)).thenReturn(facebookUserInfo);
 
         try {
             facebookService.getFacebookUserInfo(accessToken, inputFacebookId);
         } catch (OAuth2ForbiddenException e) {
-            verify(facebookUserInfo, times(1)).getFacebookId();
+            verify(facebookUserInfo, times(1)).getSocialNetworkId();
             verify(facebookClient, times(1)).getProfileUserInfo(accessToken, facebookService.userId);
 
             verifyNoMoreInteractions(facebookClient, facebookUserInfo);

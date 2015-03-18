@@ -8,7 +8,7 @@ import org.springframework.social.facebook.api.Reference;
 class SuccessfulFacebookProfile extends FacebookProfile {
 
     private String email;
-    private String country;
+//    private String country;
     private String city;
     private String birthday;
 
@@ -16,9 +16,9 @@ class SuccessfulFacebookProfile extends FacebookProfile {
         super(id, username, name, firstName, lastName, gender, Locale.getDefault());
     }
 
-    public void addOtherInfo(String email, String country, String city, String birthday) {
+    public void addOtherInfo(String email, String city, String birthday) {
         this.email = email;
-        this.country = country;
+//        this.country = country;
         this.city = city;
         this.birthday = birthday;
     }
@@ -31,12 +31,13 @@ class SuccessfulFacebookProfile extends FacebookProfile {
     @Override
     public Reference getLocation() {
         // try to recognized null values: NULL_VALUE_MARKER
-        if (AppTestFacebookTokenService.unmaskNullValueIfNeeded(country) == null) {
-            return new Reference("", city);
-        } else {
-            String facebookLocation = city + "," + country;
-            return new Reference("", facebookLocation);
-        }
+//        if (AppTestFacebookTokenService.unmaskNullValueIfNeeded(country) == null) {
+//            return new Reference("", city);
+//        } else {
+//            String facebookLocation = city + "," + country;
+//            return new Reference("", facebookLocation);
+//        }
+        return new Reference("", city);
     }
 
     @Override

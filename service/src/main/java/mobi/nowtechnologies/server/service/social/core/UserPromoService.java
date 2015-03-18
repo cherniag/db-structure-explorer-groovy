@@ -2,13 +2,9 @@ package mobi.nowtechnologies.server.service.social.core;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.service.ActivationEmailService;
 import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.service.ReferralService;
@@ -30,10 +26,7 @@ public class UserPromoService {
     private UserService userService;
 
     @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
-
-    @Resource
-    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
+    private SocialNetworkInfoRepository socialNetworkInfoRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -56,34 +49,34 @@ public class UserPromoService {
         return new MergeResult(mergeResult.isMergeDone(), user);
     }
 
-    public MergeResult applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser) {
-        MergeResult userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, disableReactivationForUser);
-        googlePlusUserInfoRepository.save(googleUserInfo);
+    public MergeResult applyInitPromoByGooglePlus(User userAfterSignUp, SocialNetworkInfo googleUserInfo, boolean disableReactivationForUser) {
+        MergeResult userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, socialNetworkInfoRepository, ProviderType.GOOGLE_PLUS, disableReactivationForUser);
+        socialNetworkInfoRepository.save(googleUserInfo);
 
         return userAfterApplyPromo;
     }
 
-    public MergeResult applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean disableReactivationForUser) {
-        MergeResult mergeResult = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, disableReactivationForUser);
-        facebookUserInfoRepository.save(facebookProfile);
+    public MergeResult applyInitPromoByFacebook(User userAfterSignUp, SocialNetworkInfo facebookProfile, boolean disableReactivationForUser) {
+        MergeResult mergeResult = doApplyPromo(userAfterSignUp, facebookProfile, socialNetworkInfoRepository, ProviderType.FACEBOOK, disableReactivationForUser);
+        socialNetworkInfoRepository.save(facebookProfile);
 
         return mergeResult;
     }
 
-    private MergeResult doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType providerType, boolean disableReactivationForUser) {
+    private MergeResult doApplyPromo(User userAfterSignUp, SocialNetworkInfo socialNetworkInfo, SocialNetworkInfoRepository socialNetworkInfoRepository, ProviderType providerType, boolean disableReactivationForUser) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
-        User userForMerge = getUserForMerge(refreshedSignUpUser, socialInfo.getEmail());
+        User userForMerge = getUserForMerge(refreshedSignUpUser, socialNetworkInfo.getEmail());
         MergeResult mergeResult = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);
         User userAfterApplyPromo = mergeResult.getResultOfOperation();
-        baseSocialRepository.deleteByUser(userAfterApplyPromo);
+        socialNetworkInfoRepository.deleteByUser(userAfterApplyPromo);
 
-        socialInfo.setUser(userAfterApplyPromo);
-        userAfterApplyPromo.setUserName(socialInfo.getEmail());
+        socialNetworkInfo.setUser(userAfterApplyPromo);
+        userAfterApplyPromo.setUserName(socialNetworkInfo.getEmail());
         userAfterApplyPromo.setProvider(providerType);
 
         userRepository.save(userAfterApplyPromo);
 
-        referralService.acknowledge(userAfterApplyPromo, socialInfo);
+        referralService.acknowledge(userAfterApplyPromo, socialNetworkInfo);
 
         return new MergeResult(mergeResult.isMergeDone(), userAfterApplyPromo);
     }

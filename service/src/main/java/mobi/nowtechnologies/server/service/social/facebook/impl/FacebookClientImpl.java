@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
+import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 
 import javax.annotation.Resource;
@@ -33,7 +34,7 @@ public class FacebookClientImpl implements FacebookClient {
     FacebookOperationsAdaptor facebookOperationsAdaptor;
 
     @Override
-    public FacebookUserInfo getProfileUserInfo(String accessToken, String userId) {
+    public SocialNetworkInfo getProfileUserInfo(String accessToken, String userId) {
         log.debug("requesting FacebookProfile by userId: [{}]", userId);
         FacebookProfile profile;
         try {
@@ -43,7 +44,7 @@ public class FacebookClientImpl implements FacebookClient {
             throw INVALID_FACEBOOK_TOKEN_EXCEPTION;
         }
 
-        FacebookUserInfo details = new FacebookUserInfo();
+        SocialNetworkInfo details = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
         String id = profile.getId();
 
         details.setEmail(getEmail(profile));
@@ -53,8 +54,8 @@ public class FacebookClientImpl implements FacebookClient {
         assignCityAndCountry(profile, details);
 
         details.setFirstName(profile.getFirstName());
-        details.setSurname(profile.getLastName());
-        details.setFacebookId(id);
+        details.setLastName(profile.getLastName());
+        details.setSocialNetworkId(id);
         details.setUserName(id);
         AgeRange ageRange = profile.getAgeRange();
         details.setAgeRangeMin(ageRange.getMin());
@@ -90,17 +91,14 @@ public class FacebookClientImpl implements FacebookClient {
         return null;
     }
 
-    void assignCityAndCountry(FacebookProfile profile, FacebookUserInfo details) {
+    void assignCityAndCountry(FacebookProfile profile, SocialNetworkInfo details) {
         Reference loc = profile.getLocation();
         if (loc != null) {
             String cityWithCountry = loc.getName();
             if (!Strings.isNullOrEmpty(cityWithCountry)) {
                 List<String> result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(cityWithCountry);
                 if (result.size() > 0) {
-                    details.setCity(result.get(0));
-                }
-                if (result.size() > 1) {
-                    details.setCountry(result.get(1));
+                    details.setLocation(result.get(0));
                 }
             }
         }
