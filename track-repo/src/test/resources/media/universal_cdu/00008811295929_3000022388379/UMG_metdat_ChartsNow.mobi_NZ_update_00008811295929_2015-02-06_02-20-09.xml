@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.digiplug.com/dsc/umgistd-1_4_5" upc="00008811295929">
+    <type>update</type>
+    <territory>NZ</territory>
+    <prd_title>Dance For Me</prd_title>
+    <prd_version_title></prd_version_title>
+    <prd_configuration>eAlbum</prd_configuration>
+    <prd_label_name>Universal Music New Zealand Limited</prd_label_name>
+    <set_count>1</set_count>
+    <track_count>10</track_count>
+    <complete_product>Y</complete_product>
+    <prd_length>1:12:01</prd_length>
+    <release_date>10-Oct-2014</release_date>
+    <album_presales_previews>N</album_presales_previews>
+    <music_type>POP</music_type>
+    <genre>R &amp; B</genre>
+    <series_name></series_name>
+    <prd_explicit>N</prd_explicit>
+    <prd_e_marketing_tag></prd_e_marketing_tag>
+    <local_product_number></local_product_number>
+    <p_line>(P) 2002 Geffen Records</p_line>
+    <c_line>(C) 2002 Geffen Records</c_line>
+    <permanent_download_album_preorder_previews>N</permanent_download_album_preorder_previews>
+    <permanent_download_preorder_status>N</permanent_download_preorder_status>
+    <prd_pricing>
+        <current_price_code>TP</current_price_code>
+        <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+        <new_price_code></new_price_code>
+        <new_price_effective_date></new_price_effective_date>
+    </prd_pricing>
+    <prd_contributors>
+        <artist_name>Mary J. Blige</artist_name>
+    </prd_contributors>
+    <terms>
+        <note></note>
+    </terms>
+    <prd_associated_products/>
+    <tracks>
+        <track isrc="USMC10200199">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>1</track_number>
+            <track_title>No More Drama</track_title>
+            <track_version_title>Thunderpuss Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:09:20</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Terry Lewis</composer>
+                <composer>James Harris III</composer>
+                <composer>B. Devorzan</composer>
+                <composer>Perry Botkin</composer>
+                <author>Terry Lewis</author>
+                <author>James Harris III</author>
+                <author>B. Devorzan</author>
+                <author>Perry Botkin</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200173">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>2</track_number>
+            <track_title>Family Affair</track_title>
+            <track_version_title>Spanish Fly Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:07:51</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Mary J. Blige</composer>
+                <composer>Bruce Miller</composer>
+                <composer>Andre R. Young</composer>
+                <composer>Camara Kambon</composer>
+                <composer>Mike Elizondo</composer>
+                <composer>Asiah Kewis</composer>
+                <composer>Luchana N. Lodge</composer>
+                <author>Mary J. Blige</author>
+                <author>Bruce Miller</author>
+                <author>Andre R. Young</author>
+                <author>Camara Kambon</author>
+                <author>Mike Elizondo</author>
+                <author>Asiah Kewis</author>
+                <author>Luchana N. Lodge</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200913">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>3</track_number>
+            <track_title>Everything</track_title>
+            <track_version_title>Curtis &amp; Moore Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:07:06</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>John Starks</composer>
+                <composer>Linda Creed</composer>
+                <composer>Hachidai Nakamura</composer>
+                <composer>Terry Lewis</composer>
+                <composer>Thom Bell</composer>
+                <composer>James Harris III</composer>
+                <composer>Fred Wesley</composer>
+                <composer>Rokusuke Ei</composer>
+                <composer>James Brown</composer>
+                <author>Hachidai Nakamura</author>
+                <author>Linda Creed</author>
+                <author>Thom Bell</author>
+                <author>Fred Wesley</author>
+                <author>James Brown</author>
+                <author>Terry Lewis</author>
+                <author>John Starks</author>
+                <author>Rokusuke Ei</author>
+                <author>James Harris III</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200699">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>4</track_number>
+            <track_title>Rainy Dayz</track_title>
+            <track_version_title>Thunderpuss Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:07:56</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Jeffrey Atkins</composer>
+                <composer>Irving Lorenzo</composer>
+                <author>Jeffrey Atkins</author>
+                <author>Irving Lorenzo</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200909">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>5</track_number>
+            <track_title>He Think I Don't Know</track_title>
+            <track_version_title>HQ2 Club Mix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:08:25</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Gerald Isaac</composer>
+                <author>Gerald Isaac</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200910">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>6</track_number>
+            <track_title>Your Child</track_title>
+            <track_version_title>Junior Vasquez Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:07:32</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Gerald W. Isaac</composer>
+                <composer>Gerald Isaac</composer>
+                <author>Gerald W. Isaac</author>
+                <author>Gerald Isaac</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200911">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>7</track_number>
+            <track_title>Never Been</track_title>
+            <track_version_title>al B. rich 2 Step Groove Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:05:35</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Missy Elliott</composer>
+                <composer>Henri Charlemagne</composer>
+                <composer>Gene McFadden</composer>
+                <composer>John Whitehead</composer>
+                <composer>Jerry Cohen</composer>
+                <author>Missy Elliott</author>
+                <author>Henri Charlemagne</author>
+                <author>Gene McFadden</author>
+                <author>John Whitehead</author>
+                <author>Jerry Cohen</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10112241">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>8</track_number>
+            <track_title>Dance For Me</track_title>
+            <track_version_title>G-Club Remix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:07:12</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>Pop</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2001 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Mary J. Blige</composer>
+                <composer>Ahkim Miller</composer>
+                <composer>Bruce Miller</composer>
+                <composer>Damon Blackmon</composer>
+                <composer>Sting</composer>
+                <author>Mary J. Blige</author>
+                <author>Ahkim Miller</author>
+                <author>Bruce Miller</author>
+                <author>Damon Blackmon</author>
+                <author>Sting</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200912">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>9</track_number>
+            <track_title>Give Me You</track_title>
+            <track_version_title>Extended Nino Radio Mix</track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:06:41</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 2002 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Diane Warren</composer>
+                <author>Diane Warren</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+        <track isrc="USMC10200914">
+            <type>update</type>
+            <volume>1</volume>
+            <track_number>10</track_number>
+            <track_title>Let No Man Put Asunder</track_title>
+            <track_version_title></track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>AUDIO</asset_type>
+            <track_length>0:04:23</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>R &amp; B</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line>(P) 1999 Geffen Records</p_line>
+            <c_line></c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STAP</current_price_code>
+                <current_price_effective_date>06-Feb-2015</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Mary J. Blige</artist_name>
+                <composer>Bruce Hawes</composer>
+                <composer>Bruce E. Gray</composer>
+                <author>Bruce E. Gray</author>
+                <author>Bruce Hawes</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>Y</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>Y</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+    </tracks>
+</product>

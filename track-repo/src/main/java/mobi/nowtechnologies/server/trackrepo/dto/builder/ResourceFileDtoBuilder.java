@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
 package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
 import mobi.nowtechnologies.server.trackrepo.Resolution;
@@ -8,10 +12,6 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.VideoResolution;
-import mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl;
-import mobi.nowtechnologies.server.trackrepo.uits.IMP4Manager;
-import mobi.nowtechnologies.server.trackrepo.uits.MP3Manager;
-import mobi.nowtechnologies.server.trackrepo.uits.MP4Manager;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,28 +27,17 @@ import org.springframework.core.io.Resource;
 
 public class ResourceFileDtoBuilder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
-
-    private MP3Manager mp3Manager = new MP3Manager();
-    private IMP4Manager mp4manager = new MP4Manager();
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private Resource publishDir;
-    private Resource workDir;
 
     public void setPublishDir(Resource publishDir) {
         this.publishDir = publishDir;
     }
 
-    public void setWorkDir(Resource workDir) {
-        this.workDir = workDir;
-    }
-
     public void init() throws Exception {
         if (publishDir == null || !publishDir.exists()) {
             throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.destination");
-        }
-        if (workDir == null || !workDir.exists()) {
-            throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.workdir");
         }
     }
 
@@ -56,24 +45,19 @@ public class ResourceFileDtoBuilder {
         LOGGER.debug("Build track {}", track);
         String uniqueTrackId = track.getUniqueTrackId();
 
-        String workDirPath = workDir.getFile().getAbsolutePath();
         String distDirPath = publishDir.getFile().getAbsolutePath();
 
         List<ResourceFileDto> files = new ArrayList<ResourceFileDto>(16);
 
         AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
         if (audioFile != null) {
-            String mp3hash = getMediaHash(getFilePath(FileType.ORIGINAL_MP3, AudioResolution.RATE_ORIGINAL, workDirPath, uniqueTrackId));
-            String aac48hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_48, workDirPath, uniqueTrackId));
-            String aac96hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_96, workDirPath, uniqueTrackId));
-
             files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_48, distDirPath, uniqueTrackId, null));
             files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_96, distDirPath, uniqueTrackId, null));
             files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW, distDirPath, uniqueTrackId, null));
-            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_48, distDirPath, uniqueTrackId, aac48hash));
-            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_96, distDirPath, uniqueTrackId, aac96hash));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_48, distDirPath, uniqueTrackId, null));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_96, distDirPath, uniqueTrackId, null));
             files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW, distDirPath, uniqueTrackId, null));
-            files.add(build(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL, distDirPath, uniqueTrackId, mp3hash));
+            files.add(build(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL, distDirPath, uniqueTrackId, null));
         }
 
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -129,18 +113,5 @@ public class ResourceFileDtoBuilder {
                         "" :
                         type.getPack() + "/";
         return String.format("%s/%s%s%s.%s", dir, subdir, isrc, resolution.getSuffix(), type.getExt());
-    }
-
-    private String getMediaHash(String fileName) {
-        try {
-            if (fileName.toLowerCase().endsWith("." + FileType.DOWNLOAD.getExt())) {
-                return mp3Manager.getMP3MediaHash(fileName);
-            } else { // Assume AAC.....
-                return mp4manager.getMediaHash(fileName);
-            }
-        } catch (Exception e) {
-            LOGGER.error("Cannot get hash for {} : {}", fileName, e.getMessage(), e);
-            return null;
-        }
     }
 }

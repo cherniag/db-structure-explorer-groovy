@@ -1,0 +1,1841 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ern:NewReleaseMessage xmlns:ern="http://ddex.net/xml/ern/37" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" LanguageAndScriptCode="en" ReleaseProfileVersionId="CommonReleaseType/12/AudioAlbum"
+                       MessageSchemaVersionId="ern/37" xs:schemaLocation="http://ddex.net/xml/ern/37 http://ddex.net/xml/ern/37/release-notification.xsd">
+    <MessageHeader>
+        <MessageThreadId>3000022388379</MessageThreadId>
+        <MessageId>3000022388379_53836826443</MessageId>
+        <MessageFileName>UMG_DDEX_Metadata_ChartsNow.mobi_00008811295929_2015-02-06_02-20-09.xml</MessageFileName>
+        <MessageSender>
+            <PartyId>PADPIDA2010032301A</PartyId>
+            <PartyName>
+                <FullName>Digiplug</FullName>
+            </PartyName>
+        </MessageSender>
+        <SentOnBehalfOf>
+            <PartyId>PADPIDA2012031302R</PartyId>
+            <PartyName>
+                <FullName>Universal Music Group International</FullName>
+            </PartyName>
+        </SentOnBehalfOf>
+        <MessageRecipient>
+            <PartyId>PADPIDA2011063001G</PartyId>
+            <PartyName>
+                <FullName>ChartsNow.mobi</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2015-02-06T02:20:09</MessageCreatedDateTime>
+        <MessageControlType>LiveMessage</MessageControlType>
+    </MessageHeader>
+    <IsBackfill>false</IsBackfill>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200199</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A1</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>No More Drama</TitleText>
+                <SubTitle>Thunderpuss Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT9M20.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>No More Drama</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>No More Drama</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Terry Lewis</FullName>
+                        <NamesBeforeKeyName>Terry</NamesBeforeKeyName>
+                        <KeyName>Lewis</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>James Harris III</FullName>
+                        <NamesBeforeKeyName>James</NamesBeforeKeyName>
+                        <KeyName>Harris III</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>B. Devorzan</FullName>
+                        <NamesBeforeKeyName>B.</NamesBeforeKeyName>
+                        <KeyName>Devorzan</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Perry Botkin</FullName>
+                        <NamesBeforeKeyName>Perry</NamesBeforeKeyName>
+                        <KeyName>Botkin</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>EMI April Music</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Screen Gems-EMI Music Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200173</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A2</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Family Affair</TitleText>
+                <SubTitle>Spanish Fly Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT7M51.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Family Affair</TitleText>
+                    <SubTitle>Spanish Fly Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Family Affair</TitleText>
+                    <SubTitle>Spanish Fly Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Bruce Miller</FullName>
+                        <NamesBeforeKeyName>Bruce</NamesBeforeKeyName>
+                        <KeyName>Miller</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Andre R. Young</FullName>
+                        <NamesBeforeKeyName>Andre R.</NamesBeforeKeyName>
+                        <KeyName>Young</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Camara Kambon</FullName>
+                        <NamesBeforeKeyName>Camara</NamesBeforeKeyName>
+                        <KeyName>Kambon</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Mike Elizondo</FullName>
+                        <NamesBeforeKeyName>Mike</NamesBeforeKeyName>
+                        <KeyName>Elizondo</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Asiah Kewis</FullName>
+                        <NamesBeforeKeyName>Asiah</NamesBeforeKeyName>
+                        <KeyName>Kewis</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>Luchana N. Lodge</FullName>
+                        <NamesBeforeKeyName>Luchana N.</NamesBeforeKeyName>
+                        <KeyName>Lodge</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>Asiah Town Entertainment</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="9">
+                    <PartyName>
+                        <FullName>Colorscapes Publishing</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="10">
+                    <PartyName>
+                        <FullName>Luchi Publishing Co.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="11">
+                    <PartyName>
+                        <FullName>Music Of Windswept Pacific</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="12">
+                    <PartyName>
+                        <FullName>Universal Tunes a Division of Songs of Universal Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="13">
+                    <PartyName>
+                        <FullName>Universal-MCA Music Publishing A Division of Universal Studios Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="14">
+                    <PartyName>
+                        <FullName>WB Music Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200913</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A3</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Everything</TitleText>
+                <SubTitle>Curtis &amp; Moore Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT7M6.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Everything</TitleText>
+                    <SubTitle>Curtis &amp; Moore Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Everything</TitleText>
+                    <SubTitle>Curtis &amp; Moore Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Fred Wesley</FullName>
+                        <NamesBeforeKeyName>Fred</NamesBeforeKeyName>
+                        <KeyName>Wesley</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Hachidai Nakamura</FullName>
+                        <NamesBeforeKeyName>Hachidai</NamesBeforeKeyName>
+                        <KeyName>Nakamura</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>James Brown</FullName>
+                        <NamesBeforeKeyName>James</NamesBeforeKeyName>
+                        <KeyName>Brown</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>James Harris III</FullName>
+                        <NamesBeforeKeyName>James</NamesBeforeKeyName>
+                        <KeyName>Harris III</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>John Starks</FullName>
+                        <NamesBeforeKeyName>John</NamesBeforeKeyName>
+                        <KeyName>Starks</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Linda Creed</FullName>
+                        <NamesBeforeKeyName>Linda</NamesBeforeKeyName>
+                        <KeyName>Creed</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>Rokusuke Ei</FullName>
+                        <NamesBeforeKeyName>Rokusuke</NamesBeforeKeyName>
+                        <KeyName>Ei</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>Terry Lewis</FullName>
+                        <NamesBeforeKeyName>Terry</NamesBeforeKeyName>
+                        <KeyName>Lewis</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="9">
+                    <PartyName>
+                        <FullName>Thom Bell</FullName>
+                        <NamesBeforeKeyName>Thom</NamesBeforeKeyName>
+                        <KeyName>Bell</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="10">
+                    <PartyName>
+                        <FullName>Ardmore &amp; Beechwood Ltd.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="11">
+                    <PartyName>
+                        <FullName>Assorted Music</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="12">
+                    <PartyName>
+                        <FullName>Beechwood Music Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="13">
+                    <PartyName>
+                        <FullName>Bell Boy Music</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="14">
+                    <PartyName>
+                        <FullName>Dynatone Publishing Co.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="15">
+                    <PartyName>
+                        <FullName>EMI Music Publishing Ltd.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="16">
+                    <PartyName>
+                        <FullName>Flyte Tyme Tunes Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="17">
+                    <PartyName>
+                        <FullName>Jadar Music Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="18">
+                    <PartyName>
+                        <FullName>Toshiba Music Publ.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="19">
+                    <PartyName>
+                        <FullName>Warner Chappell Music</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="20">
+                    <PartyName>
+                        <FullName>Warner-Tamerlane Publishing Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200699</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A4</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Rainy Dayz</TitleText>
+                <SubTitle>Thunderpuss Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT7M56.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Rainy Dayz</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Rainy Dayz</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Jeffrey Atkins</FullName>
+                        <NamesBeforeKeyName>Jeffrey</NamesBeforeKeyName>
+                        <KeyName>Atkins</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Irving Lorenzo</FullName>
+                        <NamesBeforeKeyName>Irving</NamesBeforeKeyName>
+                        <KeyName>Lorenzo</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Ensign Music Corporation</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Songs Of Universal, Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200909</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A5</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>He Think I Don't Know</TitleText>
+                <SubTitle>HQ2 Club Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT8M25.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>He Think I Don't Know</TitleText>
+                    <SubTitle>HQ2 Club Mix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>He Think I Don't Know</TitleText>
+                    <SubTitle>HQ2 Club Mix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Gerald Isaac</FullName>
+                        <NamesBeforeKeyName>Gerald</NamesBeforeKeyName>
+                        <KeyName>Isaac</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Careers-BMG Music Publishing, Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200910</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A6</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Your Child</TitleText>
+                <SubTitle>Junior Vasquez Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT7M32.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Your Child</TitleText>
+                    <SubTitle>Junior Vasquez Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Your Child</TitleText>
+                    <SubTitle>Junior Vasquez Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Gerald Isaac</FullName>
+                        <NamesBeforeKeyName>Gerald</NamesBeforeKeyName>
+                        <KeyName>Isaac</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Gerald W. Isaac</FullName>
+                        <NamesBeforeKeyName>Gerald W.</NamesBeforeKeyName>
+                        <KeyName>Isaac</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>BMG Songs Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200911</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A7</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Never Been</TitleText>
+                <SubTitle>al B. rich 2 Step Groove Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT5M35.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Never Been</TitleText>
+                    <SubTitle>al B. rich 2 Step Groove Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Never Been</TitleText>
+                    <SubTitle>al B. rich 2 Step Groove Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Missy Elliott</FullName>
+                        <NamesBeforeKeyName>Missy</NamesBeforeKeyName>
+                        <KeyName>Elliott</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Henri Charlemagne</FullName>
+                        <NamesBeforeKeyName>Henri</NamesBeforeKeyName>
+                        <KeyName>Charlemagne</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Gene McFadden</FullName>
+                        <NamesBeforeKeyName>Gene</NamesBeforeKeyName>
+                        <KeyName>McFadden</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>John Whitehead</FullName>
+                        <NamesBeforeKeyName>John</NamesBeforeKeyName>
+                        <KeyName>Whitehead</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Jerry Cohen</FullName>
+                        <NamesBeforeKeyName>Jerry</NamesBeforeKeyName>
+                        <KeyName>Cohen</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Johnny Handsome Music</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>WB Music Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>Warner-Tamerlane Publishing Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10112241</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A8</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Dance For Me</TitleText>
+                <SubTitle>G-Club Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT7M12.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Dance For Me</TitleText>
+                    <SubTitle>G-Club Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Dance For Me</TitleText>
+                    <SubTitle>G-Club Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Ahkim Miller</FullName>
+                        <NamesBeforeKeyName>Ahkim</NamesBeforeKeyName>
+                        <KeyName>Miller</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Bruce Miller</FullName>
+                        <NamesBeforeKeyName>Bruce</NamesBeforeKeyName>
+                        <KeyName>Miller</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Damon Blackmon</FullName>
+                        <NamesBeforeKeyName>Damon</NamesBeforeKeyName>
+                        <KeyName>Blackmon</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Sting</FullName>
+                        <KeyName>Sting</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Ahkim Miller Publishing Designee</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>EMI Blackwood Music Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>Sony/ATV Tunes LLC</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="9">
+                    <PartyName>
+                        <FullName>Universal Tunes a Division of Songs of Universal Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="10">
+                    <PartyName>
+                        <FullName>Universal-MCA Music Publishing A Division of Universal Studios Inc.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2001 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200912</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A9</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Give Me You</TitleText>
+                <SubTitle>Extended Nino Radio Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT6M41.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Give Me You</TitleText>
+                    <SubTitle>Extended Nino Radio Mix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Give Me You</TitleText>
+                    <SubTitle>Extended Nino Radio Mix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Diane Warren</FullName>
+                        <NamesBeforeKeyName>Diane</NamesBeforeKeyName>
+                        <KeyName>Warren</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Realsongs</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USMC10200914</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A10</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Let No Man Put Asunder</TitleText>
+            </ReferenceTitle>
+            <Duration>PT4M23.000S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Let No Man Put Asunder</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Let No Man Put Asunder</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <IndirectResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Bruce E. Gray</FullName>
+                        <NamesBeforeKeyName>Bruce E.</NamesBeforeKeyName>
+                        <KeyName>Gray</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Bruce Hawes</FullName>
+                        <NamesBeforeKeyName>Bruce</NamesBeforeKeyName>
+                        <KeyName>Hawes</KeyName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>Composer</IndirectResourceContributorRole>
+                    <IndirectResourceContributorRole>Author</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Industrial Strength Music</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Lucky Three Music Publ. Co.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <IndirectResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Warner-Tamerlane Publishing Corp.</FullName>
+                    </PartyName>
+                    <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+                </IndirectResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <PLine>
+                    <PLineText>(P) 1999 Geffen Records</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">06UMGIM08697</ProprietaryId>
+            </ImageId>
+            <ResourceReference>A11</ResourceReference>
+            <Title>
+                <TitleText>Dance For Me</TitleText>
+            </Title>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Dance For Me</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Dance For Me</TitleText>
+                </Title>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ResourceContributorRole>MainArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <CLine>
+                    <CLineText>(C) 2002 Geffen Records</CLineText>
+                </CLine>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release IsMainRelease="true">
+            <ReleaseId>
+                <ICPN IsEan="false">00008811295929</ICPN>
+            </ReleaseId>
+            <ReleaseReference>R0</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Dance For Me</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A11</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Dance For Me</TitleText>
+                </Title>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Dance For Me</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroup>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>1</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>2</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>3</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>4</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>5</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>6</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>7</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>8</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>9</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>10</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                            <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                            <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                        </ResourceGroupContentItem>
+                    </ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>Image</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A11</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <CLine>
+                    <CLineText>(C) 2002 Geffen Records</CLineText>
+                </CLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+                <OriginalReleaseDate>2002-01-01</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music New Zealand Limited</LabelName>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>UMC (Universal Music Catalogue)</LabelName>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT1H12M1.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200199_R1</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R1</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>No More Drama</TitleText>
+                <SubTitle>Thunderpuss Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>No More Drama</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>No More Drama</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT9M20.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200173_R2</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R2</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Family Affair</TitleText>
+                <SubTitle>Spanish Fly Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Family Affair</TitleText>
+                    <SubTitle>Spanish Fly Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Family Affair</TitleText>
+                    <SubTitle>Spanish Fly Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT7M51.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200913_R3</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R3</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Everything</TitleText>
+                <SubTitle>Curtis &amp; Moore Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Everything</TitleText>
+                    <SubTitle>Curtis &amp; Moore Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Everything</TitleText>
+                    <SubTitle>Curtis &amp; Moore Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT7M6.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200699_R4</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R4</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Rainy Dayz</TitleText>
+                <SubTitle>Thunderpuss Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Rainy Dayz</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Rainy Dayz</TitleText>
+                    <SubTitle>Thunderpuss Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT7M56.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200909_R5</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R5</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>He Think I Don't Know</TitleText>
+                <SubTitle>HQ2 Club Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>He Think I Don't Know</TitleText>
+                    <SubTitle>HQ2 Club Mix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>He Think I Don't Know</TitleText>
+                    <SubTitle>HQ2 Club Mix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT8M25.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200910_R6</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R6</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Your Child</TitleText>
+                <SubTitle>Junior Vasquez Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Your Child</TitleText>
+                    <SubTitle>Junior Vasquez Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Your Child</TitleText>
+                    <SubTitle>Junior Vasquez Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT7M32.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200911_R7</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R7</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Never Been</TitleText>
+                <SubTitle>al B. rich 2 Step Groove Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Never Been</TitleText>
+                    <SubTitle>al B. rich 2 Step Groove Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Never Been</TitleText>
+                    <SubTitle>al B. rich 2 Step Groove Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT5M35.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10112241_R8</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R8</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Dance For Me</TitleText>
+                <SubTitle>G-Club Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Dance For Me</TitleText>
+                    <SubTitle>G-Club Remix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Dance For Me</TitleText>
+                    <SubTitle>G-Club Remix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2001 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT7M12.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200912_R9</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R9</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Give Me You</TitleText>
+                <SubTitle>Extended Nino Radio Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Give Me You</TitleText>
+                    <SubTitle>Extended Nino Radio Mix</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Give Me You</TitleText>
+                    <SubTitle>Extended Nino Radio Mix</SubTitle>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 2002 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT6M41.000S</Duration>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ProprietaryId Namespace="PADPIDA2012031302R">00008811295929_USMC10200914_R10</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R10</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Let No Man Put Asunder</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Mary J. Blige</DisplayArtistName>
+                <Title TitleType="FormalTitle">
+                    <TitleText>Let No Man Put Asunder</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Let No Man Put Asunder</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Mary J. Blige</FullName>
+                        <NamesBeforeKeyName>Mary J.</NamesBeforeKeyName>
+                        <KeyName>Blige</KeyName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NoAdviceAvailable</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                        <IsInstantGratificationResource>false</IsInstantGratificationResource>
+                        <IsPreOrderIncentiveResource>false</IsPreOrderIncentiveResource>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>R &amp; B</GenreText>
+                </Genre>
+                <PLine>
+                    <PLineText>(P) 1999 Geffen Records</PLineText>
+                </PLine>
+                <ReleaseDate>2014-10-10</ReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>NZ</TerritoryCode>
+                <LabelName>Universal Music</LabelName>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Polydor</LabelName>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT4M23.000S</Duration>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>R1</DealReleaseReference>
+            <DealReleaseReference>R2</DealReleaseReference>
+            <DealReleaseReference>R3</DealReleaseReference>
+            <DealReleaseReference>R4</DealReleaseReference>
+            <DealReleaseReference>R5</DealReleaseReference>
+            <DealReleaseReference>R6</DealReleaseReference>
+            <DealReleaseReference>R7</DealReleaseReference>
+            <DealReleaseReference>R8</DealReleaseReference>
+            <DealReleaseReference>R9</DealReleaseReference>
+            <DealReleaseReference>R10</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <IsPreOrderDeal>false</IsPreOrderDeal>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>NZ</TerritoryCode>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <PriceType Namespace="PADPIDA2012031302R">STAP</PriceType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2015-02-06</StartDate>
+                    </ValidityPeriod>
+                    <ReleaseDisplayStartDate>2014-10-10</ReleaseDisplayStartDate>
+                    <TrackListingPreviewStartDate>2014-10-10</TrackListingPreviewStartDate>
+                    <CoverArtPreviewStartDate>2014-10-10</CoverArtPreviewStartDate>
+                    <ClipPreviewStartDate>2014-10-10</ClipPreviewStartDate>
+                </DealTerms>
+            </Deal>
+            <Deal>
+                <DealTerms>
+                    <IsPreOrderDeal>false</IsPreOrderDeal>
+                    <CommercialModelType>SubscriptionModel</CommercialModelType>
+                    <Usage>
+                        <UseType>Stream</UseType>
+                    </Usage>
+                    <TerritoryCode>NZ</TerritoryCode>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <PriceType Namespace="PADPIDA2012031302R">STAP</PriceType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2015-02-06</StartDate>
+                    </ValidityPeriod>
+                    <ReleaseDisplayStartDate>2014-10-10</ReleaseDisplayStartDate>
+                    <TrackListingPreviewStartDate>2014-10-10</TrackListingPreviewStartDate>
+                    <CoverArtPreviewStartDate>2014-10-10</CoverArtPreviewStartDate>
+                    <ClipPreviewStartDate>2014-10-10</ClipPreviewStartDate>
+                </DealTerms>
+            </Deal>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R0</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <IsPreOrderDeal>false</IsPreOrderDeal>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <PriceType Namespace="PADPIDA2012031302R">MP</PriceType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2015-02-06</StartDate>
+                    </ValidityPeriod>
+                    <ReleaseDisplayStartDate>2014-10-10</ReleaseDisplayStartDate>
+                    <TrackListingPreviewStartDate>2014-10-10</TrackListingPreviewStartDate>
+                    <CoverArtPreviewStartDate>2014-10-10</CoverArtPreviewStartDate>
+                    <ClipPreviewStartDate>2014-10-10</ClipPreviewStartDate>
+                </DealTerms>
+            </Deal>
+            <Deal>
+                <DealTerms>
+                    <IsPreOrderDeal>false</IsPreOrderDeal>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>NZ</TerritoryCode>
+                    <PriceInformation>
+                        <PriceType Namespace="PADPIDA2012031302R">TP</PriceType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2015-02-06</StartDate>
+                    </ValidityPeriod>
+                    <ReleaseDisplayStartDate>2014-10-10</ReleaseDisplayStartDate>
+                    <TrackListingPreviewStartDate>2014-10-10</TrackListingPreviewStartDate>
+                    <CoverArtPreviewStartDate>2014-10-10</CoverArtPreviewStartDate>
+                    <ClipPreviewStartDate>2014-10-10</ClipPreviewStartDate>
+                </DealTerms>
+            </Deal>
+        </ReleaseDeal>
+    </DealList>
+</ern:NewReleaseMessage>
