@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
@@ -18,6 +19,18 @@ public class NZSubscriberInfoService implements InitializingBean {
 
     NZSubscriberInfoRepository subscriberInfoRepository;
     NZSubscriberInfoProvider subscriberInfoProvider;
+
+    @Transactional
+    public void confirm(int userId, String msisdn) {
+        NZSubscriberInfo existing = subscriberInfoRepository.findSubscriberInfoByUserId(userId);
+        if(existing != null) {
+            existing.unassignUser();
+        }
+
+        log.info("confirm msisdn {} for {}", msisdn, userId);
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
+        nzSubscriberInfo.setUserId(userId);
+    }
 
     public boolean belongs(String msisdn) throws ProviderNotAvailableException, MsisdnNotFoundException {
         log.info("Checking if {} is Vodafone msisdn.", msisdn);

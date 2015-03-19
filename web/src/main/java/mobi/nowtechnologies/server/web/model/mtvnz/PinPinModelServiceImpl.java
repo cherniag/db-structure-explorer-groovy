@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
-import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
+import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.web.model.PinModelService;
 
@@ -23,18 +22,15 @@ import com.google.common.collect.Collections2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.transaction.annotation.Transactional;
-
 public class PinPinModelServiceImpl implements PinModelService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     PaymentPolicyService paymentPolicyService;
     @Resource
-    NZSubscriberInfoRepository subscriberInfoRepository;
+    NZSubscriberInfoService nzSubscriberInfoService;
 
     @Override
-    @Transactional
     public Map<String, Object> getModel(User user, String phone) {
         List<PaymentPolicy> filtered = filterWithOneDurationLength(paymentPolicyService.findPaymentPolicies(user));
 
@@ -46,7 +42,7 @@ public class PinPinModelServiceImpl implements PinModelService {
 
         Object policies = new ArrayList<>(new TreeSet<>(converted));
 
-        confirm(user.getId(), phone);
+        nzSubscriberInfoService.confirm(user.getId(), phone);
 
         return Collections.singletonMap("paymentPolicyDtos", policies);
     }
@@ -63,17 +59,6 @@ public class PinPinModelServiceImpl implements PinModelService {
         }
 
         return dtos;
-    }
-
-    private void confirm(int userId, String msisdn) {
-        NZSubscriberInfo existing = subscriberInfoRepository.findSubscriberInfoByUserId(userId);
-        if(existing != null) {
-            existing.unassignUser();
-        }
-
-        logger.info("confirm msisdn {} for {}", msisdn, userId);
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
-        nzSubscriberInfo.setUserId(userId);
     }
 
 }
