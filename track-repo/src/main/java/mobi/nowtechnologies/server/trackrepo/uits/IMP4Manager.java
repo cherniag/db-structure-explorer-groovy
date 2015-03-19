@@ -13,8 +13,4 @@ public interface IMP4Manager {
     int process(InputStream audioFile, OutputStream data, OutputStream header, OutputStream encoded, UitsParameters params, String md5, boolean encrypt);
 
     int process(String inputFile, String audioFile, String headerFile, String encodedFile, UitsParameters params, String md5, boolean encrypt) throws IOException;
-
-    int processHeader(InputStream header, OutputStream out, UitsParameters params, String md5);
-
-    String getMediaHash(String audioFile);
 }

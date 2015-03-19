@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.error.ThrottlingException;
-
 import javax.servlet.http.HttpServletRequest;
 
 public interface ThrottlingService {

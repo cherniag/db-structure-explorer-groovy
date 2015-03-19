@@ -28,9 +28,7 @@ public abstract class IParser {
         try {
             if (file.isDirectory() || file.getCanonicalFile().isDirectory()) {
                 boolean symlink = file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath());
-                return symlink ?
-                       false :
-                       true;
+                return !symlink;
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
@@ -43,15 +41,17 @@ public abstract class IParser {
             File commitFile = new File(drop.name + "/" + INGEST_ACK);
             try {
                 commitFile.createNewFile();
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage());
+            }
+            catch (IOException e) {
+                LOGGER.error("Can't create new commitFile {}", commitFile, e);
             }
         }
         File commitFile = new File(drop.name + "/" + AUTO_INGEST_ACK);
         try {
             commitFile.createNewFile();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+        }
+        catch (IOException e) {
+            LOGGER.error("Can't create new commitFile {}", commitFile, e);
         }
     }
 

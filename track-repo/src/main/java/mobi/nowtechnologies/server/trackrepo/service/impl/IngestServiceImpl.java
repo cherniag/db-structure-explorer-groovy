@@ -18,7 +18,7 @@ import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestData;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
-import mobi.nowtechnologies.server.trackrepo.ingest.Ingestors;
+import mobi.nowtechnologies.server.trackrepo.ingest.Ingestor;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
@@ -35,6 +35,9 @@ import javax.mail.internet.MimeMessage;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +54,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,29 +93,29 @@ public class IngestServiceImpl implements IngestService {
     public IngestWizardData getDrops(String... ingestors) throws Exception {
         LOGGER.debug("getDrops [ingestors:{}]", Arrays.toString(ingestors));
         IngestWizardData result = updateIngestData(null, false);
-        List<Ingestors> ingObjs = new ArrayList<Ingestors>();
+        List<Ingestor> ingObjs = new ArrayList<>();
 
         if (ingestors != null && ingestors.length > 0) {
             for (String ingStr : ingestors) {
-                ingObjs.add(Ingestors.valueOf(ingStr));
+                ingObjs.add(Ingestor.valueOf(ingStr));
             }
         }
 
         if (ingObjs.isEmpty()) {
-            ingObjs.addAll(Arrays.asList(Ingestors.values()));
+            ingObjs.addAll(Arrays.asList(Ingestor.values()));
         }
 
         result.setDropdata(getDropsData(ingObjs));
         return result;
     }
 
-    private DropsData getDropsData(List<Ingestors> ingestors) throws Exception {
+    private DropsData getDropsData(List<Ingestor> ingestors) throws Exception {
         DropsData drops = new DropsData();
         drops.setDrops(new ArrayList<Drop>());
 
         Set<Callable<List<Drop>>> callables = new HashSet<>();
-
-        for (final Ingestors ingestor : ingestors) {
+        
+        for (final Ingestor ingestor : ingestors) {
             callables.add(getParsedDropsCallable(ingestor));
         }
 
@@ -122,7 +126,7 @@ public class IngestServiceImpl implements IngestService {
         return drops;
     }
 
-    private Callable<List<Drop>> getParsedDropsCallable(final Ingestors ingestor) {
+    private Callable<List<Drop>> getParsedDropsCallable(final Ingestor ingestor) {
         return new Callable<List<Drop>>() {
             @Override
             public List<Drop> call() throws Exception {
@@ -171,9 +175,9 @@ public class IngestServiceImpl implements IngestService {
     protected void processDrop(Drop drop, boolean updateFiles) throws IOException, InterruptedException {
         LOGGER.debug("INGEST processFinish");
         IParser parser = drop.getParser();
-        Ingestors ingestor = drop.getIngestor();
+        Ingestor ingestor = drop.getIngestor();
 
-        LOGGER.info("Loading " + drop.getName() + " with " + parser.getClass());
+        LOGGER.info("Loading [{}] with [{}]", drop.getName(), parser.getClass());
 
         Map<String, DropTrack> tracks = drop.getIngestdata() != null ?
                                         drop.getIngestdata().getTracks() :
@@ -229,8 +233,11 @@ public class IngestServiceImpl implements IngestService {
                 track.setExplicit(value.explicit);
                 track.setReportingType(value.getReportingType());
 
-                if (!addOrUpdateFiles(track, value.files, updateFiles)) {
+                if (!addOrUpdateFiles(track, value.files, updateFiles, ingestor)) {
                     commit(ingestor, parser, drop.getDrop(), list, false, true, "Drop is updating asset files: to be processed manually");
+                    if (ingestor.equals(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13)){
+                        continue;
+                    }
                     return;
                 }
 
@@ -248,9 +255,10 @@ public class IngestServiceImpl implements IngestService {
                 }
 
                 trackRepository.save(track);
-            } else if (value.type == Type.DELETE) {
-                LOGGER.info("DELETE " + value.productId);
-                Track track = trackRepository.findByProductCode((String) value.productId);
+            }
+            else if (value.type == Type.DELETE) {
+                LOGGER.info("DELETE [{}]", value.productId);
+                Track track = trackRepository.findByProductCode(value.productId);
                 if (track != null) {
                     trackRepository.delete(track);
                 }
@@ -338,7 +346,7 @@ public class IngestServiceImpl implements IngestService {
                     data.getData().add(dataTrack);
                 }
             }
-            LOGGER.info("Drop {} tracks to ingest: ", drop.getName(), drop.getIngestdata().getData().size());
+            LOGGER.info("Drop {} tracks to ingest: {} files", drop.getName(), drop.getIngestdata().getData().size());
         }
         return command;
     }
@@ -423,16 +431,16 @@ public class IngestServiceImpl implements IngestService {
         return takeDown;
     }
 
-    protected boolean addOrUpdateFiles(Track track, List<DropAssetFile> dropFiles, boolean updateFiles) {
+    protected boolean addOrUpdateFiles(Track track, List<DropAssetFile> dropFiles, boolean updateFiles, Ingestor ingestor) {
         Set<AssetFile> files = track.getFiles();
         if (files == null) {
-            files = new HashSet<AssetFile>();
+            files = new HashSet<>();
             track.setFiles(files);
         }
 
-        LOGGER.info("Adding files " + dropFiles.size());
+        LOGGER.info("Adding files {}", dropFiles.size());
         for (DropAssetFile file : dropFiles) {
-            if (!addOrUpdateFile(files, file, updateFiles)) {
+            if (!addOrUpdateFile(files, file, updateFiles, ingestor)) {
                 return false;
             }
         }
@@ -449,11 +457,11 @@ public class IngestServiceImpl implements IngestService {
         return true;
     }
 
-    protected boolean addOrUpdateFile(Set<AssetFile> files, DropAssetFile dropFile, boolean force) {
+    protected boolean addOrUpdateFile(Set<AssetFile> files, DropAssetFile dropFile, boolean updateFiles, Ingestor ingestor) {
         boolean found = false;
         for (AssetFile file : files) {
             if (file.getType() == dropFile.type) {
-                if (!force) {
+                if (!hasToBeUpdated(updateFiles, ingestor, dropFile)) {
                     return false; // Do not update existing file
                 }
                 file.setPath(dropFile.file);
@@ -472,6 +480,17 @@ public class IngestServiceImpl implements IngestService {
             files.add(file);
         }
         return true;
+    }
+
+    private boolean hasToBeUpdated(boolean updateFiles, Ingestor ingestor, DropAssetFile dropFile) {
+        Preconditions.checkNotNull(ingestor);
+        Preconditions.checkNotNull(dropFile);
+        Preconditions.checkNotNull(dropFile.file);
+
+        Path path = Paths.get(dropFile.file);
+        boolean isFileDoesNotExist = Files.notExists(path);
+
+        return ingestor.equals(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13) && isFileDoesNotExist ? false : updateFiles;
     }
 
     /*
@@ -519,12 +538,12 @@ public class IngestServiceImpl implements IngestService {
 
     }
 
-    private void commit(Ingestors ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto, String message) throws IOException, InterruptedException {
+    private void commit(Ingestor ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto, String message) throws IOException, InterruptedException {
         parser.commit(drop, auto);
         logIngest(ingestor, parser, drop, tracks, status, message);
     }
 
-    private void logIngest(Ingestors ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, String message) {
+    private void logIngest(Ingestor ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, String message) {
         Set<DropContent> cnt = new HashSet<DropContent>();
         if (tracks != null) {
             for (DropTrack track : tracks) {

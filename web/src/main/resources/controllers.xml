@@ -5,14 +5,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/mvc
-	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="subscriptionInfoAsm" class="mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm">
         <property name="timeService" ref="timeService"/>
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
     </bean>
-
-    <bean name="web.VersionController" class="mobi.nowtechnologies.server.controller.VersionController"/>
 
     <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
 
@@ -145,5 +143,5 @@
 
     <!-- Static Pages -->
     <mvc:view-controller path="/privacy_policy.html" view-name="privacy_policy"/>
-
+    <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
 </beans>
