@@ -13,12 +13,14 @@ public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
     // duration is always is one
     private DurationUnit durationUnit;
     private String appStoreProductId;
+    private String paymentType;
 
     public PaymentPolicyDto(PaymentPolicy paymentPolicy) {
         this.id = paymentPolicy.getId();
         this.subCost = paymentPolicy.getSubcost();
         this.durationUnit = paymentPolicy.getPeriod().getDurationUnit();
         this.appStoreProductId = paymentPolicy.getAppStoreProductId();
+        this.paymentType = paymentPolicy.getPaymentType();
     }
 
     public int getId() {
@@ -64,11 +66,12 @@ public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
     @Override
     public String toString() {
         return "PaymentPolicyDto{" +
-                "id=" + id +
-                ", subCost=" + subCost +
-                ", durationUnit=" + durationUnit +
-                ", appStoreProductId='" + appStoreProductId + '\'' +
-                '}';
+               "id=" + id +
+               ", paymentType=" + paymentType +
+               ", durationUnit=" + durationUnit +
+               ", subCost='" + subCost + '\'' +
+               ", appStoreProductId='" + appStoreProductId + '\'' +
+               '}';
     }
 
     public static Collection<PaymentPolicyDto> convert(Collection<PaymentPolicy> paymentPolicies) {

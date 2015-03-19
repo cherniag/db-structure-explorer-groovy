@@ -36,14 +36,18 @@ public class PinPinModelServiceImpl implements PinModelService {
     @Override
     @Transactional
     public Map<String, Object> getModel(User user, String phone) {
-        List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
-        List<PaymentPolicy> filtered = filterWithOneDurationLength(all);
+        List<PaymentPolicy> filtered = filterWithOneDurationLength(paymentPolicyService.findPaymentPolicies(user));
+
+        logger.info("Found for community {} payment policies: {}", user.getCommunity().getRewriteUrlParameter(), PaymentPolicyDto.convert(filtered));
 
         Collection<PaymentPolicy> vfPsms = Collections2.filter(filtered, new PaymentTypePredicate(PaymentDetails.MTVNZ_PSMS_TYPE));
 
-        Preconditions.checkState(vfPsms.size() == 2, "Found not one payment policy for vfPsms for community " + user.getCommunity());
-
         Collection<PaymentPolicyDto> converted = PaymentPolicyDto.convert(vfPsms);
+
+        logger.info("Found for community {} and payment type: {} payment policies: {}", user.getCommunity().getRewriteUrlParameter(), PaymentDetails.MTVNZ_PSMS_TYPE, converted);
+
+        Preconditions.checkState(converted.size() == 2, "Found not one payment policy for vfPsms for community " + user.getCommunity().getRewriteUrlParameter());
+
         Object policies = new ArrayList<>(new TreeSet<>(converted));
 
         confirm(user.getId(), phone);
