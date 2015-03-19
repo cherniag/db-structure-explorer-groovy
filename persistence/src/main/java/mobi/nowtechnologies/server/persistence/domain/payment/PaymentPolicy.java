@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "tb_paymentPolicy")
@@ -50,7 +48,7 @@ public class PaymentPolicy {
 
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
+
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     @Column(name = "i")
@@ -112,14 +110,10 @@ public class PaymentPolicy {
     private PaymentPolicyType paymentPolicyType;
 
     public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-        LOGGER.debug("input parameters paymentPolicies: [{}]", paymentPolicies);
-
         List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
         for (PaymentPolicy paymentPolicy : paymentPolicies) {
             offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
         }
-
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
         return offerPaymentPolicyDtos;
     }
 
@@ -224,7 +218,6 @@ public class PaymentPolicy {
 
         offerPaymentPolicyDto.setPaymentType(paymentType);
 
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDto);
         return offerPaymentPolicyDto;
     }
 

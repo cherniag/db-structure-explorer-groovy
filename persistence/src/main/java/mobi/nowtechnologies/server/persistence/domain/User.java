@@ -1533,6 +1533,10 @@ public class User implements Serializable {
                           .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 
+    public boolean isPaymentInProgress() {
+        return getCurrentPaymentDetails() != null && (getCurrentPaymentDetails().isAwaiting() || getCurrentPaymentDetails().isErrorAndCanRetry());
+    }
+
     public static enum Fields {
         userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
     }
