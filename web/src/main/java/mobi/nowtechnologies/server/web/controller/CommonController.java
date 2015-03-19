@@ -74,7 +74,7 @@ public abstract class CommonController implements MessageSourceAware {
             URL reconstructedURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());
             return reconstructedURL.toString();
         } catch (MalformedURLException e) {
-            LOGGER.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
