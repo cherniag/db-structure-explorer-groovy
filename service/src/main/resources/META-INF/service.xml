@@ -477,7 +477,9 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <bean id="service.bean.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.DumbMessageNotificationServiceImpl"/>
     <bean id="o2.service.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.O2OAndVFNZMessageNotificationServiceImpl"/>
     <bean id="vf_nz.service.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.O2OAndVFNZMessageNotificationServiceImpl"/>
-    <bean id="mtvnz.service.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.MTVNZMessageNotificationServiceImpl"/>
+    <bean id="mtvnz.service.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.MTVNZMessageNotificationServiceImpl">
+		<property name="messageSource" ref="serviceMessageSource"/>
+	</bean>
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
