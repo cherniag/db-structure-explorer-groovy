@@ -47,6 +47,7 @@
 	</mvc:annotation-driven>
 	
 	<mvc:resources mapping="/assets/**" location="/assets/**" />
+    <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
 	
 	<!-- Application Message Bundle -->
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

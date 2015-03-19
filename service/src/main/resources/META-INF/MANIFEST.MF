@@ -1,2 +1,5 @@
 Manifest-Version: 1.0
-
+Project-Version: ${project.version}
+Build-Number: ${buildNumber}
+Bamboo-Build-Number: ${bambooBuildNumber}
+Bamboo-Branch-Name: ${bambooBranchName}

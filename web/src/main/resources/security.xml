@@ -5,7 +5,7 @@
 
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <sec:http pattern="/version" security="none" />
+    <sec:http pattern="/MANIFEST.MF" security="none" />
 
     <sec:http create-session="stateless" use-expressions="true">
 
@@ -63,7 +63,7 @@
         <property name="tokenValiditySeconds" value="${rememberMe.tokenValiditySeconds}"/>
         <property name="alwaysRemember" value="true"/>
         <property name="successfulHander">
-            <bean class="mobi.nowtechnologies.server.security.authentication.NowTechBasedRememberMeSuccessfulHandler">
+            <bean class="mobi.nowtechnologies.server.web.service.impl.NowTechBasedRememberMeSuccessfulHandler">
                 <property name="userService" ref="service.UserService" />
                 <property name="promotionService" ref="service.PromotionService" />
             </bean>
@@ -74,9 +74,9 @@
         <property name="facebookUserDetailsServiceImpl" ref="facebookUserDetailsServiceImpl" />
     </bean>
 
-    <bean id="chartsNowPasswordEncoder" class="mobi.nowtechnologies.server.shared.web.security.utils.ChartsNowPasswordEncoder" />
+    <bean id="chartsNowPasswordEncoder" class="mobi.nowtechnologies.server.web.security.ChartsNowPasswordEncoder" />
 
-    <bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.shared.web.security.service.impl.UserDetailsServiceImpl">
+    <bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.web.service.impl.UserDetailsServiceImpl">
         <property name="userService" ref="service.UserService" />
     </bean>
 
@@ -117,5 +117,5 @@
     <bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
         <property name="nowTechTokenBasedRememberMeServices"  ref="nowTechBasedRememberMeServices"/>
     </bean>
-    <bean id="filter.slowRequestFilter" class="mobi.nowtechnologies.server.shared.web.filter.SlowRequestFilter"/>
+    <bean id="filter.slowRequestFilter" class="mobi.nowtechnologies.server.web.view.SlowRequestFilter"/>
 </beans>

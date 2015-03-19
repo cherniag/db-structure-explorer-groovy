@@ -37,10 +37,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="service.AppsFlyerDataService" class="mobi.nowtechnologies.server.service.AppsFlyerDataService"/>
 
-	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
-		<property name="manifest" value="META-INF/MANIFEST.MF" />
-	</bean>
-
 	<bean id="userStatusTypeService" class="mobi.nowtechnologies.server.service.behavior.UserStatusTypeService" />
     <bean id="behaviorInfoService" class="mobi.nowtechnologies.server.service.behavior.BehaviorInfoService">
 		<property name="activationDatePropertyName" value="referral.logic.activation.date" />

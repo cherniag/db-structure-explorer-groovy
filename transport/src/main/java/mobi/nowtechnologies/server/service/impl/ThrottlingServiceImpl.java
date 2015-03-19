@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.error.ThrottlingException;
+import mobi.nowtechnologies.server.service.ThrottlingException;
 import mobi.nowtechnologies.server.service.ThrottlingService;
 
 import javax.servlet.http.HttpServletRequest;

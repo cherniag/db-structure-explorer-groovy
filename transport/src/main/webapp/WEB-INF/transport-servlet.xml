@@ -36,11 +36,13 @@
        </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
+    <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
+
     <context:annotation-config/>
 
 	<bean id="pathVariableResolver" class="mobi.nowtechnologies.server.interceptor.PathVariableResolver"/>
 
-    <bean class="mobi.nowtechnologies.server.shared.web.mapping.RESTRequestMappingHandlerMapping">
+    <bean class="mobi.nowtechnologies.server.transport.mvc.mapping.RESTRequestMappingHandlerMapping">
        <property name="order" value="#{ T(org.springframework.core.Ordered).HIGHEST_PRECEDENCE }"/>
     </bean>
 
@@ -73,7 +75,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDto</value>
-				<value>mobi.nowtechnologies.server.dto.transport.PhoneActivationDto</value>
+				<value>mobi.nowtechnologies.server.transport.phonenumber.dto.PhoneActivationDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.AccountCheckDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.LockedTrackDto</value>

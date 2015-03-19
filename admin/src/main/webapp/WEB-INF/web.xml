@@ -12,7 +12,12 @@
     <param-name>webAppRootKey</param-name>
     <param-value>admin</param-value>
   </context-param>
-  <listener>
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>@profile@</param-value>
+    </context-param>
+
+    <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   <listener>

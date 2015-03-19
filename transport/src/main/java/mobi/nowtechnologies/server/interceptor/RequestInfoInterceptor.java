@@ -13,16 +13,18 @@ public class RequestInfoInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Object bean = handlerMethod.getBean();
-        if (bean instanceof CommonController) {
-            CommonController controller = (CommonController) bean;
-            PathVariableResolver requestInfoResolver = new PathVariableResolver(request);
-            String remoteAddr = Utils.getIpFromRequest(request);
-            controller.setCurrentApiVersion(requestInfoResolver.resolveApiVersion());
-            controller.setCurrentCommunityUri(requestInfoResolver.resolveCommunityUri());
-            controller.setCurrentCommandName(requestInfoResolver.resolveCommandName());
-            controller.setCurrentRemoteAddr(remoteAddr);
+        if(handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Object bean = handlerMethod.getBean();
+            if (bean instanceof CommonController) {
+                CommonController controller = (CommonController) bean;
+                PathVariableResolver requestInfoResolver = new PathVariableResolver(request);
+                String remoteAddr = Utils.getIpFromRequest(request);
+                controller.setCurrentApiVersion(requestInfoResolver.resolveApiVersion());
+                controller.setCurrentCommunityUri(requestInfoResolver.resolveCommunityUri());
+                controller.setCurrentCommandName(requestInfoResolver.resolveCommandName());
+                controller.setCurrentRemoteAddr(remoteAddr);
+            }
         }
 
         return super.preHandle(request, response, handler);

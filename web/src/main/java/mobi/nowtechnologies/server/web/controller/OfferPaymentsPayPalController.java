@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.OfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +52,7 @@ public class OfferPaymentsPayPalController extends CommonController {
                                       @RequestParam(value = REQUEST_PARAM_PAYPAL_PAYMENT_POLICY, required = true) Integer paymentPolicyId, @ModelAttribute(PayPalDto.NAME) PayPalDto dto,
                                       @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
         OfferDto offer = offerService.getOfferDto(offerId);
-        StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(PAGE_PAYMENTS_PAYPAL_CALLBACK.replaceFirst("\\{offerId\\}", offerId.toString()));
+        StringBuilder callbackUrl = new StringBuilder(getServerURL(request)).append(PATH_DELIM).append(PAGE_PAYMENTS_PAYPAL_CALLBACK.replaceFirst("\\{offerId\\}", offerId.toString()));
         callbackUrl.append(START_PARAM_DELIM).append(REQUEST_PARAM_PAYPAL).append("=");
 
         dto.setBillingAgreementDescription(messageSource.getMessage(PAYPAL_BILLING_AGREEMENT_DESCRIPTION, new Object[] {offer.getTitle(), offer.getPrice()}, locale));
