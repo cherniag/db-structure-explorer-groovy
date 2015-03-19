@@ -51,10 +51,13 @@
         <property name="universalDDEX_V3_7_AssetAndMetaData_V1_13_Root" value="${trackRepo.ingest.universal.ddex.3.7.asset.and.meta.data.1.13.root}"/>
 	</bean>
 
+    <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
+
     <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl" destroy-method="destroy">
 		<property name="trackRepository" ref="trackRepository" />
 		<property name="ingestionLogRepository" ref="ingestionLogRepository" />
 		<property name="parserFactory" ref="trackRepo.ParserFactory" />
+        <property name="timeService" ref="timeService" />
 		<property name="executorService">
 			<bean class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
 				<constructor-arg value="#{T(mobi.nowtechnologies.server.trackrepo.ingest.Ingestor).values().length}" />

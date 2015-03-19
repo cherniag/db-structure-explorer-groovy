@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.DropContent;
 import mobi.nowtechnologies.server.trackrepo.domain.IngestionLog;
@@ -72,6 +73,7 @@ public class IngestServiceImpl implements IngestService {
     private IngestionLogRepository ingestionLogRepository;
     private IParserFactory parserFactory;
     private ExecutorService executorService;
+    private TimeService timeService;
 
     public void setTrackRepository(TrackRepository trackRepository) {
         this.trackRepository = trackRepository;
@@ -87,6 +89,10 @@ public class IngestServiceImpl implements IngestService {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public void setTimeService(TimeService timeService) {
+        this.timeService = timeService;
     }
 
     @Override
@@ -241,7 +247,7 @@ public class IngestServiceImpl implements IngestService {
                     return;
                 }
 
-                addOrUpdateTerritories(track, value.territories);
+                addOrUpdateTerritories(track, value.territories, ingestor);
 
                 List<String> alerts = new ArrayList<String>();
                 for (DropTerritory territory : value.territories) {
@@ -396,7 +402,7 @@ public class IngestServiceImpl implements IngestService {
         return data;
     }
 
-    protected boolean addOrUpdateTerritories(Track track, List<DropTerritory> dropTerritories) {
+    protected boolean addOrUpdateTerritories(Track track, List<DropTerritory> dropTerritories, Ingestor ingestor) {
         Set<Territory> territories = track.getTerritories();
         if (territories == null) {
             territories = new HashSet<Territory>();
@@ -410,7 +416,7 @@ public class IngestServiceImpl implements IngestService {
         boolean takeDown = false;
         for (DropTerritory territoryData : dropTerritories) {
 
-            boolean result = addOrUpdateTerritory(territories, territoryData);
+            boolean result = addOrUpdateTerritory(territories, territoryData, ingestor);
             takeDown |= result;
 
             if (result) {
@@ -493,24 +499,24 @@ public class IngestServiceImpl implements IngestService {
         return ingestor.equals(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13) && isFileDoesNotExist ? false : updateFiles;
     }
 
-    /*
-     * Return false if the territory is removed (take down) Return true if the
-     * territory is added or updated.
-     */
-    protected boolean addOrUpdateTerritory(Set<Territory> territories, DropTerritory value) {
-        LOGGER.debug("Adding territory [{}] [{}]", value.country, value.label);
-        if (value.country != null) {
+    protected boolean addOrUpdateTerritory(Set<Territory> territories, DropTerritory dropTerritory, Ingestor ingestor) {
+        LOGGER.debug("Adding territory [{}] [{}]", dropTerritory.country, dropTerritory.label);
+        if (dropTerritory.country != null) {
+            if (ingestor.equals(Ingestor.EMI_UMG) && dropTerritory.takeDown && dropTerritory.country.equalsIgnoreCase("WorldWide")) {
+                for (Territory territory : territories) {
+                    markTerritoryAsDeleted(territory);
+                }
+                return false;
+            }
+
             boolean found = false;
             Territory territory = null;
-            for (Territory data : territories) {
-                if (data.getCode().equals(value.country)) {
+            for ( Territory data : territories ) {
+                if (data.getCode().equals(dropTerritory.country)) {
                     found = true;
                     territory = data;
-                    //					if (value.takeDown && value.dealReference != null && value.dealReference.equals(data.getDealReference())) {
-                    if (value.takeDown) {
-                        LOGGER.info("Take down for [{}] on [{}]", value.country, territory.getReportingId());
-                        territory.setDeleted(true);
-                        territory.setDeleteDate(new Date());
+                    if (dropTerritory.takeDown) {
+                        markTerritoryAsDeleted(territory);
                         return false;
                     }
                 }
@@ -518,24 +524,30 @@ public class IngestServiceImpl implements IngestService {
             if (!found) {
                 territory = new Territory();
                 territories.add(territory);
-                territory.setCode(value.country);
-                territory.setCreateDate(new Date());
+                territory.setCode(dropTerritory.country);
+                territory.setCreateDate(timeService.now());
             }
-            territory.setDistributor(value.distributor);
-            territory.setPublisher((value.publisher) == null ?
+            territory.setDistributor(dropTerritory.distributor);
+            territory.setPublisher((dropTerritory.publisher) == null ?
                                    "" :
-                                   value.publisher);
-            territory.setLabel(value.label);
-            territory.setCurrency(value.currency);
-            territory.setPrice(value.price);
-            territory.setStartDate(value.startdate);
-            territory.setReportingId(value.reportingId);
-            territory.setPriceCode(value.priceCode);
-            territory.setDealReference(value.dealReference);
+                                   dropTerritory.publisher);
+            territory.setLabel(dropTerritory.label);
+            territory.setCurrency(dropTerritory.currency);
+            territory.setPrice(dropTerritory.price);
+            territory.setStartDate(dropTerritory.startdate);
+            territory.setReportingId(dropTerritory.reportingId);
+            territory.setPriceCode(dropTerritory.priceCode);
+            territory.setDealReference(dropTerritory.dealReference);
             territory.setDeleted(false);
         }
         return true;
 
+    }
+
+    private void markTerritoryAsDeleted(Territory territory) {
+        LOGGER.info("Take down for [{}] on [{}]", territory.getCode(), territory.getReportingId());
+        territory.setDeleted(true);
+        territory.setDeleteDate(timeService.now());
     }
 
     private void commit(Ingestor ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto, String message) throws IOException, InterruptedException {
