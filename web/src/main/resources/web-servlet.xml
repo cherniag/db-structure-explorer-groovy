@@ -26,7 +26,7 @@
     </bean>
 
     <!-- TODO re-check usage of this bean -->
-    <bean id="web.FlashMapManager" class="mobi.nowtechnologies.server.shared.web.servlet.CookieFlashMapManager"/>
+    <bean id="web.FlashMapManager" class="mobi.nowtechnologies.server.web.view.CookieFlashMapManager"/>
 
     <!-- Configures the Spring MVC @Controller programming model -->
     <mvc:annotation-driven>
@@ -92,7 +92,7 @@
 
     <mvc:interceptors>
         <!-- Community Change Interceptor and Resolver definition -->
-        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.shared.web.interceptor.CommunityChangeInterceptor" />
+        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor" />
 
         <mvc:interceptor>
             <mvc:mapping path="/**"/>

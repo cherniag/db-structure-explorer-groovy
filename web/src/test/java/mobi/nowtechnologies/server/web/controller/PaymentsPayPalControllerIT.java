@@ -8,7 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
+import mobi.nowtechnologies.server.web.service.impl.UserDetailsImpl;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;

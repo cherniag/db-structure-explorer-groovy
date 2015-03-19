@@ -47,7 +47,7 @@ public class ServiceConfigHttpService extends AbstractHttpService {
 
         //need to overwrite default accept headers
         headers.setAccept(Arrays.asList(MediaType.ALL));
-        return new HttpEntity<>(headers);
+        return new HttpEntity<>(null, headers);
     }
 
 }

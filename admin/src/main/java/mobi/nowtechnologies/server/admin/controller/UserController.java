@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.admin.validator.UserDtoValidator;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
@@ -120,7 +119,7 @@ public class UserController extends AbstractCommonController {
         Date oldNextSubPayment = user.getNextSubPaymentAsDate();
         Date newNextSubPayment = userDto.getNextSubPayment();
 
-        if (Utils.datesNotEquals(oldNextSubPayment, newNextSubPayment) && !user.wasSubscribed()) {
+        if (!oldNextSubPayment.equals(newNextSubPayment) && !user.wasSubscribed()) {
             userDto.withFreeTrialExpiredMillis(newNextSubPayment);
         }
         return userDto;

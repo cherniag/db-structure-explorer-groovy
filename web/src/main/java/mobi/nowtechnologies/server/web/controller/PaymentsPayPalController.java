@@ -14,22 +14,33 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
 import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 import static mobi.nowtechnologies.server.web.controller.UnsubscribeController.REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 import static org.springframework.util.Assert.notNull;
 
 @Controller
@@ -124,7 +135,7 @@ public class PaymentsPayPalController extends CommonController {
         PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
         dto.setBillingAgreementDescription(messageSource.getMessage("pay.paypal.billing.agreement.description",
                                                                     new Object[] {paymentPolicyDto.getDuration(), paymentPolicyDto.getDurationUnit(), paymentPolicyDto.getSubcost()}, locale));
-        StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT).append(START_PARAM_DELIM)
+        StringBuilder callbackUrl = new StringBuilder(getServerURL(request)).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT).append(START_PARAM_DELIM)
                                                                                   .append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&")
                                                                                   .append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);

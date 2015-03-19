@@ -7,6 +7,8 @@ import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -65,5 +67,15 @@ public abstract class CommonController implements MessageSourceAware {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleAllExceptions(Exception e) {
         return new ModelAndView("errors/500");
+    }
+
+    protected String getServerURL(HttpServletRequest request) {
+        try {
+            URL reconstructedURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());
+            return reconstructedURL.toString();
+        } catch (MalformedURLException e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
     }
 }

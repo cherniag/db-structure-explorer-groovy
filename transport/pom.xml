@@ -29,30 +29,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webResources>
-                        <webResource>
-                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-                            <includes>
-                                <include>web.xml</include>
-                            </includes>
-                            <targetPath>WEB-INF</targetPath>
-                            <filtering>true</filtering>
-                        </webResource>
-                    </webResources>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>application-tests</id>
-            <properties>
-                <profile>application-tests</profile>
-            </properties>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>

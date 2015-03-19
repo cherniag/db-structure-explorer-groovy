@@ -5,9 +5,6 @@ import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +25,7 @@ public class RequestUtils {
     }
 
     public static String getCommunityURL() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = getHttpServletRequest();
         String communityURL = request.getParameter(CommunityResolverFilter.COMMUNITY_URI_PARAM);
         if (!StringUtils.hasText(communityURL)) {
             Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
@@ -39,16 +36,5 @@ public class RequestUtils {
 
         LOGGER.debug("Output parameter communityURL=[{}]", communityURL);
         return communityURL;
-    }
-
-    public static String getServerURL() {
-        try {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            URL reconstructedURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());
-            return reconstructedURL.toString();
-        } catch (MalformedURLException e) {
-            LOGGER.error(e.getMessage(), e);
-            return null;
-        }
     }
 }
