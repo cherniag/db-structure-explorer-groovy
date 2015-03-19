@@ -8,8 +8,6 @@ import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +16,11 @@ public class MTVNZMessageNotificationServiceImpl implements MessageNotificationS
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MTVNZMessageNotificationServiceImpl.class);
 
-    @Resource(name = "serviceMessageSource")
     private CommunityResourceBundleMessageSource messageSource;
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @Override
     public String getMessage(User user, String msgCodeBase, String[] msgArgs) {
