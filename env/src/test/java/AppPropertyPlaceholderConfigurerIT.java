@@ -36,16 +36,16 @@ public class AppPropertyPlaceholderConfigurerIT {
         {"classpath:application.properties", "classpath:env/com/application.properties", "classpath:props/prod_jadmin/conf/application.properties", "classpath:env/prod_jadmin/conf/application.properties"},
         {"classpath:application.properties", "classpath:env/com/application.properties", "classpath:props/prod_trackrepo/conf/application.properties", "classpath:env/prod_trackrepo/conf/application.properties"},
 
-//        {"classpath:trackrepo-application.properties", "classpath:props/autotest/conf/trackrepo-application.properties", "classpath:env/autotest/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/cherry/conf/trackrepo-application.properties", "classpath:env/cherry/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/cucumber/conf/trackrepo-application.properties", "classpath:env/cucumber/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/potato/conf/trackrepo-application.properties", "classpath:env/potato/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/kiwi/conf/trackrepo-application.properties", "classpath:env/kiwi/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/lime/conf/trackrepo-application.properties", "classpath:env/lime/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/orange/conf/trackrepo-application.properties", "classpath:env/orange/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/rage/conf/trackrepo-application.properties", "classpath:env/rage/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/staging/conf/trackrepo-application.properties", "classpath:env/staging/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:props/prod_trackrepo/conf/trackrepo-application.properties", "classpath:env/prod_trackrepo/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/autotest/conf/trackrepo-application.properties", "classpath:env/autotest/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/cherry/conf/trackrepo-application.properties", "classpath:env/cherry/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/cucumber/conf/trackrepo-application.properties", "classpath:env/cucumber/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/potato/conf/trackrepo-application.properties", "classpath:env/potato/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/kiwi/conf/trackrepo-application.properties", "classpath:env/kiwi/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/lime/conf/trackrepo-application.properties", "classpath:env/lime/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/orange/conf/trackrepo-application.properties", "classpath:env/orange/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/rage/conf/trackrepo-application.properties", "classpath:env/rage/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/staging/conf/trackrepo-application.properties", "classpath:env/staging/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties", "classpath:env/com/trackrepo-application.properties","classpath:props/prod_trackrepo/conf/trackrepo-application.properties", "classpath:env/prod_trackrepo/conf/trackrepo-application.properties"},
     };
 
     static FileSystemResourceLoader fileSystemResourceLoader = new FileSystemResourceLoader();
@@ -72,9 +72,6 @@ public class AppPropertyPlaceholderConfigurerIT {
             assertThat(
                 "The values for key [" + oldPropertyKey + "] newTrimmedProp: [" + newTrimmedProp + "] oldTrimmedProp: [" + oldTrimmedProp + "] are different in new " + filePaths[2] + " and old " +
                 filePaths[1] + "( uses " + filePaths[0] + " file as general)  files", newTrimmedProp, is(oldTrimmedProp));
-//            if (!Objects.equals(newTrimmedProp, oldTrimmedProp)) {
-//                logger.info("{}:new {}={}", filePaths[2], oldPropertyKey, oldTrimmedProp);
-//            }
         }
     }
 
