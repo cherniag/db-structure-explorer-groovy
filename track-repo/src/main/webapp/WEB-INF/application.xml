@@ -20,6 +20,8 @@
     <util:list id="trackRepo.appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>classpath:trackrepo-application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/gen-app.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/gen-trackrepo-app.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
     </util:list>

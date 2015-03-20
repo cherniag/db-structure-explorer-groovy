@@ -8,6 +8,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:application.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/gen-app.properties</value>
 				<value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
 			</list>
 		</property>
