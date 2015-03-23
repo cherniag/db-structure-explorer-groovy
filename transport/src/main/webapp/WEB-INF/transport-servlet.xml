@@ -4,9 +4,9 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/mvc
-		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<mvc:interceptors>
@@ -26,6 +26,15 @@
 				</property>
 			</bean>
 		</mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+                <property name="cacheSeconds" value="0"/>
+                <property name="useExpiresHeader" value="true"/>
+                <property name="useCacheControlHeader" value="true"/>
+                <property name="useCacheControlNoStore" value="true"/>
+            </bean>
+        </mvc:interceptor>
 	</mvc:interceptors>
 
 	<mvc:annotation-driven>
@@ -36,11 +45,13 @@
        </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
+    <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
+
     <context:annotation-config/>
 
 	<bean id="pathVariableResolver" class="mobi.nowtechnologies.server.interceptor.PathVariableResolver"/>
 
-    <bean class="mobi.nowtechnologies.server.shared.web.mapping.RESTRequestMappingHandlerMapping">
+    <bean class="mobi.nowtechnologies.server.transport.mvc.mapping.RESTRequestMappingHandlerMapping">
        <property name="order" value="#{ T(org.springframework.core.Ordered).HIGHEST_PRECEDENCE }"/>
     </bean>
 
@@ -73,7 +84,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDto</value>
-				<value>mobi.nowtechnologies.server.dto.transport.PhoneActivationDto</value>
+				<value>mobi.nowtechnologies.server.transport.phonenumber.dto.PhoneActivationDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.AccountCheckDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.LockedTrackDto</value>
@@ -119,6 +130,7 @@
             <list>
                 <ref bean="transport.JaxbMarshallingView"/>
                 <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+                    <property name="disableCaching" value="false"/>
                     <property name="objectMapper">
                         <bean class="com.fasterxml.jackson.databind.ObjectMapper">
                             <property name="serializationInclusion" value="NON_EMPTY"/>

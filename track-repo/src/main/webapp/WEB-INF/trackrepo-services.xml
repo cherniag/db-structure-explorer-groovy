@@ -19,7 +19,7 @@
         <property name="httpClient" ref="trackRepo.cloudHttpClient"/>
 		<property name="copyFileOnCloudAttemptCount" value="${cloudFile.copyFileOnCloudAttemptCount}"/>
 	</bean>
-    
+
     <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl">
         <property name="itunesScript" value="${trackRepo.itunes.script}" />
 		<property name="trackRepository" ref="trackRepository" />
@@ -47,25 +47,27 @@
         <property name="emiUmgRoot" value="${trackRepo.ingest.emi_umg.root}" />
         <property name="iodaRoot" value="${trackRepo.ingest.ioda.root}" />
         <property name="manualRoot" value="${trackRepo.ingest.manual.root}" />
-        <property name="absoluteRoot" value="${trackRepo.ingest.absolute.root}" />
         <property name="mosRoot" value="${trackRepo.ingest.mos.root}" />
+        <property name="universalDDEX_V3_7_AssetAndMetaData_V1_13_Root" value="${trackRepo.ingest.universal.ddex.3.7.asset.and.meta.data.1.13.root}"/>
 	</bean>
+
+    <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
 
     <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl" destroy-method="destroy">
 		<property name="trackRepository" ref="trackRepository" />
 		<property name="ingestionLogRepository" ref="ingestionLogRepository" />
 		<property name="parserFactory" ref="trackRepo.ParserFactory" />
+        <property name="timeService" ref="timeService" />
 		<property name="executorService">
 			<bean class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
-				<constructor-arg value="#{T(mobi.nowtechnologies.server.trackrepo.ingest.Ingestors).values().length}" />
+				<constructor-arg value="#{T(mobi.nowtechnologies.server.trackrepo.ingest.Ingestor).values().length}" />
 			</bean>
 		</property>
 	</bean>
-	
+
     <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
 		<property name="publishDir" value="${trackRepo.pull.publish}" />
-		<property name="workDir" value="${trackRepo.encode.workdir}" />
-    </bean> 
+    </bean>
 	
 	<bean id="trackRepo.FileService" class="mobi.nowtechnologies.server.trackrepo.service.impl.FileServiceImpl">
 		<property name="fileRepository" ref="fileRepository" />
@@ -200,10 +202,6 @@
 		</property>
 		<property name="defaultContentType" value="application/octet-stream"/>
 	</bean>
-
-    <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
-        <property name="manifest" value="META-INF/MANIFEST.MF" />
-    </bean>
 
 	<bean id="trackReportingOptionsService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackReportingOptionsService">
 		<property name="trackRepository" ref="trackRepository"/>

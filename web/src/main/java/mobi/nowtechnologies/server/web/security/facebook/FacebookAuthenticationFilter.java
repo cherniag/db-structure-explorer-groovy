@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.web.security.facebook;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
+import mobi.nowtechnologies.server.web.service.impl.UserDetailsImpl;
 import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 
 import javax.servlet.ServletException;

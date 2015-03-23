@@ -2,7 +2,6 @@ package mobi.nowtechnologies.common.util;
 
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 
-import java.util.Calendar;
 import java.util.Date;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -75,10 +74,6 @@ public final class DateTimeUtils {
         return (int) millisToSeconds(millis);
     }
 
-    public static boolean datesNotEquals(Date oldTime, Date newTime) {
-        return newTime.getTime() != oldTime.getTime();
-    }
-
     public static Date newDate(int dd, int mm, int yyyy) {
         return new DateTime(yyyy, mm, dd, 0, 0, 0, 0).toDate();
     }
@@ -96,17 +91,6 @@ public final class DateTimeUtils {
             return new DateTime(date.getTime(), DateTimeZone.forID(timeZoneId));
         }
         return null;
-    }
-
-    public static Date getDateWithoutMilliseconds(Date inputDate) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(inputDate);
-        c.set(Calendar.MILLISECOND, 0);
-        return c.getTime();
-    }
-
-    public static Long getTimeWithoutMilliseconds(Long inputTime) {
-        return getDateWithoutMilliseconds(new Date(inputTime)).getTime();
     }
 
     public static Date moveDate(Date date, String timeZoneId, int amount, DurationUnit unit) {

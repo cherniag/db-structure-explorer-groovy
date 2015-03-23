@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
+import mobi.nowtechnologies.server.web.service.impl.UserDetailsImpl;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;

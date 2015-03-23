@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- Application properties     -->
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -21,10 +19,5 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
     <import resource="../WEB-INF/trackrepo-services.xml"/>
 
     <bean id="mp4Manager" class="mobi.nowtechnologies.server.trackrepo.service.impl.MP4ManagerMock"/>
-
-    <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
-        <property name="manifest" value="classpath:TEST-MANIFEST.MF" />
-    </bean>
-
 
 </beans>

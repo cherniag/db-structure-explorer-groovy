@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 
+import java.util.Objects;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class DropAssetFile {
@@ -13,61 +15,21 @@ public class DropAssetFile {
     public Integer duration;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof DropAssetFile)) {
-            return false;
-        }
-
-        DropAssetFile that = (DropAssetFile) o;
-
-        if (duration != null ?
-            !duration.equals(that.duration) :
-            that.duration != null) {
-            return false;
-        }
-        if (file != null ?
-            !file.equals(that.file) :
-            that.file != null) {
-            return false;
-        }
-        if (isrc != null ?
-            !isrc.equals(that.isrc) :
-            that.isrc != null) {
-            return false;
-        }
-        if (md5 != null ?
-            !md5.equals(that.md5) :
-            that.md5 != null) {
-            return false;
-        }
-        if (type != that.type) {
-            return false;
-        }
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(file, type, md5, isrc, duration);
     }
 
     @Override
-    public int hashCode() {
-        int result = file != null ?
-                     file.hashCode() :
-                     0;
-        result = 31 * result + (type != null ?
-                                type.hashCode() :
-                                0);
-        result = 31 * result + (md5 != null ?
-                                md5.hashCode() :
-                                0);
-        result = 31 * result + (isrc != null ?
-                                isrc.hashCode() :
-                                0);
-        result = 31 * result + (duration != null ?
-                                duration.hashCode() :
-                                0);
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final DropAssetFile other = (DropAssetFile) obj;
+        return Objects.equals(this.file, other.file) && Objects.equals(this.type, other.type) && Objects.equals(this.md5, other.md5) && Objects.equals(this.isrc, other.isrc) &&
+               Objects.equals(this.duration, other.duration);
     }
 
     @Override

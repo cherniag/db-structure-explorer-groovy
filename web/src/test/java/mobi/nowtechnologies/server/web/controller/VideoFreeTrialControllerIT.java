@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
+import mobi.nowtechnologies.server.web.service.impl.UserDetailsImpl;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;

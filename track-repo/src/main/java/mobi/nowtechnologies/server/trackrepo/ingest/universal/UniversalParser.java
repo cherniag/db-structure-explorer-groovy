@@ -49,20 +49,21 @@ public class UniversalParser extends IParser {
 
         durationFormatter = new PeriodFormatterBuilder().appendHours().appendSuffix(":").appendMinutes().appendSuffix(":").appendSeconds().toFormatter();
 
-        LOGGER.info("Universal parser loading from " + root);
+        LOGGER.info("Universal parser loading from {}", root);
     }
 
-    protected Map<String, DropTrack> loadXml(String drop, String code, Map<String, List<DropAssetFile>> fulfillmentFiles) {
+    public Map<String, DropTrack> loadXml(String drop, String code, Map<String, List<DropAssetFile>> fulfillmentFiles) {
 
         SAXBuilder builder = new SAXBuilder();
         builder.setEntityResolver(new DtdLoader());
 
-        LOGGER.info("Scanning " + root + "/" + code + "_" + drop + " ");
+        LOGGER.info("Scanning {}/{}_{}", root, code, drop);
         File productDir = new File(root + "/" + code + "_" + drop);
         File[] files = productDir.listFiles();
-        Map<String, DropTrack> resultDropTracksWithMetadata = new HashMap<String, DropTrack>();
+        Map<String, DropTrack> resultDropTracksWithMetadata = new HashMap<>();
         for (File file : files) {
-            if (file.getName().endsWith(".xml")) {
+            String name = file.getName();
+            if ((!name.contains("DDEX")) && name.endsWith(".xml")) {
                 try {
                     preprocess(file);
 
@@ -72,10 +73,9 @@ public class UniversalParser extends IParser {
                     Element product = document.getRootElement();
 
                     addProductMetadata(code, fulfillmentFiles, product, resultDropTracksWithMetadata);
-                } catch (IOException io) {
+                }
+                catch (IOException | JDOMException io) {
                     LOGGER.error(io.getMessage());
-                } catch (JDOMException jdomex) {
-                    LOGGER.error(jdomex.getMessage());
                 }
             }
         }
@@ -231,30 +231,31 @@ public class UniversalParser extends IParser {
         return artist;
     }
 
+    @Override
     public Map<String, DropTrack> ingest(DropData drop) {
 
-        Map<String, DropTrack> result = new HashMap<String, DropTrack>();
+        Map<String, DropTrack> result = new HashMap<>();
         try {
             File fulfillment = new File(root + "/Delivery_Messages/fulfillment_" + drop.name + ".xml");
             SAXBuilder builder = new SAXBuilder();
             builder.setEntityResolver(new DtdLoader());
-            LOGGER.info("Loading " + fulfillment.getPath());
+            LOGGER.info("Loading [{}]", fulfillment.getPath());
 
             try {
-                Document document = (Document) builder.build(fulfillment);
+                Document document = builder.build(fulfillment);
                 Element rootNode = document.getRootElement();
 
                 @SuppressWarnings("unchecked") List<Element> products = rootNode.getChild("products").getChildren("product");
                 for (Element product : products) {
                     result.putAll(parseProduct(drop.name, product));
                 }
-            } catch (IOException io) {
-                LOGGER.error(io.getMessage());
-            } catch (JDOMException jdomex) {
-                LOGGER.error(jdomex.getMessage());
             }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            catch (IOException | JDOMException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        catch (Exception e) {
+            LOGGER.error("Can't ingest [{}] drop", drop, e);
         }
 
         return result;
@@ -265,9 +266,9 @@ public class UniversalParser extends IParser {
         String code = product.getChildText("upc");
         String base = getResourceBase(code, dropId);
 
-        Map<String, List<DropAssetFile>> fulfillmentFiles = new HashMap<String, List<DropAssetFile>>();
+        Map<String, List<DropAssetFile>> fulfillmentFiles = new HashMap<>();
 
-        List<Element> assets = new ArrayList<Element>(product.getChild("assets").getChildren("asset"));
+        List<Element> assets = new ArrayList<>(product.getChild("assets").getChildren("asset"));
         assets.addAll(product.getChild("assets").getChildren("track"));
 
         for (Element asset : assets) {
@@ -278,7 +279,7 @@ public class UniversalParser extends IParser {
 
                 List<DropAssetFile> assetFiles = fulfillmentFiles.get(assetFile.isrc);
                 if (assetFiles == null) {
-                    assetFiles = new ArrayList<DropAssetFile>();
+                    assetFiles = new ArrayList<>();
                     fulfillmentFiles.put(assetFile.isrc, assetFiles);
                 }
 
@@ -345,32 +346,35 @@ public class UniversalParser extends IParser {
         return root + File.separator + code + "_" + drop + File.separator;
     }
 
+    @Override
     public void commit(DropData drop, boolean auto) {
-
         if (!auto) {
             File commitFile = new File(root + "/Delivery_Messages/" + drop.name + ".ack");
             try {
                 commitFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+            }
+            catch (IOException e) {
+                LOGGER.error("Can't create file [{}]", commitFile, e);
             }
         }
         File commitFile = new File(root + "/Delivery_Messages/auto_" + drop.name + ".ack");
         try {
             commitFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (IOException e) {
+            LOGGER.error("Can't create file [{}]", commitFile, e);
         }
     }
 
+    @Override
     public List<DropData> getDrops(boolean auto) {
-        List<DropData> result = new ArrayList<DropData>();
+        List<DropData> result = new ArrayList<>();
         File deliveries = new File(root + "/Delivery_Messages");
         if (!deliveries.exists()) {
             LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", deliveries.getAbsolutePath());
             return result;
         }
-        LOGGER.info("Checking manifests in " + root + "/Delivery_Messages: found " + deliveries.listFiles().length);
+        LOGGER.info("Checking manifests in {}/Delivery_Messages: found {} files", root, deliveries.listFiles().length);
 
         File[] fulfillmentFiles = deliveries.listFiles();
         for (File file : fulfillmentFiles) {

@@ -1,12 +1,17 @@
 package mobi.nowtechnologies.server.transport.context;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
+import mobi.nowtechnologies.server.service.behavior.PaymentTimeService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.transport.context.dto.ContextDto;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.Date;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,26 +26,34 @@ public class ContextController extends CommonController {
 
     @Resource
     ContextDtoAsm contextDtoAsm;
+    @Resource
+    TimeService timeService;
+    @Resource
+    PaymentTimeService paymentTimeService;
 
     @RequestMapping(method = GET,
                     value = {"**/{community}/{apiVersion:6\\.10}/CONTEXT", "**/{community}/{apiVersion:6\\.9}/CONTEXT", "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
-    public ModelAndView getContext(@AuthenticatedUser User user) throws Exception {
-        return getContext(user, true);
+    public ModelAndView getContext(@AuthenticatedUser User user, HttpServletResponse response) throws Exception {
+        return getContext(user, true, response);
     }
 
     @RequestMapping(method = GET,
                     value = {"**/{community}/{apiVersion:6\\.7}/CONTEXT"})
-    public ModelAndView getContextNoFreemiumSupport(@AuthenticatedUser User user) throws Exception {
-        return getContext(user, false);
+    public ModelAndView getContextNoFreemiumSupport(@AuthenticatedUser User user, HttpServletResponse response) throws Exception {
+        return getContext(user, false, response);
     }
 
-    public ModelAndView getContext(@AuthenticatedUser User user, boolean needToLookAtActivationDate) throws Exception {
+    public ModelAndView getContext(User user, boolean needToLookAtActivationDate, HttpServletResponse response) throws Exception {
         LOGGER.info("command processing started");
         Exception ex = null;
         try {
             userService.authorize(user, false, ActivationStatus.ACTIVATED);
 
-            ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate);
+            final Date serverTime = timeService.now();
+
+            ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate, serverTime);
+
+            handleExpires(user, response, serverTime);
 
             return createModelAndView(contextDto);
         } catch (Exception e) {
@@ -49,6 +62,15 @@ public class ContextController extends CommonController {
         } finally {
             logProfileData(null, getCurrentCommunityUri(), null, null, user, ex);
             LOGGER.info("command processing finished");
+        }
+    }
+
+    private void handleExpires(User user, HttpServletResponse response, Date serverTime) {
+        if(user.isPaymentInProgress()) {
+            Date nextRetryTime = paymentTimeService.getNextRetryTime(user, serverTime);
+            if(nextRetryTime != null) {
+                response.setDateHeader("Expires", nextRetryTime.getTime());
+            }
         }
     }
 

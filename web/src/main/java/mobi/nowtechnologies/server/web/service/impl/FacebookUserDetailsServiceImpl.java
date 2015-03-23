@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.web.service.impl;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.web.security.service.impl.UserDetailsServiceImpl;
-import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import mobi.nowtechnologies.server.web.security.facebook.FacebookAuthenticationFilter;
 
