@@ -22,7 +22,6 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import static java.util.Collections.sort;
@@ -130,19 +129,12 @@ public class PaymentPolicyService {
         ProviderType provider = getProviderType(user, defaultProvider);
         List<MediaType> mediaTypes = getMediaTypes(user);
         Community community = user.getUserGroup().getCommunity();
+
         List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes);
 
-        sort(paymentPolicies, new Comparator<PaymentPolicy>() {
-            @Override
-            public int compare(PaymentPolicy p1, PaymentPolicy p2) {
-                int result = p2.getPeriod().getDurationUnit().compareTo(p1.getPeriod().getDurationUnit());
-                if (result == 0) {
-                    return new Integer(p2.getPeriod().getDuration()).compareTo(p1.getPeriod().getDuration());
-                }
-                return result;
-            }
-        });
-        return mergePaymentPolicies(user, paymentPolicies);
+        List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(user, paymentPolicies);
+        sort(paymentPolicyDtos, new PaymentPolicyDto.ByOrderAscAndDurationDesc());
+        return paymentPolicyDtos;
     }
 
     private ProviderType getProviderType(User user, ProviderType defaultProvider) {

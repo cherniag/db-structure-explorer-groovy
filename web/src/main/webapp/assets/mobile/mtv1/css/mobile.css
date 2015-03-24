@@ -564,13 +564,18 @@ body {
 
 .subscribe_header_block {
     background-color: #F5E15E;
+    padding: 13%;
+    position: relative;
 }
 
 .subscribe_header_mtv_logo {
-    background: url(../imgs/mtvtrax_header_logo.png) no-repeat center;
-    background-size: 100% auto;
+    background: url(../imgs/mtvtrax_header_logo.png) no-repeat top left;
+    background-size: contain;
     position: absolute;
-    top: 0;
+    top: 0px;
+    width: 18%;
+    height: 75%;
+    left: 2%;
 }
 
 .mtv_tracks_styled_title {
@@ -588,7 +593,12 @@ body {
 
 .subscribe_header_premium_banner {
     background: url(../imgs/subscribe_premium_banner.png) no-repeat center;
-    background-size: 100% auto;
+    background-size: contain;
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 35%;
 }
 
 .subscribe_description_block {
@@ -654,17 +664,6 @@ body {
         bottom: 20px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 84px;
-        padding-bottom: 44px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 106px;
-        height: 124px;
-        left: 14px;
-    }
-
     .mtv_tracks_styled_title_device {
         padding: 2px 16px 4px;
     }
@@ -675,12 +674,6 @@ body {
 
     .mtv_tracks_styled_title_big_device {
         font-size: 52px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 468px;
-        height: 100px;
-        margin: 20px auto 0;
     }
 
     .subscribe_description_block_device {
@@ -953,17 +946,6 @@ body {
         bottom: 18px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 70px;
-        padding-bottom: 38px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 92px;
-        height: 108px;
-        left: 12px;
-    }
-
     .mtv_tracks_styled_title_device {
         padding: 2px 16px 4px;
     }
@@ -974,12 +956,6 @@ body {
 
     .mtv_tracks_styled_title_big_device {
         font-size: 42px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 396px;
-        height: 84px;
-        margin: 18px auto 0;
     }
 
     .subscribe_description_block_device {
@@ -1104,17 +1080,6 @@ body {
         bottom: 14px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 56px;
-        padding-bottom: 30px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 70px;
-        height: 82px;
-        left: 10px;
-    }
-
     .mtv_tracks_styled_title_device {
         padding: 2px 10px 3px;
     }
@@ -1129,12 +1094,6 @@ body {
 
     .mtv_tracks_styled_title_big_device {
         font-size: 34px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 312px;
-        height: 66px;
-        margin: 14px auto 0;
     }
 
     .subscribe_description_block_device {
@@ -1282,27 +1241,12 @@ body {
         top: 42px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 52px;
-        padding-bottom: 28px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 64px;
-        height: 74px;
-    }
-
     .mtv_tracks_styled_title_small_device {
         font-size: 20px;
     }
 
     .mtv_tracks_styled_title_big_device {
         font-size: 30px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 286px;
-        height: 60px;
     }
 
     .subscribe_description_block_device {
@@ -1317,10 +1261,6 @@ body {
         width: 22px;
         height: 22px;
     }
-
-    .subscribe_option_discount_text_device{
-        height: 18px;
-    }
 }
 
 @media all and (max-width: 400px){
@@ -1330,17 +1270,6 @@ body {
         right: 12px;
         left: 12px;
         bottom: 12px;
-    }
-
-    .subscribe_header_block_device {
-        padding-top: 46px;
-        padding-bottom: 24px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 58px;
-        height: 68px;
-        left: 8px;
     }
 
     .mtv_tracks_styled_title_device {
@@ -1357,12 +1286,6 @@ body {
 
     .mtv_tracks_styled_title_big_device {
         font-size: 28px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 260px;
-        height: 56px;
-        margin: 12px auto 0;
     }
 
     .subscribe_description_block_device {
@@ -1424,29 +1347,12 @@ body {
         bottom: 10px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 42px;
-        padding-bottom: 22px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 53px;
-        height: 62px;
-        left: 7px;
-    }
-
     .mtv_tracks_styled_title_small_device {
         font-size: 16px;
     }
 
     .mtv_tracks_styled_title_big_device {
         font-size: 26px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 234px;
-        height: 50px;
-        margin: 10px auto 0;
     }
 
     .subscribe_description_block_device {
@@ -1515,29 +1421,12 @@ body {
         bottom: 8px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 38px;
-        padding-bottom: 20px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 48px;
-        height: 56px;
-        left: 6px;
-    }
-
     .mtv_tracks_styled_title_small_device {
         font-size: 14px;
     }
 
     .mtv_tracks_styled_title_big_device {
         font-size: 24px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 208px;
-        height: 46px;
-        margin: 8px auto 0;
     }
 
     .subscribe_description_block_device {
@@ -1685,16 +1574,6 @@ body {
         top: 15px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 38px;
-        padding-bottom: 18px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 200px;
-        height: 44px;
-    }
-
     .mtv_tracks_styled_title_big_device {
         font-size: 22px;
     }
@@ -1716,17 +1595,6 @@ body {
         bottom: 6px;
     }
 
-    .subscribe_header_block_device {
-        padding-top: 28px;
-        padding-bottom: 14px;
-    }
-
-    .subscribe_header_mtv_logo_device {
-        width: 36px;
-        height: 42px;
-        left: 4px;
-    }
-
     .mtv_tracks_styled_title_device {
         padding: 1px 6px 1px;
     }
@@ -1737,12 +1605,6 @@ body {
 
     .mtv_tracks_styled_title_big_device {
         font-size: 18px;
-    }
-
-    .subscribe_header_premium_banner_device {
-        width: 156px;
-        height: 34px;
-        margin: 6px auto 0;
     }
 
     .subscribe_description_block_device {
