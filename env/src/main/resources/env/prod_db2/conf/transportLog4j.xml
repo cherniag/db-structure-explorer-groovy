@@ -482,7 +482,6 @@
         <appender-ref ref="userSMSNotificationAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="paymentExecutionAppender"/>
-        <appender-ref ref="notificationJobAppender"/>
         <appender-ref ref="paymentRetryJobAppender"/>
         <appender-ref ref="cleanExpiredPaymentJobAppender"/>
         <appender-ref ref="unsubscribeControllerAppender"/>
