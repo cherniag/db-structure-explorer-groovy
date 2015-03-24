@@ -13,14 +13,9 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
-/**
- * The persistent class for the tb_country database table.
- */
 @Entity
 @Table(name = "tb_country")
 public class Country implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "i", columnDefinition = "smallint(5) unsigned")
@@ -61,8 +56,4 @@ public class Country implements Serializable {
         return new ToStringBuilder(this).append("i", i).append("name", name).append("fullName", fullName).toString();
     }
 
-    public static enum Fields {
-        i,
-        fullName, name
-    }
 }

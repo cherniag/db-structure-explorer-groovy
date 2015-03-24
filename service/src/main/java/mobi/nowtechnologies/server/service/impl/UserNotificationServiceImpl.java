@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
@@ -539,8 +540,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         Community community = userGroup.getCommunity();
         String communityUrl = community.getRewriteUrlParameter();
 
-        boolean wasSmsSentSuccessfully = false;
-
         if (availableCommunities.contains(communityUrl)) {
             if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
                 if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
@@ -567,11 +566,14 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
                     if (!StringUtils.isBlank(message)) {
                         String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
-                        SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(user.getMobile(), message, title);
-                        LOGGER.info("SmsResponse=[{}]", smsResponse);
+                        SMSGatewayService smsProvider = smsServiceFacade.getSMSProvider(communityUrl);
+                        SMSResponse smsResponse = smsProvider.send(user.getMobile(), message, title);
+
+                        LOGGER.info("SmsResponse, result: [{}], description error: [{}]", smsResponse.isSuccessful(), smsResponse.getDescriptionError());
+
                         return smsResponse.isSuccessful();
                     } else {
-                        LOGGER.info("The sms wasn't sent cause empty sms text message");
+                        LOGGER.info("The sms wasn't sent cause empty sms text message for code: {} and community {}", msgCode, communityUrl);
                     }
                 } else {
                     LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
@@ -580,7 +582,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
             }
         } else {
-            LOGGER.info("The sms wasn't sent cause rejecting");
+            LOGGER.info("The sms wasn't sent cause rejecting community {}, all available are: {}", communityUrl, availableCommunities);
         }
 
         return false;
