@@ -24,55 +24,30 @@ public class AppPropertyPlaceholderConfigurerIT {
 
     @DataPoints
     public static String[][] filePaths = {
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/autotest/conf/application.properties", "classpath:n/autotest/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/cherry/conf/application.properties", "classpath:n/cherry/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/cucumber/conf/application.properties", "classpath:n/cucumber/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/potato/conf/application.properties", "classpath:n/potato/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/kiwi/conf/application.properties", "classpath:n/kiwi/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/lime/conf/application.properties", "classpath:n/lime/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/orange/conf/application.properties", "classpath:n/orange/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/rage/conf/application.properties", "classpath:n/rage/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/staging/conf/application.properties", "classpath:n/staging/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/prod_db1/conf/application.properties", "classpath:n/prod_db1/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/prod_db2/conf/application.properties", "classpath:n/prod_db2/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/prod_jadmin/conf/application.properties", "classpath:n/prod_jadmin/conf/application.properties"},
-        {"classpath:application.properties", "classpath:n/gen-app.properties", "classpath:props/prod_trackrepo/conf/application.properties", "classpath:n/prod_trackrepo/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/autotest/conf/application.properties", "classpath:n/autotest/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/cherry/conf/application.properties", "classpath:n/cherry/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/cucumber/conf/application.properties", "classpath:n/cucumber/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/potato/conf/application.properties", "classpath:n/potato/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/kiwi/conf/application.properties", "classpath:n/kiwi/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/lime/conf/application.properties", "classpath:n/lime/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/orange/conf/application.properties", "classpath:n/orange/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/rage/conf/application.properties", "classpath:n/rage/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/staging/conf/application.properties", "classpath:n/staging/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/prod_db1/conf/application.properties", "classpath:n/prod_db1/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/prod_db2/conf/application.properties", "classpath:n/prod_db2/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/prod_jadmin/conf/application.properties", "classpath:n/prod_jadmin/conf/application.properties"},
+        {"classpath:application.properties","classpath:application_or.properties", "classpath:n/gen-app.properties", "classpath:props/prod_trackrepo/conf/application.properties", "classpath:n/prod_trackrepo/conf/application.properties"},
 
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/autotest/conf/trackrepo-application.properties", "classpath:n/autotest/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/cherry/conf/trackrepo-application.properties", "classpath:n/cherry/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/cucumber/conf/trackrepo-application.properties", "classpath:n/cucumber/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/potato/conf/trackrepo-application.properties", "classpath:n/potato/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/kiwi/conf/trackrepo-application.properties", "classpath:n/kiwi/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/lime/conf/trackrepo-application.properties", "classpath:n/lime/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/orange/conf/trackrepo-application.properties", "classpath:n/orange/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/rage/conf/trackrepo-application.properties", "classpath:n/rage/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/staging/conf/trackrepo-application.properties", "classpath:n/staging/conf/trackrepo-application.properties"},
-        {"classpath:trackrepo-application.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/prod_trackrepo/conf/trackrepo-application.properties", "classpath:n/prod_trackrepo/conf/trackrepo-application.properties"},
-
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/autotest/conf/application.properties", "classpath:env/autotest/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/cherry/conf/application.properties", "classpath:env/cherry/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/cucumber/conf/application.properties", "classpath:env/cucumber/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/potato/conf/application.properties", "classpath:env/potato/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/kiwi/conf/application.properties", "classpath:env/kiwi/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/lime/conf/application.properties", "classpath:env/lime/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/orange/conf/application.properties", "classpath:env/orange/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/rage/conf/application.properties", "classpath:env/rage/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/staging/conf/application.properties", "classpath:env/staging/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/prod_db1/conf/application.properties", "classpath:env/prod_db1/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/prod_db2/conf/application.properties", "classpath:env/prod_db2/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/prod_jadmin/conf/application.properties", "classpath:env/prod_jadmin/conf/application.properties"},
-//        {"classpath:application.properties", "classpath:env/gen-app.properties", "classpath:props/prod_trackrepo/conf/application.properties", "classpath:env/prod_trackrepo/conf/application.properties"},
-
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/autotest/conf/trackrepo-application.properties", "classpath:env/autotest/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/cherry/conf/trackrepo-application.properties", "classpath:env/cherry/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/cucumber/conf/trackrepo-application.properties", "classpath:env/cucumber/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/potato/conf/trackrepo-application.properties", "classpath:env/potato/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/kiwi/conf/trackrepo-application.properties", "classpath:env/kiwi/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/lime/conf/trackrepo-application.properties", "classpath:env/lime/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/orange/conf/trackrepo-application.properties", "classpath:env/orange/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/rage/conf/trackrepo-application.properties", "classpath:env/rage/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/staging/conf/trackrepo-application.properties", "classpath:env/staging/conf/trackrepo-application.properties"},
-//        {"classpath:trackrepo-application.properties", "classpath:env/gen-trackrepo-app.properties","classpath:props/prod_trackrepo/conf/trackrepo-application.properties", "classpath:env/prod_trackrepo/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/autotest/conf/trackrepo-application.properties", "classpath:n/autotest/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/cherry/conf/trackrepo-application.properties", "classpath:n/cherry/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/cucumber/conf/trackrepo-application.properties", "classpath:n/cucumber/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/potato/conf/trackrepo-application.properties", "classpath:n/potato/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/kiwi/conf/trackrepo-application.properties", "classpath:n/kiwi/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/lime/conf/trackrepo-application.properties", "classpath:n/lime/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/orange/conf/trackrepo-application.properties", "classpath:n/orange/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/rage/conf/trackrepo-application.properties", "classpath:n/rage/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/staging/conf/trackrepo-application.properties", "classpath:n/staging/conf/trackrepo-application.properties"},
+        {"classpath:trackrepo-application.properties","classpath:trackrepo-application_or.properties", "classpath:n/gen-trackrepo-app.properties","classpath:props/prod_trackrepo/conf/trackrepo-application.properties", "classpath:n/prod_trackrepo/conf/trackrepo-application.properties"},
     };
 
     static FileSystemResourceLoader fileSystemResourceLoader = new FileSystemResourceLoader();
@@ -83,10 +58,10 @@ public class AppPropertyPlaceholderConfigurerIT {
         AppPropertyResourceConfigurer oldAppPropertyPlaceholderConfigurer = new AppPropertyResourceConfigurer();
         AppPropertyResourceConfigurer newAppPropertyPlaceholderConfigurer = new AppPropertyResourceConfigurer();
 
-        oldAppPropertyPlaceholderConfigurer.setLocations(new Resource[] {getResource(filePaths[0]), getResource(filePaths[2])});
-        newAppPropertyPlaceholderConfigurer.setLocations(new Resource[] {getResource(filePaths[0]), getResource(filePaths[1]), getResource(filePaths[3])});
+        oldAppPropertyPlaceholderConfigurer.setLocations(new Resource[] {getResource(filePaths[1]), getResource(filePaths[3])});
+        newAppPropertyPlaceholderConfigurer.setLocations(new Resource[] {getResource(filePaths[0]), getResource(filePaths[2]), getResource(filePaths[4])});
 
-        //when
+        //when,
         Properties oldProperties = oldAppPropertyPlaceholderConfigurer.mergeProperties();
         Properties newProperties = newAppPropertyPlaceholderConfigurer.mergeProperties();
 
@@ -97,8 +72,8 @@ public class AppPropertyPlaceholderConfigurerIT {
             String newTrimmedProp = newProperties.getProperty(oldPropertyKey).trim();
             String oldTrimmedProp = oldProperties.getProperty(oldPropertyKey).trim();
             assertThat(
-                "The values for key [" + oldPropertyKey + "] newTrimmedProp: [" + newTrimmedProp + "] oldTrimmedProp: [" + oldTrimmedProp + "] are different in new " + filePaths[3] + " and old " +
-                filePaths[2] + "( uses " + filePaths[0] + " file as general)  files", newTrimmedProp, is(oldTrimmedProp));
+                "The values for key [" + oldPropertyKey + "] newTrimmedProp: [" + newTrimmedProp + "] oldTrimmedProp: [" + oldTrimmedProp + "] are different in new " + filePaths[4] + " and old " +
+                filePaths[3] + "( uses " + filePaths[0] + " file as general)  files", newTrimmedProp, is(oldTrimmedProp));
         }
     }
 
