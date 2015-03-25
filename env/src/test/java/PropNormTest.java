@@ -30,7 +30,6 @@ import org.springframework.core.io.Resource;
 import org.junit.*;
 
 // @author Titov Mykhaylo (titov) on 23.03.2015.
-@Ignore
 public class PropNormTest {
 
     Logger logger = LoggerFactory.getLogger(PropNormTest.class);
@@ -102,7 +101,7 @@ public class PropNormTest {
             }
 
             Properties commonProperties = new Properties();
-            for (String key : allPropKeys) {
+                for (String key : allPropKeys) {
                 Map<String, List<String>> propValueToPropsPathMap = new HashMap<>();
                 for (Map.Entry<String, Properties> propPathToPropertiesEntry : propPathToPropertiesMap.entrySet()) {
                     Properties properties = propPathToPropertiesEntry.getValue();
@@ -128,8 +127,17 @@ public class PropNormTest {
                 if (!entries.isEmpty() && propValuePropPathsEntry.getValue().size() >= propCount / 2) {
                     String propValue = propValuePropPathsEntry.getKey();
                     if (propValue != null) {
-                        if (propValue.startsWith("ENC(") && propValuePropPathsEntry.getKey().contains("prod")) {
-                            continue;
+                        if (propValue.startsWith("ENC(")) {
+                            boolean inProd = false;
+                            for (String path : propValuePropPathsEntry.getValue()) {
+                                if(path.contains("prod")){
+                                    inProd = true;
+                                }
+                            }
+
+                            if (inProd){
+                                continue;
+                            }
                         }
                         commonProperties.setProperty(key, propValue);
 
