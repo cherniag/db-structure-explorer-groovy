@@ -36,20 +36,25 @@ public class PropNormTest {
 
     static FileSystemResourceLoader fileSystemResourceLoader = new FileSystemResourceLoader();
 
-    static String[] propPaths = {
-        "classpath:env/autotest/conf/application.properties",
-        "classpath:env/cherry/conf/application.properties",
-        "classpath:env/cucumber/conf/application.properties",
-        "classpath:env/potato/conf/application.properties",
-        "classpath:env/kiwi/conf/application.properties",
-        "classpath:env/lime/conf/application.properties",
-        "classpath:env/orange/conf/application.properties",
-        "classpath:env/rage/conf/application.properties",
-        "classpath:env/staging/conf/application.properties",
-        "classpath:env/prod_db1/conf/application.properties",
-        "classpath:env/prod_db2/conf/application.properties",
-        "classpath:env/prod_jadmin/conf/application.properties",
-        "classpath:env/prod_trackrepo/conf/application.properties"
+    static String[][] propPaths = {
+        {"classpath:env/autotest/conf/application.properties", "classpath:env/autotest/conf/trackrepo-application.properties"},
+        {"classpath:env/cherry/conf/application.properties", "classpath:env/cherry/conf/trackrepo-application.properties"},
+        {"classpath:env/cucumber/conf/application.properties", "classpath:env/cucumber/conf/trackrepo-application.properties"},
+        {"classpath:env/potato/conf/application.properties", "classpath:env/potato/conf/trackrepo-application.properties"},
+        {"classpath:env/kiwi/conf/application.properties", "classpath:env/kiwi/conf/trackrepo-application.properties"},
+        {"classpath:env/lime/conf/application.properties", "classpath:env/lime/conf/trackrepo-application.properties"},
+        {"classpath:env/orange/conf/application.properties", "classpath:env/orange/conf/trackrepo-application.properties"},
+        {"classpath:env/rage/conf/application.properties", "classpath:env/rage/conf/trackrepo-application.properties"},
+        {"classpath:env/staging/conf/application.properties", "classpath:env/staging/conf/trackrepo-application.properties"},
+        {"classpath:env/prod_db1/conf/application.properties", null},
+        {"classpath:env/prod_db2/conf/application.properties", null},
+        {"classpath:env/prod_jadmin/conf/application.properties", null},
+        {"classpath:env/prod_trackrepo/conf/application.properties", "classpath:env/prod_trackrepo/conf/trackrepo-application.properties"},
+    };
+
+    static String[][] globalAndEnvGlobalProps = {
+        {"classpath:application.properties",  "gen-app.properties"},
+        {"classpath:trackrepo-application.properties", "gen-trackrepo-app.properties"}
     };
 
     Comparator<Map.Entry<String, List<String>>> comparator = new Comparator<Map.Entry<String, List<String>>>() {
@@ -67,85 +72,99 @@ public class PropNormTest {
 
     @Test
     public void test() throws Exception {
-        Map<String, PropertiesConfigurationLayout> propertiesConfigurationLayoutMap = new HashMap<>();
-        Map<String, Properties> propPathToPropertiesMap = new HashMap<>();
-        Set<String> allPropKeys = new HashSet<>();
+        FileUtils.copyDirectory(new File("env/src/main/resources/env"), new File("env/src/main/resources/n"));
 
-        for (String propPath : propPaths) {
-            AppPropertyResourceConfigurer propertyPlaceholderConfigurer = new AppPropertyResourceConfigurer();
-            Resource propResource = getResource(propPath);
-            propertyPlaceholderConfigurer.setLocations(new Resource[] {getResource("classpath:application.properties"), getResource("classpath:env/gen-app.properties"), propResource});
+        for (int i = 0; i < propPaths[0].length; i++) {
 
-            Properties properties = propertyPlaceholderConfigurer.mergeProperties();
-            propPathToPropertiesMap.put(propPath, properties);
-            allPropKeys.addAll(properties.stringPropertyNames());
+            Map<String, PropertiesConfigurationLayout> propertiesConfigurationLayoutMap = new HashMap<>();
+            Map<String, Properties> propPathToPropertiesMap = new HashMap<>();
+            Set<String> allPropKeys = new HashSet<>();
 
-            PropertiesConfigurationLayout propertiesConfigurationLayout = new PropertiesConfigurationLayout(new PropertiesConfiguration());
-            propertiesConfigurationLayout.load(new FileReader(propResource.getFile()));
-            propertiesConfigurationLayoutMap.put(propPath, propertiesConfigurationLayout);
-        }
+            String globalPropPath = globalAndEnvGlobalProps[i][0];
 
-        Properties commonProperties = new Properties();
-        for (String key : allPropKeys) {
-            Map<String, List<String>> propValueToPropsPathMap = new HashMap<>();
-            for (Map.Entry<String, Properties> propPathToPropertiesEntry : propPathToPropertiesMap.entrySet()) {
-                Properties properties = propPathToPropertiesEntry.getValue();
-                String value = properties.getProperty(key);
-                List<String> propPaths = propValueToPropsPathMap.get(value);
-                if(propPaths == null){
-                    propPaths = new ArrayList<>();
-                    propValueToPropsPathMap.put(value, propPaths);
+            for (int j = 0; j < propPaths.length; j++) {
+                AppPropertyResourceConfigurer propertyPlaceholderConfigurer = new AppPropertyResourceConfigurer();
+                String filePath = propPaths[j][i];
+
+                if(filePath!=null) {
+                    Resource propResource = getResource(filePath);
+                    propertyPlaceholderConfigurer.setLocations(new Resource[] {getResource(globalPropPath), propResource});
+
+                    Properties properties = propertyPlaceholderConfigurer.mergeProperties();
+                    propPathToPropertiesMap.put(filePath, properties);
+                    allPropKeys.addAll(properties.stringPropertyNames());
+
+                    PropertiesConfigurationLayout propertiesConfigurationLayout = new PropertiesConfigurationLayout(new PropertiesConfiguration());
+                    propertiesConfigurationLayout.load(new FileReader(propResource.getFile()));
+                    propertiesConfigurationLayoutMap.put(filePath, propertiesConfigurationLayout);
                 }
-                propPaths.add(propPathToPropertiesEntry.getKey());
             }
 
-            List<Map.Entry<String, List<String>>> entries = new ArrayList<>(propValueToPropsPathMap.entrySet());
-            Collections.sort(entries, comparator);
-
-            Map.Entry<String, List<String>> propValuePropPathsEntry = entries.get(0);
-            if(!entries.isEmpty() &&  propValuePropPathsEntry.getValue().size() >= propPaths.length/2){
-                String propValue = propValuePropPathsEntry.getKey();
-                if (propValue != null) {
-                    if (propValue.startsWith("ENC(") && propValuePropPathsEntry.getKey().contains("prod")){
-                        continue;
+            Properties commonProperties = new Properties();
+            for (String key : allPropKeys) {
+                Map<String, List<String>> propValueToPropsPathMap = new HashMap<>();
+                for (Map.Entry<String, Properties> propPathToPropertiesEntry : propPathToPropertiesMap.entrySet()) {
+                    Properties properties = propPathToPropertiesEntry.getValue();
+                    String value = properties.getProperty(key);
+                    List<String> propPaths = propValueToPropsPathMap.get(value);
+                    if (propPaths == null) {
+                        propPaths = new ArrayList<>();
+                        propValueToPropsPathMap.put(value, propPaths);
                     }
-                    commonProperties.setProperty(key, propValue);
+                    propPaths.add(propPathToPropertiesEntry.getKey());
+                }
+
+                List<Map.Entry<String, List<String>>> entries = new ArrayList<>(propValueToPropsPathMap.entrySet());
+                Collections.sort(entries, comparator);
+
+                Map.Entry<String, List<String>> propValuePropPathsEntry = entries.get(0);
+
+                int propCount =  propPaths.length;
+                if(i==1){
+                    propCount = propCount - 3;
+                }
+
+                if (!entries.isEmpty() && propValuePropPathsEntry.getValue().size() >= propCount / 2) {
+                    String propValue = propValuePropPathsEntry.getKey();
+                    if (propValue != null) {
+                        if (propValue.startsWith("ENC(") && propValuePropPathsEntry.getKey().contains("prod")) {
+                            continue;
+                        }
+                        commonProperties.setProperty(key, propValue);
 
 
-                    for (Map.Entry<String, Properties> propPathToPropertiesEntry : propPathToPropertiesMap.entrySet()) {
-                        Properties propPathToPropertiesEntryValue = propPathToPropertiesEntry.getValue();
-                        PropertiesConfigurationLayout propertiesConfigurationLayout = propertiesConfigurationLayoutMap.get(propPathToPropertiesEntry.getKey());
-                        if (propValuePropPathsEntry.getValue().contains(propPathToPropertiesEntry.getKey())) {
-                            propPathToPropertiesEntryValue.remove(key);
-                            propertiesConfigurationLayout.getConfiguration().clearProperty(key);
-                        }else {
-                            propertiesConfigurationLayout.getConfiguration().setProperty(key, propPathToPropertiesEntryValue.getProperty(key));
+                        for (Map.Entry<String, Properties> propPathToPropertiesEntry : propPathToPropertiesMap.entrySet()) {
+                            Properties propPathToPropertiesEntryValue = propPathToPropertiesEntry.getValue();
+                            PropertiesConfigurationLayout propertiesConfigurationLayout = propertiesConfigurationLayoutMap.get(propPathToPropertiesEntry.getKey());
+                            if (propValuePropPathsEntry.getValue().contains(propPathToPropertiesEntry.getKey())) {
+                                propPathToPropertiesEntryValue.remove(key);
+                                propertiesConfigurationLayout.getConfiguration().clearProperty(key);
+                            } else {
+                                propertiesConfigurationLayout.getConfiguration().setProperty(key, propPathToPropertiesEntryValue.getProperty(key));
+                            }
                         }
                     }
                 }
             }
-        }
 
-        FileUtils.copyDirectory(new File("env/src/main/resources/env"), new File("env/src/main/resources/n"));
+            Properties classpathProperties = new Properties();
+            classpathProperties.load(getResource(globalPropPath).getInputStream());
 
-        Properties classpathProperties = new Properties();
-        classpathProperties.load(getResource("classpath:application.properties").getInputStream());
+            PrintWriter printWriter = new PrintWriter("env/src/main/resources/n/"+globalAndEnvGlobalProps[i][1]);
+            for (Object key : commonProperties.keySet()) {
+                Object val = commonProperties.get(key);
+                Object classpathVal = classpathProperties.get(key);
+                if (classpathVal == null || !classpathVal.equals(val)) {
+                    printWriter.println(key + "=" + val);
+                }
+            }
+            printWriter.close();
 
-        PrintWriter printWriter = new PrintWriter("env/src/main/resources/n/application.properties");
-        for (Object key : commonProperties.keySet()) {
-            Object val = commonProperties.get(key);
-            Object classpathVal = classpathProperties.get(key);
-            if(classpathVal == null || !classpathVal.equals(val)){
-                printWriter.println(key + "=" + val);
+            for (Map.Entry<String, PropertiesConfigurationLayout> stringPropertiesConfigurationLayoutEntry : propertiesConfigurationLayoutMap.entrySet()) {
+                PropertiesConfigurationLayout propertiesConfigurationLayout = stringPropertiesConfigurationLayoutEntry.getValue();
+                propertiesConfigurationLayout.save(new FileWriter("env/src/main/resources/n/" + stringPropertiesConfigurationLayoutEntry.getKey().replaceFirst(".*?/", "/")));
             }
         }
-        printWriter.close();
-
-        for (Map.Entry<String, PropertiesConfigurationLayout> stringPropertiesConfigurationLayoutEntry : propertiesConfigurationLayoutMap.entrySet()) {
-            PropertiesConfigurationLayout propertiesConfigurationLayout = stringPropertiesConfigurationLayoutEntry.getValue();
-            propertiesConfigurationLayout.save(new FileWriter("env/src/main/resources/n/" + stringPropertiesConfigurationLayoutEntry.getKey().replaceFirst(".*?/", "/")));
-        }
-
     }
 
     static Resource getResource(String filePath) {return fileSystemResourceLoader.getResource(filePath);}
