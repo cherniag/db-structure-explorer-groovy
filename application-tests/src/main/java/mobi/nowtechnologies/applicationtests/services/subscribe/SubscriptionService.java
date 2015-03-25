@@ -9,13 +9,19 @@ import mobi.nowtechnologies.applicationtests.services.repeat.RepeatService;
 import mobi.nowtechnologies.applicationtests.services.repeat.Repeatable;
 import mobi.nowtechnologies.applicationtests.services.repeat.UserRepeatable;
 import mobi.nowtechnologies.applicationtests.services.ui.WebPortalService;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -27,9 +33,10 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +74,11 @@ public class SubscriptionService {
     RepeatService repeatService;
     @Resource
     PhoneNumberCreator phoneNumberCreator;
+    @Resource
+    PendingPaymentRepository pendingPaymentRepository;
+    @Resource
+    SubmittedPaymentRepository submittedPaymentRepository;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     //
@@ -125,27 +137,73 @@ public class SubscriptionService {
 
     @Transactional(value = "applicationTestsTransactionManager")
     public void setCurrentPaymentDetailsStatus(User user, PaymentDetailsStatus paymentDetailsStatus) {
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(user.getCommunity(), user.getProvider(), user.getSegment(), user.getContract(), user.getTariff(),
+                                                                                         Arrays.asList(AUDIO, VIDEO_AND_AUDIO));
+
+        final PaymentPolicy paymentPolicy = paymentPolicies.get(0);
+
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if (currentPaymentDetails == null) {
             currentPaymentDetails = new PaymentDetails();
             currentPaymentDetails.setOwner(user);
-
-            List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(user.getCommunity(),
-                    user.getProvider(),
-                    user.getSegment(),
-                    user.getContract(),
-                    user.getTariff(),
-                    Arrays.asList(AUDIO, VIDEO_AND_AUDIO));
-            if (CollectionUtils.isNotEmpty(paymentPolicies)) {
-                currentPaymentDetails.setPaymentPolicy(paymentPolicies.get(0));
-            }
-
+            currentPaymentDetails.setPaymentPolicy(paymentPolicy);
             user.setCurrentPaymentDetails(currentPaymentDetails);
         }
         currentPaymentDetails.setActivated(true);
         currentPaymentDetails.setLastPaymentStatus(paymentDetailsStatus);
         paymentDetailsRepository.save(currentPaymentDetails);
         userRepository.save(user);
+
+        if(paymentDetailsStatus == PaymentDetailsStatus.AWAITING) {
+            PendingPayment pendingPayment = createPendingPayment(user, PaymentDetailsType.FIRST, paymentPolicy);
+            pendingPaymentRepository.save(pendingPayment);
+        }
+
+        if(paymentDetailsStatus == PaymentDetailsStatus.ERROR) {
+            SubmittedPayment pendingPayment = createSubmittedPayment(user, paymentPolicy);
+            submittedPaymentRepository.save(pendingPayment);
+        }
+    }
+
+    private PendingPayment createPendingPayment(User user, PaymentDetailsType type, PaymentPolicy paymentPolicy) {
+        final Date now = new Date();
+        final Date expired = DateUtils.addHours(now, 1);
+
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+
+        PendingPayment pendingPayment = new PendingPayment();
+        pendingPayment.setPaymentDetails(currentPaymentDetails);
+        pendingPayment.setPaymentSystem(currentPaymentDetails.getPaymentType());
+        pendingPayment.setAmount(paymentPolicy.getSubcost());
+        pendingPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
+        pendingPayment.setPeriod(paymentPolicy.getPeriod());
+        pendingPayment.setUser(user);
+        pendingPayment.setExternalTxId("");
+        pendingPayment.setTimestamp(now.getTime());
+        pendingPayment.setExpireTimeMillis(expired.getTime());
+        pendingPayment.setType(type);
+
+        return pendingPayment;
+    }
+
+    private SubmittedPayment createSubmittedPayment(User user, PaymentPolicy paymentPolicy) {
+        final Date now = new Date();
+        final Date expireTime = DateUtils.addHours(now, 1);
+
+        SubmittedPayment submittedPayment = new SubmittedPayment();
+        submittedPayment.setNextSubPayment(DateTimeUtils.millisToIntSeconds(expireTime.getTime()));
+        submittedPayment.setExternalTxId("ex-tx-" + UUID.randomUUID().toString());
+        submittedPayment.setAppStoreOriginalTransactionId("orig-tx-" + UUID.randomUUID().toString());
+        submittedPayment.setStatus(PaymentDetailsStatus.SUCCESSFUL);
+        submittedPayment.setUser(user);
+        submittedPayment.setTimestamp(now.getTime());
+        submittedPayment.setAmount(paymentPolicy.getSubcost());
+        submittedPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
+        submittedPayment.setPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
+        submittedPayment.setBase64EncodedAppStoreReceipt("app-" + UUID.randomUUID().toString());
+        submittedPayment.setPeriod(paymentPolicy.getPeriod());
+        submittedPayment.setPaymentPolicy(paymentPolicy);
+        return submittedPayment;
     }
 
 }

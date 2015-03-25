@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalDDEXParse
 import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.EMI_UMG;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.SONY;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.SONY_DDEX;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.UNIVERSAL;
@@ -74,6 +75,8 @@ public class IParserFactory {
             return SONY.name();
         } else if (WARNER_OLD == name) {
             return WARNER.name();
+        } else if (EMI_UMG == name) {
+            return UNIVERSAL.name();
         } else if(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13 == name){
             return UNIVERSAL.name();
         }

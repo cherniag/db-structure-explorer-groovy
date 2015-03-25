@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
-import mobi.nowtechnologies.server.shared.Utils;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 import javax.persistence.Column;
@@ -17,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
@@ -57,7 +57,7 @@ public class UserLog {
         this.userLogType = userLogType;
         this.logTimeMillis = System.currentTimeMillis();
         this.userLogStatus = userLogStatus;
-        this.description = Utils.substring(description, 255);
+        this.description = StringUtils.substring(description, 0, 255);
     }
 
     public UserLog(UserLog oldLog, String phoneNumber, UserLogStatus status, UserLogType userLogType, String description) {

@@ -350,7 +350,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         AccountLog accountLog = new AccountLog(user.getId(), null, balanceAfter, PROMOTION_BY_PROMO_CODE_APPLIED);
         accountLog.setPromoCode(promoCode.getCode());
         entityService.saveEntity(accountLog);
-        for (byte i = 1; i <= freeWeeks; i++) {
+        for (int i = 1; i <= freeWeeks; i++) {
             entityService.saveEntity(new AccountLog(user.getId(), null, balanceAfter - i, SUBSCRIPTION_CHARGE));
         }
     }

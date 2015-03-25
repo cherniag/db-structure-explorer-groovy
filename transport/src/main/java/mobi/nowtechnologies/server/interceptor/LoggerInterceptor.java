@@ -21,18 +21,20 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!request.getPathInfo().contains("REGISTER_USER")) {
-            request.getParameterMap();
-        }
-        request = new RequestCachingRequestWrapper(request);
+        if(handler instanceof HandlerMethod) {
+            if (!request.getPathInfo().contains("REGISTER_USER")) {
+                request.getParameterMap();
+            }
+            request = new RequestCachingRequestWrapper(request);
 
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        Object bean = handlerMethod.getBean();
-        if (bean instanceof CommonController) {
-            CommonController controller = (CommonController) bean;
-            LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), controller.getCurrentCommunityUri(), request.getPathInfo().replaceFirst("/", ""), bean.getClass(),
-                                  controller.getCurrentRemoteAddr());
+            Object bean = handlerMethod.getBean();
+            if (bean instanceof CommonController) {
+                CommonController controller = (CommonController) bean;
+                LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), controller.getCurrentCommunityUri(), request.getPathInfo().replaceFirst("/", ""), bean.getClass(),
+                                      controller.getCurrentRemoteAddr());
+            }
         }
 
         return super.preHandle(request, response, handler);
@@ -77,10 +79,6 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                 this.reader = new BufferedReader(new InputStreamReader(inputStream, getCharacterEncoding()));
             }
             return this.reader;
-        }
-
-        private byte[] toByteArray() {
-            return this.bos.toByteArray();
         }
 
         private class RequestCachingInputStream extends ServletInputStream {

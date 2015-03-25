@@ -6,25 +6,29 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.mockito.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import org.powermock.modules.junit4.PowerMockRunner;
-
-@RunWith(PowerMockRunner.class)
 public class PaymentPolicyServiceTest {
 
     private PaymentPolicyService paymentPolicyServiceFixture;
@@ -164,6 +168,35 @@ public class PaymentPolicyServiceTest {
 
         Mockito.verify(paymentPolicyRepositoryMock, times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
 
+    }
+
+    @Test
+    public void testOrdering() {
+        List<PaymentPolicy> paymentPolicies = new ArrayList<>();
+
+        PaymentPolicy paymentPolicy = createPaymentPolicy();
+        ReflectionTestUtils.setField(paymentPolicy, "order", 10);
+        paymentPolicies.add(paymentPolicy);
+
+        paymentPolicy = createPaymentPolicy();
+        ReflectionTestUtils.setField(paymentPolicy, "order", 15);
+        paymentPolicies.add(paymentPolicy);
+
+        paymentPolicy = createPaymentPolicy();
+        ReflectionTestUtils.setField(paymentPolicy, "order", 5);
+        paymentPolicies.add(paymentPolicy);
+
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
+
+        Mockito.when(paymentPolicyRepositoryMock.getPaymentPolicies(any(Community.class), any(ProviderType.class), any(SegmentType.class), any(Contract.class), any(Tariff.class), anyList()))
+               .thenReturn(paymentPolicies);
+
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyServiceFixture.getPaymentPolicyDtos(user);
+
+        assertEquals(3, paymentPolicyDtos.size());
+        assertEquals(5, ReflectionTestUtils.getField(paymentPolicyDtos.get(0), "order"));
+        assertEquals(10, ReflectionTestUtils.getField(paymentPolicyDtos.get(1), "order"));
+        assertEquals(15, ReflectionTestUtils.getField(paymentPolicyDtos.get(2), "order"));
     }
 
 }

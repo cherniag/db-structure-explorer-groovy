@@ -3,6 +3,7 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/admin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/application-tests" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/database/changelog/cn_service/SRV-659/upd_dat_apply_promo.sql" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/env" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/env/src/main/resources/env/gen-app.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mq-parent-pom" charset="UTF-8" />

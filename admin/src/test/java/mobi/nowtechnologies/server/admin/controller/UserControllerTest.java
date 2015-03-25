@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.admin.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 
 import java.util.Date;
@@ -23,7 +22,7 @@ public class UserControllerTest {
         //when
         UserDto result = new UserController().updateFreeTrialExpiredTime(userDto, user);
         //then
-        assertTrue(Utils.datesNotEquals(futureDate, result.getFreeTrialExpiredAsDate()));
+        assertFalse(futureDate.equals(result.getFreeTrialExpiredAsDate()));
     }
 
     @Test

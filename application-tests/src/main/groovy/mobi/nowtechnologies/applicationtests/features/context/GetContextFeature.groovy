@@ -33,6 +33,8 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBe
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository
@@ -70,13 +72,18 @@ public class GetContextFeature {
     @Resource
     ChartUserStatusBehaviorRepository chartUserStatusBehaviorRepository
     @Resource
+    PendingPaymentRepository pendingPaymentRepository
+    @Resource
+    SubmittedPaymentRepository submittedPaymentRepository
+
+    @Resource
     SimpleInterpolator simpleInterpolator
     @Resource
     RunnerService runnerService
     Runner runner
 
 
-    List<UserDeviceData> userDeviceDatas = new ArrayList<>()
+    Set<UserDeviceData> userDeviceDatas = new HashSet<>()
     Map<String, BehaviorConfig> freemiumSettings = new ConcurrentHashMap<>();
     Map<UserDeviceData, ResponseEntity<String>> responses = new ConcurrentHashMap<>()
     Set<String> allCommunities = new HashSet<>()
@@ -129,6 +136,14 @@ public class GetContextFeature {
             def expected = extractResult(it, referralInfo, listValues, timeInResponse, chartId);
 
             assertEquals("Did not match for " + it, expected, foundJson)
+        }
+    }
+
+    @Then('^header (.+) contains value$')
+    def "header Expires contains value"(String header) {
+        runner.parallel {
+            def time = responses[it].getHeaders().getFirstDate(header)
+            assertTrue time > new Date(0).getTime()
         }
     }
 
@@ -255,6 +270,10 @@ public class GetContextFeature {
         allCommunities.clear()
         freemiumSettings.clear()
         appClientDeviceSet.cleanup()
+        userDeviceDatas.clear()
+
+        pendingPaymentRepository.deleteAll()
+        submittedPaymentRepository.deleteAll()
     }
 
     def extractResult(UserDeviceData data, UserReferralsSnapshot snapshot, ListValues listValues, String serverTime, Integer chartId) {
