@@ -30,6 +30,7 @@ import org.springframework.core.io.Resource;
 import org.junit.*;
 
 // @author Titov Mykhaylo (titov) on 23.03.2015.
+@Ignore
 public class PropNormTest {
 
     Logger logger = LoggerFactory.getLogger(PropNormTest.class);
