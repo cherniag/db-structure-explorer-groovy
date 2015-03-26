@@ -108,6 +108,8 @@ public class PaymentPolicy {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_policy_type")
     private PaymentPolicyType paymentPolicyType;
+    @Column(name = "payment_order", nullable = false, columnDefinition = "int default 0")
+    private int order;
 
     public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
         List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
@@ -211,6 +213,10 @@ public class PaymentPolicy {
 
     public void setPaymentPolicyType(PaymentPolicyType paymentPolicyType) {
         this.paymentPolicyType = paymentPolicyType;
+    }
+
+    public int getOrder() {
+        return order;
     }
 
     public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
@@ -469,7 +475,7 @@ public class PaymentPolicy {
                                         .append("segment", segment).append("contract", contract).append("contentCategory", contentCategory).append("contentType", contentType)
                                         .append("subMerchantId", subMerchantId).append("contentDescription", contentDescription).append("tariff", tariff).append("mediaType", mediaType)
                                         .append("advancedPaymentSeconds", advancedPaymentSeconds).append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds).append("isDefault", isDefault)
-                                        .append("online", online).toString();
+                                        .append("online", online).append("order", order).toString();
     }
 
     public static enum Fields {

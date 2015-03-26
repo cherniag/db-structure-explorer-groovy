@@ -31,7 +31,7 @@ public class SubscriptionInfoAsm {
         info.setCurrentPaymentPolicy(currentPaymentPolicyDto);
 
         List<PaymentPolicyDto> included = filterPaymentPolicyDTOs(paymentPolicyDtos, isIos);
-        Collections.sort(included, new PaymentPolicyDto.ByDurationAsc());
+        Collections.sort(included, new PaymentPolicyDto.ByOrderAscAndDurationAsc());
         info.addPaymentPolicyDto(included);
 
         return info;
