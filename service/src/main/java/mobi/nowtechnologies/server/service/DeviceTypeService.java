@@ -20,11 +20,4 @@ public class DeviceTypeService {
         return DeviceTypeDao.setDevice(userId, deviceType, deviceUID);
     }
 
-    public byte findIdByName(String name) {
-        if (name == null) {
-            throw new ServiceException("The parammeter name is null");
-        }
-        return DeviceTypeDao.findIdByName(name);
-    }
-
 }

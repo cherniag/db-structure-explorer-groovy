@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
@@ -19,7 +16,6 @@ import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -28,10 +24,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
-import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.ReactivateUserException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -41,7 +37,6 @@ import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -89,19 +84,15 @@ import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.Au
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Math.max;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +104,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
@@ -144,7 +134,6 @@ public class UserService {
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
 
-    private O2ProviderService o2ClientService;
     private O2UserDetailsUpdater o2UserDetailsUpdater;
 
     private UserDetailsUpdater userDetailsUpdater;
@@ -159,8 +148,9 @@ public class UserService {
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
     private DeviceUserDataService deviceUserDataService;
     private AppsFlyerDataService appsFlyerDataService;
-
+    private UserTransactionRepository userTransactionRepository;
     private UrbanAirshipTokenService urbanAirshipTokenService;
+    private UserActivationStatusService userActivationStatusService;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -176,9 +166,11 @@ public class UserService {
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
         LOGGER.info("Attempt to update user contract and provider with [{}]", providerUserDetails);
         if (user.isVFNZCommunityUser()) {
-            updateProviderForVFNZCommunityUser(user, providerUserDetails);
+            if (isNotNull(providerUserDetails.operator)) {
+                user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+            }
         } else {
-            if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity())) {
+            if (deviceService.isPromotedDevicePhone(user.getUserGroup().getCommunity(), user.getMobile(), null)) {
                 user.setContract(PAYM);
                 user.setProvider(O2);
             } else {
@@ -187,12 +179,6 @@ public class UserService {
             }
         }
         return user;
-    }
-
-    private void updateProviderForVFNZCommunityUser(User user, ProviderUserDetails providerUserDetails) {
-        if (isNotNull(providerUserDetails.operator)) {
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
-        }
     }
 
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
@@ -291,7 +277,7 @@ public class UserService {
         notNull(userName, "The parameter userName is null");
         notNull(userToken, "The parameter userToken is null");
         notNull(timestamp, "The parameter timestamp is null");
-        User user = findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
 
         if (user != null) {
 
@@ -324,57 +310,6 @@ public class UserService {
         throw new UserCredentialsException(serverMessage);
     }
 
-    public void checkActivationStatus(User user, ActivationStatus... availableActivationStatuses) {
-        ActivationStatus activationStatus = user.getActivationStatus();
-        if (ArrayUtils.isNotEmpty(availableActivationStatuses)) {
-            List<ActivationStatus> statusList = Arrays.asList(availableActivationStatuses);
-            if (!statusList.contains(activationStatus)) {
-                throw new ActivationStatusException(activationStatus, availableActivationStatuses[0]);
-            }
-        }
-
-        String message = null;
-        String messageCode = null;
-        if (activationStatus == REGISTERED) {
-            if (!user.isTempUserName()) {
-                message = "User activation status [REGISTERED] is invalid. User must have temp userName";
-                messageCode = "error.604.activation.status.REGISTERED.invalid.userName";
-            } else if (user.hasAllDetails()) {
-                message = "User activation status [REGISTERED] is invalid. User can't have all details";
-                messageCode = "error.604.activation.status.REGISTERED.invalid.userDetails";
-            } else if (!user.isLimited()) {
-                message = "User activation status [REGISTERED] is invalid. User must have limit status";
-                messageCode = "error.604.activation.status.REGISTERED.invalid.status";
-            } else if (user.hasPhoneNumber()) {
-                message = "User activation status [REGISTERED] is invalid. User can't have phoneNumber";
-                messageCode = "error.604.activation.status.REGISTERED.invalid.phoneNumber";
-            }
-        } else if (activationStatus == ENTERED_NUMBER) {
-            if (!user.isTempUserName()) {
-                message = "User activation status [ENTERED_NUMBER] is invalid. User must have temp userName";
-                messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.userName";
-            } else if (!user.isLimited()) {
-                message = "User activation status [ENTERED_NUMBER] is invalid. User must have limit status";
-                messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.status";
-            } else if (!user.hasPhoneNumber()) {
-                message = "User activation status [ENTERED_NUMBER] is invalid. User must have phoneNumber";
-                messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.phoneNumber";
-            }
-        } else if (activationStatus == ACTIVATED) {
-            if (!user.hasAllDetails()) {
-                message = "User activation status [ACTIVATED] is invalid. User must have all user details";
-                messageCode = "error.604.activation.status.ACTIVATED.invalid.userDetails";
-            } else if (!user.isActivatedUserName()) {
-                message = "User activation status [ACTIVATED] is invalid. User must have activated userName";
-                messageCode = "error.604.activation.status.ACTIVATED.invalid.userName";
-            }
-        }
-
-        if (message != null) {
-            throw new ActivationStatusException(message, messageCode);
-        }
-    }
-
     public User checkCredentials(String userName, String userToken, String timestamp, String communityName, String deviceUID) {
         LOGGER.debug("input parameters userName, userToken, timestamp, communityName, deviceUID: [{}], [{}], [{}], [{}], [{}]", userName, userToken, timestamp, communityName, deviceUID);
         User user = checkCredentials(userName, userToken, timestamp, communityName);
@@ -394,30 +329,6 @@ public class UserService {
         return user;
     }
 
-    public User findByName(String userName) {
-        if (userName == null) {
-            throw new ServiceException("The parameter userName is null");
-        }
-        return entityService.findByProperty(User.class, User.Fields.userName.toString(), userName);
-    }
-
-    public List<User> findByMobile(String mobile) {
-        if (mobile == null) {
-            throw new ServiceException("The parameter mobile is null");
-        }
-        return userRepository.findByMobile(mobile);
-    }
-
-    public User findByFacebookId(String facebookId, String communityName) {
-        LOGGER.debug("input parameters facebookId, communityName: [{}], [{}]", facebookId, communityName);
-        if (facebookId == null) {
-            throw new ServiceException("The parameter facebookId is null");
-        }
-        final User user = userDao.findByFacebookAndCommunity(facebookId, communityName);
-        LOGGER.info("Output parameter user=[{}]", user);
-        return user;
-    }
-
     private String findCountryCodeByIp(String ipAddress) {
         LOGGER.debug("input parameters ipAddress: [{}]", ipAddress);
 
@@ -432,40 +343,6 @@ public class UserService {
         return countryName;
     }
 
-    public String getMigPhoneNumber(int operator, String mobile) {
-        return Operator.getMapAsIds().get(operator).getMigName() + "." + mobile;
-    }
-
-    public String convertPhoneNumberFromGreatBritainToInternationalFormat(String mobile) {
-        if (mobile == null) {
-            throw new ServiceException("The parameter mobile is null");
-        }
-        if (!mobile.startsWith("0044")) {
-            return mobile.replaceFirst("0", "0044");
-        }
-        return mobile;
-    }
-
-    @Transactional(readOnly = true)
-    public User getUserWithSelectedCharts(Integer userId) {
-        User user = userRepository.findOne(userId);
-        user.getSelectedCharts().size();
-
-        return user;
-    }
-
-    public User findByNameAndCommunity(String userName, String communityName) {
-        LOGGER.debug("input parameters userName, communityName: [{}], [{}]", userName, communityName);
-        User user = userDao.findByNameAndCommunity(userName, communityName);
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User updateUser(User user) {
-        return userRepository.save(user);
-    }
-
     @Transactional(propagation = REQUIRED)
     public User mergeUser(User oldUser, User tempUser) {
         LOGGER.info(
@@ -476,6 +353,7 @@ public class UserService {
 
         deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(tempUser);
+        userTransactionRepository.deleteByUser(tempUser);
 
         appsFlyerDataService.mergeAppsFlyerData(tempUser, oldUser);
 
@@ -503,7 +381,6 @@ public class UserService {
         Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
         LOGGER.info("promotion [{}]", promotion);
         if (promotion != null) {
-            user.setSubBalance((byte) (user.getSubBalance() + promotion.getFreeWeeks()));
             entityService.updateEntity(user);
             promotion.setNumUsers(promotion.getNumUsers() + 1);
             entityService.updateEntity(promotion);
@@ -545,10 +422,6 @@ public class UserService {
         return user;
     }
 
-    public boolean isUnsubscribedUser(User user) {
-        return user != null && user.getCurrentPaymentDetails() != null && !user.getCurrentPaymentDetails().isActivated();
-    }
-
     @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
         LOGGER.info("Unsubscribe user {} reason : {}", user.shortInfo(), reason);
@@ -560,22 +433,64 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public void makeUserActive(User user) {
-        if (user == null) {
-            throw new ServiceException("The parameter user is null");
-        }
-        user.setLastDeviceLogin(getEpochSeconds());
-        updateUser(user);
+    public User populateAmountOfMoneyToUserNotification(User user, SubmittedPayment payment) {
+        LOGGER.info("input parameters user, payment: [{}], [{}]", user.getId(), payment.getI());
+
+        BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(payment.getAmount());
+        user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
+
+        user = updateUser(user);
+        LOGGER.info("Output parameter user=[{}]", user);
+        return user;
     }
 
+
     @Transactional(readOnly = true)
-    public User findById(int id) {
-        return entityService.findById(User.class, id);
+    public User getUserWithSelectedCharts(Integer userId) {
+        User user = userRepository.findOne(userId);
+        user.getSelectedCharts().size();
+
+        return user;
+    }
+
+    public boolean isCommunitySupportByIp(String email, String community, String remoteAddr) {
+        String countryCode = findCountryCodeByIp(remoteAddr);
+        return countryAppVersionService.isAppVersionLinkedWithCountry("CNBETA", countryCode);
+    }
+
+    public boolean checkPromotionCode(String code, String communityUrl) {
+        Community community = communityService.getCommunityByUrl(communityUrl);
+        Promotion promotion = promotionService.getActivePromotion(community, code);
+        return promotion != null;
+    }
+
+    public void contactWithUser(String from, String name, String subject) throws ServiceException {
+        String message = messageSource.getMessage(null, "support.email", null, null);
+        mailService.sendMessage(from, new String[] {message}, "From User " + name, subject, null);
+    }
+
+    @Transactional(propagation = REQUIRED)
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public String getMigPhoneNumber(int operator, String mobile) {
+        return Operator.getMapAsIds().get(operator).getMigName() + "." + mobile;
+    }
+
+    public String convertPhoneNumberFromGreatBritainToInternationalFormat(String mobile) {
+        if (mobile == null) {
+            throw new ServiceException("The parameter mobile is null");
+        }
+        if (!mobile.startsWith("0044")) {
+            return mobile.replaceFirst("0", "0044");
+        }
+        return mobile;
     }
 
     @Transactional(readOnly = true)
     public User getWithSocial(int id) {
-        User byId = findById(id);
+        User byId = userRepository.findOne(id);
         byId.getSocialInfo().size();
         return byId;
     }
@@ -584,7 +499,7 @@ public class UserService {
     public User changePassword(Integer userId, String newPassword) {
         LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[] {userId, newPassword});
 
-        User user = findById(userId);
+        User user = userRepository.findOne(userId);
 
         String storedToken = Utils.createStoredToken(user.getUserName(), newPassword);
 
@@ -592,22 +507,6 @@ public class UserService {
 
         LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[] {user});
         return user;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public PaymentDetails createPaymentDetails(UserRegInfo userRegInfo, User user, Community community) {
-        PaymentDetailsDto dto = UserRegInfo.getPaymentDetailsDto(userRegInfo);
-
-        if (userRegInfo.getPaymentType().equals(UserRegInfoServer.PaymentType.PREMIUM_USER)) {
-            String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(dto.getPhoneNumber());
-            dto.setPhoneNumber(getMigPhoneNumber(dto.getOperator(), migPhone));
-        }
-
-        PaymentDetails createPaymentDetails = paymentDetailsService.createPaymentDetails(dto, user, community);
-        if (null == createPaymentDetails) {
-            entityService.updateEntity(user);
-        }
-        return createPaymentDetails;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -653,13 +552,10 @@ public class UserService {
     public User processAccountCheckCommandForAuthorizedUser(int userId) {
         LOGGER.info("input parameters userId: [{}]", userId);
 
-        User user = userDao.findUserById(userId);
+        User user = userRepository.findOne(userId);
 
-        user = updateLastDeviceLogin(user);
-
-        if (user.getLastDeviceLogin() == 0) {
-            makeUserActive(user);
-        }
+        user.setLastDeviceLogin(getEpochSeconds());
+        updateUser(user);
 
         user = prepareUserConversionToAccountCheckDto(user);
 
@@ -707,11 +603,9 @@ public class UserService {
         User user = newUser(userRegDetailsDto, userName, deviceType, deviceString, community);
         entityService.saveEntity(user);
 
-        String communityName = community.getName();
-
         String promotionCode = userRegDetailsDto.getPromotionCode();
         if (isNull(promotionCode)) {
-            promotionCode = getDefaultPromoCode(communityName);
+            promotionCode = messageSource.getMessage(community.getRewriteUrlParameter(), "defaultPromotionCode", null, null);
         }
 
         promotionService.applyPromotionByPromoCode(user, promotionCode);
@@ -743,112 +637,9 @@ public class UserService {
         return user;
     }
 
-    public String getDefaultPromoCode(String communityName) {
-        LOGGER.debug("input parameters communityName: [{}], [{}]", communityName);
-        Community community = CommunityDao.getMapAsNames().get(communityName);
-
-        String promotionCode = messageSource.getMessage(community.getRewriteUrlParameter(), "defaultPromotionCode", null, null);
-        LOGGER.info("Output parameter [{}]", promotionCode);
-        return promotionCode;
-    }
-
-    @Transactional(propagation = REQUIRED, readOnly = true)
-    public User getUser(String userName, String communityUrl) {
-        LOGGER.debug("input parameters email, communityUrl: [{}], [{}]", userName, communityUrl);
-        User user = userRepository.findOne(userName, communityUrl);
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    public boolean isCommunitySupportByIp(String email, String community, String remoteAddr) {
-        String countryCode = findCountryCodeByIp(remoteAddr);
-        return countryAppVersionService.isAppVersionLinkedWithCountry("CNBETA", countryCode);
-    }
-
-    public boolean checkPromotionCode(String code, String community) {
-        Promotion promotion = promotionService.getActivePromotion(code, community);
-        return promotion != null;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User registerUser(FacebookProfile facebookProfile, String communityName, String ipAddress) {
-        LOGGER.debug("input parameters facebookProfile: [{}]", facebookProfile);
-
-        String userName;
-        String email = facebookProfile.getEmail();
-        final String facebookId = facebookProfile.getId();
-        if (email == null) {
-            userName = facebookId;
-        } else {
-            userName = email.toLowerCase();
-        }
-
-        String tmpPassword = Utils.getRandomString(AppConstants.TMP_PASSWORD_LENGTH);
-
-        UserRegDetailsDto userRegDetailsDto = new UserRegDetailsDto();
-        userRegDetailsDto.setEmail(userName);
-        userRegDetailsDto.setCommunityName(communityName);
-        userRegDetailsDto.setIpAddress(ipAddress);
-        userRegDetailsDto.setPassword(tmpPassword);
-        userRegDetailsDto.setFacebookId(facebookId);
-
-        User user = registerUser(userRegDetailsDto);
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public boolean restoreUserPassword(String email, String communityRedirectURL) {
-        LOGGER.debug("input parameters email, communityRedirectURL: [{}], [{}]", email, communityRedirectURL);
-
-        Community community = communityService.getCommunityByUrl(communityRedirectURL.toUpperCase());
-
-        String tmpPassword = Utils.getRandomString(AppConstants.TMP_PASSWORD_LENGTH);
-        String localStoredToken = Utils.createStoredToken(email, tmpPassword);
-
-        User user = findByNameAndCommunity(email, community.getName());
-
-        boolean isUserExist = false;
-        if (user != null) {
-            user.setToken(localStoredToken);
-
-            updateUser(user);
-
-            String communityUri = communityRedirectURL.toLowerCase();
-            String from = messageSource.getMessage(communityUri, email, null, null);
-            String[] to = {messageSource.getMessage(communityUri, "mail.rest.password.address", null, null)};
-            String subject = messageSource.getMessage(communityUri, "mail.rest.password.subject", null, null);
-            String body = messageSource.getMessage(communityUri, "mail.rest.password.body", null, null);
-            String portalUrl = messageSource.getMessage(communityUri, "mail.portal.url", null, null);
-
-            Map<String, String> modelMap = new HashMap<String, String>();
-            modelMap.put("displayName", user.getDisplayName());
-            modelMap.put("portalUrl", portalUrl);
-            modelMap.put("email", email);
-            modelMap.put("password", tmpPassword);
-
-            mailService.sendMessage(from, to, subject, body, modelMap);
-
-            isUserExist = true;
-        }
-        LOGGER.debug("Output parameter isUserExist=[{}]", isUserExist);
-        return isUserExist;
-    }
-
-    public AccountDto getAccountDetails(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-
-        User user = findById(userId);
-
-        AccountDto accountDto = user.toAccountDto();
-
-        LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
-        return accountDto;
-    }
-
     @Transactional(propagation = REQUIRED)
     public boolean sendSMSWithOTALink(String phone, int userId) {
-        User user = findById(userId);
+        User user = userRepository.findOne(userId);
         String code = Utils.getOTACode(user.getId(), user.getUserName());
         String[] args = {migHttpService.getOtaUrl() + "&CODE=" + code};
         String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(phone);
@@ -861,35 +652,17 @@ public class UserService {
         return response.getHttpStatus() == 200;
     }
 
-    public AccountDto saveAccountDetails(AccountDto accountDto, int userId) {
+    public void saveAccountDetails(AccountDto accountDto, int userId) {
         LOGGER.debug("input parameters accountDto: [{}]", accountDto);
 
-        User user = findById(userId);
+        User user = userRepository.findOne(userId);
 
         String localStoredToken = Utils.createStoredToken(user.getUserName(), accountDto.getNewPassword());
 
         user.setToken(localStoredToken);
         user.setMobile(accountDto.getPhoneNumber());
 
-        updateUser(user);
-
-        accountDto = user.toAccountDto();
-
-        LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
-        return accountDto;
-    }
-
-    public void contactWithUser(String from, String name, String subject) throws ServiceException {
-
-    }
-
-    private User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
-        LOGGER.debug("input parameters deviceUID, community: [{}], [{}]", deviceUID, community);
-
-        User user = userRepository.findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
+        userRepository.save(user);
     }
 
     @Transactional(propagation = REQUIRED)
@@ -899,12 +672,13 @@ public class UserService {
         final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
 
         Community community = communityService.getCommunityByUrl(userDeviceRegDetailsDto.getCommunityUri());
-        User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
+        User user = userRepository.findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
         if (user == null) {
             detectUserAccountWithSameDeviceAndDisableIt(deviceUID, community);
             user = createUser(userDeviceRegDetailsDto, deviceUID, community);
-        } else if (isNotNull(user) && updateUserPendingActivation && PENDING_ACTIVATION == user.getActivationStatus()) {
+            LOGGER.info("REGISTER_USER created user ", user.getUserName());
+        } else if (updateUserPendingActivation && PENDING_ACTIVATION == user.getActivationStatus()) {
             user.setActivationStatus(REGISTERED);
         }
 
@@ -969,17 +743,6 @@ public class UserService {
         boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
         boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
         return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User updateLastDeviceLogin(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
-
-        user.setLastDeviceLogin(getEpochSeconds());
-        updateUser(user);
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1107,18 +870,6 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = REQUIRED)
-    public User populateAmountOfMoneyToUserNotification(User user, SubmittedPayment payment) {
-        LOGGER.info("input parameters user, payment: [{}], [{}]", user.getId(), payment.getI());
-
-        BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(payment.getAmount());
-        user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
-
-        user = updateUser(user);
-        LOGGER.info("Output parameter user=[{}]", user);
-        return user;
-    }
-
     @Transactional(propagation = REQUIRED, rollbackFor = {ServiceCheckedException.class, RuntimeException.class})
     public Future<Boolean> makeSuccessfulPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
         try {
@@ -1155,7 +906,7 @@ public class UserService {
             }
 
             if (user.getLastSuccesfullPaymentSmsSendingTimestampMillis() == 0) {
-                resetLastSuccessfulPaymentSmsSendingTimestampMillis(user.getId());
+                userRepository.updateFields(getEpochMillis(), user.getId());
             }
 
             result = new AsyncResult<Boolean>(TRUE);
@@ -1166,19 +917,6 @@ public class UserService {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
         }
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public int resetLastSuccessfulPaymentSmsSendingTimestampMillis(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-
-        int updatedRowCount = userRepository.updateFields(getEpochMillis(), userId);
-        if (updatedRowCount != 1) {
-            throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + userId + "]");
-        }
-
-        LOGGER.debug("Output parameter updatedRowCount=[{}]", updatedRowCount);
-        return updatedRowCount;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1238,7 +976,7 @@ public class UserService {
         String phoneNumber = user.getMobile();
         Community community = user.getUserGroup().getCommunity();
 
-        if (isPromotedDevice(phoneNumber, community)) {
+        if (deviceService.isPromotedDevicePhone(community, phoneNumber, null)) {
             // if the device is promoted, we set the default field
             populateSubscriberData(user, null);
         } else {
@@ -1258,11 +996,6 @@ public class UserService {
         userRepository.save(user);
 
         LOGGER.info("Subscriber data was populated for user[{}] with data [{}]", new Object[] {user, subscriberData});
-    }
-
-    @Transactional(readOnly = true)
-    public String getRedeemServerO2Url(User user) {
-        return o2ClientService.getRedeemServerO2Url(user.getMobile());
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1292,22 +1025,9 @@ public class UserService {
             throw new ServiceException("The parameter user is null");
         }
 
-        final int subBalance = user.getSubBalance();
-        if (subBalance <= 0) {
-            user.setStatus(UserStatusDao.getLimitedUserStatus());
-            userRepository.save(user);
-            LOGGER.info("Unable to decrease balance [{}] for user with id [{}]. So the user subscription status was changed on LIMITED", subBalance, user.getId());
-        } else {
-
-            user.setSubBalance((byte) (subBalance - 1));
-            user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
-            user.setStatus(UserStatusDao.getSubscribedUserStatus());
-            userRepository.save(user);
-
-            accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, SUBSCRIPTION_CHARGE, null);
-
-            LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]", user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance());
-        }
+        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        userRepository.save(user);
+        LOGGER.info("So the user subscription status was changed on LIMITED for user with id [{}]", user.getId());
     }
 
     @Transactional(readOnly = true)
@@ -1349,24 +1069,6 @@ public class UserService {
     @Transactional(propagation = REQUIRED)
     public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
         userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
-    }
-
-    @Transactional
-    public User updateTokenDetails(User user, String idfa) {
-        int result = userRepository.updateTokenDetails(user.getId(), idfa);
-
-        if (result > 0) {
-            user.setIdfa(idfa);
-        }
-
-        return user;
-    }
-
-    @Transactional(readOnly = true)
-    public Page<User> getUsersForRetryPayment(int maxCount) {
-        int epochSeconds = getEpochSeconds();
-
-        return userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1466,21 +1168,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean isPromotedDevice(String phoneNumber, Community community) {
-        boolean isPromoted = false;
-        try {
-            isPromoted = deviceService.isPromotedDevicePhone(community, phoneNumber, null);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
-        return isPromoted;
-    }
-
-    public boolean isVFNZOtacValid(String otac, String phoneNumber, Community community) {
-        return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community) != 0L;
-    }
-
     @Transactional(propagation = REQUIRED)
     public MergeResult autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) {
         User user = checkUser(communityUri, userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER, ACTIVATED);
@@ -1544,7 +1231,7 @@ public class UserService {
 
     @Transactional
     public User authorize(User user, boolean checkReactivation, ActivationStatus... activationStatuses) {
-        checkActivationStatus(user, activationStatuses);
+        userActivationStatusService.checkActivationStatus(user, activationStatuses);
         if (checkReactivation) {
             checkUserReactivation(user);
         }
@@ -1573,7 +1260,6 @@ public class UserService {
     }
 
     public void setO2ClientService(O2ProviderService o2ClientService) {
-        this.o2ClientService = o2ClientService;
     }
 
     public void setOtacValidationService(OtacValidationService otacValidationService) {
@@ -1682,6 +1368,14 @@ public class UserService {
 
     public void setAppsFlyerDataService(AppsFlyerDataService appsFlyerDataService) {
         this.appsFlyerDataService = appsFlyerDataService;
+    }
+
+    public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {
+        this.userTransactionRepository = userTransactionRepository;
+    }
+
+    public void setUserActivationStatusService(UserActivationStatusService userActivationStatusService) {
+        this.userActivationStatusService = userActivationStatusService;
     }
 
     protected Integer getOperator() {

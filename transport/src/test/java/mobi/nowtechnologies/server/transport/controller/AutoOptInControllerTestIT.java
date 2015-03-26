@@ -94,7 +94,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
         String deviceUid = "b88106713409e92622461a876abcd74b";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String otac = null;
-        User user = userRepository.findOne(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
         reactivationUserInfo.setUser(user);
         reactivationUserInfo.setReactivationRequest(true);
@@ -235,7 +235,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String otac = null;
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         user.setTariff(Tariff._4G);
         user.setSegment(SegmentType.CONSUMER);
         user.setVideoFreeTrialHasBeenActivated(false);
@@ -248,7 +248,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
             post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac)
                                                                                .param("DEVICE_UID", deviceUid)).andExpect(status().isOk());
 
-        user = userRepository.findOne(userName, communityUrl);
+        user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         assertTrue(user.isVideoFreeTrialHasBeenActivated());
         assertTrue(user.getFreeTrialExpiredMillis() > currentTimeInMilliSeconds);
     }
@@ -263,7 +263,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
         String deviceUid = "b88106713409e92622461a876abcd74b";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String otac = null;
-        User user = userRepository.findOne(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         mockMvc.perform(
             post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac)
                                                                                .param("DEVICE_UID", deviceUid)).andExpect(status().isOk())
@@ -281,7 +281,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
         String deviceUid = "b88106713409e92622461a876abcd74b";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String otac = null;
-        User user = userRepository.findOne(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         mockMvc.perform(
             post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN.xml").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac)
                                                                               .param("DEVICE_UID", deviceUid)).andExpect(status().isOk())

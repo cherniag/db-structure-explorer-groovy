@@ -29,9 +29,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "taskType", length = 50, discriminatorType = DiscriminatorType.STRING)
 public abstract class Task implements Serializable {
-
-    private static final long serialVersionUID = 5704319982970830025L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

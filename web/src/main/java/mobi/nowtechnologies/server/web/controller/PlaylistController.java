@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -37,11 +38,12 @@ public class PlaylistController extends CommonController {
     private ChartDetailService chartDetailService;
     private ChartService chartService;
     private UserService userService;
+    private UserRepository userRepository;
     private Map<String, String> env;
 
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
     public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
-        User user = userService.findById(getUserId());
+        User user = userRepository.findOne(getUserId());
         if (user.isLimited()) {
             return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
         } else {
@@ -80,6 +82,10 @@ public class PlaylistController extends CommonController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setChartDetailService(ChartDetailService chartDetailService) {

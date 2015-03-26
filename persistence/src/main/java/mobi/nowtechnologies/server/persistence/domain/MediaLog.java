@@ -39,7 +39,6 @@ public class MediaLog implements Serializable {
     public static final String NQ_GET_PURCHASED_TRACKS_BY_USER_ID = "getPurchasedTracksByUserId";
     public static final String NQ_IS_DOWNLOADED_ORIGINAL = "isDowloadedOriginal";
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaLog.class);
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int i;

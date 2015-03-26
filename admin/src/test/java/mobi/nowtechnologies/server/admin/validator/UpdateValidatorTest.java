@@ -129,7 +129,7 @@ public class UpdateValidatorTest {
         UpdateIncomingDto updateIncomingDto = createUpdateIncomingDto("first", "second", "third");
         Errors errors = mock(Errors.class);
         // not allowed
-        when(userRepository.findByUserNameAndCommunity(anyList(), eq("hl_uk"))).thenReturn(Lists.newArrayList(createUser("first"), createUser("third"), createUser("second")));
+        when(userRepository.findByUserNamesAndCommunity(anyList(), eq("hl_uk"))).thenReturn(Lists.newArrayList(createUser("first"), createUser("third"), createUser("second")));
 
         updateValidator.validateUsers(updateIncomingDto, errors);
 
@@ -141,7 +141,7 @@ public class UpdateValidatorTest {
         UpdateIncomingDto updateIncomingDto = createUpdateIncomingDto("first", "fourth", "third", "second");
         Errors errors = mock(Errors.class);
         // not allowed
-        when(userRepository.findByUserNameAndCommunity(anyList(), eq("hl_uk"))).thenReturn(Lists.newArrayList(createUser("second"), createUser("first"), createUser("third")));
+        when(userRepository.findByUserNamesAndCommunity(anyList(), eq("hl_uk"))).thenReturn(Lists.newArrayList(createUser("second"), createUser("first"), createUser("third")));
 
         updateValidator.validateUsers(updateIncomingDto, errors);
 

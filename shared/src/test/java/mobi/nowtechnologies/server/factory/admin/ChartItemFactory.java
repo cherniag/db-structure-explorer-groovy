@@ -36,20 +36,6 @@ public class ChartItemFactory {
         return expectedItemDto;
     }
 
-    public static String anyChartItemJSON(Integer chartId, Date publishDate) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH:mm:ss").create();
-        Type type = new TypeToken<ChartItemDto>() {}.getType();
-
-        return gson.toJson(anyChartItemDto(chartId, publishDate), type);
-    }
-
-    public static String anyChartItemListJSON(int amount, Integer chartId, Date publishDate) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH:mm:ss").create();
-        Type type = new TypeToken<ArrayList<ChartItemDto>>() {}.getType();
-
-        return gson.toJson(getChartItemDtos(amount, chartId, publishDate), type);
-    }
-
     /**
      * @return
      */
@@ -61,18 +47,4 @@ public class ChartItemFactory {
         return items;
     }
 
-    public static List<ChartItemDto> getChartItemDtos(ChartItemDto item, int amount) {
-        List<ChartItemDto> items = new ArrayList<ChartItemDto>();
-        for (int i = 0; i < amount; i++) {
-            items.add(item);
-        }
-        return items;
-    }
-
-    /**
-     * @return
-     */
-    public static List<ChartItemDto> getEmptyChartItemDtos() {
-        return new ArrayList<ChartItemDto>();
-    }
 }

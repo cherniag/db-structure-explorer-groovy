@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.shared.web.interceptor;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -39,10 +39,11 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
     protected static final Logger PROFILE_LOGGER = LoggerFactory.getLogger("PROFILE_LOGGER");
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerInterceptor.class);
-    private UserService userService;
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    private UserRepository userRepository;
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -153,7 +154,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                     if (userIdObject instanceof Integer) {
                         final Integer userId = (Integer) userIdObject;
                         if (userId != null) {
-                            User user = userService.findById(userId);
+                            User user = userRepository.findOne(userId);
                             if (user != null) {
                                 PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
                                 if (currentPaymentDetails != null) {

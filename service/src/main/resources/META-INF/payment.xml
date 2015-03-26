@@ -11,6 +11,7 @@
 	
 	<bean id="service.PendingPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PendingPaymentServiceImpl">
 		<property name="pendingPaymentRepository" ref="pendingPaymentRepository" />
+		<property name="userRepository" ref="userRepository" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentSystems" ref="service.map.paymentSystems" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
@@ -97,6 +98,7 @@
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="userService" ref="vf_nz.service.UserService" />
         <property name="pendingPaymentService" ref="service.PendingPaymentService" />
+        <property name="userRepository" ref="userRepository" />
         <property name="paymentCodes">
             <set>
                 <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>

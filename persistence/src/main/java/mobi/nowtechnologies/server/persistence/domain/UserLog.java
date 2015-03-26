@@ -80,10 +80,6 @@ public class UserLog {
                null;
     }
 
-    public DateTime getLastUpdate() {
-        return new DateTime(logTimeMillis);
-    }
-
     public long getLastUpdateMillis() {
         return logTimeMillis;
     }
@@ -106,13 +102,6 @@ public class UserLog {
 
     public UserLogStatus getUserLogStatus() {
         return userLogStatus;
-    }
-
-    public UserLog withOldUserLog(UserLog oldUserLog) {
-        if (isNotNull(oldUserLog)) {
-            id = oldUserLog.getId();
-        }
-        return this;
     }
 
     public UserLog withUser(User user) {

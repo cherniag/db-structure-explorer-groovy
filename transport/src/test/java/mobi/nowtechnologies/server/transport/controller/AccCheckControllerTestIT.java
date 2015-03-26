@@ -16,6 +16,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -48,7 +49,8 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
 
     @Resource
     private ChartRepository chartRepository;
-
+    @Resource
+    private UserRepository userRepository;
     @Resource
     private ChartDetailRepository chartDetailRepository;
 
@@ -70,7 +72,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         setUserSelectedCharts(user, 5);
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("COMMUNITY_NAME", communityUrl).param("USER_NAME", userName).param("USER_TOKEN", userToken)
@@ -113,7 +115,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String urbanAirshipToken = "test-urban-airship-token";
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         setUserSelectedCharts(user, 5);
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("COMMUNITY_NAME", communityUrl).param("USER_NAME", userName).param("USER_TOKEN", userToken)
@@ -134,7 +136,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         setUserSelectedCharts(user, 5);
 
         mockMvc.perform(
@@ -156,7 +158,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
 
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
         reactivationUserInfo.setUser(user);
@@ -187,7 +189,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
 
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
         reactivationUserInfo.setUser(user);
@@ -211,7 +213,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         ChartDetail chartDetail = chartDetailRepository.findOne(22);
         chartDetail.setLocked(true);
         chartDetailRepository.save(chartDetail);
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         UserStatus userStatus = new UserStatus();
         userStatus.setI((byte) 10);
         user.setStatus(userStatus);
@@ -275,7 +277,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setProvider(NON_VF);
         userService.updateUser(user);
 
@@ -297,7 +299,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setProvider(NON_VF);
         userService.updateUser(user);
 
@@ -422,7 +424,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setProvider(null);
         userService.updateUser(user);
 
@@ -444,7 +446,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setMobile("1");
         userService.updateUser(user);
 

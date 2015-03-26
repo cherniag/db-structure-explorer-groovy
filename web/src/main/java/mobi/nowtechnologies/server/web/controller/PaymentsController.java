@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
@@ -15,7 +16,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm;
 import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,6 +53,7 @@ public class PaymentsController extends CommonController {
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
     private UserService userService;
+    private UserRepository userRepository;
     private CommunityService communityService;
     private PromotionService promotionService;
 
@@ -81,6 +81,10 @@ public class PaymentsController extends CommonController {
         this.userService = userService;
     }
 
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
     }
@@ -93,9 +97,11 @@ public class PaymentsController extends CommonController {
         this.subscriptionInfoAsm = subscriptionInfoAsm;
     }
 
-    protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale, String scopePrefix) {
-        User user = userService.findById(getUserId());
-        Community community = communityService.getCommunityByUrl(communityUrl);
+    protected ModelAndView getManagePaymentsPage(String viewName, Locale locale, String scopePrefix) {
+        User user = userRepository.findOne(getUserId());
+
+        LOGGER.info("Request for  page[{}] with user id [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, user.getId(), locale);
+
         PaymentsPage paymentsPage = new PaymentsPage();
         // the following check was added to show a static page instead of the
         // vf payment options. Once the options are enabled, the following
@@ -106,7 +112,7 @@ public class PaymentsController extends CommonController {
             LOGGER.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
             return new ModelAndView(scopePrefix + "/notimplemented");
         }
-        if (!paymentRequired(user, community)) {
+        if (!paymentRequired(user, user.getCommunity())) {
             return new ModelAndView("payments_coming_soon");
         }
 
@@ -133,7 +139,7 @@ public class PaymentsController extends CommonController {
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
-        mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user, community));
+        mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user));
         mav.addObject("paymentsPage", paymentsPage);
 
         return mav;
@@ -206,16 +212,13 @@ public class PaymentsController extends CommonController {
     }
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
-    public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
-        LOGGER.info("Request for [{}] with communityUrl [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, communityUrl, locale);
-
-        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale, VIEW_MANAGE_PAYMENTS);
+    public ModelAndView getManagePaymentsPage(Locale locale) {
+        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, locale, VIEW_MANAGE_PAYMENTS);
     }
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS_INAPP}, method = RequestMethod.GET)
-    public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
-
-        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl, locale, VIEW_MANAGE_PAYMENTS_INAPP);
+    public ModelAndView getManagePaymentsPageInApp(Locale locale) {
+        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, locale, VIEW_MANAGE_PAYMENTS_INAPP);
     }
 
     private boolean isConsumerUser(User user) {
@@ -275,10 +278,10 @@ public class PaymentsController extends CommonController {
         return messageSource.getMessage(messageCode, args, "", locale);
     }
 
-    private boolean userIsLimitedAndPromotionIsActive(User user, Community community) {
+    private boolean userIsLimitedAndPromotionIsActive(User user) {
         if (user.isLimited()) {
 
-            Promotion twoWeeksTrial = promotionService.getActivePromotion(PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+            Promotion twoWeeksTrial = promotionService.getActivePromotion(user.getUserGroup(), PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE);
             long now = System.currentTimeMillis();
             int dbSecs = (int) (now / 1000); // in db we keep time in seconds not milliseconds
             if (twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate()) {

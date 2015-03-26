@@ -71,7 +71,6 @@ public class ChartItemControllerTest {
         fixture.setChartDetailService(chartDetailService);
         fixture.setFilesURL("");
         fixture.setChartAsm(chartAsm);
-        // fixture.dateTimeFormat = new SimpleDateFormat();
         //fixture.dateFormat = new SimpleDateFormat();
         fixture.messageSource = mock(MessageSource.class);
     }
