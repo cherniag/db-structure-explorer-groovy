@@ -3,9 +3,12 @@ package mobi.nowtechnologies.server.service.nz;
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +24,17 @@ public class NZSubscriberInfoService implements InitializingBean {
     NZSubscriberInfoProvider subscriberInfoProvider;
 
     @Transactional
-    public void confirm(int userId, String msisdn) {
-        NZSubscriberInfo existing = subscriberInfoRepository.findSubscriberInfoByUserId(userId);
+    public void confirm(User user, String msisdn) {
+        NZSubscriberInfo existing = subscriberInfoRepository.findSubscriberInfoByUserId(user.getId());
         if(existing != null) {
             existing.unassignUser();
         }
 
-        log.info("confirm msisdn {} for {}", msisdn, userId);
+        log.info("confirm msisdn {} for {}", msisdn, user.getId());
         NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
-        nzSubscriberInfo.setUserId(userId);
+        nzSubscriberInfo.setUserId(user.getId());
+
+        user.setMobile("+" + msisdn);
     }
 
     public boolean belongs(String msisdn) throws ProviderNotAvailableException, MsisdnNotFoundException {

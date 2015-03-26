@@ -42,7 +42,7 @@ public class PinPinModelServiceImpl implements PinModelService {
 
         Object policies = new ArrayList<>(new TreeSet<>(converted));
 
-        nzSubscriberInfoService.confirm(user.getId(), phone);
+        nzSubscriberInfoService.confirm(user, phone);
 
         return Collections.singletonMap("paymentPolicyDtos", policies);
     }
