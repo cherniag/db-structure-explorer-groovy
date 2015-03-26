@@ -38,6 +38,10 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <bean id="service.AppsFlyerDataService" class="mobi.nowtechnologies.server.service.AppsFlyerDataService"/>
 
 	<bean id="userStatusTypeService" class="mobi.nowtechnologies.server.service.behavior.UserStatusTypeService" />
+    <bean class="mobi.nowtechnologies.server.service.behavior.PaymentTimeService">
+        <property name="timeRange" value="${context.request.expires.minutes.time.range}"/>
+    </bean>
+
     <bean id="behaviorInfoService" class="mobi.nowtechnologies.server.service.behavior.BehaviorInfoService">
 		<property name="activationDatePropertyName" value="referral.logic.activation.date" />
     </bean>
@@ -376,8 +380,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
 		<property name="communityRepository" ref="communityRepository" />
 	</bean>
-
-	<bean id="service.operatorService" class="mobi.nowtechnologies.server.service.impl.OperatorServiceImpl" />
 
 	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"></bean>
 

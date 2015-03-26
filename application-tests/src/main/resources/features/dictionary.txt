@@ -36,4 +36,4 @@ get context supported communities=mtv1
 # Try to avoid unneeded server polling
 #
 all versions to signup=6.0, 6.3, 6.5, 6.7
-all versions to get context=6.8
+all versions to get context=6.8, 6.9

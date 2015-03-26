@@ -26,6 +26,15 @@
 				</property>
 			</bean>
 		</mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+                <property name="cacheSeconds" value="0"/>
+                <property name="useExpiresHeader" value="true"/>
+                <property name="useCacheControlHeader" value="true"/>
+                <property name="useCacheControlNoStore" value="true"/>
+            </bean>
+        </mvc:interceptor>
 	</mvc:interceptors>
 
 	<mvc:annotation-driven>
@@ -121,6 +130,7 @@
             <list>
                 <ref bean="transport.JaxbMarshallingView"/>
                 <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+                    <property name="disableCaching" value="false"/>
                     <property name="objectMapper">
                         <bean class="com.fasterxml.jackson.databind.ObjectMapper">
                             <property name="serializationInclusion" value="NON_EMPTY"/>
