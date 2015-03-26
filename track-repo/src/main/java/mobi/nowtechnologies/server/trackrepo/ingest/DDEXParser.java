@@ -61,15 +61,16 @@ public abstract class DDEXParser extends IParser {
 
             boolean isAlbum = checkAlbum(type);
 
-            if (isAlbum == false) {
+            if (!isAlbum) {
                 isAlbum = isWrongAlbum(release);
             }
 
             if (!isAlbum) {
                 DropTrack track = parseTrack(distributor, action, deals, files, resourceDetails, imageFile, release);
 
-                result.put(track.isrc + track.productCode + getClass(), track);
-            } else {
+                result.put(getKey(track), track);
+            }
+            else {
                 albumElement = release;
             }
         }
@@ -78,6 +79,11 @@ public abstract class DDEXParser extends IParser {
 
         return result;
     }
+
+    protected String getKey(DropTrack track) {
+        return track.isrc + track.productCode + getClass();
+    }
+
 
     private void parseAlbum(Map<String, DropTrack> result, Element albumElement) {
         String upc = null;
@@ -183,7 +189,7 @@ public abstract class DDEXParser extends IParser {
         Element detailsTitle = details.getChild("Title");
         List subTitles = detailsTitle.getChildren("SubTitle");
         if (subTitles != null) {
-            String fullSubTitle = new String();
+            String fullSubTitle = "";
             for (int si = 0; si < subTitles.size(); si++) {
                 Element subTitleElement = (Element) subTitles.get(si);
                 fullSubTitle += subTitleElement.getText();
@@ -237,8 +243,7 @@ public abstract class DDEXParser extends IParser {
         territoryData.country = dealTerritory.country;
         territoryData.takeDown = dealTerritory.takeDown;
         territoryData.distributor = distributor;
-        String territoryLabel = territory.getChildText("LabelName");
-        territoryData.label = territoryLabel;
+        territoryData.label = territory.getChildText("LabelName");
         territoryData.reportingId = track.isrc;
         territoryData.startdate = dealTerritory.startdate;
         territoryData.price = dealTerritory.price;
@@ -387,7 +392,7 @@ public abstract class DDEXParser extends IParser {
     }
 
     private Map<String, List<DropAssetFile>> parseMediaFiles(String fileRoot, Map<String, DropTrack> resourceDetails, Element rootNode) {
-        Map<String, List<DropAssetFile>> files = new HashMap<String, List<DropAssetFile>>();
+        Map<String, List<DropAssetFile>> files = new HashMap<>();
         List<Element> list = rootNode.getChild("ResourceList").getChildren("SoundRecording");
 
         for (Element node : list) {
@@ -600,8 +605,9 @@ public abstract class DDEXParser extends IParser {
         return new File(xmlFileParentFolder + separator + getXmlFileName(xmlFileParentFolder.getName()));
     }
 
+    @Override
     public Map<String, DropTrack> ingest(DropData drop) {
-        Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+        Map<String, DropTrack> tracks = new HashMap<>();
         try {
             File folder = new File(drop.name);
             File[] content = folder.listFiles();
@@ -613,8 +619,9 @@ public abstract class DDEXParser extends IParser {
                 }
             }
 
-        } catch (Exception e) {
-            LOGGER.error("Ingest failed: [{}]", e.getMessage(), e);
+        }
+        catch (Exception e) {
+            LOGGER.error("Ingest failed", e);
         }
         return tracks;
     }
@@ -626,7 +633,7 @@ public abstract class DDEXParser extends IParser {
 
         try {
             String fileRoot = xmlFile.getParent();
-            Map<String, DropTrack> resourceDetails = new HashMap<String, DropTrack>();
+            Map<String, DropTrack> resourceDetails = new HashMap<>();
 
             Document document = builder.build(xmlFile);
             Element rootNode = document.getRootElement();
@@ -643,17 +650,16 @@ public abstract class DDEXParser extends IParser {
 
             return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
 
-        } catch (IOException io) {
-            LOGGER.error("Exception: [{}]", io.getMessage());
-        } catch (JDOMException jdomex) {
-            LOGGER.error("Exception: [{}]", jdomex.getMessage());
+        }
+        catch (IOException | JDOMException e) {
+            LOGGER.error("Exception: [{}]", e.getMessage());
         }
         return null;
     }
 
     @Override
     public List<DropData> getDrops(boolean auto) {
-        List<DropData> result = new ArrayList<DropData>();
+        List<DropData> result = new ArrayList<>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
         return result;

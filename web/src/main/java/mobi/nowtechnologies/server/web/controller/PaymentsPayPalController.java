@@ -130,7 +130,7 @@ public class PaymentsPayPalController extends CommonController {
         PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
         dto.setBillingAgreementDescription(messageSource.getMessage("pay.paypal.billing.agreement.description",
                                                                     new Object[] {paymentPolicyDto.getDuration(), paymentPolicyDto.getDurationUnit(), paymentPolicyDto.getSubcost()}, locale));
-        StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT).append(START_PARAM_DELIM)
+        StringBuilder callbackUrl = new StringBuilder(getServerURL(request)).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT).append(START_PARAM_DELIM)
                                                                                   .append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&")
                                                                                   .append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);

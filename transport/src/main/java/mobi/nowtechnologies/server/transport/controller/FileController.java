@@ -5,8 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.web.servlet.FileInResponseView;
-import mobi.nowtechnologies.server.shared.web.servlet.PlainTextView;
+import mobi.nowtechnologies.server.transport.controller.view.FileInResponseView;
+import mobi.nowtechnologies.server.transport.controller.view.PlainTextView;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;

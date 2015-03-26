@@ -27,8 +27,4 @@
 		<property name="trackReportingOptionsService" ref="trackReportingOptionsService"/>
  	</bean>
 
-    <bean name="trackRepo.VersionController"
-          class="mobi.nowtechnologies.server.controller.VersionController">
-    </bean>
-
 </beans>

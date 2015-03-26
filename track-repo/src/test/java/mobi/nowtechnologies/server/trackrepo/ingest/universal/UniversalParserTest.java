@@ -11,9 +11,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.junit.*;
-import org.junit.runner.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
@@ -24,12 +27,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 
-import org.powermock.modules.junit4.PowerMockRunner;
-
 /**
  * User: sanya Date: 7/10/13 Time: 9:25 AM
  */
-@RunWith(PowerMockRunner.class)
 public class UniversalParserTest {
 
     private UniversalParser fixture;
@@ -48,7 +48,7 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(false, result.get("ROCRP1002941").explicit);
+        assertEquals(false, result.get("ROCRP1002941").explicit);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(true, result.get("GBSXS1100209").explicit);
+        assertEquals(true, result.get("GBSXS1100209").explicit);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(false, result.get("ROCRP1002941").explicit);
+        assertEquals(false, result.get("ROCRP1002941").explicit);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(true, result.get("GBSXS1100209").explicit);
+        assertEquals(true, result.get("GBSXS1100209").explicit);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(true, result.get("ROCRP1002948").explicit);
+        assertEquals(true, result.get("ROCRP1002948").explicit);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(false, result.get("ROCRP1002948").explicit);
+        assertEquals(false, result.get("ROCRP1002948").explicit);
     }
 
     @Test
@@ -120,41 +120,41 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(8, result.size());
+        assertEquals(8, result.size());
 
         DropTrack track = result.get("ROCRP1002948");
 
-        Assert.assertEquals(DropTrack.Type.INSERT, track.type);
-        Assert.assertEquals("05037128167051", track.productCode);
-        Assert.assertEquals("Get Back (ASAP)", track.title);
-        Assert.assertEquals("Extended Mix", track.subTitle);
-        Assert.assertEquals("Alexandra Stan", track.artist);
-        Assert.assertEquals("Dance", track.genre);
-        Assert.assertEquals("(C) 2011 3Beat Productions Limited, under Exclusive License to All Around The World Ltd.", track.copyright);
-        Assert.assertEquals("ROCRP1002948", track.isrc);
-        Assert.assertEquals("2011", track.year);
-        Assert.assertEquals(null, track.label);
-        Assert.assertEquals("05037128167051", track.physicalProductId);
-        Assert.assertEquals("Get Back (ASAP)", track.album);
-        Assert.assertEquals(null, track.info);
-        Assert.assertEquals(true, track.licensed);
-        Assert.assertEquals(false, track.exists);
-        Assert.assertEquals(false, track.explicit);
-        Assert.assertEquals("05037128167051", track.productId);
+        assertEquals(DropTrack.Type.INSERT, track.type);
+        assertEquals("05037128167051", track.productCode);
+        assertEquals("Get Back (ASAP)", track.title);
+        assertEquals("Extended Mix", track.subTitle);
+        assertEquals("Alexandra Stan", track.artist);
+        assertEquals("Dance", track.genre);
+        assertEquals("(C) 2011 3Beat Productions Limited, under Exclusive License to All Around The World Ltd.", track.copyright);
+        assertEquals("ROCRP1002948", track.isrc);
+        assertEquals("2011", track.year);
+        assertEquals(null, track.label);
+        assertEquals("05037128167051", track.physicalProductId);
+        assertEquals("Get Back (ASAP)", track.album);
+        assertEquals(null, track.info);
+        assertEquals(true, track.licensed);
+        assertEquals(false, track.exists);
+        assertEquals(false, track.explicit);
+        assertEquals("05037128167051", track.productId);
 
-        Assert.assertEquals(1, track.territories.size());
+        assertEquals(1, track.territories.size());
 
         DropTerritory territory = track.territories.get(0);
-        Assert.assertEquals("GB", territory.country);
-        Assert.assertEquals("Universal Music TV", territory.label);
-        Assert.assertEquals(null, territory.currency);
-        Assert.assertEquals(null, territory.price);
-        Assert.assertEquals("ROCRP1002948", territory.reportingId);
-        Assert.assertEquals("Universal Music TV Campaign Division", territory.distributor);
-        Assert.assertEquals(false, territory.takeDown);
-        Assert.assertEquals("STAP", territory.priceCode);
-        Assert.assertEquals(null, territory.dealReference);
-        Assert.assertEquals(null, territory.publisher);
+        assertEquals("GB", territory.country);
+        assertEquals("Universal Music TV", territory.label);
+        assertEquals(null, territory.currency);
+        assertEquals(null, territory.price);
+        assertEquals("ROCRP1002948", territory.reportingId);
+        assertEquals("Universal Music TV Campaign Division", territory.distributor);
+        assertEquals(false, territory.takeDown);
+        assertEquals("STAP", territory.priceCode);
+        assertEquals(null, territory.dealReference);
+        assertEquals(null, territory.publisher);
     }
 
     @Test
@@ -166,42 +166,42 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
 
-        Assert.assertEquals(1, result.size());
+        assertEquals(1, result.size());
 
         DropTrack track = result.get("FRUV71300321");
 
-        Assert.assertEquals(DropTrack.Type.INSERT, track.type);
-        Assert.assertEquals("00602537560646", track.productCode);
-        Assert.assertEquals("Jamaïque", track.title);
-        Assert.assertEquals("", track.subTitle);
-        Assert.assertEquals("Psy 4 De La Rime", track.artist);
-        Assert.assertEquals("Rap", track.genre);
-        Assert.assertEquals("(C) 2013 Def Jam Recordings France", track.copyright);
-        Assert.assertEquals("FRUV71300321", track.isrc);
-        Assert.assertEquals("2013", track.year);
-        Assert.assertEquals(null, track.label);
-        Assert.assertEquals("00602537560646", track.physicalProductId);
-        Assert.assertEquals("Jamaïque", track.album);
-        Assert.assertEquals(null, track.info);
-        Assert.assertEquals(true, track.licensed);
-        Assert.assertEquals(false, track.exists);
-        Assert.assertEquals(false, track.explicit);
-        Assert.assertEquals("00602537560646", track.productId);
+        assertEquals(DropTrack.Type.INSERT, track.type);
+        assertEquals("00602537560646", track.productCode);
+        assertEquals("Jamaïque", track.title);
+        assertEquals("", track.subTitle);
+        assertEquals("Psy 4 De La Rime", track.artist);
+        assertEquals("Rap", track.genre);
+        assertEquals("(C) 2013 Def Jam Recordings France", track.copyright);
+        assertEquals("FRUV71300321", track.isrc);
+        assertEquals("2013", track.year);
+        assertEquals(null, track.label);
+        assertEquals("00602537560646", track.physicalProductId);
+        assertEquals("Jamaïque", track.album);
+        assertEquals(null, track.info);
+        assertEquals(true, track.licensed);
+        assertEquals(false, track.exists);
+        assertEquals(false, track.explicit);
+        assertEquals("00602537560646", track.productId);
 
-        Assert.assertEquals(1, track.territories.size());
+        assertEquals(1, track.territories.size());
 
         DropTerritory territory = track.territories.get(0);
-        Assert.assertEquals("GB", territory.country);
-        Assert.assertEquals("UMC", territory.label);
-        Assert.assertEquals("09-Sep-2013", fixture.dateFormat.format(territory.startdate));
-        Assert.assertEquals(null, territory.currency);
-        Assert.assertEquals(null, territory.price);
-        Assert.assertEquals("FRUV71300321", territory.reportingId);
-        Assert.assertEquals("UMC (Universal Music Catalogue)", territory.distributor);
-        Assert.assertEquals(false, territory.takeDown);
-        Assert.assertEquals("STVTP", territory.priceCode);
-        Assert.assertEquals(null, territory.dealReference);
-        Assert.assertEquals(null, territory.publisher);
+        assertEquals("GB", territory.country);
+        assertEquals("UMC", territory.label);
+        assertEquals("09-Sep-2013", fixture.dateFormat.format(territory.startdate));
+        assertEquals(null, territory.currency);
+        assertEquals(null, territory.price);
+        assertEquals("FRUV71300321", territory.reportingId);
+        assertEquals("UMC (Universal Music Catalogue)", territory.distributor);
+        assertEquals(false, territory.takeDown);
+        assertEquals("STVTP", territory.priceCode);
+        assertEquals(null, territory.dealReference);
+        assertEquals(null, territory.publisher);
     }
 
     @Test
@@ -212,39 +212,39 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.ingest(drop);
 
-        Assert.assertEquals(8, result.size());
+        assertEquals(8, result.size());
 
         DropTrack track = result.get("ROCRP1002948");
 
-        Assert.assertEquals(4, track.files.size());
+        assertEquals(4, track.files.size());
 
         DropAssetFile downloadFile = track.files.get(0);
-        Assert.assertTrue(downloadFile.file.endsWith("UMG_audtrk_05037128167051_01_003_185.mp3"));
-        Assert.assertEquals(AssetFile.FileType.DOWNLOAD, downloadFile.type);
-        Assert.assertEquals("9ac82d0a3fb1dc43aef97dcf2c28b3e3", downloadFile.md5);
-        Assert.assertEquals("ROCRP1002948", downloadFile.isrc);
-        Assert.assertEquals(266000, downloadFile.duration.intValue());
+        assertTrue(downloadFile.file.endsWith("UMG_audtrk_05037128167051_01_003_185.mp3"));
+        assertEquals(AssetFile.FileType.DOWNLOAD, downloadFile.type);
+        assertEquals("9ac82d0a3fb1dc43aef97dcf2c28b3e3", downloadFile.md5);
+        assertEquals("ROCRP1002948", downloadFile.isrc);
+        assertEquals(266000, downloadFile.duration.intValue());
 
         DropAssetFile previewFile = track.files.get(1);
-        Assert.assertTrue(previewFile.file.endsWith("UMG_audclp_05037128167051_01_003_1129.mp4"));
-        Assert.assertEquals(AssetFile.FileType.PREVIEW, previewFile.type);
-        Assert.assertEquals("f3623b0b4bd4ae98a77fe8554ae3f7ef", previewFile.md5);
-        Assert.assertEquals("ROCRP1002948", previewFile.isrc);
-        Assert.assertEquals(266000, previewFile.duration.intValue());
+        assertTrue(previewFile.file.endsWith("UMG_audclp_05037128167051_01_003_1129.mp4"));
+        assertEquals(AssetFile.FileType.PREVIEW, previewFile.type);
+        assertEquals("f3623b0b4bd4ae98a77fe8554ae3f7ef", previewFile.md5);
+        assertEquals("ROCRP1002948", previewFile.isrc);
+        assertEquals(266000, previewFile.duration.intValue());
 
         DropAssetFile mobileFile = track.files.get(2);
-        Assert.assertTrue(mobileFile.file.endsWith("UMG_audtrk_05037128167051_01_003_1129.mp4"));
-        Assert.assertEquals(AssetFile.FileType.MOBILE, mobileFile.type);
-        Assert.assertEquals("8908fb2efc6fe2954537c8a1745163f6", mobileFile.md5);
-        Assert.assertEquals("ROCRP1002948", mobileFile.isrc);
-        Assert.assertEquals(266000, mobileFile.duration.intValue());
+        assertTrue(mobileFile.file.endsWith("UMG_audtrk_05037128167051_01_003_1129.mp4"));
+        assertEquals(AssetFile.FileType.MOBILE, mobileFile.type);
+        assertEquals("8908fb2efc6fe2954537c8a1745163f6", mobileFile.md5);
+        assertEquals("ROCRP1002948", mobileFile.isrc);
+        assertEquals(266000, mobileFile.duration.intValue());
 
         DropAssetFile imageFile = track.files.get(3);
-        Assert.assertTrue(imageFile.file.endsWith("UMG_cvrart_05037128167051_01_RGB72_1200x1200_10452455688.jpg"));
-        Assert.assertEquals(AssetFile.FileType.IMAGE, imageFile.type);
-        Assert.assertEquals("1acbb74d56b81ab6e1b4c0bdee6f0c3e", imageFile.md5);
-        Assert.assertEquals(null, imageFile.isrc);
-        Assert.assertEquals(null, imageFile.duration);
+        assertTrue(imageFile.file.endsWith("UMG_cvrart_05037128167051_01_RGB72_1200x1200_10452455688.jpg"));
+        assertEquals(AssetFile.FileType.IMAGE, imageFile.type);
+        assertEquals("1acbb74d56b81ab6e1b4c0bdee6f0c3e", imageFile.md5);
+        assertEquals(null, imageFile.isrc);
+        assertEquals(null, imageFile.duration);
     }
 
     @Test
@@ -255,25 +255,25 @@ public class UniversalParserTest {
 
         Map<String, DropTrack> result = fixture.ingest(drop);
 
-        Assert.assertEquals(1, result.size());
+        assertEquals(1, result.size());
 
         DropTrack track = result.get("FRUV71300321");
 
-        Assert.assertEquals(2, track.files.size());
+        assertEquals(2, track.files.size());
 
         DropAssetFile downloadFile = track.files.get(0);
-        Assert.assertTrue(downloadFile.file.endsWith("UMG_vidtrk_00602537560646_01_001_20601.mp4"));
-        Assert.assertEquals(AssetFile.FileType.VIDEO, downloadFile.type);
-        Assert.assertEquals("4e92a9f57a74bf9146f0e627820a81c3", downloadFile.md5);
-        Assert.assertEquals("FRUV71300321", downloadFile.isrc);
-        Assert.assertEquals(262000, downloadFile.duration.intValue());
+        assertTrue(downloadFile.file.endsWith("UMG_vidtrk_00602537560646_01_001_20601.mp4"));
+        assertEquals(AssetFile.FileType.VIDEO, downloadFile.type);
+        assertEquals("4e92a9f57a74bf9146f0e627820a81c3", downloadFile.md5);
+        assertEquals("FRUV71300321", downloadFile.isrc);
+        assertEquals(262000, downloadFile.duration.intValue());
 
         DropAssetFile previewFile = track.files.get(1);
-        Assert.assertTrue(previewFile.file.endsWith("UMG_vidtrkimg_00602537560646_01_001_RGB300_1400x1400.jpg"));
-        Assert.assertEquals(AssetFile.FileType.IMAGE, previewFile.type);
-        Assert.assertEquals("94e48b35182db59bb6faf176e728cc5b", previewFile.md5);
-        Assert.assertEquals(null, previewFile.isrc);
-        Assert.assertEquals(null, previewFile.duration);
+        assertTrue(previewFile.file.endsWith("UMG_vidtrkimg_00602537560646_01_001_RGB300_1400x1400.jpg"));
+        assertEquals(AssetFile.FileType.IMAGE, previewFile.type);
+        assertEquals("94e48b35182db59bb6faf176e728cc5b", previewFile.md5);
+        assertEquals(null, previewFile.isrc);
+        assertEquals(null, previewFile.duration);
     }
 
     @Test
@@ -321,7 +321,7 @@ public class UniversalParserTest {
         }
 
         @Factory
-        public static Matcher<Collection<DropTerritory>> hasTerritoryWithCountry(String country) {
+        public static <T> Matcher<Collection<DropTerritory>> hasTerritoryWithCountry(String country) {
             return new TerritoryMatcher(country);
         }
 
@@ -333,18 +333,11 @@ public class UniversalParserTest {
         @Override
         protected boolean matchesSafely(Collection<DropTerritory> dropTerritory) {
             for (DropTerritory territory : dropTerritory) {
-                if (matchStrings(country, territory.country)) {
+                if (Objects.equals(country, territory.country)) {
                     return true;
                 }
             }
             return false;
-        }
-
-        private boolean matchStrings(String country, String territoryCountry) {
-            if (country == territoryCountry) {
-                return true;
-            }
-            return country != null && country.equals(territoryCountry);
         }
 
     }

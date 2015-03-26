@@ -2,7 +2,7 @@
 <beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" profile="application-tests">
+http://www.springframework.org/schema/beans/spring-beans.xsd" profile="application-tests">
 
     <bean id="serviceReloadableResourceBundleMessageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
