@@ -2,9 +2,10 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
 
 import javax.annotation.Resource;
 
@@ -34,7 +35,7 @@ public class SocialNetworkInfoRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testMapping() {
         SocialNetworkInfo fbUserInfo = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
-        fbUserInfo.setUser(findUser());
+        fbUserInfo.setUserId(findUser().getId());
         fbUserInfo.setFirstName("AA");
         fbUserInfo.setSocialNetworkId("ID");
         fbUserInfo.setUserName("userName");
@@ -48,7 +49,7 @@ public class SocialNetworkInfoRepositoryIT extends AbstractRepositoryIT {
         final User user = findUser();
 
         SocialNetworkInfo fbUserInfo = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
-        fbUserInfo.setUser(user);
+        fbUserInfo.setUserId(user.getId());
         fbUserInfo.setFirstName("BB");
         fbUserInfo.setSocialNetworkId("ID0");
         fbUserInfo.setUserName("userName");

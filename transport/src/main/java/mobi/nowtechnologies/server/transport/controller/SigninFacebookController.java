@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.social.core.UserPromoService;

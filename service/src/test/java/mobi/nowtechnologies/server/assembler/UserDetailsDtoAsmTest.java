@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
@@ -13,6 +13,8 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 
 import java.text.SimpleDateFormat;
+
+import org.springframework.social.facebook.api.GraphApi;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -45,10 +47,10 @@ public class UserDetailsDtoAsmTest {
         when(googlePlusUserInfo.getFirstName()).thenReturn("Name");
         when(googlePlusUserInfo.getLastName()).thenReturn("Surname");
         when(googlePlusUserInfo.getGender()).thenReturn(Gender.FEMALE);
-        when(googlePlusUserInfo.getLocation()).thenReturn("London");
+        when(googlePlusUserInfo.getCity()).thenReturn("London");
         when(googlePlusUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
 
-        when(socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)).thenReturn(googlePlusUserInfo);
+        when(socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)).thenReturn(googlePlusUserInfo);
 
 
         // invoke
@@ -58,7 +60,7 @@ public class UserDetailsDtoAsmTest {
         GooglePlusUserDetailsDto dtoUserDetails = (GooglePlusUserDetailsDto) dto;
         assertEquals("a@bc.com", dtoUserDetails.getEmail());
         assertEquals("Display Name", dtoUserDetails.getUserName());
-        assertEquals("http://gp.com/1/1.jpg", dtoUserDetails.getProfileUrl());
+        assertEquals(googlePlusUserInfo.getProfileImageUrl(), dtoUserDetails.getProfileUrl());
         assertEquals("000001", dtoUserDetails.getGooglePlusId());
         assertEquals("Name", dtoUserDetails.getFirstName());
         assertEquals("Surname", dtoUserDetails.getSurname());
@@ -78,13 +80,12 @@ public class UserDetailsDtoAsmTest {
         when(facebookUserInfo.getFirstName()).thenReturn("Name");
         when(facebookUserInfo.getLastName()).thenReturn("Surname");
         when(facebookUserInfo.getEmail()).thenReturn("a@bc.com");
-        when(facebookUserInfo.getProfileUrl()).thenReturn("http://fb.com/1/1.jpg");
         when(facebookUserInfo.getSocialNetworkId()).thenReturn("000001");
-        when(facebookUserInfo.getLocation()).thenReturn("London");
+        when(facebookUserInfo.getCity()).thenReturn("London");
         when(facebookUserInfo.getGender()).thenReturn(Gender.FEMALE);
         when(facebookUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
 
-        when(socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.FACEBOOK)).thenReturn(facebookUserInfo);
+        when(socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK)).thenReturn(facebookUserInfo);
 
 
         // invoke
@@ -96,7 +97,7 @@ public class UserDetailsDtoAsmTest {
         assertEquals("Name", dtoUserDetails.getFirstName());
         assertEquals("Surname", dtoUserDetails.getSurname());
         assertEquals("a@bc.com", dtoUserDetails.getEmail());
-        assertEquals("http://fb.com/1/1.jpg", dtoUserDetails.getProfileUrl());
+        assertEquals(String.format("%s%s/picture?type=large", GraphApi.GRAPH_API_URL, "000001"), dtoUserDetails.getProfileUrl());
         assertEquals("000001", dtoUserDetails.getFacebookId());
         assertEquals("London", dtoUserDetails.getLocation());
         assertEquals(Gender.FEMALE, dtoUserDetails.getGender());

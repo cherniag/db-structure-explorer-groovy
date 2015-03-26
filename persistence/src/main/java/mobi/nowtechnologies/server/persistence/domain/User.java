@@ -215,8 +215,6 @@ public class User implements Serializable {
     private long lastSuccessfulPaymentTimeMillis;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Drm> drms;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<SocialNetworkInfo> socialNetworkInfo = new HashSet<SocialNetworkInfo>();
     private String facebookId;
     @Column(nullable = true)
     private String deviceUID;
@@ -1486,10 +1484,6 @@ public class User implements Serializable {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public Set<SocialNetworkInfo> getSocialNetworkInfo() {
-        return socialNetworkInfo;
     }
 
     public Community getCommunity() {

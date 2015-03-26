@@ -12,10 +12,9 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
     private String lastName;
     private String profileUrl;
     private String displayName;
-    private String homePage;
 
     public GooglePlusTemplateCustomizerImpl(String googlePlusEmail, String googlePlusUserId, String firstName, String lastName, String profileUrl, String accessToken, String gender, String birthday,
-                                            String primaryLocation, String displayName, String homePage) {
+                                            String primaryLocation, String displayName) {
         super(accessToken);
         this.googlePlusUserId = googlePlusUserId;
         this.googlePlusEmail = googlePlusEmail;
@@ -26,7 +25,6 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
         this.birthday = birthday;
         this.primaryLocation = primaryLocation;
         this.displayName = displayName;
-        this.homePage = homePage;
     }
 
 
@@ -36,7 +34,7 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
 
     @Override
     protected String renderGooglePlusResponse(String body) {
-        return String.format(body, displayName, firstName, lastName, homePage, gender, profileUrl, primaryLocation, birthday, googlePlusUserId, googlePlusEmail);
+        return String.format(body, displayName, firstName, lastName, profileUrl, gender, profileUrl, primaryLocation, birthday, googlePlusUserId, googlePlusEmail);
     }
 
 }

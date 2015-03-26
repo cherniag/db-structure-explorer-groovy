@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -15,17 +14,17 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
 import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 import static mobi.nowtechnologies.server.web.controller.UnsubscribeController.REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,6 +62,9 @@ public class PaymentsPayPalController extends CommonController {
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
     private UserService userService;
 
+    @Resource
+    private SocialNetworkInfoRepository socialNetworkInfoRepository;
+
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
     public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
                                       @RequestParam(value = REQUEST_PARAM_PAYPAL_TOKEN, required = false) String token,
@@ -91,17 +93,9 @@ public class PaymentsPayPalController extends CommonController {
         boolean paymentEnabled = communityResourceBundleMessageSource.readBoolean(communityUrl, "web.portal.social.info.for.paypal.enabled", false);
 
         if (paymentEnabled) {
-            User user = userService.getWithSocial(getSecurityContextDetails().getUserId());
-            List<SocialNetworkInfo> socialNetworkInfo = new ArrayList<SocialNetworkInfo>(user.getSocialNetworkInfo());
-            Assert.isTrue(!socialNetworkInfo.isEmpty(), "No social info for " + user.getId());
-
-            //to get predictable socialInfo from set
-            Collections.sort(socialNetworkInfo, new Comparator<SocialNetworkInfo>() {
-                @Override
-                public int compare(SocialNetworkInfo o1, SocialNetworkInfo o2) {
-                    return o2.getSocialNetworkId().compareTo(o1.getSocialNetworkId());
-                }
-            });
+            Integer userId = getSecurityContextDetails().getUserId();
+            List<SocialNetworkInfo> socialNetworkInfo = socialNetworkInfoRepository.findByUserId(userId);
+            Assert.isTrue(!socialNetworkInfo.isEmpty(), "No social info for " + userId);
 
             SocialNetworkInfo first = socialNetworkInfo.iterator().next();
             modelAndModel.addObject("customerName", getFormattedName(first));

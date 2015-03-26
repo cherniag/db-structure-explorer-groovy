@@ -1,7 +1,7 @@
 -- reusable script. no need transactions
 
 INSERT INTO social_network_info
-(id, user_id, social_network, social_network_id, email, gender, date_of_birth, profile_image_url, last_name, first_name, profile_url, location, user_name, age_range_min, age_range_max, profile_image_silhouette)
+(id, user_id, social_network_type, social_network_id, email, gender, date_of_birth, profile_image_url, last_name, first_name, country, city, user_name, age_range_min, age_range_max, profile_image_silhouette)
   SELECT fb.id,
     si.user_id,
     'FACEBOOK',
@@ -12,7 +12,7 @@ INSERT INTO social_network_info
     fb.profile_image_url,
     fb.surname,
     fb.first_name,
-    fb.profile_url,
+    fb.country,
     fb.city,
     fb.user_name,
     fb.age_range_min,
@@ -23,7 +23,7 @@ INSERT INTO social_network_info
   WHERE fb.id NOT IN(SELECT id FROM social_network_info);
 
 INSERT INTO social_network_info
-(id, user_id, social_network, social_network_id, email, gender, date_of_birth, profile_image_url, last_name, first_name, profile_url, location, user_name, age_range_min, age_range_max, profile_image_silhouette)
+(id, user_id, social_network_type, social_network_id, email, gender, date_of_birth, profile_image_url, last_name, first_name, country, city, user_name, age_range_min, age_range_max, profile_image_silhouette)
   SELECT gp.id,
     si.user_id,
     'GOOGLE',
@@ -34,7 +34,7 @@ INSERT INTO social_network_info
     gp.picture_url,
     gp.family_name,
     gp.given_name,
-    gp.home_page,
+    NULL,
     gp.location,
     gp.display_name,
     NULL,

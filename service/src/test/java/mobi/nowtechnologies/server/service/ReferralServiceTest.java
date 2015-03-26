@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
@@ -52,10 +52,6 @@ public class ReferralServiceTest {
         Referral r1 = createReferral("contact1@dot.com", 17);
         Referral r2 = createReferral("contact2@dot.com", 17);
 
-        User user = createUser("user_name@dot.com", 33, 17);
-
-        when(userService.getWithSocial(user.getId())).thenReturn(user);
-
         referralService.refer(Arrays.asList(r1, r2));
 
         verify(referralRepository).saveAndFlush(r1);
@@ -83,9 +79,6 @@ public class ReferralServiceTest {
         Referral r1 = createReferral("contact1@dot.com", 17);
         Referral r2 = createReferral("contact2@dot.com", 17);
 
-        User user = createUser("user_name@dot.com", 34, 17);
-
-        when(userService.getWithSocial(user.getId())).thenReturn(user);
         when(referralRepository.save(r1)).thenThrow(new DataIntegrityViolationException(""));
 
         referralService.refer(Arrays.asList(r1, r2));

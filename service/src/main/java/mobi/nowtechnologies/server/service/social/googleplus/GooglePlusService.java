@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.service.social.googleplus;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import javax.annotation.Resource;
 
@@ -56,10 +56,9 @@ public class GooglePlusService {
         result.setUserName(personFromGooglePlus.getDisplayName());
         result.setProfileImageUrl(extractImageUrl(personFromGooglePlus));
         result.setGender(Gender.restore(personFromGooglePlus.getGender()));
-        result.setLocation(extractLocation(personFromGooglePlus));
+        result.setCity(extractLocation(personFromGooglePlus));
         result.setFirstName(personFromGooglePlus.getGivenName());
         result.setLastName(personFromGooglePlus.getFamilyName());
-        result.setProfileUrl(buildHomepageUrl(personFromGooglePlus));
         return result;
     }
 

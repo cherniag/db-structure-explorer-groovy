@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.applicationtests.services.http.facebook;
 
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.Gender;
@@ -16,10 +16,9 @@ public class FacebookUserInfoGenerator {
 
     public static final Gender GENDER = Gender.MALE;
     public static final String CITY = "Pripyat";
-//    public static final String COUNTRY = "USSR";
+    public static final String COUNTRY = "USSR";
     public static final String FIRST_NAME = "Firstname";
     public static final String SURNAME = "Surname";
-    public static final String PROFILE_URL = "profile-url";
 
     @Resource
     private AppTestFacebookTokenService appTestFacebookTokenService;
@@ -49,17 +48,15 @@ public class FacebookUserInfoGenerator {
         info.setBirthday(new Date());
         info.setEmail(email);
         info.setGender(GENDER);
-        info.setLocation(CITY);
-//        info.setCountry(COUNTRY);
+        info.setCity(CITY);
         info.setUserName(userName);
         info.setSocialNetworkId(facebookUserId);
         info.setFirstName(FIRST_NAME);
         info.setLastName(SURNAME);
-        info.setProfileUrl(PROFILE_URL);
 
-//        if (excludeCountry) {
-//            info.setCountry(null);
-//        }
+        if (!excludeCountry) {
+            info.setCountry(COUNTRY);
+        }
 
         return info;
     }

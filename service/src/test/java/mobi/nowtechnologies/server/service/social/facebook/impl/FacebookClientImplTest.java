@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
 import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -51,12 +51,12 @@ public class FacebookClientImplTest {
         verify(facebookOperationsAdaptor, times(1)).getFacebookProfile("", "");
 
         assertEquals("101", convert.getSocialNetworkId());
-        assertEquals("https://graph.facebook.com/v1.0/101/picture?type=large", convert.getProfileUrl());
         assertEquals("email@dot.com", convert.getEmail());
         assertEquals("firstName", convert.getFirstName());
         assertEquals("lastName", convert.getLastName());
         assertEquals(Gender.MALE, convert.getGender());
-        assertEquals("Kiev", convert.getLocation());
+        assertEquals("Kiev", convert.getCity());
+        assertEquals("Ukraine", convert.getCountry());
         assertEquals(DateUtils.parseDate("24/06/1985", FacebookClient.DATE_FORMAT), convert.getBirthday());
 
         assertEquals(convert.getAgeRangeMin(), AgeRange.UNKNOWN.getMin());

@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.service.social.core;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.ActivationEmailService;
 import mobi.nowtechnologies.server.service.MergeResult;
@@ -68,9 +68,9 @@ public class UserPromoService {
         User userForMerge = getUserForMerge(refreshedSignUpUser, socialNetworkInfo.getEmail());
         MergeResult mergeResult = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);
         User userAfterApplyPromo = mergeResult.getResultOfOperation();
-        socialNetworkInfoRepository.deleteByUser(userAfterApplyPromo);
+        socialNetworkInfoRepository.deleteByUserId(userAfterApplyPromo.getId());
 
-        socialNetworkInfo.setUser(userAfterApplyPromo);
+        socialNetworkInfo.setUserId(userAfterApplyPromo.getId());
         userAfterApplyPromo.setUserName(socialNetworkInfo.getEmail());
         userAfterApplyPromo.setProvider(providerType);
 

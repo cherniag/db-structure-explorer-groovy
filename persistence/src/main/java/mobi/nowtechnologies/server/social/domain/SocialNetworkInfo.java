@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.social.domain;
 
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.Gender;
@@ -10,8 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import java.util.Date;
@@ -28,13 +26,12 @@ public class SocialNetworkInfo {
     @Column(name = "id")
     private Long id;
 
-    @JoinColumn(name = "user_id", nullable = false)
-    @ManyToOne
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "social_network")
-    private OAuthProvider socialNetwork;
+    @Column(name = "social_network_type")
+    private OAuthProvider socialNetworkType;
 
     @Column(name = "social_network_id")
     private String socialNetworkId;
@@ -58,11 +55,11 @@ public class SocialNetworkInfo {
     @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "profile_url")
-    private String profileUrl;
+    @Column(name = "country")
+    private String country;
 
-    @Column(name = "location")
-    private String location;
+    @Column(name = "city")
+    private String city;
 
     @Column(name = "user_name")
     private String userName;
@@ -78,8 +75,8 @@ public class SocialNetworkInfo {
 
     protected SocialNetworkInfo(){}
 
-    public SocialNetworkInfo(OAuthProvider socialNetwork){
-        this.socialNetwork = Preconditions.checkNotNull(socialNetwork);
+    public SocialNetworkInfo(OAuthProvider socialNetworkType){
+        this.socialNetworkType = Preconditions.checkNotNull(socialNetworkType);
     }
 
     public String getEmail() {
@@ -103,13 +100,6 @@ public class SocialNetworkInfo {
         this.gender = gender;
     }
 
-    public String getProfileUrl() {
-        return profileUrl;
-    }
-    public void setProfileUrl(String profileUrl) {
-        this.profileUrl = profileUrl;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -131,11 +121,18 @@ public class SocialNetworkInfo {
         this.userName = userName;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCity() {
+        return city;
     }
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public Integer getAgeRangeMin() {
@@ -173,8 +170,8 @@ public class SocialNetworkInfo {
         return socialNetworkId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     @Override

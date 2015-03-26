@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl.mock;
 
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -36,14 +36,13 @@ public class AppTestFacebookTokenService {
         String birthdayString = getDateFormat().format(info.getBirthday());
 
         return info.getSocialNetworkId() + "#" +    // 0
-               info.getEmail() + "#" +        // 1
-               info.getFirstName() + "#" +    // 2
-               info.getLastName() + "#" +      // 3
-               info.getLocation() + "#" +         // 4
-               info.getProfileUrl() + "#" +   // 5
-               info.getUserName() + "#" +     // 6
+               info.getEmail() + "#" +              // 1
+               info.getFirstName() + "#" +          // 2
+               info.getLastName() + "#" +           // 3
+               info.getCity() + "#" +               // 4
+               info.getUserName() + "#" +           // 5
                // for the case when we need to omit the country: put NULL_VALUE_MARKER value instead and recognize it later (unparse)
-//               maskNullValueIfNeed(info.getCountry()) + "#" + //
+               maskNullValueIfNeed(info.getCountry()) + "#" + // 6
                info.getGender().name().toLowerCase() + "#" +  // 7
                birthdayString;                                // 8
     }
@@ -63,8 +62,8 @@ public class AppTestFacebookTokenService {
         if (split.length == 10) {
             // reassign the id to simulate the wrong ID
             if (split[9].equals(ERROR_ID_MARKER)) {
-                SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile("_broken_different_id_", split[6], "", split[2], split[3], split[7]);
-                profile.addOtherInfo(split[1], split[4], split[8]);
+                SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile("_broken_different_id_", split[5], "", split[2], split[3], split[7]);
+                profile.addOtherInfo(split[1], split[6], split[4], split[8]);
                 return profile;
             }
 
@@ -77,8 +76,8 @@ public class AppTestFacebookTokenService {
             throw new IllegalArgumentException();
         } else {
             // no error markers:
-            SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], split[6], "", split[2], split[3], split[7]);
-            profile.addOtherInfo(split[1], split[4], split[8]);
+            SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], split[5], "", split[2], split[3], split[7]);
+            profile.addOtherInfo(split[1], split[6], split[4], split[8]);
             return profile;
         }
     }

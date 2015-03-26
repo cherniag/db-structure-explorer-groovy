@@ -7,7 +7,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="persistence.EntityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
           parent="abstract.EntityManagerFactory">
-        <property name="packagesToScan" value="mobi.nowtechnologies.server.persistence"/>
+        <property name="packagesToScan" value="mobi.nowtechnologies.server.*.domain"/>
     </bean>
 </beans>
 

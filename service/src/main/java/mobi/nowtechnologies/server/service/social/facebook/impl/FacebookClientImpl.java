@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import javax.annotation.Resource;
 
@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.social.SocialException;
 import org.springframework.social.facebook.api.AgeRange;
 import org.springframework.social.facebook.api.FacebookProfile;
-import org.springframework.social.facebook.api.GraphApi;
 import org.springframework.social.facebook.api.Reference;
 
 /**
@@ -50,7 +49,6 @@ public class FacebookClientImpl implements FacebookClient {
         details.setEmail(getEmail(profile));
         details.setBirthday(getBirthdayDate(profile));
         details.setGender(Gender.restore(profile.getGender()));
-        details.setProfileUrl(String.format("%s%s/picture?type=large", GraphApi.GRAPH_API_URL, id));
         assignCityAndCountry(profile, details);
 
         details.setFirstName(profile.getFirstName());
@@ -98,7 +96,10 @@ public class FacebookClientImpl implements FacebookClient {
             if (!Strings.isNullOrEmpty(cityWithCountry)) {
                 List<String> result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(cityWithCountry);
                 if (result.size() > 0) {
-                    details.setLocation(result.get(0));
+                    details.setCity(result.get(0));
+                }
+                if (result.size() > 1) {
+                    details.setCountry(result.get(1));
                 }
             }
         }

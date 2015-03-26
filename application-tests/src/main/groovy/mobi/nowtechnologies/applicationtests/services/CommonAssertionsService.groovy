@@ -7,7 +7,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.domain.User
@@ -68,12 +68,12 @@ class CommonAssertionsService {
 
     def checkFacebookUserWasNotChanged(User before, User after) {
         checkUserWasNotChanged(before, after);
-        assertNull("New record is created", socialNetworkInfoRepository.findByUserAndSocialNetwork(after, OAuthProvider.FACEBOOK));
+        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), OAuthProvider.FACEBOOK));
     }
 
     def checkGooglePlusUserWasNotChanged(User before, User after) {
         checkUserWasNotChanged(before, after);
-        assertNull("New record is created", socialNetworkInfoRepository.findByUserAndSocialNetwork(after, OAuthProvider.GOOGLE));
+        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), OAuthProvider.GOOGLE));
     }
 
     def checkDeviceTypeField(UserDeviceData device, ClientDevicesSet devicesSet) {
@@ -200,13 +200,13 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def facebookUserInfo = socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.FACEBOOK)
+            def facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK)
             def facebookProfile = appTestFacebookTokenService.parseToken(phoneState.facebookAccessToken)
             assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(facebookUserInfo.getFirstName(), FacebookUserInfoGenerator.FIRST_NAME)
             assertEquals(facebookUserInfo.getBirthday().getTime(), dateFormat.parse(facebookProfile.getBirthday()).getTime())
             assertEquals(facebookUserInfo.getLastName(), FacebookUserInfoGenerator.SURNAME)
-            assertEquals(facebookUserInfo.getLocation(), FacebookUserInfoGenerator.CITY)
+            assertEquals(facebookUserInfo.getCity(), FacebookUserInfoGenerator.CITY)
             assertEquals(facebookUserInfo.getSocialNetworkId(), phoneState.getFacebookUserId())
             assertEquals(facebookUserInfo.getUserName(), phoneState.getFacebookUserId())
         }
@@ -247,14 +247,14 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)
             def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())
             assertEquals(googlePlusUserInfo.getLastName(), googlePlusProfile.getFamilyName())
             assertEquals(googlePlusUserInfo.getFirstName(), googlePlusProfile.getGivenName())
             assertEquals(googlePlusUserInfo.getSocialNetworkId(), googlePlusProfile.getId())
-            assertEquals(googlePlusUserInfo.getLocation(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
+            assertEquals(googlePlusUserInfo.getCity(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
         }
     }
 

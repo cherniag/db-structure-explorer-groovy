@@ -18,7 +18,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
-import mobi.nowtechnologies.server.persistence.repository.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
@@ -148,7 +148,7 @@ class GooglePlusSuccessFeature {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)
 
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
         }
@@ -184,14 +184,14 @@ class GooglePlusSuccessFeature {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserAndSocialNetwork(user, OAuthProvider.GOOGLE)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)
             def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())
             assertEquals(googlePlusUserInfo.getLastName(), googlePlusProfile.getFamilyName())
             assertEquals(googlePlusUserInfo.getFirstName(), googlePlusProfile.getGivenName())
             assertEquals(googlePlusUserInfo.getSocialNetworkId(), googlePlusProfile.getId())
-            assertEquals(googlePlusUserInfo.getLocation(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
+            assertEquals(googlePlusUserInfo.getCity(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
         }
     }
 
