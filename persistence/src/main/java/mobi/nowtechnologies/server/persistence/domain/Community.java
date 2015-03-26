@@ -23,6 +23,7 @@ public class Community implements Serializable {
     public static final String HL_COMMUNITY_REWRITE_URL = "hl_uk";
     public static final String O2_COMMUNITY_REWRITE_URL = "o2";
     public static final String VF_NZ_COMMUNITY_REWRITE_URL = "vf_nz";
+    public static final String MTV_NZ_COMMUNITY_REWRITE_URL = "mtvnz";
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = IDENTITY)

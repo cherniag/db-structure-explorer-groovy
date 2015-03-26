@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import static mobi.nowtechnologies.server.persistence.domain.Community.MTV_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
@@ -363,6 +364,33 @@ public class UserTest {
 
         boolean result = user.isInvalidPaymentPolicy();
 
+        assertEquals(false, result);
+    }
+
+    @Test
+    public void shouldReturnFalseForMtvNzCommunityUser() {
+        //given
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+        paymentPolicy.setProvider(NON_VF);
+
+        O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+        o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        Community community = new Community();
+        community.setRewriteUrlParameter(MTV_NZ_COMMUNITY_REWRITE_URL);
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setCommunity(community);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(userGroup);
+        user.setProvider(FACEBOOK);
+        user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+
+        //when
+        boolean result = user.isInvalidPaymentPolicy();
+
+        //then
         assertEquals(false, result);
     }
 
