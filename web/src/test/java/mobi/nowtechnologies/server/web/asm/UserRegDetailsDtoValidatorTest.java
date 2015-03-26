@@ -1,44 +1,49 @@
-package mobi.nowtechnologies.server.service.validator;
+package mobi.nowtechnologies.server.web.asm;
 
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+
+import javax.servlet.http.Cookie;
 
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-import org.powermock.modules.junit4.PowerMockRunner;
-
-@RunWith(PowerMockRunner.class)
 public class UserRegDetailsDtoValidatorTest {
 
     @Mock
     private UserService userService;
+    @Mock
+    private UserRepository userRepository;
 
-
-    private MockHttpServletRequest request = new MockHttpServletRequest();
-
-
+    @InjectMocks
     private UserRegDetailsDtoValidator validator;
 
-    private UserRegDetailsDto dto;
+    private UserRegDetailsDto dto = new UserRegDetailsDto();
 
-    private Errors errors;
+    private Errors errors = new BeanPropertyBindingResult(dto, "");
 
     @Before
     public void before() {
-        validator = new UserRegDetailsDtoValidator(request, userService, null);
-        dto = new UserRegDetailsDto();
+        MockitoAnnotations.initMocks(this);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        request.setCookies(createCookieWithDefaultCommunityValue());
+
         dto.setPassword("TEST");
         dto.setEmail("test@gmail.com");
-        errors = new BeanPropertyBindingResult(dto, "");
     }
 
     @Test
@@ -54,5 +59,12 @@ public class UserRegDetailsDtoValidatorTest {
         when(userService.isCommunitySupportByIp(anyString(), anyString(), anyString())).thenReturn(true);
         validator.customValidate(dto, errors);
         assertNull(errors.getFieldError("ipAddress"));
+    }
+
+    private Cookie createCookieWithDefaultCommunityValue() {
+        Cookie cookie = mock(Cookie.class);
+        when(cookie.getName()).thenReturn(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
+        when(cookie.getValue()).thenReturn("SomeDefaultCommunity");
+        return cookie;
     }
 }

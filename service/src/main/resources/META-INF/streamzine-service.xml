@@ -30,9 +30,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
         <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory"/>
         <property name="deepLinkInfoService" ref="deepLinkInfoService"/>
-        <property name="badgeMappingRepository" ref="badgeMappingRepository"/>
         <property name="communityRepository" ref="communityRepository"/>
-        <property name="resolutionRepository" ref="resolutionRepository"/>
         <property name="badgesService" ref="badgesService"/>
     </bean>
 

@@ -178,10 +178,6 @@ public abstract class AbstractPayment {
         this.period = period;
     }
 
-    public boolean isRetry() {
-        return RETRY.equals(type);
-    }
-
     public PaymentHistoryItemDto toPaymentHistoryItemDto() {
         PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
 

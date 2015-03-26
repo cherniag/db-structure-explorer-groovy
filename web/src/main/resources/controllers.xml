@@ -16,6 +16,11 @@
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
     </bean>
 
+    <bean id="userRegDetailsDtoValidator" class="mobi.nowtechnologies.server.web.asm.UserRegDetailsDtoValidator">
+        <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
+    </bean>
+
     <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
 
     <bean name="web.LoginController" class="mobi.nowtechnologies.server.web.controller.LoginLogoutController"/>
@@ -23,13 +28,9 @@
     <bean name="web.SignUpController" class="mobi.nowtechnologies.server.web.controller.SignUpController">
         <property name="userService" ref="service.UserService"/>
         <property name="communityService" ref="service.communityService"/>
+        <property name="userRegDetailsDtoValidator" ref="userRegDetailsDtoValidator"/>
         <property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
         <property name="authenticationManager" ref="authenticationManager"/>
-    </bean>
-
-    <bean name="web.RestorePasswordController"
-          class="mobi.nowtechnologies.server.web.controller.RestorePasswordController">
-        <property name="userService" ref="service.UserService"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.GetAppController">
@@ -37,6 +38,7 @@
     </bean>
 
     <bean name="web.AccountController" class="mobi.nowtechnologies.server.web.controller.AccountController">
+        <property name="userRepository" ref="userRepository"/>
         <property name="userService" ref="service.UserService"/>
         <property name="messageSource" ref="messageSource"/>
         <property name="specificCommunityResourcesFolderPath" value="${specificCommunityResourcesFolderPath}"/>
@@ -57,6 +59,7 @@
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="communityService" ref="service.communityService"/>
+        <property name="userRepository" ref="userRepository"/>
     	<property name="userService" ref="service.UserService"/>
     	<property name="promotionService" ref="service.PromotionService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
@@ -85,6 +88,7 @@
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
     </bean>
 
@@ -109,6 +113,7 @@
     <bean class="mobi.nowtechnologies.server.web.controller.PlaylistController">
         <property name="chartService" ref="service.ChartService"/>
         <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
         <property name="chartDetailService" ref="service.ChartDetailService"/>
         <property name="env">
             <util:map key-type="java.lang.String" value-type="java.lang.String">
@@ -120,6 +125,7 @@
 
     <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
         <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean name="web.FaqController" class="mobi.nowtechnologies.server.web.controller.FaqController"/>
@@ -154,6 +160,7 @@
     
     <bean class="mobi.nowtechnologies.server.web.controller.VideoTrialController">
         <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <!-- Static Pages -->

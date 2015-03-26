@@ -29,7 +29,6 @@ public class DeviceType implements Serializable {
     public static final String BLACKBERRY = "BLACKBERRY";
     public static final String SYMBIAN = "SYMBIAN";
     public static final String WINDOWS_PHONE = "WINDOWS_PHONE";
-    private static final long serialVersionUID = 1L;
     private byte i;
     private String name;
 

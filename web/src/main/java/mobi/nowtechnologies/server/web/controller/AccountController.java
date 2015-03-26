@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -37,10 +39,15 @@ public class AccountController extends CommonController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
     private UserService userService;
+    private UserRepository userRepository;
     private String specificCommunityResourcesFolderPath;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setSpecificCommunityResourcesFolderPath(String specificCommunityResourcesFolderPath) {
@@ -49,7 +56,7 @@ public class AccountController extends CommonController {
 
     @InitBinder(AccountDto.ACCOUNT_DTO)
     public void initBinder(WebDataBinder binder) {
-        binder.setValidator(new AccountDtoValidator(userService));
+        binder.setValidator(new AccountDtoValidator(userRepository));
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         CustomDateEditor editor = new CustomDateEditor(simpleDateFormat, true);
@@ -66,7 +73,9 @@ public class AccountController extends CommonController {
 
         Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
         String communityUrl = cookie.getValue();
-        AccountDto accountDto = userService.getAccountDetails(userId);
+
+        User user = userRepository.findOne(userId);
+        AccountDto accountDto = user.toAccountDto();
 
         ModelAndView modelAndView = getAccountPageModelView(locale, accountDto, communityUrl);
 
@@ -83,7 +92,9 @@ public class AccountController extends CommonController {
         Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
         String communityUrl = cookie.getValue();
 
-        AccountDto accountDto = userService.getAccountDetails(userId);
+        User user = userRepository.findOne(userId);
+        AccountDto accountDto = user.toAccountDto();
+
         accountDto = getLocalizedAccountDto(locale, accountDto, communityUrl);
 
         ModelAndView modelAndView = new ModelAndView("change_account");
@@ -104,7 +115,7 @@ public class AccountController extends CommonController {
         } else {
             int userId = getUserId();
 
-            accountDto = userService.saveAccountDetails(accountDto, userId);
+            userService.saveAccountDetails(accountDto, userId);
 
             modelAndView = new ModelAndView("redirect:account.html");
         }

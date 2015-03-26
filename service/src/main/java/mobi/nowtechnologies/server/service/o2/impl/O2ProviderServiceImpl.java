@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
@@ -65,8 +64,6 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     private Integer limitValidatePhoneNumber;
 
-    private UserService userService;
-
     private O2Service o2Service;
 
     private GBCellNumberValidator gbCellNumberValidator = new GBCellNumberValidator();
@@ -105,10 +102,6 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     public void setWebServiceGateway(WebServiceGateway webServiceGateway) {
         this.webServiceGateway = webServiceGateway;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     @Override
@@ -221,7 +214,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     @Override
     public ProviderUserDetails getUserDetails(String token, String phoneNumber, Community community) {
-        if (userService.isPromotedDevice(phoneNumber, community)) {
+        if (deviceService.isPromotedDevicePhone(community, phoneNumber, null)) {
             return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
         }
 

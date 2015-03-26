@@ -40,7 +40,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
             mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID).param("XTIFY_TOKEN", xtifyToken))
                    .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
-        User found = userRepository.findOne(dto.userName, communityUrl);
+        User found = userRepository.findByUserNameAndCommunityUrl(dto.userName, communityUrl);
 
         assertEquals(found.getUserName(), dto.userName);
         assertEquals(found.getToken(), dto.userToken);
@@ -62,7 +62,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         ResultActions resultActions =
             mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
-        User found = userRepository.findOne(dto.userName, communityUrl);
+        User found = userRepository.findByUserNameAndCommunityUrl(dto.userName, communityUrl);
 
         assertNotNull(dto.uuid);
         assertEquals(36, dto.uuid.length());
@@ -132,7 +132,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                    .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
 
-        User registered = userRepository.findOne(dto.userName, communityUrl);
+        User registered = userRepository.findByUserNameAndCommunityUrl(dto.userName, communityUrl);
 
         AppsFlyerData found = appsFlyerDataRepository.findDataByUserId(registered.getId());
 
@@ -151,7 +151,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
             mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json").param("DEVICE_TYPE", deviceType).param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
 
-        User one = userRepository.findOne(dto.userName, communityUrl);
+        User one = userRepository.findByUserNameAndCommunityUrl(dto.userName, communityUrl);
         assertNotNull(one);
         DeviceUserData found = deviceUserDataRepository.find(one.getId(), communityUrl, deviceUID);
         assertNull(found);
@@ -170,7 +170,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                    .andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
 
-        User one = userRepository.findOne(dto.userName, communityUrl);
+        User one = userRepository.findByUserNameAndCommunityUrl(dto.userName, communityUrl);
         assertNotNull(one);
         DeviceUserData found = deviceUserDataRepository.find(one.getId(), communityUrl, deviceUID);
         assertNull(found);

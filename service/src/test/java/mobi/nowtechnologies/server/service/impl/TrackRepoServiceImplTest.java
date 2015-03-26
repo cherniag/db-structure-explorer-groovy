@@ -27,6 +27,7 @@ import mobi.nowtechnologies.shared.testcases.TestCases;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -398,11 +399,11 @@ public class TrackRepoServiceImplTest {
             }
         });
 
-        when(mediaRepository.getByIsrc(any(String.class))).thenAnswer(new Answer<Media>() {
+        when(mediaRepository.getByIsrc(any(String.class))).thenAnswer(new Answer<List<Media>>() {
             @Override
-            public Media answer(InvocationOnMock invocation) throws Throwable {
+            public List<Media> answer(InvocationOnMock invocation) throws Throwable {
                 String isrc = (String) invocation.getArguments()[0];
-                return mapMediaByIsrc.get(isrc, 0);
+                return Arrays.asList(mapMediaByIsrc.get(isrc, 0));
             }
         });
         when(mediaRepository.save(any(Media.class))).thenAnswer(new Answer<Media>() {

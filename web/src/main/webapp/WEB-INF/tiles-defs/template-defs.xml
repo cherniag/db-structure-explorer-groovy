@@ -38,19 +38,7 @@
 	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/signup/footer.jsp"/>
 	  <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/footSection.jsp"/>
   </definition>
-  
-  <definition name="restore_password" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-  	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/restore_password/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/restore_password/header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/restore_password/content.jsp"/>
-  </definition>
-  
-   <definition name="restore_password_confirmation" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-   	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/content.jsp"/>
-	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/footer.jsp"/>
-  </definition>
+
   <!-- END Unauthenticated pages -->
   
   <definition name="getapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">

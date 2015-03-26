@@ -25,6 +25,6 @@ public class UserDbService {
     }
 
     public User getUserByUserNameAndCommunity(String userName, String communityUrl) {
-        return userRepository.findOne(userName, communityUrl);
+        return userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
     }
 }

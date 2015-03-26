@@ -73,39 +73,6 @@ public class UserRegInfo {
     private String confirmStoredToken;
     private boolean isEula;
 
-    public static PaymentDetailsDto getPaymentDetailsDto(UserRegInfo regInfo) {
-        PaymentDetailsDto dto = new PaymentDetailsDto();
-        dto.setBillingAddress(regInfo.getCardBillingAddress() + " " + regInfo.getCardBillingAddress2());
-        dto.setBillingCity(regInfo.getCardBillingCity());
-        dto.setBillingCountry(regInfo.getCardBillingCountry());
-        dto.setBillingPostCode(regInfo.getCardBillingPostCode());
-        dto.setCardCv2(regInfo.getCardCv2());
-        dto.setCardExpirationDate(toMMYY(regInfo.getCardExpirationMonth(), regInfo.getCardExpirationYear()));
-        dto.setCardHolderFirstName(regInfo.getCardHolderFirstName());
-        dto.setCardHolderLastName(regInfo.getCardHolderLastName());
-        dto.setCardIssueNumber(regInfo.getCardIssueNumber());
-        dto.setCardNumber(regInfo.getCardNumber());
-        dto.setCardStartDate(toMMYY(regInfo.getCardStartMonth(), regInfo.getCardStartYear()));
-        dto.setCardType(regInfo.getCardType());
-        dto.setPaymentType(regInfo.getPaymentType());
-        dto.setPhoneNumber(regInfo.getPhoneNumber());
-        dto.setOperator(regInfo.getOperator());
-        dto.setBillingAgreementDescription(regInfo.getBillingAgreementDescription());
-        return dto;
-    }
-
-    public static String toMMYY(Integer month, Integer year) {
-        if (month == null || year == null) {
-            return null;
-        }
-        return (month < 10 ?
-                "0" :
-                "") + month + "" +
-               (year % 100 < 10 ?
-                "0" :
-                "") + year % 100;
-    }
-
     @Override
     public String toString() {
         return "UserRegInfo [email=" + email + ", deviceType=" + deviceType + ", deviceString=" + deviceString + ", appVersion=" + appVersion + ", communityName=" + communityName + ", operator=" +

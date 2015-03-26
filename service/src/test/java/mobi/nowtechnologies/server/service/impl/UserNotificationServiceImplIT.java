@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 //TODO: Rebuild test not to use mocks.
-public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4SpringContextTests {
+public class UserNotificationServiceImplIT {
 
     @Resource
     private UserNotificationService userNotificationService;

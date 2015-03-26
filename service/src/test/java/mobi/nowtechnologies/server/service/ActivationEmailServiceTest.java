@@ -6,13 +6,12 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
 
 import java.util.Locale;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -20,8 +19,6 @@ import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.runners.*;
 import org.mockito.stubbing.*;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
@@ -32,10 +29,7 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class ActivationEmailServiceIT {
+public class ActivationEmailServiceTest {
 
     public static final String EMAIL = "a@gmail.com";
 
@@ -43,6 +37,9 @@ public class ActivationEmailServiceIT {
 
     @Mock
     private ActivationEmailRepository activationEmailRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private UserService userService;
@@ -122,7 +119,7 @@ public class ActivationEmailServiceIT {
     public void testSendEmail() {
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-        when(userService.findByNameAndCommunity("htc", Community.O2_COMMUNITY_REWRITE_URL)).thenReturn(user);
+        when(userRepository.findByUserNameAndCommunityUrl("htc", Community.O2_COMMUNITY_REWRITE_URL)).thenReturn(user);
         when(activationEmailRepository.save(any(ActivationEmail.class))).then(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -143,7 +140,7 @@ public class ActivationEmailServiceIT {
     public void testSendEmailNotValid() {
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-        when(userService.findByNameAndCommunity("htc", Community.O2_COMMUNITY_REWRITE_URL)).thenReturn(user);
+        when(userRepository.findByUserNameAndCommunityUrl("htc", Community.O2_COMMUNITY_REWRITE_URL)).thenReturn(user);
         when(activationEmailRepository.save(any(ActivationEmail.class))).then(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -164,6 +161,7 @@ public class ActivationEmailServiceIT {
     public void setUp() {
         activationEmailService = new ActivationEmailServiceImpl();
         ReflectionTestUtils.setField(activationEmailService, "activationEmailRepository", activationEmailRepository);
+        ReflectionTestUtils.setField(activationEmailService, "userRepository", userRepository);
         ReflectionTestUtils.setField(activationEmailService, "userService", userService);
         ReflectionTestUtils.setField(activationEmailService, "messageSource", messageSource);
         ReflectionTestUtils.setField(activationEmailService, "mailService", mailService);
