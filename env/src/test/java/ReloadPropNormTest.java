@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,6 +23,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResourceLoader;
 
@@ -54,7 +56,7 @@ public class ReloadPropNormTest {
     };
 
     static String[][] globalAndEnvGlobalProps = {
-        {"classpath:service.properties",  "service.properties"},
+        {"classpath:services",  "services.properties"},
     };
 
     Comparator<Map.Entry<String, List<String>>> comparator = new Comparator<Map.Entry<String, List<String>>>() {
@@ -76,6 +78,14 @@ public class ReloadPropNormTest {
         }
     }
 
+    class AppPropertyResourceConfigurer extends PropertyPlaceholderConfigurer {
+
+        @Override
+        public Properties mergeProperties() throws IOException {
+            return super.mergeProperties();
+        }
+    }
+
     @Test
     public void test() throws Exception {
         StandardPBEStringEncryptor stringEncryptor = new StandardPBEStringEncryptor();
@@ -89,7 +99,16 @@ public class ReloadPropNormTest {
             communityResourceBundleMessageSource.setReloadableResourceBundleMessageSource(customReloadableResourceBundleMessageSource);
             communityResourceBundleMessageSource.setStringEncryptor(stringEncryptor);
 
+            //AppPropertyResourceConfigurer appPropertyPlaceholderConfigurer = new AppPropertyResourceConfigurer();
+            //appPropertyPlaceholderConfigurer.setLocations();
+            //Properties allProperties = appPropertyPlaceholderConfigurer.mergeProperties();
+
             Properties allProperties = customReloadableResourceBundleMessageSource.getAllProperties();
+            for (String community : communities) {
+                CustomReloadableResourceBundleMessageSource gg = new CustomReloadableResourceBundleMessageSource();
+                gg.setBasenames(globalAndEnvGlobalProps[0][0] +"_"+ community, propPath +"_"+ community);
+                allProperties.putAll(gg.getAllProperties());
+            }
 
             Map<String, PropertiesConfigurationLayout> communityToPropertiesConfigurationLayoutMap = new HashMap<>();
 
@@ -123,7 +142,7 @@ public class ReloadPropNormTest {
                 PropertiesConfigurationLayout commonPropertiesConfigurationLayout = new PropertiesConfigurationLayout(new PropertiesConfiguration());
                 commonPropertiesConfigurationLayout.load(new FileReader(propPath.replace("classpath:", "env/src/main/resources/") + ".properties"));
 
-                if (!entries.isEmpty() && messageToCommunitiesMapEntry.getValue().size() >= propPaths.length / 2) {
+                if (!entries.isEmpty() && messageToCommunitiesMapEntry.getValue().size() >= communities.length / 2) {
                     String propValue = messageToCommunitiesMapEntry.getKey();
                     if (propValue != null) {
                         commonPropertiesConfigurationLayout.getConfiguration().setProperty(propName, propValue);
@@ -133,13 +152,14 @@ public class ReloadPropNormTest {
                             if (propertiesConfigurationLayout == null){
                                 continue;
                             }
+                            List<String> communityList = messageToCommunitiesMapEntry.getValue();
+
                             String message = communityResourceBundleMessageSource.getMessage(community, propName, null, null, null);
 
-                            Object oldProperty = propertiesConfigurationLayout.getConfiguration().getProperty(propName);
-                            if (oldProperty!=null &&  oldProperty.equals(message)) {
+                            if (communityList.contains(community)) {
                                 propertiesConfigurationLayout.getConfiguration().clearProperty(propName);
-                            } else {
-                                propertiesConfigurationLayout.getConfiguration().setProperty(propName, message);
+                            } else if (message == null) {
+                                propertiesConfigurationLayout.getConfiguration().setProperty(propName, propValue);
                             }
                         }
                     }

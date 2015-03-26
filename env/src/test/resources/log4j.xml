@@ -38,6 +38,11 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
+
+	<logger name="ReloadableMessageSourceIT">
+		<appender-ref ref="stdout" />
+		<appender-ref ref="stderr" />
+	</logger>
 	 
 
 </log4j:configuration>
