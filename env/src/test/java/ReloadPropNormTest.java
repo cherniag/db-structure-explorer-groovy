@@ -91,9 +91,21 @@ public class ReloadPropNormTest {
 
             Properties allProperties = customReloadableResourceBundleMessageSource.getAllProperties();
 
-            Map<String, List<String>> messageToCommunitiesMap = new HashMap<>();
+            Map<String, PropertiesConfigurationLayout> communityToPropertiesConfigurationLayoutMap = new HashMap<>();
+
             for (String propName : allProperties.stringPropertyNames()) {
+                Map<String, List<String>> messageToCommunitiesMap = new HashMap<>();
                 for (String community : communities) {
+
+                    String filePath = propPath.replace("classpath:", "env/src/main/resources/") + "_" + community + ".properties";
+                    if (new File(filePath).exists()){
+                        PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration();
+                        PropertiesConfigurationLayout propertiesConfigurationLayout = new PropertiesConfigurationLayout(propertiesConfiguration);
+                        propertiesConfigurationLayout.load(new FileReader(filePath));
+                        propertiesConfiguration.setPath(filePath);
+                        communityToPropertiesConfigurationLayoutMap.put(community, propertiesConfigurationLayout);
+                    }
+
                     String message = communityResourceBundleMessageSource.getMessage(community, propName, null, null, null);
                     List<String> communities = messageToCommunitiesMap.get(message);
                     if (communities == null) {
@@ -117,13 +129,10 @@ public class ReloadPropNormTest {
                         commonPropertiesConfigurationLayout.getConfiguration().setProperty(propName, propValue);
 
                         for (String community : communities) {
-                            PropertiesConfigurationLayout propertiesConfigurationLayout = new PropertiesConfigurationLayout(new PropertiesConfiguration());
-                            String fileName = propPath.replace("classpath:", "env/src/main/resources/") + "_" + community + ".properties";
-                            if (!new File(fileName).exists()){
+                            PropertiesConfigurationLayout propertiesConfigurationLayout = communityToPropertiesConfigurationLayoutMap.get(community);
+                            if (propertiesConfigurationLayout == null){
                                 continue;
                             }
-                            propertiesConfigurationLayout.load(new FileReader(fileName));
-
                             String message = communityResourceBundleMessageSource.getMessage(community, propName, null, null, null);
 
                             Object oldProperty = propertiesConfigurationLayout.getConfiguration().getProperty(propName);
@@ -137,6 +146,16 @@ public class ReloadPropNormTest {
                 }
 
                 commonPropertiesConfigurationLayout.save(new FileWriter("env/src/main/resources/n/" + propPath.replaceFirst(".*?/", "/") + ".properties"));
+
+                for (String community : communities) {
+                    PropertiesConfigurationLayout propertiesConfigurationLayout = communityToPropertiesConfigurationLayoutMap.get(community);
+                    if (propertiesConfigurationLayout == null){
+                        continue;
+                    }
+                    String path = propertiesConfigurationLayout.getConfiguration().getPath();
+
+                    propertiesConfigurationLayout.save(new FileWriter(path.replaceFirst("resources\\\\env", "resources\\\\n")));
+                }
 
             }
         }
