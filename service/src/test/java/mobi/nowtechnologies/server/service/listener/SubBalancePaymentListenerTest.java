@@ -85,7 +85,6 @@ public class SubBalancePaymentListenerTest {
     }
 
     /**
-     * Run the void setUserService(UserService) method test.
      *
      * @throws Exception
      */

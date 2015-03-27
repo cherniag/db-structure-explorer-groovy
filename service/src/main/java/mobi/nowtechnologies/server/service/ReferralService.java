@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
 import javax.annotation.Resource;
@@ -45,6 +46,9 @@ public class ReferralService {
 
     @Resource
     private CommunityRepository communityRepository;
+
+    @Resource
+    private UserRepository userRepository;
 
     @Transactional
     public void refer(List<Referral> referrals) {
@@ -101,7 +105,7 @@ public class ReferralService {
         final String contact = referral.getContact();
 
         if (providerType == ProviderType.EMAIL) {
-            User byContact = userService.findByName(contact);
+            User byContact = userRepository.findByUserNameAndCommunityUrl(contact, community.getRewriteUrlParameter());
             return byContact != null && byContact.getCommunityId().equals(community.getId());
         }
         if (providerType == ProviderType.FACEBOOK || providerType == ProviderType.GOOGLE_PLUS) {

@@ -161,7 +161,7 @@ public class UpdateValidator extends BaseValidator {
             return;
         }
         String communityRewriteUrl = cookieUtil.get(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
-        List<User> found = userRepository.findByUserNameAndCommunity(userNames, communityRewriteUrl);
+        List<User> found = userRepository.findByUserNamesAndCommunity(userNames, communityRewriteUrl);
 
         removeFoundInDatabaseFromIncoming(userNames, found);
 

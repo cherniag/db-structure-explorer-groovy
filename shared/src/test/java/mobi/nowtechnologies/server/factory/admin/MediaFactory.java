@@ -4,6 +4,7 @@
 
 package mobi.nowtechnologies.server.factory.admin;
 
+import mobi.nowtechnologies.server.shared.dto.admin.ArtistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import mobi.nowtechnologies.server.shared.enums.ItemType;
 
@@ -22,7 +23,17 @@ public class MediaFactory {
         expectedItemDto.setIsrc("Some isrc");
         expectedItemDto.setTitle("Some title");
         expectedItemDto.setInfo("Some info");
-        expectedItemDto.setArtistDto(ArtistFactory.anyArtistDto());
+        expectedItemDto.setArtistDto(anyArtistDto());
+
+        return expectedItemDto;
+    }
+
+    public static ArtistDto anyArtistDto() {
+        ArtistDto expectedItemDto = new ArtistDto();
+        expectedItemDto.setId(Integer.MAX_VALUE);
+        expectedItemDto.setInfo("Some Info");
+        expectedItemDto.setName("Some name");
+        expectedItemDto.setRealName("Some real name");
 
         return expectedItemDto;
     }

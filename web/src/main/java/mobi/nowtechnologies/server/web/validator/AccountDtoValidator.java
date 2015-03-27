@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.web.validator;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -19,10 +19,10 @@ public class AccountDtoValidator extends BaseValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountDtoValidator.class);
 
-    private UserService userService;
+    private UserRepository userRepository;
 
-    public AccountDtoValidator(UserService userService) {
-        this.userService = userService;
+    public AccountDtoValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class AccountDtoValidator extends BaseValidator {
 
         SecurityContextDetails securityContextDetails = (SecurityContextDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int userId = securityContextDetails.getUserId();
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
 
         String currentStoredToken = Utils.createStoredToken(accountDto.getEmail(), accountDto.getCurrentPassword());
         if (null == errors.getFieldError("currentPassword")) {

@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
@@ -30,6 +31,7 @@ import static java.util.Collections.nCopies;
 import com.google.common.collect.Lists;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -39,6 +41,7 @@ import org.mockito.runners.*;
 import org.mockito.stubbing.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.*;
@@ -48,6 +51,8 @@ public class PendingPaymentServiceImplTest {
 
     @Mock
     UserService userServiceMock;
+    @Mock
+    UserRepository userRepository;
     @Mock
     PaymentPolicyService paymentPolicyServiceMock;
     @Mock
@@ -198,7 +203,7 @@ public class PendingPaymentServiceImplTest {
         when(page.hasNextPage()).thenReturn(true);
 
         pendingPaymentService.setMaxCount(maxCount);
-        when(userServiceMock.getUsersForRetryPayment(maxCount)).thenReturn(page);
+        when(userRepository.getUsersForRetryPayment(anyInt(), any(PageRequest.class))).thenReturn(page);
 
         List<PendingPayment> createRetryPayments = pendingPaymentService.createRetryPayments();
 

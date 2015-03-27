@@ -17,9 +17,6 @@ public interface ArtistRepository extends JpaRepository<Artist, Integer> {
     @Query(value = "select a from Artist a where a.name = :name")
     Artist getByName(@Param("name") String name);
 
-    @Query(value = "select a from Artist a where a.realName = :realName")
-    List<Artist> getByRealName(@Param("realName") String name, Pageable pageable);
-
     @Query(value = "select a from Artist a where a.realName = :name or a.name = :name")
     List<Artist> getByNames(@Param("name") String name, Pageable pageable);
 }

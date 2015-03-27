@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.web.validator.ContactUsDtoValidator;
@@ -31,13 +32,18 @@ public class SupportController extends CommonController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SupportController.class);
 
     private UserService userService;
+    private UserRepository userRepository;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @InitBinder(ContactUsDto.NAME)
-    public void initBinder(HttpServletRequest request, WebDataBinder binder) {
+    public void initBinder(WebDataBinder binder) {
         binder.setValidator(new ContactUsDtoValidator());
     }
 
@@ -46,7 +52,7 @@ public class SupportController extends CommonController {
         LOGGER.debug("input parameters request [{}]", request);
 
         int userId = getUserId();
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
 
         ContactUsDto contactUsDto = new ContactUsDto();
         contactUsDto.setEmail(user.getUserName());

@@ -30,7 +30,7 @@ public class UserServiceMergeIT {
     @Test
     public void testRemoveDeviceUserDataWhenMergeSameDevice() throws Exception {
         //disable old user
-        User oldUser = userService.findById(102);
+        User oldUser = userRepository.findOne(102);
         String deviceUID = oldUser.getDeviceUID();
         oldUser.setDeviceUID(deviceUID + "disabled_at");
         oldUser.setUuid(Utils.getRandomUUID());
@@ -63,7 +63,7 @@ public class UserServiceMergeIT {
 
     @Test
     public void testRemoveDeviceUserDataWhenMergeAnotherDevice() throws Exception {
-        User oldUser = userService.findById(103);
+        User oldUser = userRepository.findOne(103);
         deviceUserDataRepository.saveAndFlush(new DeviceUserData(oldUser, "x1"));
         //register temp user
         String anotherDeviceUID = "ddd2";

@@ -4,10 +4,6 @@ package mobi.nowtechnologies.server.shared.dto.admin;
  * @author Titov Mykhaylo (titov)
  */
 public class FilterDto {
-
-    public final static String FILTER_DTO = "FILTER_DTO";
-    public final static String FILTER_DTO_LIST = "FILTER_DTO_LIST";
-
     private String name;
 
     public String getName() {

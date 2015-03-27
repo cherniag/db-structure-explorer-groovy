@@ -7,8 +7,8 @@ import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.AccountLogService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.SubmittedPaymentService;
 import mobi.nowtechnologies.server.shared.dto.admin.AccountLogDto;
@@ -41,7 +41,7 @@ public class AccountLogController extends AbstractCommonController {
     private AccountLogService accountLogService;
     private PendingPaymentService pendingPaymentService;
     private SubmittedPaymentService submittedPaymentService;
-    private UserService userService;
+    private UserRepository userRepository;
 
     public void setAccountLogService(AccountLogService accountLogService) {
         this.accountLogService = accountLogService;
@@ -55,15 +55,15 @@ public class AccountLogController extends AbstractCommonController {
         this.submittedPaymentService = submittedPaymentService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @RequestMapping(value = "/accountLogs/{userId}", method = RequestMethod.GET)
     public ModelAndView getTransactionHistory(HttpServletRequest request, @PathVariable(value = "userId") Integer userId) {
         LOGGER.debug("input parameters request, userId: [{}], [{}]", request, userId);
 
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         List<AccountLog> accountLogs = accountLogService.findByUserId(userId);
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(userId);
         List<SubmittedPayment> submittedPayments =

@@ -254,7 +254,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         emailGenerate(user, fbEmail);
         ActivationEmail activationEmail = Iterables.getFirst(activationEmailRepository.findAll(), null);
         applyInitPromoByEmail(activationEmail, timestamp, getUserToken(resultActions, timestamp));
-        user = userRepository.findOne(fbEmail, communityUrl);
+        user = userRepository.findByUserNameAndCommunityUrl(fbEmail, communityUrl);
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
         mockMvc.perform(post("/" + communityUrl + "/5.5/GET_CHART.json").param("USER_NAME", fbEmail).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
                .andExpect(status().isOk()).andDo(print()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH).exists());

@@ -135,7 +135,7 @@
 		</mvc:interceptor>
 		
 		<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" >
-            <property name="userService" ref="service.UserService"/>
+            <property name="userRepository" ref="userRepository"/>
         </bean>
 		
 		<bean class="mobi.nowtechnologies.server.web.interceptor.ImplicitObjectsInterceptor">

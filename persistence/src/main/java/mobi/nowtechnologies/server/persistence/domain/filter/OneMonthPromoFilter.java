@@ -4,18 +4,12 @@ import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
-/**
- * @generated
- */
-@javax.persistence.Entity
-@javax.persistence.DiscriminatorValue(value = "ONE_MONTH_PROMO")
-public class OneMonthPromoFilter extends AbstractFilterWithCtiteria implements java.io.Serializable {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-    /**
-     * @generated
-     */
-    private static final long serialVersionUID = -872622075L;
-
+@Entity
+@DiscriminatorValue(value = "ONE_MONTH_PROMO")
+public class OneMonthPromoFilter extends AbstractFilterWithCtiteria {
     @Override
     public boolean doFilter(User user) {
         throw new PersistenceException("Not implemented");

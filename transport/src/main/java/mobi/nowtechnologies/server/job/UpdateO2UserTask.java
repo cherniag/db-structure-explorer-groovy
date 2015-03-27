@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
+import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -27,6 +28,7 @@ public class UpdateO2UserTask {
     private transient UserLogRepository userLogRepository;
     private transient O2Service o2Service;
     private transient UserService userService;
+    private transient DeviceService deviceService;
     private transient O2UserDetailsUpdater o2UserDetailsUpdater = new O2UserDetailsUpdater();
 
     @Transactional
@@ -54,7 +56,7 @@ public class UpdateO2UserTask {
     private void updateUser(User u) {
         LOG.info("getting subscriber data for phone [{}], id=[{}]", u.getMobile(), u.getId());
         O2SubscriberData o2SubscriberData;
-        if (userService.isPromotedDevice(u.getMobile(), u.getUserGroup().getCommunity())) {
+        if (deviceService.isPromotedDevicePhone(u.getUserGroup().getCommunity(), u.getMobile(), null)) {
             o2SubscriberData = o2UserDetailsUpdater.getDefaultSubscriberData();
             LOG.info("[promoted device] default subscriber data for [{}]", u.getMobile());
         } else {
@@ -99,5 +101,9 @@ public class UpdateO2UserTask {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
     }
 }
