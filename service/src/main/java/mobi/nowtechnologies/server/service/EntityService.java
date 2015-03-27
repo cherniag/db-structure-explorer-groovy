@@ -65,16 +65,4 @@ public class EntityService {
         return entityDao.findByProperties(entityClass, fieldNameValueMap);
     }
 
-    public <T> T findByProperty(Class<T> entityClass, String fieldName, Object fieldValue) {
-        if (fieldName == null) {
-            throw new ServiceException("The parameter fieldName is null");
-        }
-        if (fieldName.isEmpty()) {
-            throw new ServiceException("The parameter fieldName is empty");
-        }
-        if (entityClass == null) {
-            throw new ServiceException("The parameter entityClass is null");
-        }
-        return entityDao.findByProperty(entityClass, fieldName, fieldValue);
-    }
 }

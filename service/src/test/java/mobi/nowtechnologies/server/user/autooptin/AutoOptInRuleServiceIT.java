@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -22,8 +23,11 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -39,6 +43,7 @@ import static org.hamcrest.Matchers.is;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@Transactional
 public class AutoOptInRuleServiceIT {
 
     private static final String MOBILE = "+447123456789";
@@ -50,6 +55,9 @@ public class AutoOptInRuleServiceIT {
 
     @Autowired
     private PromotionService promotionService;
+
+    @Resource
+    private CommunityRepository communityRepository;
 
     @Autowired
     @Qualifier("serviceMessageSource")
@@ -193,19 +201,21 @@ public class AutoOptInRuleServiceIT {
         User user = createMatchingUser();
         user.setTariff(_3G);
         String promoCode = communityResourceBundleMessageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.3g.promoCode", null, null);
-        Promotion promotion = promotionService.getActivePromotion(promoCode, O2_COMMUNITY_REWRITE_URL);
+        Promotion promotion = promotionService.getActivePromotion(findO2Community(), promoCode);
         user.getOldUser().setLastPromo(promotion.getPromoCode());
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(false));
     }
 
+    private Community findO2Community() {return communityRepository.findByRewriteUrlParameter(O2_COMMUNITY_REWRITE_URL);}
+
     @Test
     public void checkWhen4GUserHad4GPromo() throws Exception {
         User user = createMatchingUser();
         user.setTariff(_4G);
         String promoCode = communityResourceBundleMessageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.4g.promoCode", null, null);
-        Promotion promotion = promotionService.getActivePromotion(promoCode, O2_COMMUNITY_REWRITE_URL);
+        Promotion promotion = promotionService.getActivePromotion(findO2Community(), promoCode);
         user.getOldUser().setLastPromo(promotion.getPromoCode());
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);

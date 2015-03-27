@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,7 +16,7 @@ import org.springframework.data.repository.query.Param;
 /**
  * User: gch Date: 12/17/13
  */
-public interface TaskRepository<T extends Task> extends PagingAndSortingRepository<T, Long> {
+public interface TaskRepository<T extends Task> extends JpaRepository<T, Long> {
 
     @Query("select task from UserTask task join task.user user where " + "user.id = :userId and task.taskStatus = 'ACTIVE' and task.taskType = :taskType")
     public List<UserTask> findActiveUserTasksByUserIdAndType(@Param("userId") int userId, @Param("taskType") String taskType);

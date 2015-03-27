@@ -96,7 +96,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @QueryHints(@QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE"))
     Page<User> getUsersForPendingPayment(int epochSeconds, Pageable pageable);
 
-    @Query("select u from User u " + "join u.currentPaymentDetails pd " + "join u.userGroup ug " + "join ug.community c " + "join pd.paymentPolicy pp " + "where " + "pd.retriesOnError>0 " +
+    @Query("select u from User u " +
+           "join u.currentPaymentDetails pd " +
+           "join u.userGroup ug " +
+           "join ug.community c " +
+           "join pd.paymentPolicy pp " +
+           "where pd.retriesOnError>0 " +
            "and (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') " + "and (" +
            " (u.nextSubPayment<=?1 and pd.madeAttempts=0 and pp.advancedPaymentSeconds=0)" +
            "   or (" +
@@ -128,7 +133,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
            "and u.status=10 " +
            "and u.nextSubPayment<=?1+172800 " +
            "and u.nextSubPayment>?1 " +
-           "and u.lastBefore48SmsMillis/1000+172800<u.nextSubPayment")
+           "and u.lastBefore48SmsMillis/1000+172800<u.nextSubPayment " +
+           "and u.segment='CONSUMER' " +
+           "and u.contract='PAYG'")
     List<User> findBefore48hExpireUsers(int epochSeconds, Pageable pageable);
 
     @Query("select u from User u " +
@@ -155,13 +162,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                                        "      and log.type = 'UPDATE_O2_USER' " +
                                        "      and log.last_update >  ?1)")
     List<Integer> getUsersForUpdate(long timeMillis, int userGroupId);
-
-    @Query(value = "select u from User u " +
-                   " join u.userGroup ug " +
-                   " join ug.community c " +
-                   "  where c.rewriteUrlParameter = ?2" +
-                   " and u.userName = ?1 ")
-    User findOne(String userName, String communityUrl);
 
     @Modifying
     @Query(value = "update User user " +
@@ -228,31 +228,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByUserNameAndCommunity(@Param("searchWord") String searchWord, @Param("rewriteUrlParameter") String rewriteUrlParameter, @Param("excludedUserNames") List<String> excludedUserNames,
                                           Pageable pageable);
 
-    @Query(value = "select count(*) from User user where" +
-                   " user.userName = ?1 and user.userGroupId=" +
-                   "(select userGroup.id from UserGroup userGroup where userGroup.communityId=" +
-                   "(select community.id from Community community where community.name=?2))")
-    Long countByUserNameAndCommunityName(String userName, String communityName);
-
-
-    @Query(value = "select user from User user where user.facebookId = ?1 " +
-                   "and user.userGroupId=(select userGroup.id from UserGroup userGroup " +
-                   "where userGroup.communityId=(select community.id from Community community where community.name=?2))")
-    List<User> findByFacebookAndCommunity(String facebookId, String communityName);
-
-
-    @Query(value = "select user from User user where" +
-                   " user.userName = ?1 and user.userGroupId=" +
-                   "(select userGroup.id from UserGroup userGroup where userGroup.communityId=" +
-                   "(select community.id from Community community where community.name=?2))")
-    User findByUserNameAndCommunityName(String userName, String communityName);
-
-    @Query(value = "select user from User user where" + " user.userName = ?1")
-    List<User> findByUserName(String userName);
-
     @Query(value = "select user from User user join user.userGroup userGroup  " +
                    "join userGroup.community community where" +
                    " user.userName in (:userNames) and community.rewriteUrlParameter = :communityRewriteUrl")
-    List<User> findByUserNameAndCommunity(@Param("userNames") List<String> userNames, @Param("communityRewriteUrl") String communityRewriteUrl);
+    List<User> findByUserNamesAndCommunity(@Param("userNames") List<String> userNames, @Param("communityRewriteUrl") String communityRewriteUrl);
 
+    @Query(value = "select user from User user join user.userGroup userGroup  " +
+                   "join userGroup.community community where" +
+                   " user.userName = :userName and community.rewriteUrlParameter = :communityRewriteUrl")
+    User findByUserNameAndCommunityUrl(@Param("userName") String userName, @Param("communityRewriteUrl") String communityRewriteUrl);
 }

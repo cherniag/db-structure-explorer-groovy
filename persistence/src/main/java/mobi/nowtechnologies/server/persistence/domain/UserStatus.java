@@ -15,10 +15,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity
 @Table(name = "tb_userStatus")
 public class UserStatus implements Serializable {
-
     public static final String SUBSCRIBED = "SUBSCRIBED";
     public static final String LIMITED = "LIMITED";
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private byte i;

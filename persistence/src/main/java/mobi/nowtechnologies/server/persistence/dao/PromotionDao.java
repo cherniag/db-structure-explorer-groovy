@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.shared.Utils;
 
@@ -20,14 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PromotionDao extends JpaDaoSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionDao.class);
-
-    @SuppressWarnings("unchecked")
-    public List<PromoCode> getActivePromoCodePromotion(final int userGroupId) {
-        List<PromoCode> promotions = getJpaTemplate().find(
-            "select promoCode from  PromoCode promoCode join promoCode.promotion p where p.showPromotion=true and (p.numUsers < p.maxUsers or p.maxUsers=0) and p.isActive=true and p.userGroup=?1 " +
-            "and p.type=?2 and p.startDate<?3 and p.endDate>?3", userGroupId, Promotion.ADD_FREE_WEEKS_PROMOTION, Utils.getEpochSeconds());
-        return promotions;
-    }
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)

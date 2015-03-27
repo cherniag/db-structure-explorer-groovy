@@ -81,13 +81,11 @@ public class O2ClientServiceImplTest {
         fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
         fixture.setUserLogRepository(mockUserLogRepository);
         fixture.setLimitValidatePhoneNumber(9);
-        fixture.setUserService(userServiceMock);
         fixture.setO2Service(o2serviceImpl);
 
         fixture2 = new O2ProviderServiceImpl();
         fixture2.setServerO2Url("https://uat.mqapi.com");
         fixture2.setCommunityService(mockCommunityService);
-        fixture2.setUserService(userServiceMock);
         fixture2.setO2Service(o2serviceImpl);
         o2serviceImpl.setRestTemplate(mockRestTemplate);
     }
@@ -233,13 +231,11 @@ public class O2ClientServiceImplTest {
         Community community = new Community();
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
         assertEquals("o2", userDetails.operator);
         assertEquals("PAYG", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -250,13 +246,11 @@ public class O2ClientServiceImplTest {
         Community community = new Community();
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
         assertEquals("non-o2", userDetails.operator);
         assertEquals("PAYG", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -267,13 +261,11 @@ public class O2ClientServiceImplTest {
         Community community = new Community();
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
         assertEquals("o2", userDetails.operator);
         assertEquals("PAYM", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -284,13 +276,11 @@ public class O2ClientServiceImplTest {
         Community community = new Community();
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
         assertEquals("non-o2", userDetails.operator);
         assertEquals("PAYM", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -301,13 +291,11 @@ public class O2ClientServiceImplTest {
         Community community = new Community();
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
         assertEquals("o2", userDetails.operator);
         assertEquals("business", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -318,13 +306,11 @@ public class O2ClientServiceImplTest {
         Community community = new Community();
 
         when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
         assertEquals("non-o2", userDetails.operator);
         assertEquals("business", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test(expected = ExternalServiceException.class)
@@ -333,8 +319,7 @@ public class O2ClientServiceImplTest {
         String otac_auth_code = "6666fasdffwqe";
         Community community = new Community();
 
-        when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
+        when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(false);
 
         fixture.getUserDetails(otac_auth_code, phoneNumber, community);
     }

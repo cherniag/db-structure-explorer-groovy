@@ -19,7 +19,4 @@ public class MigPaymentDetailsFactory {
     }
 
 
-    public static MigPaymentDetails createMigPaymentDetails2() {
-        return new MigPaymentDetails();
-    }
 }

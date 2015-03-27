@@ -43,7 +43,7 @@ public class UserPromoService {
     public MergeResult applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         activationEmailService.activate(activationEmailId, email, token);
 
-        User existingUser = userRepository.findOne(email, user.getCommunityRewriteUrl());
+        User existingUser = userRepository.findByUserNameAndCommunityUrl(email, user.getCommunityRewriteUrl());
         MergeResult mergeResult = userService.applyInitPromo(user, existingUser, null, false, true, false);
         user = mergeResult.getResultOfOperation();
 
@@ -89,6 +89,6 @@ public class UserPromoService {
     }
 
     private User getUserForMerge(User userAfterSignUp, String email) {
-        return userRepository.findOne(email, userAfterSignUp.getCommunityRewriteUrl());
+        return userRepository.findByUserNameAndCommunityUrl(email, userAfterSignUp.getCommunityRewriteUrl());
     }
 }

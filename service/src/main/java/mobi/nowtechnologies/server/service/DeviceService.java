@@ -10,6 +10,8 @@ import mobi.nowtechnologies.server.persistence.repository.PromotedDeviceReposito
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -69,7 +71,11 @@ public class DeviceService {
     }
 
     public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode) {
-        return isPromotedDevicePhone(community, phoneNumber, promoCode, DEFAULT_PROMO_PHONE_MSG_CODE);
+        boolean promotedDevicePhone = isPromotedDevicePhone(community, phoneNumber, promoCode, DEFAULT_PROMO_PHONE_MSG_CODE);
+
+        logger().info("is promoted device('{}')={}", phoneNumber, promotedDevicePhone);
+
+        return promotedDevicePhone;
     }
 
     public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode, String propertyName) {
@@ -113,5 +119,9 @@ public class DeviceService {
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    private Logger logger() {
+        return LoggerFactory.getLogger(getClass());
     }
 }

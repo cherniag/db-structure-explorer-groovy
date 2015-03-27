@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentEventNotifier;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
@@ -60,6 +61,9 @@ public class VFPaymentServiceImplTest {
     private UserService userServiceMock;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private PendingPaymentService pendingPaymentServiceMock;
     
     @Mock
@@ -74,6 +78,7 @@ public class VFPaymentServiceImplTest {
     @Before
     public void setUp() throws Exception {
         fixture = spy(new VFPaymentServiceImpl());
+        fixture.setUserRepository(userRepository);
         fixture.setGatewayService(gatewayServiceMock);
         fixture.setUserService(userServiceMock);
         fixture.setPendingPaymentService(pendingPaymentServiceMock);
@@ -154,7 +159,7 @@ public class VFPaymentServiceImplTest {
         vfpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         pendingPayment.setPaymentDetails(vfpsmsPaymentDetails);
 
-        PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
+        PowerMockito.doReturn(Collections.singletonList(user)).when(userRepository).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
         Answer<?> answer  = new Answer<Object>() {
@@ -168,7 +173,7 @@ public class VFPaymentServiceImplTest {
 
         fixture.process(vfResponse);
 
-        verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
+        verify(userRepository, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(1)).getPendingPayments(user.getId());
         verify(applicationEventPublisher).publishEvent(any(ApplicationEvent.class));
     }
@@ -190,13 +195,13 @@ public class VFPaymentServiceImplTest {
         vfpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         pendingPayment.setPaymentDetails(vfpsmsPaymentDetails);
 
-        PowerMockito.doReturn(Collections.singletonList(user)).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
+        PowerMockito.doReturn(Collections.singletonList(user)).when(userRepository).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
 
         fixture.process(vfResponse);
 
-        verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
+        verify(userRepository, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(1)).getPendingPayments(user.getId());
         verify(fixture, times(0)).commitPayment(pendingPayment, vfResponse);
     }
@@ -218,13 +223,13 @@ public class VFPaymentServiceImplTest {
         vfpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         pendingPayment.setPaymentDetails(vfpsmsPaymentDetails);
 
-        PowerMockito.doReturn(Collections.emptyList()).when(userServiceMock).findByMobile("+" + deliverSm.getSourceAddr());
+        PowerMockito.doReturn(Collections.emptyList()).when(userRepository).findByMobile("+" + deliverSm.getSourceAddr());
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
 
         fixture.process(vfResponse);
 
-        verify(userServiceMock, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
+        verify(userRepository, times(1)).findByMobile("+" + deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(0)).getPendingPayments(user.getId());
         verify(fixture, times(0)).commitPayment(pendingPayment, vfResponse);
     }

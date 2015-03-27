@@ -2,8 +2,9 @@ package mobi.nowtechnologies.server.service.aop;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserNotificationService;
-import mobi.nowtechnologies.server.service.UserService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,14 +24,14 @@ public class SMSNotification {
 
     private UserNotificationService userNotificationService;
 
-    private UserService userService;
+    private UserRepository userRepository;
 
     public void setUserNotificationService(UserNotificationService userNotificationService) {
         this.userNotificationService = userNotificationService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     /*
@@ -79,7 +80,7 @@ public class SMSNotification {
         Object object = joinPoint.proceed();
         Integer userId = (Integer) joinPoint.getArgs()[0];
         try {
-            User user = userService.findById(userId);
+            User user = userRepository.findOne(userId);
             userNotificationService.sendUnsubscribeAfterSMS(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -114,7 +115,7 @@ public class SMSNotification {
         Object object = joinPoint.proceed();
         Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
         try {
-            User user = userService.findById(userId);
+            User user = userRepository.findOne(userId);
             userNotificationService.sendLowBalanceWarning(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -146,7 +147,7 @@ public class SMSNotification {
         Object object = joinPoint.proceed();
         Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
         try {
-            User user = userService.findById(userId);
+            User user = userRepository.findOne(userId);
             userNotificationService.sendUnsubscribePotentialSMS(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

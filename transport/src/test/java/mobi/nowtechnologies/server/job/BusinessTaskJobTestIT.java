@@ -53,7 +53,7 @@ public class BusinessTaskJobTestIT {
     private BusinessTaskJob sendChargeNotificationJob;
 
     @Resource
-    private TaskRepository taskRepository;
+    private TaskRepository<Task> taskRepository;
 
     @Resource
     private UserRepository userRepository;

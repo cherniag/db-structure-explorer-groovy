@@ -264,6 +264,7 @@
     <bean id="job.UpdateO2UserTask" class="mobi.nowtechnologies.server.job.UpdateO2UserTask">
         <property name="userLogRepository" ref="userLogRepository"/>
         <property name="userService" ref="service.UserService"/>
+        <property name="deviceService" ref="service.DeviceService"/>
         <property name="o2Service" ref="service.O2Service"/>
     </bean>
      

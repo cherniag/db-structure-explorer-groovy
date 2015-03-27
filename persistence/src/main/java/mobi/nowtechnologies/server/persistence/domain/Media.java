@@ -434,8 +434,4 @@ public class Media extends Item implements Serializable {
                                         .append("headerPreviewFileId", headerPreviewFileId).append("info", info).append("iTunesUrl", iTunesUrl).append("amazonUrl", amazonUrl)
                                         .append("publishDate", publishDate).append("trackId", trackId).append("areArtistUrls", areArtistUrls).toString();
     }
-
-    public static enum Fields {
-        isrc, i;
-    }
 }

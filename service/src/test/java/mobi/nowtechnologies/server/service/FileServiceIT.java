@@ -31,7 +31,6 @@ public class FileServiceIT {
         //userWithCommunity.setDeviceType((byte) 0);
     }
 
-    private static FileService fileService;
     @Autowired
     private FileService service;
 

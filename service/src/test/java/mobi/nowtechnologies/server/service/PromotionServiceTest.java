@@ -14,18 +14,22 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -50,8 +54,6 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
-import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED;
-import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -97,6 +99,8 @@ public class PromotionServiceTest {
     PromotionRepository promotionRepositoryMock;
     @Mock
     UserBannedRepository userBannedRepositoryMock;
+    @Mock
+    UserTransactionRepository userTransactionRepository;
     @Mock
     EntityService entityServiceMock;
     @Mock
@@ -149,6 +153,7 @@ public class PromotionServiceTest {
         promotionServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setDeviceService(deviceServiceMock);
+        promotionServiceSpy.setUserTransactionRepository(userTransactionRepository);
     }
 
     @Test
@@ -165,39 +170,6 @@ public class PromotionServiceTest {
         assertNotNull(userAfterPromotion);
         assertNull(userAfterPromotion.getPotentialPromotion());
         assertNull(user.getCurrentPaymentDetails().getPromotionPaymentPolicy());
-    }
-
-    @Test
-    @Ignore
-    public void testGetActivePromotion_Success() throws Exception {
-        String promotionCode = "promo";
-        String communityName = "Now Music";
-
-        Promotion result = promotionServiceSpy.getActivePromotion(promotionCode, communityName);
-
-        assertNotNull(result);
-    }
-
-    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-    @Ignore
-    public void testGetActivePromotion_WhenPromotionCodeIsNull() throws Exception {
-        String promotionCode = null;
-        String communityName = "";
-
-        Promotion result = promotionServiceSpy.getActivePromotion(promotionCode, communityName);
-
-        assertNotNull(result);
-    }
-
-    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-    @Ignore
-    public void testGetActivePromotion_WhenCommunityNameIsNull() throws Exception {
-        String promotionCode = "";
-        String communityName = null;
-
-        Promotion result = promotionServiceSpy.getActivePromotion(promotionCode, communityName);
-
-        assertNotNull(result);
     }
 
     @Test
@@ -661,7 +633,8 @@ public class PromotionServiceTest {
         //given
         final User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
 
-        final Promotion promotion = new Promotion().withFreeWeeks((byte) 3).withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
+        final Promotion promotion = new Promotion().withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
+        promotion.setPeriod(new Period(DurationUnit.WEEKS, 3));
         promotion.getPromoCode().withPromotion(promotion);
 
         int freeTrialStartedTimestampSeconds = 1;
@@ -672,7 +645,7 @@ public class PromotionServiceTest {
         mockStatic(Utils.class);
 
         final int currentTimeSeconds = Integer.MAX_VALUE;
-        int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getFreeWeeks() * WEEK_SECONDS;
+        int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getPeriod().getDuration() * WEEK_SECONDS;
         PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
         PowerMockito.when(Utils.secondsToMillis(expectedNextSubPaymentSeconds)).thenReturn(SECONDS.toMillis(expectedNextSubPaymentSeconds));
         PowerMockito.when(Utils.secondsToMillis(freeTrialStartedTimestampSeconds)).thenReturn(freeTrialStartedTimestampSeconds * 1000L);
@@ -688,32 +661,6 @@ public class PromotionServiceTest {
                 return true;
             }
         }).when(promotionServiceSpy).updatePromotionNumUsers(promotion);
-
-        Answer answer = new Answer() {
-            int count = -1;
-
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                AccountLog accountLog = (AccountLog) invocation.getArguments()[0];
-                assertNotNull(accountLog);
-                assertThat(accountLog.getUserId(), is(user.getId()));
-                assertNull(accountLog.getSubmittedPayment());
-                assertThat(accountLog.getLogTimestamp(), is(currentTimeSeconds));
-                if (count == -1) {
-                    assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance() + (int) promotion.getFreeWeeks()));
-                    assertThat(accountLog.getTransactionType(), is(PROMOTION_BY_PROMO_CODE_APPLIED));
-                    assertThat(accountLog.getPromoCode(), is(promotion.getPromoCode().getCode()));
-                    count = 1;
-                } else {
-                    assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance() + (int) promotion.getFreeWeeks() - count));
-                    assertThat(accountLog.getTransactionType(), is(SUBSCRIPTION_CHARGE));
-                    count++;
-                }
-
-                return accountLog;
-            }
-        };
-        Mockito.doAnswer(answer).when(entityServiceMock).saveEntity(any(AccountLog.class));
 
         //when
         User actualUser = promotionServiceSpy
@@ -735,7 +682,7 @@ public class PromotionServiceTest {
         verify(userBannedRepositoryMock, times(1)).findOne(user.getId());
         verify(entityServiceMock, times(1)).updateEntity(user);
         verify(promotionServiceSpy, times(1)).updatePromotionNumUsers(promotion);
-        verify(entityServiceMock, times(promotion.getFreeWeeks() + 1)).saveEntity(any(AccountLog.class));
+        verify(userTransactionRepository, times(1)).save(any(UserTransaction.class));
     }
 
     @Test
@@ -794,7 +741,7 @@ public class PromotionServiceTest {
         promoCode.setCode("store");
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
-        promotion.setFreeWeeks((byte) 52);
+        promotion.setPeriod(new Period(DurationUnit.WEEKS, 52));
 
         Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
             @Override
@@ -831,7 +778,7 @@ public class PromotionServiceTest {
         promoCode.setCode("store");
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
-        promotion.setFreeWeeks((byte) 52);
+        promotion.setPeriod(new Period(DurationUnit.WEEKS, 52));
 
         Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
             @Override

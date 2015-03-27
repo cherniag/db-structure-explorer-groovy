@@ -1,10 +1,14 @@
-package mobi.nowtechnologies.server.service.validator;
+package mobi.nowtechnologies.server.web.asm;
 
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -12,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
+import org.springframework.web.util.WebUtils;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -21,17 +26,20 @@ public class UserRegDetailsDtoValidator extends BaseValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserRegDetailsDtoValidator.class);
 
     private UserService userService;
-    private HttpServletRequest request;
-    private String defaultCommunityName;
+    private UserRepository userRepository;
 
-    public UserRegDetailsDtoValidator(HttpServletRequest request, UserService userService, String defaultCommunityName) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
-        this.request = request;
-        this.defaultCommunityName = defaultCommunityName;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public boolean customValidate(Object target, Errors errors) {
+        HttpServletRequest request = RequestUtils.getHttpServletRequest();
+
         LOGGER.debug("input parameters target, errors: [{}], [{}]", target, errors);
         UserRegDetailsDto userRegDetailsDto = (UserRegDetailsDto) target;
 
@@ -50,9 +58,10 @@ public class UserRegDetailsDtoValidator extends BaseValidator {
 
         String communityName = userRegDetailsDto.getCommunityName();
         if (communityName == null) {
-            communityName = defaultCommunityName;
+            Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
+            communityName = cookie.getValue();
         }
-        if (null != userService.findByNameAndCommunity(email, communityName)) {
+        if (null != userRepository.findByUserNameAndCommunityUrl(email, communityName)) {
             errors.rejectValue("email", "AlreadyExists.email", "This email is already exists");
         }
 

@@ -11,8 +11,6 @@ import org.springframework.social.facebook.api.FacebookProfile;
  * @author Titov Mykhaylo (titov)
  */
 public class FacebookAuthenticationToken extends AbstractAuthenticationToken {
-
-    private static final long serialVersionUID = -2670588793017069929L;
     private FacebookProfile facebookProfile;
     private UserDetails userDetails;
 

@@ -143,7 +143,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                                                                           displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)).andExpect(status().isOk());
-        User user = userRepository.findOne(googlePlusEmail, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(googlePlusEmail, communityUrl);
         GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(googlePlusUserInfo.getEmail(), googlePlusEmail);
         assertEquals(googlePlusUserInfo.getPicture(), resultUrlToGooglePlusPicture);
@@ -230,7 +230,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
-        user = userRepository.findOne(googlePlusEmail, communityUrl);
+        user = userRepository.findByUserNameAndCommunityUrl(googlePlusEmail, communityUrl);
         String userToken1 = Utils.createTimestampToken(user.getToken(), timestamp);
         checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
 
@@ -240,7 +240,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         user = userRepository.findByDeviceUIDAndCommunity(otherDeviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
-        user = userRepository.findOne(googlePlusEmail, communityUrl);
+        user = userRepository.findByUserNameAndCommunityUrl(googlePlusEmail, communityUrl);
         String userToken2 = Utils.createTimestampToken(user.getToken(), timestamp);
         checkGetChart(userToken2, googlePlusEmail, timestamp, otherDeviceUID, true, communityUrl);
         checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, false, communityUrl);
@@ -277,7 +277,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         emailGenerate(user, googlePlusEmail);
         ActivationEmail activationEmail = Iterables.getFirst(activationEmailRepository.findAll(), null);
         applyInitPromoByEmail(activationEmail, timestamp, getUserToken(resultActions, timestamp));
-        user = userRepository.findOne(googlePlusEmail, communityUrl);
+        user = userRepository.findByUserNameAndCommunityUrl(googlePlusEmail, communityUrl);
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
         checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }

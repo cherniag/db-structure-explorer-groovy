@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,6 @@ public class MediaService {
     private MediaLogService mediaLogService;
     private MediaLogTypeService mediaLogTypeService;
     private MediaDao mediaDao;
-    private EntityService entityService;
     private MediaRepository mediaRepository;
     private ChartRepository chartRepository;
     private ChartDetailRepository chartDetailRepository;
@@ -50,10 +50,6 @@ public class MediaService {
 
     public void setMediaDao(MediaDao aMediaDao) {
         this.mediaDao = aMediaDao;
-    }
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
     }
 
     public void setMediaRepository(MediaRepository mediaRepository) {
@@ -78,7 +74,11 @@ public class MediaService {
         if (mediaIsrc == null) {
             throw new ServiceException("The parameter mediaIsrc is null");
         }
-        return entityService.findByProperty(Media.class, Media.Fields.isrc.toString(), mediaIsrc);
+
+
+        List<Media> medias = mediaRepository.getByIsrc(mediaIsrc);
+
+        return Iterables.getFirst(medias, null);
     }
 
     public void conditionalUpdateByUserAndMedia(int userId, int mediaId) {
