@@ -24,7 +24,6 @@
         <processorPath useClasspath="true" />
         <module name="admin" />
         <module name="application-tests" />
-        <module name="database" />
         <module name="env" />
         <module name="persistence" />
         <module name="service" />
