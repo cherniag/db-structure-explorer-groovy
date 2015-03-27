@@ -73,8 +73,8 @@ public class ReloadPropNormTest {
     };
 
     class CustomReloadableResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
-        Properties getAllProperties() {
-            return getMergedProperties(Locale.getDefault()).getProperties();
+        Properties getAllProperties(Locale locale) {
+            return getMergedProperties(locale).getProperties();
         }
     }
 
@@ -103,11 +103,11 @@ public class ReloadPropNormTest {
             //appPropertyPlaceholderConfigurer.setLocations();
             //Properties allProperties = appPropertyPlaceholderConfigurer.mergeProperties();
 
-            Properties allProperties = customReloadableResourceBundleMessageSource.getAllProperties();
+            Properties allProperties = customReloadableResourceBundleMessageSource.getAllProperties(Locale.getDefault());
             for (String community : communities) {
                 CustomReloadableResourceBundleMessageSource gg = new CustomReloadableResourceBundleMessageSource();
-                gg.setBasenames(globalAndEnvGlobalProps[0][0] +"_"+ community, propPath +"_"+ community);
-                allProperties.putAll(gg.getAllProperties());
+                gg.setBasenames(globalAndEnvGlobalProps[0][0], propPath);
+                allProperties.putAll(gg.getAllProperties(new Locale(community)));
             }
 
             Map<String, PropertiesConfigurationLayout> communityToPropertiesConfigurationLayoutMap = new HashMap<>();
