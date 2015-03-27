@@ -89,6 +89,27 @@
                 </resources>
             </build>
         </profile>
+        
+        <profile>
+            <id>cucumber</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>cucumber</value>
+                </property>
+            </activation>
+            <build>
+                <filters>
+                    <filter>src/main/filters/cucumber/db.properties</filter>
+                </filters>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
 
 </project>
