@@ -53,9 +53,9 @@ public class PaymentsPayPalController extends CommonController {
 
     public static final String REQUEST_PARAM_PAYPAL = "result";
     public static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPolicyId";
+    public static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
     public static final String SUCCESSFUL_RESULT = "successful";
     public static final String FAIL_RESULT = "fail";
-    private static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
@@ -70,7 +70,7 @@ public class PaymentsPayPalController extends CommonController {
         ModelAndView modelAndModel = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PAYPAL);
 
         if (StringUtils.hasText(result)) {
-            if (StringUtils.hasText(token)) {
+            if (SUCCESSFUL_RESULT.equals(result) && StringUtils.hasText(token)) {
                 paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
@@ -135,8 +135,7 @@ public class PaymentsPayPalController extends CommonController {
         dto.setBillingAgreementDescription(messageSource.getMessage("pay.paypal.billing.agreement.description",
                                                                     new Object[] {paymentPolicyDto.getDuration(), paymentPolicyDto.getDurationUnit(), paymentPolicyDto.getSubcost()}, locale));
         StringBuilder callbackUrl = new StringBuilder(getServerURL(request)).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT).append(START_PARAM_DELIM)
-                                                                                  .append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&")
-                                                                                  .append(REQUEST_PARAM_PAYPAL).append("=");
+                                                                                  .append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&").append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);
         dto.setSuccessUrl(callbackUrl + SUCCESSFUL_RESULT);
         PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());

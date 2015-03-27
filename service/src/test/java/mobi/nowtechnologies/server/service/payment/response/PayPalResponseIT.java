@@ -43,7 +43,7 @@ public class PayPalResponseIT {
 
     @Test
     public void creatingToken() {
-        PayPalResponse makeTokenResponse = service.makeTokenRequest("Information for paypal page", null, null, "GBP", null);
+        PayPalResponse makeTokenResponse = service.getTokenForRecurrentType(null, null, "GBP", null, "Information for paypal page");
         assertNotNull(makeTokenResponse.getToken());
         assertEquals(true, makeTokenResponse.isSuccessful());
     }
