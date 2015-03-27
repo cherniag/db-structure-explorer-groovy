@@ -468,6 +468,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 		<property name="deviceService" ref="service.DeviceService"/>
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+		<property name="unsubscribeMtvNzShortCode" value="${vf.nz.smpp.service.source.address.unsubscribe.for.mtvnz}"/>
 	</bean>
 
     <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>
