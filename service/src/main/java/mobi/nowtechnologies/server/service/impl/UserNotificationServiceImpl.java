@@ -57,6 +57,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     private String rememberMeTokenCookieName;
     private DeviceService deviceService;
     private SmsServiceFacade smsServiceFacade;
+    private String unsubscribeMtvNzShortCode;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -116,6 +117,10 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     public void setSmsServiceFacade(SmsServiceFacade smsServiceFacade) {
         this.smsServiceFacade = smsServiceFacade;
+    }
+
+    public void setUnsubscribeMtvNzShortCode(String unsubscribeMtvNzShortCode) {
+        this.unsubscribeMtvNzShortCode = unsubscribeMtvNzShortCode;
     }
 
     @Async
@@ -200,7 +205,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             if (user == null) {
                 throw new NullPointerException("The parameter user is null");
             }
-            if (user.getCurrentPaymentDetails() == null) {
+            PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+            if (currentPaymentDetails == null) {
                 throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
             }
 
@@ -214,12 +220,16 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             LOGGER.info("Attempt to send subscription confirmation sms async in memory");
 
             if (!rejectDevice(user, "sms.notification.subscribed.not.for.device.type")) {
-                PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
+                PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
                 String subCost = preFormatCurrency(paymentPolicy.getSubcost());
                 Period period = paymentPolicy.getPeriod();
                 String durationUnitPart = getDurationUnitPart(community, period);
                 String currencyISO = paymentPolicy.getCurrencyISO();
                 String shortCode = paymentPolicy.getShortCode();
+
+                if(currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE)){
+                    shortCode = unsubscribeMtvNzShortCode;
+                }
 
                 boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] {unsubscribeUrl, currencyISO, subCost, durationUnitPart, shortCode});
 
