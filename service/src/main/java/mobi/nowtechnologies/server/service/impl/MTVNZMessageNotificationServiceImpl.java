@@ -30,7 +30,7 @@ public class MTVNZMessageNotificationServiceImpl implements MessageNotificationS
 
         String msgCodeEnding = null;
         if(msgCodeBase.equals("sms.unsubscribe.after.text")){
-            msgCodeEnding = getMsgCodeEndingForManualUnsubscriptionVFNZPaymentDetailsCase(user);
+            msgCodeEnding = getMsgCodeEndingForManualUnsubscriptionMTVFNZPaymentDetailsCase(user);
         } else if(msgCodeBase.equals("sms.unsubscribe.potential.text")){
             msgCodeEnding = getMsgCodeEndingForNewPaymentDetailsCommittingCase(user);
         }
@@ -44,13 +44,13 @@ public class MTVNZMessageNotificationServiceImpl implements MessageNotificationS
         return msg;
     }
 
-    private String getMsgCodeEndingForManualUnsubscriptionVFNZPaymentDetailsCase(User user) {
+    private String getMsgCodeEndingForManualUnsubscriptionMTVFNZPaymentDetailsCase(User user) {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-        if(currentPaymentDetails.getPaymentType().equals(PaymentDetails.VF_PSMS_TYPE)) {
+        if(currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE)) {
             if (user.isOnFreeTrial()) {
-                return ".for.vfPsms.onFreeTrial.user";
+                return ".for.mtvnzPsms.onFreeTrial.user";
             } else {
-                return ".for.vfPsms.onBoughtPeriod.user";
+                return ".for.mtvnzPsms.onBoughtPeriod.user";
             }
         }
         return null;
@@ -59,12 +59,12 @@ public class MTVNZMessageNotificationServiceImpl implements MessageNotificationS
     private String getMsgCodeEndingForNewPaymentDetailsCommittingCase(User user) {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         PaymentDetails previousPaymentDetails = user.getPreviousPaymentDetails();
-        if(isNotNull(previousPaymentDetails) && (currentPaymentDetails.getPaymentType().equals(PaymentDetails.VF_PSMS_TYPE) || previousPaymentDetails.getPaymentType().equals(PaymentDetails.VF_PSMS_TYPE))) {
+        if(isNotNull(previousPaymentDetails) && (currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE) || previousPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE))) {
             PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
             if(previousPaymentDetails.getPaymentPolicy().getId().equals(paymentPolicy.getId())){
-                return ".for.vfPsms.user.prevPaymentPolicyIsTheSame";
+                return ".for.mtvnzPsms.user.prevPaymentPolicyIsTheSame";
             }else {
-                return ".for.vfPsms.user.prevPaymentPolicyIsDiffer";
+                return ".for.mtvnzPsms.user.prevPaymentPolicyIsDiffer";
             }
         }
         return null;

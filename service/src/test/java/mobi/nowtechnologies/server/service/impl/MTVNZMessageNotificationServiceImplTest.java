@@ -7,9 +7,9 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.payment.MTVNZPSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -58,15 +58,15 @@ public class MTVNZMessageNotificationServiceImplTest {
 
         PaymentPolicy paymentPolicy = new PaymentPolicy();
 
-        PaymentDetails vfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        vfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        PaymentDetails mtvnzpsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        mtvnzpsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        user.setCurrentPaymentDetails(vfPsmsPaymentDetails);
+        user.setCurrentPaymentDetails(mtvnzpsmsPaymentDetails);
 
         String msgCodeBase = "sms.unsubscribe.after.text";
 
         String expectedMsg = "You have successfully unsubscribed from MTV Trax. If you change your mind, subscribe again via the account page in the app.";
-        final String expectedMsgCode = "sms.unsubscribe.after.text.for.vfPsms.onFreeTrial.user";
+        final String expectedMsgCode = "sms.unsubscribe.after.text.for.mtvnzPsms.onFreeTrial.user";
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
@@ -100,15 +100,15 @@ public class MTVNZMessageNotificationServiceImplTest {
 
         PaymentPolicy paymentPolicy = new PaymentPolicy();
 
-        PaymentDetails vfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        vfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        PaymentDetails mtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        mtvVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        user.setCurrentPaymentDetails(vfPsmsPaymentDetails);
+        user.setCurrentPaymentDetails(mtvVfPsmsPaymentDetails);
 
         String msgCodeBase = "sms.unsubscribe.after.text";
 
         String expectedMsg = "You have successfully unsubscribed from MTV Trax and have 1 days left of full access. If you change your mind, subscribe again via the account page in the app.";
-        final String expectedMsgCode = "sms.unsubscribe.after.text.for.vfPsms.onBoughtPeriod.user";
+        final String expectedMsgCode = "sms.unsubscribe.after.text.for.mtvnzPsms.onBoughtPeriod.user";
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
@@ -145,21 +145,21 @@ public class MTVNZMessageNotificationServiceImplTest {
         PaymentPolicy prevPaymentPolicy = new PaymentPolicy();
         prevPaymentPolicy.setId(2);
 
-        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        newVfPsmsPaymentDetails.setCreationTimestampMillis(1l);
-        newVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
+        PaymentDetails newMTtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        newMTtvVfPsmsPaymentDetails.setCreationTimestampMillis(1l);
+        newMTtvVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
 
-        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        prevVfPsmsPaymentDetails.setCreationTimestampMillis(0L);
-        prevVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
+        PaymentDetails prevMtvVFPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        prevMtvVFPsmsPaymentDetails.setCreationTimestampMillis(0L);
+        prevMtvVFPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
 
-        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
-        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+        user.setPaymentDetailsList(Arrays.asList(prevMtvVFPsmsPaymentDetails, newMTtvVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newMTtvVfPsmsPaymentDetails);
 
         String msgCodeBase = "sms.unsubscribe.potential.text";
 
         String expectedMsg = "Your MTV Trax subscription has changed to $1 per week. Full tracks, unlimited plays, overnight updates and no ads. To unsubscribe text STOP to 3140";
-        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.vfPsms.user.prevPaymentPolicyIsDiffer";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.mtvnzPsms.user.prevPaymentPolicyIsDiffer";
         String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -198,21 +198,21 @@ public class MTVNZMessageNotificationServiceImplTest {
         PaymentPolicy prevPaymentPolicy = new PaymentPolicy();
         prevPaymentPolicy.setId(2);
 
-        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        newVfPsmsPaymentDetails.setCreationTimestampMillis(1L);
-        newVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
+        PaymentDetails newMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        newMtvVfPsmsPaymentDetails.setCreationTimestampMillis(1L);
+        newMtvVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
 
-        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        prevVfPsmsPaymentDetails.setCreationTimestampMillis(0L);
-        prevVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
+        PaymentDetails prevMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        prevMtvVfPsmsPaymentDetails.setCreationTimestampMillis(0L);
+        prevMtvVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
 
-        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
-        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+        user.setPaymentDetailsList(Arrays.asList(prevMtvVfPsmsPaymentDetails, newMtvVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newMtvVfPsmsPaymentDetails);
 
         String msgCodeBase = "sms.unsubscribe.potential.text";
 
         String expectedMsg = "Your MTV Trax subscription has changed to $1 per week. Full tracks, unlimited plays, overnight updates and no ads. To unsubscribe text STOP to 3140";
-        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.vfPsms.user.prevPaymentPolicyIsDiffer";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.mtvnzPsms.user.prevPaymentPolicyIsDiffer";
         String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -247,19 +247,19 @@ public class MTVNZMessageNotificationServiceImplTest {
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         paymentPolicy.setId(1);
 
-        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        newVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        PaymentDetails newMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        newMtvVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        prevVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        PaymentDetails prevMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        prevMtvVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
-        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+        user.setPaymentDetailsList(Arrays.asList(prevMtvVfPsmsPaymentDetails, newMtvVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newMtvVfPsmsPaymentDetails);
 
         String msgCodeBase = "sms.unsubscribe.potential.text";
 
         String expectedMsg = "The mobile number linked to your MTV Trax subscription has successfully been changed. To unsubscribe, text STOP to 3140";
-        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.vfPsms.user.prevPaymentPolicyIsTheSame";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.mtvnzPsms.user.prevPaymentPolicyIsTheSame";
         String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -295,19 +295,19 @@ public class MTVNZMessageNotificationServiceImplTest {
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         paymentPolicy.setId(1);
 
-        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        newVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        PaymentDetails newMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        newMtvVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
-        prevVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        PaymentDetails prevMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        prevMtvVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
-        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+        user.setPaymentDetailsList(Arrays.asList(prevMtvVfPsmsPaymentDetails, newMtvVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newMtvVfPsmsPaymentDetails);
 
         String msgCodeBase = "sms.unsubscribe.potential.text";
 
         String expectedMsg = "The mobile number linked to your MTV Trax subscription has successfully been changed. To unsubscribe, text STOP to 3140";
-        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.vfPsms.user.prevPaymentPolicyIsTheSame";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.mtvnzPsms.user.prevPaymentPolicyIsTheSame";
         String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
