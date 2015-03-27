@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.aop;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 
@@ -33,29 +32,6 @@ public class SMSNotification {
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    /*
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.startPayment(..))")
-    protected void startO2PSMSPayment() {
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.commitPayment(..))")
-    protected void startVFPSMSPayment() {
-    }
-    */
-
-    /**
-     * Sending sms after any payment system has spent all retries with failure
-     */
-    /*@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
-    public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
-        PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
-        LOGGER.info("start payment: {}", pendingPayment);
-        Object object = joinPoint.proceed();
-        userNotificationService.sendPaymentFailSMS(pendingPayment);
-        LOGGER.info("finish payment {}", pendingPayment);
-        return object;
-    }*/
 
     /**
      * Sending sms after user was set to limited status

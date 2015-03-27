@@ -44,10 +44,6 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         }
     }.withMessageParser(futureResponse);
 
-    protected VFPaymentServiceImpl() {
-        super(VFPSMSPaymentDetails.class);
-    }
-
     public void setPaymentCodes(Set<String> paymentCodes) {
         this.paymentCodes = paymentCodes;
     }
@@ -114,6 +110,11 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         }
 
         return null;
+    }
+
+    @Override
+    protected VFPSMSPaymentDetails newPSMSPaymentDetails() {
+        return new VFPSMSPaymentDetails();
     }
 
 }

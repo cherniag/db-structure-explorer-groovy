@@ -58,9 +58,7 @@
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-        <property name="communityService" ref="service.communityService"/>
         <property name="userRepository" ref="userRepository"/>
-    	<property name="userService" ref="service.UserService"/>
     	<property name="promotionService" ref="service.PromotionService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>

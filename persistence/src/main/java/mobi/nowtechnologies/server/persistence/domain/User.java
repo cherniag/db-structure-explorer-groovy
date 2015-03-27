@@ -1404,18 +1404,6 @@ public class User implements Serializable {
         return isNotNull(lastPromo) && lastPromo.isWhiteListed();
     }
 
-    public PaymentDetails getPaymentDetails(Class<?> clazz) {
-        if (paymentDetailsList != null && clazz != null) {
-            for (PaymentDetails paymentDetails : paymentDetailsList) {
-                if (paymentDetails.getPaymentType().getClass() == clazz) {
-                    return paymentDetails;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public boolean hasLimitedStatus() {
         return status.getName().equals(LIMITED);
     }

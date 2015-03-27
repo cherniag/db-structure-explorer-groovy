@@ -6,11 +6,9 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -52,21 +50,16 @@ public class PaymentsController extends CommonController {
     public static final String PAGE_MANAGE_PAYMENTS_INAPP = PATH_DELIM + VIEW_MANAGE_PAYMENTS_INAPP + PAGE_EXT;
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentsController.class);
     private static final String PAYMENTS_NOTE_MSG_CODE = "pays.page.h1.options.note";
+
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
-    private UserService userService;
     private UserRepository userRepository;
-    private CommunityService communityService;
     private PromotionService promotionService;
     private CommunityServiceFactory communityServiceFactory;
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     private SubscriptionInfoAsm subscriptionInfoAsm;
-
-    public CommunityResourceBundleMessageSource getCommunityResourceBundleMessageSource() {
-        return communityResourceBundleMessageSource;
-    }
 
     public void setCommunityResourceBundleMessageSource(CommunityResourceBundleMessageSource communityResourceBundleMessageSource) {
         this.communityResourceBundleMessageSource = communityResourceBundleMessageSource;
@@ -80,16 +73,8 @@ public class PaymentsController extends CommonController {
         this.paymentPolicyService = paymentPolicyService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
     }
 
     public void setPromotionService(PromotionService promotionService) {

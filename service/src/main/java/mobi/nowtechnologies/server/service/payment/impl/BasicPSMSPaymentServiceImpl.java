@@ -28,11 +28,6 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected CommunityResourceBundleMessageSource messageSource;
-    private Class<T> paymentDetailsClass;
-
-    protected BasicPSMSPaymentServiceImpl(Class<T> clazz) {
-        this.paymentDetailsClass = clazz;
-    }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
         this.messageSource = messageSource;
@@ -44,15 +39,16 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
         Community community = pendingPayment.getUser().getUserGroup().getCommunity();
+        String communityUrl = community.getRewriteUrlParameter().toLowerCase();
+        String paymentType = paymentPolicy.getPaymentType();
 
         LOGGER.debug("Start psms payment pendingPayment: [{}]", pendingPayment);
 
-
-        Boolean smsNotify = Boolean.valueOf(messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms." + paymentPolicy.getPaymentType() + ".send", null, null));
+        Boolean smsNotify = Boolean.valueOf(messageSource.getMessage(communityUrl, "sms." + paymentType + ".send", null, null));
 
         Period period = pendingPayment.getPeriod();
         String message = smsNotify ?
-                         messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms." + paymentPolicy.getPaymentType(),
+                         messageSource.getMessage(communityUrl, "sms." + paymentType,
                                                   new Object[] {community.getDisplayName(), preFormatCurrency(pendingPayment.getAmount()), period.getDuration(), period.getDurationUnit(), paymentPolicy
                                                       .getShortCode()}, null) :
                          null;
@@ -82,11 +78,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     public T commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
         LOGGER.info("Committing o2Psms payment details for user {} ...", user.getUserName());
 
-        T details = (T) user.getPaymentDetails(paymentDetailsClass);
-
-        if (details == null) {
-            details = createPaymentDetails(user, paymentPolicy);
-        }
+        T details = createPaymentDetails(user, paymentPolicy);
 
         details = (T) super.commitPaymentDetails(user, details);
 
@@ -117,12 +109,5 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
 
     protected abstract PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message);
 
-    protected T newPSMSPaymentDetails() {
-        try {
-            return paymentDetailsClass.newInstance();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ServiceException(e.getMessage());
-        }
-    }
+    protected abstract T newPSMSPaymentDetails();
 }
