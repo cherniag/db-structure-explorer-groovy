@@ -188,7 +188,8 @@ http://www.springframework.org/schema/data/repository http://www.springframework
     <jpa:repositories base-package="mobi.nowtechnologies.server"
 		entity-manager-factory-ref="persistence.EntityManagerFactory"
 		transaction-manager-ref="persistence.TransactionManager">
-        <repository:include-filter type="regex" expression=".*Repository"/>
+        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.persistence.repository.*Repository"/>
+		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.social.*Repository"/>
     </jpa:repositories>
 
     <bean id="persistence.DataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
