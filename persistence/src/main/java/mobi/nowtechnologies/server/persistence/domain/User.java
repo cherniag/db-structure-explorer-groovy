@@ -1424,7 +1424,7 @@ public class User implements Serializable {
                     return ComparisonChain.start().compare(pd2.getCreationTimestampMillis(), pd1.getCreationTimestampMillis()).result();
                 }
             });
-            return paymentDetailsList.get(paymentDetailsList.size() - 2);
+            return paymentDetailsList.get(1);
         }
         return null;
     }
