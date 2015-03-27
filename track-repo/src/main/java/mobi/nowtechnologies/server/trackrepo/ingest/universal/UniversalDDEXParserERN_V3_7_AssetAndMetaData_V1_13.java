@@ -138,7 +138,7 @@ public class UniversalDDEXParserERN_V3_7_AssetAndMetaData_V1_13 extends DDEXPars
         Map<String, DropTrack> resultDropTracksWithMetadata = new HashMap<>();
         for (File file : files) {
             String name = file.getName();
-            if (name.contains("DDEX") && name.endsWith(".xml")) {
+            if (name.endsWith(".xml")) {
                 resultDropTracksWithMetadata.putAll(loadXml(file));
             }
         }

@@ -62,18 +62,6 @@ public class IParserFactoryTest {
     }
 
     @Test
-    public void shouldReturnUNIVERSALAsUNIVERSALIngestorName() {
-        //given
-        Ingestor ingestor = Ingestor.UNIVERSAL;
-
-        //when
-        String ingestorName = iParserFactory.getName(ingestor);
-
-        //then
-        assertThat(ingestorName, is("UNIVERSAL"));
-    }
-
-    @Test
     public void shouldReturnUNIVERSALAsEMI_UMGIngestorName() {
         //given
         Ingestor ingestor = Ingestor.EMI_UMG;

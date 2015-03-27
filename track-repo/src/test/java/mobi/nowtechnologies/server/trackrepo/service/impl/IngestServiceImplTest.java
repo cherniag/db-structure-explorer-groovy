@@ -63,7 +63,7 @@ public class IngestServiceImplTest {
         dropTerritory.country = "UA";
         dropTerritories.add(dropTerritory);
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         doReturn(true).when(ingestServiceSpy).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
 
@@ -92,7 +92,7 @@ public class IngestServiceImplTest {
         dropTerritory.country = "UA";
         dropTerritories.add(dropTerritory);
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         doReturn(true).when(ingestServiceSpy).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
 
@@ -121,13 +121,13 @@ public class IngestServiceImplTest {
         audioDropFile.isrc = "dffffff";
         dropFiles.add(audioDropFile);
 
-        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
         assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(ingestServiceSpy, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
+        verify(ingestServiceSpy, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -152,14 +152,14 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
         assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(audioDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(ingestServiceSpy, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
+        verify(ingestServiceSpy, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -179,14 +179,14 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
         assertTrue(result);
         Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(videoDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(ingestServiceSpy, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
+        verify(ingestServiceSpy, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -210,13 +210,13 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
         assertFalse(result);
         Assert.assertEquals(null, track.getMediaFile());
         Assert.assertEquals(null, track.getCoverFile());
 
-        verify(ingestServiceSpy, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL));
+        verify(ingestServiceSpy, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -237,7 +237,7 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.WARNER);
 
         assertTrue(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -264,7 +264,7 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, false, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
         assertFalse(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -290,7 +290,7 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.UNIVERSAL);
+        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
         assertTrue(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -316,7 +316,7 @@ public class IngestServiceImplTest {
         dropTerritory.country = "UA";
         dropTerritories.add(dropTerritory);
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         doReturn(false).when(ingestServiceSpy).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
 
@@ -428,7 +428,7 @@ public class IngestServiceImplTest {
         DropTerritory dropTerritory = new DropTerritory();
         dropTerritory.country = null;
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         //when
         boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
@@ -454,7 +454,7 @@ public class IngestServiceImplTest {
         dropTerritory.reportingId = "reportingId";
         dropTerritory.dealReference = "dealReference";
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         Date dateMock = mock(Date.class);
         when(timeServiceMock.now()).thenReturn(dateMock);
@@ -505,7 +505,7 @@ public class IngestServiceImplTest {
         dropTerritory.reportingId = "reportingId";
         dropTerritory.dealReference = "dealReference";
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         Date dateMock = mock(Date.class);
         when(timeServiceMock.now()).thenReturn(dateMock);
@@ -557,7 +557,7 @@ public class IngestServiceImplTest {
         dropTerritory.dealReference = "dealReference";
         dropTerritory.takeDown = false;
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         Date dateMock = mock(Date.class);
         when(timeServiceMock.now()).thenReturn(dateMock);
@@ -627,7 +627,7 @@ public class IngestServiceImplTest {
         dropTerritory.dealReference = "dealReference";
         dropTerritory.takeDown = true;
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         Date dateMock = mock(Date.class);
         when(timeServiceMock.now()).thenReturn(dateMock);
@@ -698,7 +698,7 @@ public class IngestServiceImplTest {
         dropTerritory.dealReference = "dealReference";
         dropTerritory.takeDown = true;
 
-        Ingestor ingestor = Ingestor.UNIVERSAL;
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
         Date dateMock = mock(Date.class);
         when(timeServiceMock.now()).thenReturn(dateMock);
