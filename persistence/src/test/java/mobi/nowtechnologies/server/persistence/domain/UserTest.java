@@ -5,6 +5,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -27,6 +28,9 @@ import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -1037,6 +1041,65 @@ public class UserTest {
 
         //then
         assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldReturnNullAsPrevPaymentDetailsWhenThereNoPaymentDetails() {
+        //given
+        User user = new User();
+
+        user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+
+        //when
+        PaymentDetails actualPrevPaymentDetails = user.getPreviousPaymentDetails();
+
+        //then
+        assertNull(actualPrevPaymentDetails);
+    }
+
+    @Test
+    public void shouldGetFirstPaymentDetailsAsPrevPaymentDetailsWhenThereOnlyTwoPaymentDetails() {
+        //given
+        User user = new User();
+        PaymentDetails currentPaymentDetails = new PaymentDetails();
+        currentPaymentDetails.setCreationTimestampMillis(1L);
+
+        PaymentDetails prevPaymentDetails = new PaymentDetails();
+        prevPaymentDetails.setCreationTimestampMillis(0L);
+
+        user.setCurrentPaymentDetails(currentPaymentDetails);
+
+        user.setPaymentDetailsList(Arrays.asList(currentPaymentDetails, prevPaymentDetails));
+
+        //when
+        PaymentDetails actualPrevPaymentDetails = user.getPreviousPaymentDetails();
+
+        //then
+        assertThat(actualPrevPaymentDetails, is(prevPaymentDetails));
+    }
+
+    @Test
+    public void shouldGetPrevPaymentDetailsWhenThereMoreThanTwoPaymentDetails() {
+        //given
+        User user = new User();
+        PaymentDetails currentPaymentDetails = new PaymentDetails();
+        currentPaymentDetails.setCreationTimestampMillis(2L);
+
+        PaymentDetails prevPaymentDetails = new PaymentDetails();
+        prevPaymentDetails.setCreationTimestampMillis(1L);
+
+        PaymentDetails firstPaymentDetails = new PaymentDetails();
+        firstPaymentDetails.setCreationTimestampMillis(0L);
+
+        user.setCurrentPaymentDetails(currentPaymentDetails);
+
+        user.setPaymentDetailsList(Arrays.asList(currentPaymentDetails, prevPaymentDetails, firstPaymentDetails));
+
+        //when
+        PaymentDetails actualPrevPaymentDetails = user.getPreviousPaymentDetails();
+
+        //then
+        assertThat(actualPrevPaymentDetails, is(prevPaymentDetails));
     }
 
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
