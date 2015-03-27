@@ -12,6 +12,6 @@
 
     <bean id="mtvnz.PaymentModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentModelServiceImpl"/>
 
-    <alias name="service.vfPaymentService" alias="mtvnz.PSMSPaymentService" />
+    <alias name="mtvnzPaymentSystemService" alias="mtvnz.PSMSPaymentService" />
 
 </beans>
