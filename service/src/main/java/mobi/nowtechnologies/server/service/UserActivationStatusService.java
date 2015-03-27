@@ -7,14 +7,17 @@ import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATE
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 public class UserActivationStatusService {
     public void checkActivationStatus(User user, ActivationStatus... availableActivationStatuses) {
-        final ActivationStatus activationStatus = user.getActivationStatus();
-
+        ActivationStatus activationStatus = user.getActivationStatus();
         if (ArrayUtils.isNotEmpty(availableActivationStatuses)) {
-            if (!ArrayUtils.contains(availableActivationStatuses, activationStatus)) {
+            List<ActivationStatus> statusList = Arrays.asList(availableActivationStatuses);
+            if (!statusList.contains(activationStatus)) {
                 throw new ActivationStatusException(activationStatus, availableActivationStatuses[0]);
             }
         }
