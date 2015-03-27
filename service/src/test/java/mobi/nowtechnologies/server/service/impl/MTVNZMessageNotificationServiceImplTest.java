@@ -146,9 +146,11 @@ public class MTVNZMessageNotificationServiceImplTest {
         prevPaymentPolicy.setId(2);
 
         PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        newVfPsmsPaymentDetails.setCreationTimestampMillis(1l);
         newVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
 
         PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        prevVfPsmsPaymentDetails.setCreationTimestampMillis(0L);
         prevVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
 
         user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
@@ -197,9 +199,11 @@ public class MTVNZMessageNotificationServiceImplTest {
         prevPaymentPolicy.setId(2);
 
         PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        newVfPsmsPaymentDetails.setCreationTimestampMillis(1L);
         newVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
 
         PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        prevVfPsmsPaymentDetails.setCreationTimestampMillis(0L);
         prevVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
 
         user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
