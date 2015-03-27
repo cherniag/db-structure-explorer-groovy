@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.payment.MTVNZPSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
@@ -66,11 +65,6 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     @Override
     protected PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message) {
         throw new UnsupportedOperationException("");
-    }
-
-    @Override
-    protected PSMSPaymentDetails newPSMSPaymentDetails() {
-        return new MTVNZPSMSPaymentDetails();
     }
 
     private void skipCurrentPaymentAttempt(PendingPayment pendingPayment, String reason) {

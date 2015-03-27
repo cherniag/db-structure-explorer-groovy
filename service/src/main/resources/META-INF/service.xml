@@ -191,6 +191,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <bean id="mtvnzPaymentResponseParser" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentResponseParser"/>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
+        <property name="o2PaymentService" ref="service.o2PaymentService"/>
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
         <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
@@ -198,7 +199,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
 		<property name="migPaymentService" ref="service.migPaymentService" />
-		<property name="o2PaymentService" ref="service.o2PaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -207,7 +207,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		
+		<property name="userNotificationService" ref="service.UserNotificationService" />
 		<property name="userRepository" ref="userRepository" />
 	</bean>
 

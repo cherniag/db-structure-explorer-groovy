@@ -111,10 +111,6 @@ public class SMSNotification {
     protected void createdMigPaymentDetails() {
     }
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPaymentDetails(..))")
-    protected void createdPsmsPaymentDetails() {
-    }
-
     /**
      * Sending sms after user was subscribed with some payment details
      */
@@ -124,18 +120,6 @@ public class SMSNotification {
         Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
         try {
             User user = userRepository.findOne(userId);
-            userNotificationService.sendUnsubscribePotentialSMS(user);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return object;
-    }
-
-    @Around("createdPsmsPaymentDetails()")
-    public Object createdPsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object object = joinPoint.proceed();
-        User user = (User) joinPoint.getArgs()[0];
-        try {
             userNotificationService.sendUnsubscribePotentialSMS(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

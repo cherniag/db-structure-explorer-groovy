@@ -7,11 +7,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
-import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
@@ -24,7 +21,7 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 /**
  * User: Alexsandr_Kolpakov Date: 10/15/13 Time: 2:54 PM
  */
-public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> extends AbstractPaymentSystemService implements PSMSPaymentService<T> {
+public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> extends AbstractPaymentSystemService {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected CommunityResourceBundleMessageSource messageSource;
@@ -74,40 +71,6 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         return super.commitPayment(pendingPayment, response);
     }
 
-    @Transactional(propagation = REQUIRED)
-    public T commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
-        LOGGER.info("Committing o2Psms payment details for user {} ...", user.getUserName());
-
-        T details = createPaymentDetails(user, paymentPolicy);
-
-        details = (T) super.commitPaymentDetails(user, details);
-
-        paymentDetailsService.update(details);
-        userService.updateUser(user);
-
-        LOGGER.info("Done commitment of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});
-
-        return details;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public T createPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
-        LOGGER.info("Start creation psms payment details for user [{}] and paymentPolicyId [{}]...", new Object[] {user.getUserName(), paymentPolicy.getId()});
-
-        T details = newPSMSPaymentDetails();
-        details.setPaymentPolicy(paymentPolicy);
-        details.setPhoneNumber(user.getMobile());
-        details.setCreationTimestampMillis(Utils.getEpochMillis());
-        details.setOwner(user);
-
-        paymentDetailsService.update(details);
-
-        LOGGER.info("Done creation of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});
-
-        return details;
-    }
-
     protected abstract PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message);
 
-    protected abstract T newPSMSPaymentDetails();
 }

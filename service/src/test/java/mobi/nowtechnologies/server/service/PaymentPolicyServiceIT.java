@@ -220,6 +220,7 @@ public class PaymentPolicyServiceIT {
 
         List<User> users = userRepository.findAll();
         for (User user : users) {
+            user.setLastSuccessfulPaymentDetails(null);
             userRepository.save(user.withCurrentPaymentDetails(null));
         }
 

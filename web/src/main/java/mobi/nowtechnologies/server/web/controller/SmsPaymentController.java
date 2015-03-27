@@ -1,28 +1,37 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.MTVNZPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
+import mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService;
+import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
+import mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Controller
 public class SmsPaymentController extends CommonController {
@@ -34,6 +43,14 @@ public class SmsPaymentController extends CommonController {
     CommunityServiceFactory communityServiceFactory;
     @Resource
     CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    @Resource(name = "service.PaymentDetailsService")
+    PaymentDetailsService paymentDetailsService;
+    @Resource(name = "service.o2PaymentService")
+    O2PaymentServiceImpl o2PaymentService;
+    @Resource
+    VFPaymentServiceImpl vfPaymentService;
+    @Resource
+    MTVNZPaymentSystemService mtvnzPaymentSystemService;
     UserService userService;
 
     @RequestMapping(value = {"smspayment/result"}, method = RequestMethod.GET)
@@ -99,8 +116,27 @@ public class SmsPaymentController extends CommonController {
 
     private void assign(int policyId, User user) {
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
-        PSMSPaymentService psmsPaymentService = communityServiceFactory.find(user.getCommunity(), PSMSPaymentService.class);
-        psmsPaymentService.commitPaymentDetails(user, policy);
+        PaymentDetails paymentDetails = createPaymentDetails(user, policy);
+        paymentDetailsService.commitPaymentDetails(user, paymentDetails);
+    }
+
+    private PaymentDetails createPaymentDetails(User user, PaymentPolicy policy) {
+        if(user.isVFNZCommunityUser()) {
+            int retriesOnError = vfPaymentService.getRetriesOnError();
+            return new VFPSMSPaymentDetails(policy, user, retriesOnError);
+        }
+
+        if(user.isO2CommunityUser()) {
+            int retriesOnError = o2PaymentService.getRetriesOnError();
+            return new O2PSMSPaymentDetails(policy, user, retriesOnError);
+        }
+
+        if(user.isMtvNzCommunityUser()) {
+            int retriesOnError = mtvnzPaymentSystemService.getRetriesOnError();
+            return new MTVNZPSMSPaymentDetails(policy, user, retriesOnError);
+        }
+
+        throw new IllegalArgumentException("Can not create Payment Detail");
     }
 
     private User getUser() {

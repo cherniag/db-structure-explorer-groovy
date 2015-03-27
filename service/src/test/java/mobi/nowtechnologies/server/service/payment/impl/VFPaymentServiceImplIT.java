@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
@@ -10,17 +7,10 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
-import mobi.nowtechnologies.server.shared.Utils;
-import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 
 import javax.annotation.Resource;
 
-import java.util.List;
 import java.util.Map;
-
-import org.jsmpp.bean.DeliverSm;
-import static org.jsmpp.bean.SMSCDeliveryReceipt.SUCCESS_FAILURE;
 
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
 import org.junit.runner.*;
-import org.mockito.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
@@ -40,6 +28,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/smpp.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class VFPaymentServiceImplIT {
 
     @Autowired
@@ -81,7 +70,7 @@ public class VFPaymentServiceImplIT {
         paymentServiceTarget.setGatewayService(gatewayServiceTarget);
     }
 
-    @Test
+    /*@Test
     public void testStartVFPayment_SuccessfulResponse_Successful() throws Exception {
         String userName = "+642102247312";
         String community = "vf_nz";
@@ -114,9 +103,9 @@ public class VFPaymentServiceImplIT {
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
         assertEquals(0, pendingPayments.size());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testStartVFPayment_ErrorResponse_Successful() throws Exception {
         String userName = "+642102247312";
         String community = VF_NZ_COMMUNITY_REWRITE_URL;
@@ -153,7 +142,7 @@ public class VFPaymentServiceImplIT {
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
         assertEquals(0, pendingPayments.size());
-    }
+    }*/
 
     protected String buildMessage(String msgId, String sub, String dlvrd, String submitDate, String doneDate, String stat, String err, String text) {
         return "id:" + msgId + " sub:" + sub + " dlvrd:" + dlvrd + " submit date:" + submitDate + " done date:" + doneDate + " stat:" + stat + " err:" + err + " Text:" + text;

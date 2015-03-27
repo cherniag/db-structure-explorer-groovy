@@ -22,9 +22,9 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
-import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
+import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
@@ -66,8 +66,6 @@ public class PaymentDetailsService {
     private PayPalPaymentService payPalPaymentService;
     private MigPaymentService migPaymentService;
 
-    private PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService;
-
     private PromotionService promotionService;
     private UserService userService;
     private CommunityService communityService;
@@ -76,6 +74,8 @@ public class PaymentDetailsService {
     private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
+    private UserNotificationService userNotificationService;
+    private O2PaymentServiceImpl o2PaymentService;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void setErrorStatus(PaymentDetails paymentDetails, String descriptionError, String errorCode){
@@ -87,12 +87,20 @@ public class PaymentDetailsService {
         paymentDetailsRepository.saveAndFlush(paymentDetails);
     }
 
+    public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
+        this.o2PaymentService = o2PaymentService;
+    }
+
     public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
         this.paymentDetailsDao = paymentDetailsDao;
     }
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
     }
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
@@ -135,10 +143,6 @@ public class PaymentDetailsService {
         this.paymentPolicyDao = paymentPolicyDao;
     }
 
-    public void setO2PaymentService(PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService) {
-        this.o2PaymentService = o2PaymentService;
-    }
-
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
         this.paymentDetailsRepository = paymentDetailsRepository;
     }
@@ -171,7 +175,8 @@ public class PaymentDetailsService {
                 }
                 paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
             } else if (dto.getPaymentType().equals(O2_PSMS)) {
-                paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
+                paymentDetails = new O2PSMSPaymentDetails(paymentPolicy, user, o2PaymentService.getRetriesOnError());
+                paymentDetails = commitPaymentDetails(user, paymentDetails);
             }
 
             if (null != paymentDetails) {
@@ -185,6 +190,31 @@ public class PaymentDetailsService {
         }
 
         return paymentDetails;
+    }
+
+    public PaymentDetails commitPaymentDetails(User user, PaymentDetails paymentDetails) {
+        LOGGER.info("Start creation psms payment details for user [{}] and paymentPolicyId [{}]...", new Object[] {user.getUserName(), paymentDetails.getPaymentPolicy().getId()});
+
+        deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        PaymentDetails details = paymentDetailsRepository.save(paymentDetails);
+        userService.updateUser(user);
+
+        LOGGER.info("Done commitment of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});
+
+        sendUnsubscribePotentialSMS(user);
+
+        return details;
+    }
+
+    private void sendUnsubscribePotentialSMS(User user) {
+        try {
+            userNotificationService.sendUnsubscribePotentialSMS(user);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

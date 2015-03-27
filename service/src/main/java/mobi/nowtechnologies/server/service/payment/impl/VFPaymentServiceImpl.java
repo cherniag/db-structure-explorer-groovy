@@ -112,9 +112,4 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         return null;
     }
 
-    @Override
-    protected VFPSMSPaymentDetails newPSMSPaymentDetails() {
-        return new VFPSMSPaymentDetails();
-    }
-
 }
