@@ -383,8 +383,7 @@ public class User implements Serializable {
     }
 
     private boolean isMtvNzCommunityUser() {
-        Community community = this.getUserGroup().getCommunity();
-        return MTV_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
+        return MTV_NZ_COMMUNITY_REWRITE_URL.equals(getCommunity().getRewriteUrlParameter());
     }
 
     public boolean isNonO2User() {
@@ -1565,8 +1564,7 @@ public class User implements Serializable {
                           .add("address2", country).add("city", city).add("title", title).add("displayName ", displayName).add("firstName", firstName).add("lastName", lastName)
                           .add("ipAddress", ipAddress).add("canContact", canContact).add("deviceString", deviceString).add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
                           .add("freeTrialExpiredMillis", freeTrialExpiredMillis).add("activationStatus", activationStatus).add("segment", segment).add("provider", provider).add("tariff", tariff)
-                          .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo)
-                          .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
+                          .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo).add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 
     public boolean isPaymentInProgress() {

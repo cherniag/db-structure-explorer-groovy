@@ -281,7 +281,7 @@ public class UserServiceTIT {
         user.setUserGroup(userGroup);
         userGroupRepository.save(userGroup);
         userRepository.save(user);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), user);
         sendChargeNotificationTask.setUser(user);
         taskRepository.save(sendChargeNotificationTask);
         List<UserTask> taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);

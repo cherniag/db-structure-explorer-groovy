@@ -229,12 +229,10 @@ public class PendingPaymentServiceImplTest {
 
 
     private User generateUserWithSagePayPaymentDetails(int subBalance, PaymentDetailsStatus status) {
-        User user = new User();
-        Community community = new Community();
-        UserGroup userGroup = new UserGroup();
-        userGroup.setCommunity(community);
-        user.setUserGroup(userGroup);
         String randomString = UUID.randomUUID().toString();
+
+        User user = new User();
+        user.setUserGroup(createUserGroup("c"));
         user.setUserName(randomString);
         PaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
         PaymentPolicy paymentPolicy = new PaymentPolicy();
@@ -250,13 +248,19 @@ public class PendingPaymentServiceImplTest {
         return user;
     }
 
-    private User generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus status, boolean invalid) {
-        User user = new User();
-        Community community = new Community();
+    private UserGroup createUserGroup(String community) {
+        Community c = new Community();
+        c.setRewriteUrlParameter(community);
+
         UserGroup userGroup = new UserGroup();
-        userGroup.setCommunity(community);
-        user.setUserGroup(userGroup);
+        userGroup.setCommunity(c);
+        return userGroup;
+    }
+
+    private User generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus status, boolean invalid) {
         String randomString = UUID.randomUUID().toString();
+        User user = new User();
+        user.setUserGroup(createUserGroup("c"));
         user.setUserName(randomString);
         PaymentDetails currentPaymentDetails = new O2PSMSPaymentDetails();
         PaymentPolicy paymentPolicy = new PaymentPolicy();

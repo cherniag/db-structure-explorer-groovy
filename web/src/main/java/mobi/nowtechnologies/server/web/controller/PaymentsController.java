@@ -17,6 +17,8 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm;
+import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
+import mobi.nowtechnologies.server.web.model.PaymentModelService;
 import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionStateFactory;
@@ -27,9 +29,6 @@ import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_COD
 import java.util.List;
 import java.util.Locale;
 
-import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
-import mobi.nowtechnologies.server.web.model.PaymentModelService;
-import mobi.nowtechnologies.server.web.subscription.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -150,7 +149,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user));
         mav.addObject("paymentsPage", paymentsPage);
 
-        PaymentModelService paymentModelService = communityServiceFactory.find(community, PaymentModelService.class);
+        PaymentModelService paymentModelService = communityServiceFactory.find(user.getCommunity(), PaymentModelService.class);
         if(paymentModelService != null) {
             mav.addObject("paymentData", paymentModelService.getModel(user));
         }
