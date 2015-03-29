@@ -40,6 +40,7 @@ import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_COD
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -395,16 +396,6 @@ public class PaymentDetailsService {
         return paymentDetailsByPaymentDto;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails update(PaymentDetails paymentDetails) {
-        LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
-
-        paymentDetails = paymentDetailsRepository.save(paymentDetails);
-
-        LOGGER.info("Output parameter paymentDetails=[{}]", paymentDetails);
-        return paymentDetails;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)
     public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
         LOGGER.info("Deactivate current payment details for user {} reason {}", user.shortInfo(), reason);
@@ -430,8 +421,12 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
-        LOGGER.debug("Disable payment details {}", paymentDetail);
-        return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
+        paymentDetail.disable(reason, new Date());
+
+        paymentDetail = paymentDetailsRepository.save(paymentDetail);
+
+        LOGGER.info("Output parameter paymentDetails=[{}]", paymentDetail);
+        return paymentDetail;
     }
 
     @Transactional(readOnly = true)

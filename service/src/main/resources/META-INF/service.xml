@@ -465,7 +465,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 		<property name="deviceService" ref="service.DeviceService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+        <property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
 		<property name="unsubscribeMtvNzShortCode" value="${vf.nz.smpp.service.source.address.unsubscribe.for.mtvnz}"/>
 	</bean>
 

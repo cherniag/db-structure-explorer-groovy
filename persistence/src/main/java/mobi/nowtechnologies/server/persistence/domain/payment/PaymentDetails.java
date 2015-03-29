@@ -28,6 +28,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -360,5 +361,11 @@ public class PaymentDetails {
                                         .append("lastPaymentStatus", lastPaymentStatus).append("descriptionError", descriptionError).append("errorCode", errorCode)
                                         .append("creationTimestampMillis", creationTimestampMillis).append("disableTimestampMillis", disableTimestampMillis)
                                         .append("lastFailedPaymentNotificationMillis", lastFailedPaymentNotificationMillis).append("activated", activated).toString();
+    }
+
+    public void disable(String reason, Date epochMillis) {
+        withActivated(false);
+        withDisableTimestampMillis(epochMillis.getTime());
+        withDescriptionError(reason);
     }
 }
