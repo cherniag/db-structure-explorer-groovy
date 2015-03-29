@@ -147,6 +147,10 @@ public class PaymentDetailsService {
         this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
@@ -351,10 +355,6 @@ public class PaymentDetailsService {
         return migPaymentService.sendPin(phone, messageSource.getMessage(communityUri, "sms.freeMsg", args, null));
     }
 
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails activatePaymentDetailsByPayment(Long paymentDetailsId) {
         LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
@@ -428,6 +428,17 @@ public class PaymentDetailsService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
+        LOGGER.debug("Disable payment details {}", paymentDetail);
+        return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
+        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
+    }
+
     private void applyPromoToLimitedUsers(User user) {
         if (user.isLimited()) {
 
@@ -438,16 +449,5 @@ public class PaymentDetailsService {
                 promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
             }
         }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
-        LOGGER.debug("Disable payment details {}", paymentDetail);
-        return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
-    }
-
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
-        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
     }
 }
