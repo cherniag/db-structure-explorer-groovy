@@ -27,7 +27,7 @@ public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessag
     public void process(MOMessage message) {
         String text = message.getText();
         String phoneNumber = message.getOriginator();
-        if (text.trim().contains(stopText)) {
+        if (text.toLowerCase().trim().contains(stopText)) {
             LOGGER.debug("Start precessing stop sms [{}]", message);
 
             userService.unsubscribeUser(phoneNumber, operatorName);
