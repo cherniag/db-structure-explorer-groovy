@@ -117,6 +117,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="userDao" ref="persistence.UserDao" />
 		<property name="countryService" ref="service.CountryService" />
 		<property name="promotionService" ref="service.PromotionService" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />

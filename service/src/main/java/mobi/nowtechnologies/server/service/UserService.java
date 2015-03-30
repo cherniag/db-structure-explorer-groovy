@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -122,6 +123,7 @@ public class UserService {
     private PromotionService promotionService;
     private CommunityResourceBundleMessageSource messageSource;
     private PaymentDetailsService paymentDetailsService;
+    private PaymentDetailsRepository paymentDetailsRepository;
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
     private CommunityService communityService;
@@ -400,7 +402,9 @@ public class UserService {
             if (isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())) {
                 unsubscribeUser(owner, reason);
             } else {
-                paymentDetailsService.disablePaymentDetails(paymentDetail, reason);
+                paymentDetail.disable(reason, new Date());
+                paymentDetailsRepository.save(paymentDetail);
+                LOGGER.info("Payment details [{}] was successfully disabled", paymentDetail.getI());
             }
             LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
         }
@@ -1272,6 +1276,10 @@ public class UserService {
 
     public void setUrbanAirshipTokenService(UrbanAirshipTokenService urbanAirshipTokenService) {
         this.urbanAirshipTokenService = urbanAirshipTokenService;
+    }
+
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {

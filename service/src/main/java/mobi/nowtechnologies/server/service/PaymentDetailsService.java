@@ -400,7 +400,6 @@ public class PaymentDetailsService {
     public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
         LOGGER.info("Deactivate current payment details for user {} reason {}", user.shortInfo(), reason);
 
-
         notNull(user, "The parameter user is null");
         user = userService.setToZeroSmsAccordingToLawAttributes(user);
 
@@ -411,22 +410,13 @@ public class PaymentDetailsService {
             if (inPending) {
                 throw new CanNotDeactivatePaymentDetailsException();
             }
-            disablePaymentDetails(currentPaymentDetails, reason);
+            currentPaymentDetails.disable(reason, new Date());
+            paymentDetailsRepository.save(currentPaymentDetails);
             user = userService.updateUser(user);
         }
 
         LOGGER.info("Current payment details were deactivated for user {}", user.shortInfo());
         return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
-        paymentDetail.disable(reason, new Date());
-
-        paymentDetail = paymentDetailsRepository.save(paymentDetail);
-
-        LOGGER.info("Output parameter paymentDetails=[{}]", paymentDetail);
-        return paymentDetail;
     }
 
     @Transactional(readOnly = true)

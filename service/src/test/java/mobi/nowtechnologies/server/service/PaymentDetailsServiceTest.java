@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -84,9 +85,10 @@ public class PaymentDetailsServiceTest {
 
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
 
+
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
-        verify(paymentDetailsServiceSpy, times(0)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(paymentDetailsRepositoryMock, times(0)).save(any(PaymentDetails.class));
         verify(userService, times(0)).updateUser(user);
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
@@ -100,13 +102,14 @@ public class PaymentDetailsServiceTest {
 
         user.setCurrentPaymentDetails(paymentDetails);
 
-        doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
+
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
         when(userService.updateUser(user)).thenReturn(user);
 
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
-        verify(paymentDetailsServiceSpy, times(1)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(paymentDetails).disable(eq(reason), any(Date.class));
+        verify(paymentDetailsRepositoryMock, times(1)).save(paymentDetails);
         verify(userService).updateUser(user);
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
@@ -120,12 +123,12 @@ public class PaymentDetailsServiceTest {
 
         user.setCurrentPaymentDetails(paymentDetails);
 
-        doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
+        doReturn(paymentDetails).when(paymentDetailsRepositoryMock).save(paymentDetails);
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
 
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
-        verify(paymentDetailsServiceSpy, times(0)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(paymentDetailsRepositoryMock, times(0)).save(paymentDetails);
         verify(userService, times(0)).updateUser(user);
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
