@@ -40,7 +40,6 @@
         <property name="sonyDDEXRoot" value="${trackRepo.ingest.sony.ddex.root}" />
         <property name="warnerOldRoot" value="${trackRepo.ingest.warner.root}" />
         <property name="warnerRoot" value="${trackRepo.ingest.warnerV34.root}" />
-        <property name="universalRoot" value="${trackRepo.ingest.universal.root}" />
         <property name="fugaRoot" value="${trackRepo.ingest.fuga.root}" />
         <property name="ciRoot" value="${trackRepo.ingest.ci.root}" />
         <property name="emiRoot" value="${trackRepo.ingest.emi.root}" />
