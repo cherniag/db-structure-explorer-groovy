@@ -32,13 +32,11 @@ public class DDEXParserERN_V3_7_AssetAndMetaData_V1_13_IT {
 
     DDEXParserERN_V3_7_AssetAndMetaData_V1_13 ddexParserERN_v3_7_assetAndMetaData_v1_13;
     DDEXParser ddexParser;
-    @Value("trackRepo.ingest.universal.root")
-    String universalRoot;
 
     @Before
     public void setUp() throws FileNotFoundException {
         ddexParserERN_v3_7_assetAndMetaData_v1_13 = new DDEXParserERN_V3_7_AssetAndMetaData_V1_13("");
-        ddexParser = new DDEXParser(universalRoot) {
+        ddexParser = new DDEXParser("") {
             @Override
             protected String getKey(DropTrack track) {
                 return track.isrc + track.productCode + DDEXParserERN_V3_7_AssetAndMetaData_V1_13.class;
