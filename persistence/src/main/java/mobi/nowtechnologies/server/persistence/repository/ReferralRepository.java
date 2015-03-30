@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Author: Gennadii Cherniaiev Date: 11/21/2014
@@ -23,7 +22,6 @@ public interface ReferralRepository extends JpaRepository<Referral, Long> {
     Referral findByContactAndUserId(@Param("contact") String contact, @Param("userId") int userId);
 
     @Modifying
-    @Transactional
     @Query("update Referral r set r.state = :newState where r.contact in (:contacts) and r.communityId = :communityId and r.state = :inState")
     void updateReferrals(@Param("contacts") List<String> contacts, @Param("communityId") int communityId, @Param("newState") ReferralState newState, @Param("inState") ReferralState inState);
 

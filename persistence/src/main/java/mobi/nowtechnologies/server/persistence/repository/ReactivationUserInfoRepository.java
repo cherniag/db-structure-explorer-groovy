@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by oar on 4/30/2014.
@@ -20,7 +19,6 @@ public interface ReactivationUserInfoRepository extends JpaRepository<Reactivati
     ReactivationUserInfo findByUser(User user);
 
     @Modifying
-    @Transactional
     @Query("update ReactivationUserInfo r set r.reactivationRequest = false where r.user = ?1")
     int disableReactivationForUser(User user);
 }
