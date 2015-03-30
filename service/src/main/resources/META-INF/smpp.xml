@@ -42,6 +42,7 @@
             <list>
                 <ref bean="mtvnzPaymentSMSMessageProcessor"/>
                 <ref bean="vf_nz.service.VFNZUnsubscribeProccessor"/>
+                <ref bean="vf_nz.service.MTVNZUnsubscribeProccessor"/>
                 <ref bean="vf_nz.service.UserDetailsUpdater"/>
                 <ref bean="service.vfPaymentService"/>
             </list>
