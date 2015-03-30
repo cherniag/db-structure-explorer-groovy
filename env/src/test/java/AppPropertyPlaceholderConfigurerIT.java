@@ -8,6 +8,7 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 
+import org.junit.*;
 import org.junit.experimental.theories.*;
 import org.junit.runner.*;
 import static org.junit.Assert.*;
@@ -16,6 +17,7 @@ import static org.hamcrest.core.Is.is;
 
 // @author Titov Mykhaylo (titov) on 06.01.2015.
 @RunWith(Theories.class)
+@Ignore
 public class AppPropertyPlaceholderConfigurerIT {
 
     Logger logger = LoggerFactory.getLogger(AppPropertyPlaceholderConfigurerIT.class);
