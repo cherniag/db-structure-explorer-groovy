@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 
@@ -32,6 +33,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 
 
     @Modifying
+    @Transactional
     @Query(value = "update Promotion p " +
                    "set p.numUsers=p.numUsers+1 " +
                    "where " +
