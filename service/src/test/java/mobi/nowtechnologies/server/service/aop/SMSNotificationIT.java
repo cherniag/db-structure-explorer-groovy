@@ -166,7 +166,7 @@ public class SMSNotificationIT {
         Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
-        Mockito.doReturn(response).when(mockPaypalHttpService).makeReferenceTransactionRequest(anyString(), anyString(), any(BigDecimal.class), anyString());
+        Mockito.doReturn(response).when(mockPaypalHttpService).makePaymentForRecurrentType(anyString(), anyString(), any(BigDecimal.class), anyString());
 
         payPalPaymentService.startPayment(pendingPayment);
 
