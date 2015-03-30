@@ -49,8 +49,4 @@ public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaym
         return response;
     }
 
-    @Override
-    protected O2PSMSPaymentDetails newPSMSPaymentDetails() {
-        return new O2PSMSPaymentDetails();
-    }
 }

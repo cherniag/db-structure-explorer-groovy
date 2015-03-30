@@ -382,7 +382,7 @@ public class User implements Serializable {
         return isNotNull(paymentPolicyProvider) && !paymentPolicyProvider.equals(userProvider);
     }
 
-    private boolean isMtvNzCommunityUser() {
+    public boolean isMtvNzCommunityUser() {
         return MTV_NZ_COMMUNITY_REWRITE_URL.equals(getCommunity().getRewriteUrlParameter());
     }
 

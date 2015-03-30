@@ -9,13 +9,11 @@ import mobi.nowtechnologies.server.trackrepo.ingest.manual.ManualParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalDDEXParserERN_V3_7_AssetAndMetaData_V1_13;
-import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.EMI_UMG;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.SONY;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.SONY_DDEX;
-import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.UNIVERSAL;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.WARNER;
 import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestor.WARNER_OLD;
 
@@ -25,7 +23,6 @@ public class IParserFactory {
 
     private String sonyRoot;
     private String warnerOldRoot;
-    private String universalRoot;
     private String fugaRoot;
     private String emiRoot;
     private String emiUmgRoot;
@@ -43,8 +40,6 @@ public class IParserFactory {
                 return new SonyParser(sonyRoot);
             case WARNER_OLD:
                 return new WarnerParser(warnerOldRoot);
-            case UNIVERSAL:
-                return new UniversalParser(universalRoot);
             case FUGA:
                 return new FugaParser(fugaRoot);
             case EMI:
@@ -76,9 +71,9 @@ public class IParserFactory {
         } else if (WARNER_OLD == name) {
             return WARNER.name();
         } else if (EMI_UMG == name) {
-            return UNIVERSAL.name();
+            return "UNIVERSAL";
         } else if(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13 == name){
-            return UNIVERSAL.name();
+            return "UNIVERSAL";
         }
         return name.name();
     }
@@ -89,10 +84,6 @@ public class IParserFactory {
 
     public void setWarnerOldRoot(String warnerOldRoot) {
         this.warnerOldRoot = warnerOldRoot;
-    }
-
-    public void setUniversalRoot(String universalRoot) {
-        this.universalRoot = universalRoot;
     }
 
     public void setFugaRoot(String fugaRoot) {

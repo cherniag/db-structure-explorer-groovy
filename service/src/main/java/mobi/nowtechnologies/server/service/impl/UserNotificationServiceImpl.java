@@ -7,10 +7,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PeriodMessageKeyBuilder;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
@@ -46,7 +46,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
     private UserService userService;
-    private PaymentDetailsService paymentDetailsService;
+    private PaymentDetailsRepository paymentDetailsRepository;
     private CommunityResourceBundleMessageSource messageSource;
     private List<String> availableCommunities = Collections.emptyList();
     private NowTechTokenBasedRememberMeServices rememberMeServices;
@@ -63,8 +63,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         this.userService = userService;
     }
 
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
@@ -406,7 +406,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The payment fail sms was sent successfully");
-                    paymentDetailsService.update(paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis()));
+                    paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis());
+                    paymentDetailsRepository.save(paymentDetails);
                 } else {
                     LOGGER.info("The payment fail sms wasn't sent for paymentDetails {}", paymentDetails);
                 }

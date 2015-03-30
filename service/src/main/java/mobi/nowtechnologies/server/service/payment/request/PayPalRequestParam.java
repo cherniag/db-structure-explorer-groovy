@@ -18,5 +18,10 @@ public enum PayPalRequestParam implements PaymentRequestParam {
     BUTTONSOURCE,
     SIGNATURE,
     REFERENCEID,
-    AMT
+    AMT,
+    SOLUTIONTYPE,
+    PAYERID,
+    PAYMENTREQUEST_0_AMT,
+    PAYMENTREQUEST_0_CURRENCYCODE,
+    PAYMENTREQUEST_0_PAYMENTACTION
 }

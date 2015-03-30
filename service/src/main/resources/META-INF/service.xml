@@ -117,6 +117,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="userDao" ref="persistence.UserDao" />
 		<property name="countryService" ref="service.CountryService" />
 		<property name="promotionService" ref="service.PromotionService" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -206,6 +207,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <bean id="mtvnzPaymentResponseParser" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentResponseParser"/>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
+        <property name="o2PaymentService" ref="service.o2PaymentService"/>
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
         <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
@@ -213,7 +215,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
 		<property name="migPaymentService" ref="service.migPaymentService" />
-		<property name="o2PaymentService" ref="service.o2PaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -222,7 +223,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		
+		<property name="userNotificationService" ref="service.UserNotificationService" />
 		<property name="userRepository" ref="userRepository" />
 	</bean>
 
@@ -480,7 +481,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 		<property name="deviceService" ref="service.DeviceService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+        <property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
 		<property name="unsubscribeMtvNzShortCode" value="${vf.nz.smpp.service.source.address.unsubscribe.for.mtvnz}"/>
 	</bean>
 

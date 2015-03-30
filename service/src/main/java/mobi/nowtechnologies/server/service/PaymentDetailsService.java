@@ -22,9 +22,9 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
-import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
+import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
@@ -40,6 +40,7 @@ import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_COD
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,8 +67,6 @@ public class PaymentDetailsService {
     private PayPalPaymentService payPalPaymentService;
     private MigPaymentService migPaymentService;
 
-    private PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService;
-
     private PromotionService promotionService;
     private UserService userService;
     private CommunityService communityService;
@@ -76,6 +75,8 @@ public class PaymentDetailsService {
     private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
+    private UserNotificationService userNotificationService;
+    private O2PaymentServiceImpl o2PaymentService;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void setErrorStatus(PaymentDetails paymentDetails, String descriptionError, String errorCode){
@@ -87,12 +88,20 @@ public class PaymentDetailsService {
         paymentDetailsRepository.saveAndFlush(paymentDetails);
     }
 
+    public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
+        this.o2PaymentService = o2PaymentService;
+    }
+
     public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
         this.paymentDetailsDao = paymentDetailsDao;
     }
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
     }
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
@@ -135,12 +144,12 @@ public class PaymentDetailsService {
         this.paymentPolicyDao = paymentPolicyDao;
     }
 
-    public void setO2PaymentService(PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService) {
-        this.o2PaymentService = o2PaymentService;
-    }
-
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
         this.paymentDetailsRepository = paymentDetailsRepository;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -171,7 +180,8 @@ public class PaymentDetailsService {
                 }
                 paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
             } else if (dto.getPaymentType().equals(O2_PSMS)) {
-                paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
+                paymentDetails = new O2PSMSPaymentDetails(paymentPolicy, user, o2PaymentService.getRetriesOnError());
+                paymentDetails = commitPaymentDetails(user, paymentDetails);
             }
 
             if (null != paymentDetails) {
@@ -185,6 +195,31 @@ public class PaymentDetailsService {
         }
 
         return paymentDetails;
+    }
+
+    public PaymentDetails commitPaymentDetails(User user, PaymentDetails paymentDetails) {
+        LOGGER.info("Start creation psms payment details for user [{}] and paymentPolicyId [{}]...", new Object[] {user.getUserName(), paymentDetails.getPaymentPolicy().getId()});
+
+        deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        PaymentDetails details = paymentDetailsRepository.save(paymentDetails);
+        userService.updateUser(user);
+
+        LOGGER.info("Done commitment of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});
+
+        sendUnsubscribePotentialSMS(user);
+
+        return details;
+    }
+
+    private void sendUnsubscribePotentialSMS(User user) {
+        try {
+            userNotificationService.sendUnsubscribePotentialSMS(user);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -321,10 +356,6 @@ public class PaymentDetailsService {
         return migPaymentService.sendPin(phone, messageSource.getMessage(communityUri, "sms.freeMsg", args, null));
     }
 
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails activatePaymentDetailsByPayment(Long paymentDetailsId) {
         LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
@@ -365,20 +396,9 @@ public class PaymentDetailsService {
         return paymentDetailsByPaymentDto;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails update(PaymentDetails paymentDetails) {
-        LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
-
-        paymentDetails = paymentDetailsRepository.save(paymentDetails);
-
-        LOGGER.info("Output parameter paymentDetails=[{}]", paymentDetails);
-        return paymentDetails;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)
     public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
         LOGGER.info("Deactivate current payment details for user {} reason {}", user.shortInfo(), reason);
-
 
         notNull(user, "The parameter user is null");
         user = userService.setToZeroSmsAccordingToLawAttributes(user);
@@ -390,12 +410,18 @@ public class PaymentDetailsService {
             if (inPending) {
                 throw new CanNotDeactivatePaymentDetailsException();
             }
-            disablePaymentDetails(currentPaymentDetails, reason);
+            currentPaymentDetails.disable(reason, new Date());
+            paymentDetailsRepository.save(currentPaymentDetails);
             user = userService.updateUser(user);
         }
 
         LOGGER.info("Current payment details were deactivated for user {}", user.shortInfo());
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
+        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
     }
 
     private void applyPromoToLimitedUsers(User user) {
@@ -408,16 +434,5 @@ public class PaymentDetailsService {
                 promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
             }
         }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
-        LOGGER.debug("Disable payment details {}", paymentDetail);
-        return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
-    }
-
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
-        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
     }
 }

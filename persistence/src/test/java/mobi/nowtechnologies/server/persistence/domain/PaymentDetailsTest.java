@@ -6,9 +6,13 @@ import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERRO
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.EXTERNAL_ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 
+import java.util.Date;
 import static java.lang.Long.MAX_VALUE;
 
 import org.junit.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -313,6 +317,19 @@ public class PaymentDetailsTest {
 
         //then
         assertThat(isCurrentAttemptFailed, is(true));
+    }
+
+    @Test
+    public void testDisable() throws Exception {
+        String reason = "reason";
+        Date date = new Date();
+
+        PaymentDetails paymentDetails = new PaymentDetails();
+        paymentDetails.disable(reason, date);
+
+        assertEquals(reason, paymentDetails.getDescriptionError());
+        assertEquals(date.getTime(), paymentDetails.getDisableTimestampMillis());
+        assertFalse(paymentDetails.isActivated());
     }
 
     private PaymentDetails paymentDetailsWithLastPaymentStatusSUCCESSFUL() {
