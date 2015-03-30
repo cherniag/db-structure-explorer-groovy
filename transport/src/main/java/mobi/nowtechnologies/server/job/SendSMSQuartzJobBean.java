@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
@@ -23,7 +23,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
 
     private String communityUrl;
     private int paymentDetailsFetchSize;
-    private PaymentDetailsService paymentDetailsService;
+    private PaymentDetailsRepository paymentDetailsRepository;
     private UserNotificationService userNotificationService;
 
     @Override
@@ -46,7 +46,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
     }
 
     private void init(JobDataMap jobDataMap) {
-        paymentDetailsService = (PaymentDetailsService) jobDataMap.get("paymentDetailsService");
+        paymentDetailsRepository = (PaymentDetailsRepository) jobDataMap.get("paymentDetailsRepository");
         communityUrl = (String) jobDataMap.get("communityURL");
         paymentDetailsFetchSize = Integer.parseInt((String) jobDataMap.get("paymentDetailsFetchSize"));
         userNotificationService = (UserNotificationService) jobDataMap.get("userNotificationService");
@@ -54,7 +54,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
 
     private void execute() {
         LOGGER.info("Attempt to fetch [{}] failed payment with no notification payment details", paymentDetailsFetchSize);
-        List<PaymentDetails> paymentDetails = paymentDetailsService.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, new PageRequest(0, paymentDetailsFetchSize));
+        List<PaymentDetails> paymentDetails = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, new PageRequest(0, paymentDetailsFetchSize));
         LOGGER.info("Fetched [{}] failed payment with no notification payment details", paymentDetails.size());
 
         for (PaymentDetails paymentDetail : paymentDetails) {

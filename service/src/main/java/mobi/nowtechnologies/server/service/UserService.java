@@ -33,7 +33,6 @@ import mobi.nowtechnologies.server.service.exception.ReactivateUserException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -1261,9 +1260,6 @@ public class UserService {
 
     public void setMobileProviderService(MobileProviderService mobileProviderService) {
         this.mobileProviderService = mobileProviderService;
-    }
-
-    public void setO2ClientService(O2ProviderService o2ClientService) {
     }
 
     public void setOtacValidationService(OtacValidationService otacValidationService) {

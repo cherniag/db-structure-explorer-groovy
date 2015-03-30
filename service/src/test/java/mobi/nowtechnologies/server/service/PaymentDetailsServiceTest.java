@@ -13,12 +13,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -28,8 +23,6 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
-
-import static org.hamcrest.core.Is.is;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -164,23 +157,5 @@ public class PaymentDetailsServiceTest {
 
         //when
         paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
-    }
-
-    @Test
-    public void shouldFindFailurePaymentPaymentDetailsWithNoNotification() {
-        //given
-        String communityUrl = "";
-        Pageable pageable = new PageRequest(0, 1);
-
-        List<PaymentDetails> expectedPaymentDetailsList = Collections.<PaymentDetails>singletonList(new O2PSMSPaymentDetails());
-
-        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
-        ;
-
-        //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsServiceSpy.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
-
-        //then
-        assertThat(paymentDetailsList, is(expectedPaymentDetailsList));
     }
 }

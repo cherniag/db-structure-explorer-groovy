@@ -208,7 +208,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
         <property name="o2PaymentService" ref="service.o2PaymentService"/>
-        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
         <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />

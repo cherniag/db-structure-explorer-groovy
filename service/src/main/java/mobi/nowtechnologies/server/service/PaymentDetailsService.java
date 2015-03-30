@@ -17,7 +17,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -48,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.Validate.notNull;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,7 +69,6 @@ public class PaymentDetailsService {
     private UserService userService;
     private CommunityService communityService;
     private OfferService offerService;
-    private PaymentPolicyRepository paymentPolicyRepository;
     private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
@@ -134,10 +131,6 @@ public class PaymentDetailsService {
 
     public void setOfferService(OfferService offerService) {
         this.offerService = offerService;
-    }
-
-    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
-        this.paymentPolicyRepository = paymentPolicyRepository;
     }
 
     public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
@@ -417,11 +410,6 @@ public class PaymentDetailsService {
 
         LOGGER.info("Current payment details were deactivated for user {}", user.shortInfo());
         return user;
-    }
-
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
-        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
     }
 
     private void applyPromoToLimitedUsers(User user) {

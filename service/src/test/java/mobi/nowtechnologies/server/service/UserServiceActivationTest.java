@@ -92,7 +92,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setMigHttpService(migHttpServiceMock);
         userServiceSpy.setAccountLogService(accountLogServiceMock);
         userServiceSpy.setMailService(mailServiceMock);
-        userServiceSpy.setO2ClientService(o2ClientServiceMock);
         userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
