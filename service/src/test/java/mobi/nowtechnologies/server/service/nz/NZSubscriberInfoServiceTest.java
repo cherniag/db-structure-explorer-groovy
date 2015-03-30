@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.nz;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 
 import org.junit.*;
 import org.mockito.*;
@@ -14,6 +15,8 @@ import static org.mockito.Mockito.when;
 public class NZSubscriberInfoServiceTest {
     @Mock
     NZSubscriberInfoRepository subscriberInfoRepository;
+    @Mock
+    UserRepository userRepository;
     @Mock
     NZSubscriberInfoProvider subscriberInfoProvider;
     @InjectMocks

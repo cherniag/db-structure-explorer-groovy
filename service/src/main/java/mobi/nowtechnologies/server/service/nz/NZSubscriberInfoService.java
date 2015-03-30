@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ public class NZSubscriberInfoService implements InitializingBean {
 
     NZSubscriberInfoRepository subscriberInfoRepository;
     NZSubscriberInfoProvider subscriberInfoProvider;
+    UserRepository userRepository;
 
     @Transactional
     public void confirm(User user, String msisdn) {
@@ -35,6 +37,7 @@ public class NZSubscriberInfoService implements InitializingBean {
         nzSubscriberInfo.setUserId(user.getId());
 
         user.setMobile("+" + msisdn);
+        userRepository.save(user);
     }
 
     public boolean belongs(String msisdn) throws ProviderNotAvailableException, MsisdnNotFoundException {
@@ -106,5 +109,9 @@ public class NZSubscriberInfoService implements InitializingBean {
 
     public void setSubscriberInfoProvider(NZSubscriberInfoProvider subscriberInfoProvider) {
         this.subscriberInfoProvider = subscriberInfoProvider;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 }

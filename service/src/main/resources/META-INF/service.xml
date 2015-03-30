@@ -662,6 +662,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean id="service.NZSubscriberInfoService" class="mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService">
 		<property name="subscriberInfoProvider" ref="service.NZSubscriberInfoGateway"/>
 		<property name="subscriberInfoRepository" ref="NZSubscriberInfoRepository"/>
+		<property name="userRepository" ref="userRepository"/>
 	</bean>
 
 	<bean id="service.PinCodeService" class="mobi.nowtechnologies.server.service.pincode.impl.PinCodeServiceImpl" depends-on="pinCodeRepository">
