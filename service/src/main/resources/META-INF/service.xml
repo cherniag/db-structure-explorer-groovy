@@ -165,13 +165,28 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="supportedNumbers">
             <set>
                 <value>${vf.nz.smpp.service.source.address.unsubscribe}</value>
-                <value>${vf.nz.smpp.service.source.address.unsubscribe.for.mtvnz}</value>
                 <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
                 <value>${vf.nz.smpp.service.source.address.billing.1_5gbp}</value>
             </set>
         </property>
         <property name="userService" ref="vf_nz.service.UserService" />
     </bean>
+
+	<util:constant
+			id="MTVNZ_PSMS_TYPE"
+			static-field="mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.MTVNZ_PSMS_TYPE"/>
+
+	<bean id="vf_nz.service.MTVNZUnsubscribeProccessor" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor">
+		<property name="supportedNumbers">
+			<set>
+				<value>${vf.nz.smpp.service.source.address.unsubscribe.for.mtvnz}</value>
+				<value>${mtv.nz.payment.short.code.1}</value>
+				<value>${mtv.nz.payment.short.code.4}</value>
+			</set>
+		</property>
+		<property name="operatorName" ref="MTVNZ_PSMS_TYPE"/>
+		<property name="userService" ref="vf_nz.service.UserService" />
+	</bean>
 
     <bean id="vf_nz.service.UserDetailsUpdater" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUserDetailsUpdater">
         <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
