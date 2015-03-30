@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.admin.controller;
 import mobi.nowtechnologies.server.admin.validator.UserDtoValidator;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
@@ -42,9 +43,14 @@ public class UserController extends AbstractCommonController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     private UserService userService;
+    private UserRepository userRepository;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @InitBinder({UserDto.USER_DTO})
@@ -57,7 +63,7 @@ public class UserController extends AbstractCommonController {
     public ModelAndView getUser(HttpServletRequest request, @PathVariable(value = "userId") Integer userId) {
         LOGGER.debug("input parameters request, userId: [{}], [{}]", request, userId);
 
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         UserDto userDto = UserAsm.toUserDto(user);
 
         final ModelAndView modelAndView = getEditUserModelAndView(userDto);
@@ -101,7 +107,7 @@ public class UserController extends AbstractCommonController {
 
         final ModelAndView modelAndView;
         if (!bindingResult.hasErrors()) {
-            User user = userService.findById(userDto.getId());
+            User user = userRepository.findOne(userDto.getId());
             userDto = updateFreeTrialExpiredTime(userDto, user);
 
             user = userService.updateUser(userDto);

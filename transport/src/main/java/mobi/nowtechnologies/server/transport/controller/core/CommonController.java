@@ -91,10 +91,6 @@ public abstract class CommonController extends ProfileController {
         this.remoteAddrThreadLocal.set(remoteAddr);
     }
 
-    public String getCurrentCommandName() {
-        return this.commandNameThreadLocal.get();
-    }
-
     public void setCurrentCommandName(String commandName) {
         this.commandNameThreadLocal.set(commandName);
     }

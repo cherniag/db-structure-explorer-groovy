@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,6 +26,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "tb_promotions")
@@ -48,7 +51,8 @@ public class Promotion implements Serializable {
 
     private int endDate;
 
-    private byte freeWeeks;
+    @Embedded
+    private Period period = new Period(DurationUnit.WEEKS, 0);
 
     private boolean isActive;
 
@@ -111,12 +115,8 @@ public class Promotion implements Serializable {
         this.endDate = endDate;
     }
 
-    public byte getFreeWeeks() {
-        return this.freeWeeks;
-    }
-
-    public void setFreeWeeks(byte freeWeeks) {
-        this.freeWeeks = freeWeeks;
+    public Period getPeriod() {
+        return period;
     }
 
     public boolean getIsActive() {
@@ -237,6 +237,10 @@ public class Promotion implements Serializable {
         isWhiteListed = whiteListed;
     }
 
+    public void setPeriod(Period period) {
+        this.period = period;
+    }
+
     public Promotion withDescription(String description) {
         setDescription(description);
         return this;
@@ -254,11 +258,6 @@ public class Promotion implements Serializable {
 
     public Promotion withStartDate(int startDate) {
         setStartDate(startDate);
-        return this;
-    }
-
-    public Promotion withFreeWeeks(byte freeWeeks) {
-        setFreeWeeks(freeWeeks);
         return this;
     }
 
@@ -312,16 +311,10 @@ public class Promotion implements Serializable {
         return this;
     }
 
-    public int getFreeWeeks(int freeTrialStartedTimestampSeconds) {
-        return freeWeeks == 0 ?
-               (endDate - freeTrialStartedTimestampSeconds) / WEEK_SECONDS :
-               freeWeeks;
-    }
-
-    public int getFreeWeeksEndDate(int freeTrialStartedTimestampSeconds) {
-        return freeWeeks == 0 ?
+    public int getFreeWeeksEndDate(int freeTrialStartSeconds) {
+        return period == null || period.getDuration() <= 0 ?
                endDate :
-               freeTrialStartedTimestampSeconds + freeWeeks * WEEK_SECONDS;
+               period.toNextSubPaymentSeconds(freeTrialStartSeconds);
     }
 
     public boolean isCouldBeAppliedMultipleTimes() {
@@ -330,10 +323,11 @@ public class Promotion implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("i", i).append("subWeeks", subWeeks).append("description", description).append("type", type).append("endDate", endDate).append("freeWeeks", freeWeeks)
-                                        .append("isActive", isActive).append("maxUsers", maxUsers).append("numUsers", numUsers).append("startDate", startDate).append("showPromotion", showPromotion)
-                                        .append("label", label).append("isWhiteListed", isWhiteListed).append("userGroupId", getUserGroupId()).append("promoCodeId", getPromoCodeId())
-                                        .append("isCouldBeAppliedMultipleTimes()", isCouldBeAppliedMultipleTimes()).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("i", i).append("subWeeks", subWeeks).append("description", description).append("type", type)
+                                                                          .append("endDate", endDate).append("period", period).append("isActive", isActive).append("maxUsers", maxUsers)
+                                                                          .append("numUsers", numUsers).append("startDate", startDate).append("showPromotion", showPromotion).append("label", label)
+                                                                          .append("isWhiteListed", isWhiteListed).append("userGroupId", getUserGroupId()).append("promoCodeId", getPromoCodeId())
+                                                                          .append("isCouldBeAppliedMultipleTimes()", isCouldBeAppliedMultipleTimes()).toString();
     }
 
 }

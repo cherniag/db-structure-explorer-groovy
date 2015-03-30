@@ -7,14 +7,9 @@ package mobi.nowtechnologies.server.factory.admin;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * @author Mayboroda Dmytro
@@ -36,20 +31,6 @@ public class ChartItemFactory {
         return expectedItemDto;
     }
 
-    public static String anyChartItemJSON(Integer chartId, Date publishDate) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH:mm:ss").create();
-        Type type = new TypeToken<ChartItemDto>() {}.getType();
-
-        return gson.toJson(anyChartItemDto(chartId, publishDate), type);
-    }
-
-    public static String anyChartItemListJSON(int amount, Integer chartId, Date publishDate) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH:mm:ss").create();
-        Type type = new TypeToken<ArrayList<ChartItemDto>>() {}.getType();
-
-        return gson.toJson(getChartItemDtos(amount, chartId, publishDate), type);
-    }
-
     /**
      * @return
      */
@@ -61,18 +42,4 @@ public class ChartItemFactory {
         return items;
     }
 
-    public static List<ChartItemDto> getChartItemDtos(ChartItemDto item, int amount) {
-        List<ChartItemDto> items = new ArrayList<ChartItemDto>();
-        for (int i = 0; i < amount; i++) {
-            items.add(item);
-        }
-        return items;
-    }
-
-    /**
-     * @return
-     */
-    public static List<ChartItemDto> getEmptyChartItemDtos() {
-        return new ArrayList<ChartItemDto>();
-    }
 }

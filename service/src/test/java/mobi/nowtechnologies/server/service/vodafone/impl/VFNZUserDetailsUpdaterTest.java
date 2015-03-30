@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
@@ -10,27 +11,27 @@ import java.util.Arrays;
 import org.jsmpp.bean.DeliverSm;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import org.powermock.modules.junit4.PowerMockRunner;
-
 /**
  * User: Alexsandr_Kolpakov Date: 10/21/13 Time: 10:32 AM
  */
-@RunWith(PowerMockRunner.class)
 public class VFNZUserDetailsUpdaterTest {
-
-    private VFNZUserDetailsUpdater fixture;
+    private VFNZUserDetailsUpdater fixture = new VFNZUserDetailsUpdater();
 
     @Mock
     private UserService userServiceMock;
 
+    @Mock
+    private UserRepository userRepository;
+
     @Before
     public void setUp() throws Exception {
-        fixture = new VFNZUserDetailsUpdater();
+        MockitoAnnotations.initMocks(this);
+
+        fixture.setUserRepository(userRepository);
         fixture.setUserService(userServiceMock);
     }
 
@@ -80,12 +81,12 @@ public class VFNZUserDetailsUpdaterTest {
 
         Mockito.doNothing().when(userServiceMock).populateSubscriberData(user1, data);
         Mockito.doNothing().when(userServiceMock).populateSubscriberData(user2, data);
-        Mockito.doReturn(Arrays.asList(user1, user2)).when(userServiceMock).findByMobile(data.getPhoneNumber());
+        Mockito.doReturn(Arrays.asList(user1, user2)).when(userRepository).findByMobile(data.getPhoneNumber());
 
         fixture.process(data);
 
         verify(userServiceMock, times(1)).populateSubscriberData(user1, data);
         verify(userServiceMock, times(1)).populateSubscriberData(user2, data);
-        verify(userServiceMock, times(1)).findByMobile(data.getPhoneNumber());
+        verify(userRepository, times(1)).findByMobile(data.getPhoneNumber());
     }
 }

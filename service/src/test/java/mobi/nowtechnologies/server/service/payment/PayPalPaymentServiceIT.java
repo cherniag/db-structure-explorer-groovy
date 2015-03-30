@@ -180,7 +180,7 @@ public class PayPalPaymentServiceIT {
                                                                            new BasicNameValuePair("CURRENCYCODE", "GBP"), new BasicNameValuePair("METHOD", "SetExpressCheckout"),
                                                                            new BasicNameValuePair("L_BILLINGTYPE0", "vfnz_MerchantInitiatedBillingSingleAgreement"),
                                                                            new BasicNameValuePair("PAYMENTACTION", "Authorization"))));
-        assertEquals(paymentDetails.getBillingAgreementTxId(), REDIRECT_URL + "?cmd=_express-checkout&token=EC-5YJ748178G052312W");
+        assertEquals(paymentDetails.getBillingAgreementTxId(), REDIRECT_URL + "?cmd=_express-checkout&useraction=commit&token=EC-5YJ748178G052312W");
     }
 
     @Test

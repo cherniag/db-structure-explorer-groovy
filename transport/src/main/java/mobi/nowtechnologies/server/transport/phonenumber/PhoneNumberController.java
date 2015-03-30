@@ -1,10 +1,13 @@
 package mobi.nowtechnologies.server.transport.phonenumber;
 
-import mobi.nowtechnologies.server.transport.phonenumber.dto.PhoneActivationDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
+import mobi.nowtechnologies.server.transport.phonenumber.dto.PhoneActivationDto;
+
+import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class PhoneNumberController extends CommonController {
+    @Resource
+    private O2ProviderService o2ClientService;
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/PHONE_NUMBER"})
     public ModelAndView activatePhoneNumber_O2(@RequestParam(value = "PHONE", required = false) String phone, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
@@ -40,7 +45,7 @@ public class PhoneNumberController extends CommonController {
                 userService.populateSubscriberData(user);
             }
 
-            String redeemServerO2Url = userService.getRedeemServerO2Url(user);
+            String redeemServerO2Url = o2ClientService.getRedeemServerO2Url(user.getMobile());
 
             return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
         } catch (Exception e) {

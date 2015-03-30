@@ -18,8 +18,7 @@
 						<label><s:message code="signin.form.password" /></label>
 						<input name="token" id="token" type="password" />
 						<c:if test="${param.error != null}"><span class="errorSign">&nbsp;</span></c:if>
-						<a href="restore_password.html" class="formLink"><s:message code="signin.form.link.restore.password" /></a>
-						
+
 						<c:if test="${param.error != null}">
 							<!--error-->
 								<div class="errorBoxContainer">

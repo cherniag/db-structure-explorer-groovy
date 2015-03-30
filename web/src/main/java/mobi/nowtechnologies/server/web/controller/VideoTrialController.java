@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
@@ -22,6 +23,7 @@ public class VideoTrialController extends CommonController {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoTrialController.class);
 
     private UserService userService;
+    private UserRepository userRepository;
 
     @RequestMapping(value = "videotrial.html", method = RequestMethod.GET)
     public ModelAndView getVideoFreeTrial(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale,
@@ -42,7 +44,7 @@ public class VideoTrialController extends CommonController {
 
         LOGGER.info("Calling saveVideoFreeTrial userId - {}", userId);
 
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
 
         ModelAndView mav = new ModelAndView("videotrial/confirmation");
 
@@ -66,4 +68,7 @@ public class VideoTrialController extends CommonController {
         this.userService = userService;
     }
 
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 }

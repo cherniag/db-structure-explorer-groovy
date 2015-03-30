@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -176,10 +175,6 @@ public abstract class AbstractPayment {
 
     public void setPeriod(Period period) {
         this.period = period;
-    }
-
-    public boolean isRetry() {
-        return RETRY.equals(type);
     }
 
     public PaymentHistoryItemDto toPaymentHistoryItemDto() {

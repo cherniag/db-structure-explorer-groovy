@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 
@@ -16,26 +17,26 @@ public class PromotionProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionProvider.class);
 
-    private EntityService entityService;
     private CommunityService communityService;
     private PromotionRepository promotionRepository;
     private CommunityResourceBundleMessageSource messageSource;
+    private UserGroupRepository userGroupRepository;
 
-    final public PromotionProxy getPromotionProxyByPropertyName(String propertyName, String communityName) {
+    public final PromotionProxy getPromotionProxyByPropertyName(String propertyName, String communityName) {
         String promotionCode = messageSource.getMessage(communityName, propertyName, null, null);
         notNull(promotionCode, "The parameter promotionCode is null");
         notNull(communityName, "The parameter communityName is null");
         LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, communityName);
 
         Community community = communityService.getCommunityByName(communityName);
-        UserGroup userGroup = entityService.findByProperty(UserGroup.class, UserGroup.Fields.communityId.toString(), community.getId());
+        UserGroup userGroup = userGroupRepository.findByCommunity(community);
         PromotionProxy answer = new PromotionProxy(promotionRepository, promotionCode, userGroup);
         notNull(answer.getPromotion(), "Promotion with promo code = " + promotionCode + " should exist");
         return answer;
     }
 
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
     }
 
     public void setCommunityService(CommunityService communityService) {

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,44 +41,6 @@ public class EntityDao extends JpaDaoSupport {
 
     public <T> List<T> findAll(Class<T> entityClass) {
         return getJpaTemplate().find("select o from " + entityClass.getSimpleName() + " o");
-    }
-
-    public <T> T findByCommunity(Class<T> entityClass, String communityName) {
-        if (entityClass == null) {
-            throw new NullPointerException("The parameter entityClass is null");
-        }
-        if (communityName == null) {
-            throw new NullPointerException("The parameter aCommunityName is null");
-        }
-        try {
-            return getJpaTemplate().find(entityClass, findIdByCommunity(entityClass, communityName));
-        } catch (DataAccessException dae) {
-            LOGGER.error(dae.getMessage(), dae);
-            throw new PersistenceException(dae);
-        } catch (NumberFormatException nfe) {
-            LOGGER.error(nfe.getMessage(), nfe);
-            throw new PersistenceException(nfe);
-        }
-    }
-
-    private Object findIdByCommunity(Class<?> entityClass, String communityName) {
-        if (entityClass == null) {
-            throw new NullPointerException("The parameter entityClass is null");
-        }
-        if (communityName == null) {
-            throw new NullPointerException("The parameter aCommunityName is null");
-        }
-        try {
-            return getJpaTemplate()
-                .find("select o.id from " + entityClass.getSimpleName() + " o where o.community = " + "(select oo.id from " + Community.class.getSimpleName() + " oo where oo.name = ?1)",
-                      communityName).get(0);
-        } catch (DataAccessException dae) {
-            LOGGER.error(dae.getMessage(), dae);
-            throw new PersistenceException(dae);
-        } catch (NumberFormatException nfe) {
-            LOGGER.error(nfe.getMessage(), nfe);
-            throw new PersistenceException(nfe);
-        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

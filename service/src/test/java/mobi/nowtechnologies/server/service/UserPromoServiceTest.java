@@ -37,7 +37,7 @@ public class UserPromoServiceTest {
     public void testApplyInitPromoByEmail() {
         User user = UserFactory.createUser(ACTIVATED);
 
-        when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
+        when(userRepository.findByUserNameAndCommunityUrl(anyString(), anyString())).thenReturn(user);
 
         MergeResult mergeResult = OperationResultFactory.createOperationResult(false, user);
         when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(mergeResult);
