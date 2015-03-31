@@ -32,8 +32,7 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
     @Query(value = "select paymentPolicy " +
                    "from PaymentPolicy paymentPolicy " +
                    "where paymentPolicy.community=?1 " +
-                   "and paymentPolicy.appStoreProductId=?2 " +
-                   "and paymentPolicy.online is true")
+                   "and paymentPolicy.appStoreProductId=?2")
     PaymentPolicy findByCommunityAndAppStoreProductId(Community community, String appStoreProductId);
 
     @Query(value = "select paymentPolicy " +

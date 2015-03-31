@@ -44,14 +44,6 @@ public class PaymentPolicyService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(Community community) {
-        LOGGER.debug("input parameters community: [{}]", community);
-        List<String> appStoreProductIds = paymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        LOGGER.debug("Output parameter appStoreProductIds=[{}]", appStoreProductIds);
-        return appStoreProductIds;
-    }
-
-    @Transactional(readOnly = true)
     public PaymentPolicy findByCommunityAndAppStoreProductId(Community community, String appStoreProductId) {
         LOGGER.debug("input parameters community, appStoreProductId: [{}], [{}]", community, appStoreProductId);
         PaymentPolicy paymentPolicy = paymentPolicyRepository.findByCommunityAndAppStoreProductId(community, appStoreProductId);

@@ -35,9 +35,6 @@ public class ReferralService {
     @Resource
     private ReferralRepository referralRepository;
 
-    @Resource(name = "service.UserService")
-    private UserService userService;
-
     @Resource
     private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
 

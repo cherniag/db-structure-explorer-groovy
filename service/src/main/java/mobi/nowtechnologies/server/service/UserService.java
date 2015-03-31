@@ -1248,6 +1248,13 @@ public class UserService {
                checkCredentials(userName, userToken, timestamp, community);
     }
 
+    @Transactional
+    public void updateIdfaToken(User user, String idfa) {
+        if (idfa != null) {
+            userRepository.updateTokenDetails(user.getId(), idfa);
+        }
+    }
+
     private void checkUserReactivation(User user) {
         if (TRUE.equals(reactivationUserInfoRepository.isUserShouldBeReactivated(user))) {
             throw new ReactivateUserException();
