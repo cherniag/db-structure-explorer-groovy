@@ -2,9 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -68,8 +66,6 @@ public class PaymentDetailsService {
     private PromotionService promotionService;
     private UserService userService;
     private CommunityService communityService;
-    private OfferService offerService;
-    private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
     private UserNotificationService userNotificationService;
@@ -127,14 +123,6 @@ public class PaymentDetailsService {
 
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
-    }
-
-    public void setOfferService(OfferService offerService) {
-        this.offerService = offerService;
-    }
-
-    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
-        this.paymentPolicyDao = paymentPolicyDao;
     }
 
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
@@ -293,50 +281,6 @@ public class PaymentDetailsService {
     public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
         Community community = communityService.getCommunityByUrl(communityUrl);
         return paymentDetailsDao.getAvailableOperators(community, paymentType);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void buyByPayPalPaymentDetails(String token, String communityUrl, int userId, Integer offerId) throws ServiceException {
-        LOGGER.debug("buyByPayPalPaymentDetails input parameters token, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] {token, communityUrl, userId, offerId});
-
-        User user = userRepository.findOne(userId);
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(user.getOperator(), PAY_PAL, community.getId());
-
-        if (null != paymentPolicy) {
-            Offer offer = offerService.getOffer(offerId);
-
-            PaymentDetailsDto pdto = new PaymentDetailsDto();
-            pdto.setOfferId(offerId);
-            pdto.setCurrency(offer.getCurrency());
-            pdto.setAmount(offer.getPrice().toString());
-            pdto.setToken(token);
-
-            payPalPaymentService.makePaymentWithPaymentDetails(pdto, user, paymentPolicy);
-        }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void buyByCreditCardPaymentDetails(CreditCardDto creditCardDto, String communityUrl, int userId, Integer offerId) {
-        LOGGER
-            .debug("buyByCreditCardPaymentDetails input parameters creditCardDto, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] {creditCardDto, communityUrl, userId, offerId});
-
-        User user = userRepository.findOne(userId);
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), CREDIT_CARD, community.getId());
-
-        if (null != paymentPolicy) {
-            Offer offer = offerService.getOffer(offerId);
-
-            PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(creditCardDto);
-            pdto.setOfferId(offerId);
-            pdto.setCurrency(offer.getCurrency());
-            pdto.setAmount(offer.getPrice().toString());
-            pdto.setVendorTxCode(UUID.randomUUID().toString());
-            pdto.setDescription("Making payment by Credit Card  for user " + user.getUserName());
-
-            sagePayPaymentService.makePaymentWithPaymentDetails(pdto, user, paymentPolicy);
-        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

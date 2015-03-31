@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -10,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
@@ -39,7 +37,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.*;
 
@@ -182,25 +179,6 @@ public class PayPalPaymentServiceIT {
                                                                            new BasicNameValuePair("PAYMENTACTION", "Authorization"))));
         assertEquals(paymentDetails.getBillingAgreementTxId(), REDIRECT_URL + "?cmd=_express-checkout&useraction=commit&token=EC-5YJ748178G052312W");
     }
-
-    @Test
-    public void testThatMakeReferenceTransactionRequestAreSentWhenMakingPaymentForO2() {
-        User user = createAndSaveUser();
-        PaymentPolicy paymentPolicy = createAndSavePaymentPolicy("o2");
-        PaymentDetailsDto paymentDetailsDto = PaymentTestUtils.createPaymentDetailsDto();
-        PayPalPaymentDetails paymentDetails = payPalPaymentServiceImpl.makePaymentWithPaymentDetails(paymentDetailsDto, user, paymentPolicy);
-        assertNotNull(paymentDetails);
-        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(postService, times(2)).sendHttpPost(eq(API_URL), listArgumentCaptor.capture(), anyString());
-        List actualPayPalRequestParameters = listArgumentCaptor.getValue();
-        assertEquals(10, actualPayPalRequestParameters.size());
-        assertTrue(actualPayPalRequestParameters.containsAll(Arrays.asList(new BasicNameValuePair("USER", "o2_user_name"), new BasicNameValuePair("VERSION", "90.0"),
-                                                                           new BasicNameValuePair("AMT", "2.50"), new BasicNameValuePair("CURRENCYCODE", "EUR"),
-                                                                           new BasicNameValuePair("METHOD", "DoReferenceTransaction"), new BasicNameValuePair("PAYMENTACTION", "Sale"),
-                                                                           new BasicNameValuePair("REFERENCEID", "QWW45E98RM54S"))));
-        verify(applicationEventPublisher).publishEvent(any(PaymentEvent.class));
-    }
-
 
     private PaymentPolicy createAndSavePaymentPolicy(String communityName) {
         Community community = communityRepository.findByName(communityName);

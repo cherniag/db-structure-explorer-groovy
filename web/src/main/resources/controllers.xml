@@ -138,11 +138,6 @@
         <property name="coverStorePath" value="${web.coverStorePath}"/>
     </bean>
 
-    <bean name="web.OfferPaymentMethodsController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentMethodsController">
-        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
-    </bean>
-
     <bean name="web.OfferPaymentsPayPalController"
           class="mobi.nowtechnologies.server.web.controller.OfferPaymentsPayPalController">
         <property name="offerService" ref="service.OfferService"/>

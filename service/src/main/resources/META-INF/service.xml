@@ -208,7 +208,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
         <property name="o2PaymentService" ref="service.o2PaymentService"/>
-        <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
@@ -219,7 +218,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 
 		<property name="communityService" ref="service.communityService" />
-		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
@@ -344,7 +342,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	</bean>
 
 	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
-		<property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao" />
 		<property name="paymentPolicyRepository" ref="paymentPolicyRepository" />
 	</bean>
 

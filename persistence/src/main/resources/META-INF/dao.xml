@@ -51,11 +51,6 @@ http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframewor
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
-	<bean id="persistence.PaymentPolicyDao"
-		class="mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
 	<bean id="persistence.PaymentDetailsDao"
 		class="mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />

@@ -9,10 +9,8 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.OfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto.Action;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.PaymentsCreditCardValidator;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -24,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -87,23 +84,6 @@ public class OfferPaymentsCreditCardController extends CommonController {
         } else {
             creditCardDto.setAction(Action.EDIT);
             modelAndView.setViewName(VIEW_PAYMENTS_CREDITCARD_PREVIEW);
-        }
-
-        return modelAndView;
-    }
-
-    @RequestMapping(value = PAGE_CREATE_PAYMENT_DETAILS, method = RequestMethod.POST)
-    public ModelAndView buyByCreditCardPaymentDetails(@PathVariable(OfferDto.OFFER_ID) Integer offerId, HttpServletResponse response,
-                                                      @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
-                                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-        ModelAndView modelAndView = new ModelAndView();
-
-        if (result.hasErrors()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
-        } else {
-            paymentDetailsService.buyByCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId(), offerId);
-            modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
         }
 
         return modelAndView;
