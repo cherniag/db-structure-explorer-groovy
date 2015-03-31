@@ -533,7 +533,7 @@ public class ChartServiceTest {
         when(badgesService.getBadgeFileName(eq(908L), eq(c), eq(resolution))).thenReturn("image_908");
         when(badgesService.getBadgeFileName(909L, c, resolution)).thenReturn("image_909");
 
-        ChartDto result = chartServiceFixture.processGetChartCommand(user, true, true, resolution, false);
+        ChartDto result = chartServiceFixture.processGetChartCommand(user, true, true, resolution, false, false);
 
         assertNotNull(result);
 

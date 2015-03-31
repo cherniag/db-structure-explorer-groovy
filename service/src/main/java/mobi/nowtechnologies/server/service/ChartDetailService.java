@@ -73,20 +73,6 @@ public class ChartDetailService {
         return chartDetails;
     }
 
-    @Transactional(readOnly = true)
-    public List<Long> getAllPublishTimeMillis(Integer chartId) {
-        LOGGER.debug("input parameters chartId: [{}]", chartId);
-
-        if (chartId == null) {
-            throw new ServiceException("The parameter chartId is null");
-        }
-
-        List<Long> allPublishTimeMillis = chartDetailRepository.getAllPublishTimeMillis(chartId);
-
-        LOGGER.info("Output parameter allPublishTimeMillis=[{}]", allPublishTimeMillis);
-        return allPublishTimeMillis;
-    }
-
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<Media> getLockedChartItemISRCs(Integer chartId, Date selectedPublishDate) {
