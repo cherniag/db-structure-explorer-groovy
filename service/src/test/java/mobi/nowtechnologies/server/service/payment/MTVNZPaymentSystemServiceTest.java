@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -43,6 +44,8 @@ public class MTVNZPaymentSystemServiceTest {
     private CommunityResourceBundleMessageSource messageSource;
     @Mock
     private PendingPaymentRepository pendingPaymentRepository;
+    @Mock
+    private PaymentDetailsRepository paymentDetailsRepository;
     @Mock
     private PaymentDetailsService paymentDetailsService;
     @Mock
@@ -168,7 +171,8 @@ public class MTVNZPaymentSystemServiceTest {
     }
 
     private void verifyUserWasUnSubscribedBecauseOfProvider() {
-        verify(paymentDetailsService).setErrorStatus(paymentDetails, USER_DOES_NOT_BELONG_TO_VF, null);
+        verify(paymentDetailsRepository).save(paymentDetails);
+        verify(paymentDetails).completedWithError(USER_DOES_NOT_BELONG_TO_VF);
         verify(userService).unsubscribeUser(user, USER_DOES_NOT_BELONG_TO_VF);
         verify(pendingPaymentRepository).delete(pendingPayment);
         verify(paymentEventNotifier).onUnsubscribe(user);
@@ -191,14 +195,15 @@ public class MTVNZPaymentSystemServiceTest {
 
     private void verifyUserWasNotUnSubscribedBecauseOfProvider() {
         verify(pendingPaymentRepository, never()).delete(pendingPayment);
-        verify(paymentDetailsService, never()).setErrorStatus(paymentDetails, USER_DOES_NOT_BELONG_TO_VF, null);
+        verify(paymentDetails, never()).completedWithError(USER_DOES_NOT_BELONG_TO_VF);
         verify(userService, never()).unsubscribeUser(user, USER_DOES_NOT_BELONG_TO_VF);
         verify(paymentEventNotifier, never()).onUnsubscribe(user);
     }
 
     private void verifyUserWasUnSubscribedBecauseOfUnknownMSISDN() {
         verify(pendingPaymentRepository).delete(pendingPayment);
-        verify(paymentDetailsService).setErrorStatus(paymentDetails, VF_DOES_NOT_KNOW_THIS_USER, null);
+        verify(paymentDetails).completedWithError(VF_DOES_NOT_KNOW_THIS_USER);
+        verify(paymentDetailsRepository).save(paymentDetails);
         verify(userService).unsubscribeUser(user, VF_DOES_NOT_KNOW_THIS_USER);
         verify(paymentEventNotifier).onUnsubscribe(user);
     }

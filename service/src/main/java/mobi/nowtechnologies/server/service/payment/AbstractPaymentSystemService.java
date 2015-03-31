@@ -34,7 +34,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	private long expireMillis;
 	private ApplicationEventPublisher applicationEventPublisher;
 	protected PaymentDetailsService paymentDetailsService;
-	private PaymentDetailsRepository paymentDetailsRepository;
+    protected PaymentDetailsRepository paymentDetailsRepository;
 	protected UserService userService;
     private PaymentEventNotifier paymentEventNotifier;
 

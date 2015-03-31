@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
@@ -56,6 +58,7 @@ public class PaymentsController extends CommonController {
     private UserRepository userRepository;
     private PromotionService promotionService;
     private CommunityServiceFactory communityServiceFactory;
+    private PaymentDetailsRepository paymentDetailsRepository;
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
@@ -75,6 +78,10 @@ public class PaymentsController extends CommonController {
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     public void setPromotionService(PromotionService promotionService) {
@@ -194,7 +201,10 @@ public class PaymentsController extends CommonController {
     public ModelAndView getOneClickSubscriptionSuccessfulPage(@PathVariable("scopePrefix") String scopePrefix) {
 
         final int userId = getSecurityContextDetails().getUserId();
-        PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findByUserIdAndPaymentDetailsType(userId, PaymentDetailsType.PAYMENT);
+
+        final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = convertToDto(paymentDetailsList);
 
         final ModelAndView modelAndView;
         if (paymentDetailsByPaymentDto == null || !paymentDetailsByPaymentDto.isActivated()) {
@@ -206,6 +216,16 @@ public class PaymentsController extends CommonController {
 
         LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
+    }
+
+    private PaymentDetailsByPaymentDto convertToDto(List<PaymentDetails> paymentDetailsList) {
+        final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto;
+        if (paymentDetailsList.isEmpty()) {
+            paymentDetailsByPaymentDto = null;
+        } else {
+            paymentDetailsByPaymentDto = paymentDetailsList.get(0).toPaymentDetailsByPaymentDto();
+        }
+        return paymentDetailsByPaymentDto;
     }
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
@@ -228,7 +248,9 @@ public class PaymentsController extends CommonController {
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
         if (!user.isIOsNonO2ITunesSubscribedUser()) {
-            return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
+            List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findByUserIdAndPaymentDetailsType(user.getId(), PaymentDetailsType.PAYMENT);
+
+            return convertToDto(paymentDetailsList);
         }
         return null;
     }

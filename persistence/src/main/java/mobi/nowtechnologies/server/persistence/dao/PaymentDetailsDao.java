@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 
@@ -48,14 +47,5 @@ public class PaymentDetailsDao extends JpaDaoSupport {
         return (null != result && result.size() > 0) ?
                result :
                null;
-    }
-
-    public List<PaymentDetails> find(int userId, PaymentDetailsType paymentDetailsType) {
-        LOGGER.debug("input parameters userId, paymentDetailsType: [{}], [{}]", userId, paymentDetailsType);
-
-        List<PaymentDetails> paymentDetails = getJpaTemplate().findByNamedQuery(PaymentDetails.FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE, userId, paymentDetailsType);
-
-        LOGGER.debug("Output parameter [{}]", paymentDetails);
-        return paymentDetails;
     }
 }

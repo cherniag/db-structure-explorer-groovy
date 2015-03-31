@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
@@ -23,7 +22,6 @@ import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
@@ -70,16 +68,6 @@ public class PaymentDetailsService {
     private UserRepository userRepository;
     private UserNotificationService userNotificationService;
     private O2PaymentServiceImpl o2PaymentService;
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void setErrorStatus(PaymentDetails paymentDetails, String descriptionError, String errorCode){
-        LOGGER.debug("Set error status for {}, descriptionError: {}, errorCode: {}", paymentDetails, descriptionError, errorCode);
-        paymentDetails.setDescriptionError(descriptionError);
-        paymentDetails.setDescriptionError(errorCode);
-        paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
-
-        paymentDetailsRepository.saveAndFlush(paymentDetails);
-    }
 
     public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
         this.o2PaymentService = o2PaymentService;
@@ -272,11 +260,6 @@ public class PaymentDetailsService {
         return user.getPendingPaymentDetails();
     }
 
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> findActivatedPaymentDetails(String operatorName, String phoneNumber) {
-        return paymentDetailsRepository.findActivatedPaymentDetails(operatorName, phoneNumber);
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
         Community community = communityService.getCommunityByUrl(communityUrl);
@@ -314,23 +297,6 @@ public class PaymentDetailsService {
 
         LOGGER.debug("Output parameter [{}]", paymentDetails);
         return paymentDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetailsByPaymentDto getPaymentDetailsTypeByPayment(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-
-        List<PaymentDetails> paymentDetailsList = paymentDetailsDao.find(userId, PaymentDetailsType.PAYMENT);
-
-        final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto;
-        if (paymentDetailsList.isEmpty()) {
-            paymentDetailsByPaymentDto = null;
-        } else {
-            paymentDetailsByPaymentDto = paymentDetailsList.get(0).toPaymentDetailsByPaymentDto();
-        }
-
-        LOGGER.debug("Output parameter [{}]", paymentDetailsByPaymentDto);
-        return paymentDetailsByPaymentDto;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)

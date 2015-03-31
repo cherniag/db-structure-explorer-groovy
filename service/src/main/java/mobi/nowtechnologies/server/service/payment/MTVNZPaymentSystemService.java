@@ -90,7 +90,9 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     }
 
     private void processPaymentForWrongSubscriber(PendingPayment pendingPayment, String reason) {
-        paymentDetailsService.setErrorStatus(pendingPayment.getPaymentDetails(), reason, null);
+        pendingPayment.getPaymentDetails().completedWithError(reason);
+
+        paymentDetailsRepository.save(pendingPayment.getPaymentDetails());
 
         userService.unsubscribeUser(pendingPayment.getUser(), reason);
 
