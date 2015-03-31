@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
 import mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl;
@@ -35,10 +36,12 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     @Override
     @Transactional(propagation = REQUIRED)
     public void startPayment(PendingPayment pendingPayment) throws Exception {
-        LOGGER.info("Start payment: {}", pendingPayment);
-        final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
-        final String phoneNumber = paymentDetails.getPhoneNumber();
+        String phoneNumber = null;
         try {
+            LOGGER.info("Start payment: {}", pendingPayment);
+            final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
+            phoneNumber = paymentDetails.getPhoneNumber();
+            phoneNumber = phoneNumber.replaceFirst("\\+", "");
             boolean belongs = nzSubscriberInfoService.belongs(phoneNumber);
             if(!belongs){
                 LOGGER.info("User {} is not VF subscriber", phoneNumber);
@@ -55,7 +58,10 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
                 LOGGER.warn("Could not send SMS payment request : {}, skip current attempt", smsResponse.getDescriptionError());
                 skipCurrentPaymentAttempt(pendingPayment, smsResponse.getDescriptionError());
             }
-        } catch (ProviderNotAvailableException e) {
+        }catch (MsisdnNotFoundException m){
+            LOGGER.warn("Couldn't clarify provider for msisdn [{}]. {}", phoneNumber, m.getMessage());
+            processPaymentForUnknownSubscriber(pendingPayment);
+        }catch (ProviderNotAvailableException e) {
             LOGGER.warn("NZ subscriber service is not available: {}", e.getMessage());
             skipCurrentPaymentAttempt(pendingPayment, e.getMessage());
         }
@@ -74,8 +80,16 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     }
 
     private void processPaymentFromNotSubscriber(PendingPayment pendingPayment) {
-        String reason = "User does not belong to VF";
+        LOGGER.info("Attempt to unsubscribe user [{}] because he is already non vf user");
+        processPaymentForWrongSubscriber(pendingPayment, "User does not belong to VF");
+    }
 
+    private void processPaymentForUnknownSubscriber(PendingPayment pendingPayment) {
+        LOGGER.info("Attempt to unsubscribe user by unknown user's msisdn VF response");
+        processPaymentForWrongSubscriber(pendingPayment, "VF doesn't know this user");
+    }
+
+    private void processPaymentForWrongSubscriber(PendingPayment pendingPayment, String reason) {
         paymentDetailsService.setErrorStatus(pendingPayment.getPaymentDetails(), reason, null);
 
         userService.unsubscribeUser(pendingPayment.getUser(), reason);
