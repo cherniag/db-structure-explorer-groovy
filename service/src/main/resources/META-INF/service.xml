@@ -337,7 +337,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
-                <value>file:#{systemProperties['catalina.base']}/conf/services</value>
+                <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/services</value>
                 <value>classpath:services</value>
             </list>
         </property>

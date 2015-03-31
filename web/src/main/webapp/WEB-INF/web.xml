@@ -9,7 +9,7 @@
 	<!-- The context params that read by ContextLoaderListener -->
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
-		<param-value>file:${catalina.base}/conf/webLog4j.xml</param-value>
+		<param-value>file:${catalina.base}/conf/${env}/webLog4j.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>log4jRefreshInterval</param-name>

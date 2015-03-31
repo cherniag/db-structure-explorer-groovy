@@ -19,8 +19,8 @@
 
     <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
-        <value>file:#{systemProperties['catalina.base']}/conf/gen-app.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
     </util:list>
 
     <bean id="configurationEncryptor"
@@ -48,10 +48,10 @@
 
         <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
             <value>classpath:application.properties</value>
-            <value>file:#{systemProperties['catalina.base']}/conf/gen-app.properties</value>
             <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
+            <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
             <value>classpath:application-tests/persistence.properties</value>
-            <value>file:#{systemProperties['catalina.base']}/conf/persistence.properties</value>
+            <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/persistence.properties</value>
             <value>classpath:application-tests/application.properties</value>
         </util:list>
     </beans>
