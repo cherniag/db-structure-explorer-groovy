@@ -353,7 +353,7 @@ public class PaymentDetailsService {
     public PaymentDetails activatePaymentDetailsByPayment(Long paymentDetailsId) {
         LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
 
-        final PaymentDetails paymentDetails = paymentDetailsDao.find(paymentDetailsId);
+        final PaymentDetails paymentDetails = paymentDetailsRepository.findOne(paymentDetailsId);
         final User user = paymentDetails.getOwner();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if (currentPaymentDetails != null) {

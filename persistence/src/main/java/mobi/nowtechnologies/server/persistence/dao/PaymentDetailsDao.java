@@ -58,12 +58,4 @@ public class PaymentDetailsDao extends JpaDaoSupport {
         LOGGER.debug("Output parameter [{}]", paymentDetails);
         return paymentDetails;
     }
-
-    public PaymentDetails find(Long paymentDetailsId) {
-        LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
-
-        PaymentDetails paymentDetails = entityDao.findById(PaymentDetails.class, paymentDetailsId);
-        LOGGER.debug("Output parameter [{}]", paymentDetails);
-        return paymentDetails;
-    }
 }

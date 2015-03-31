@@ -415,7 +415,7 @@ public class UserService {
     @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(int userId, UnsubscribeDto dto) {
         LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
-        User user = entityService.findById(User.class, userId);
+        User user = userRepository.findOne(userId);
         String reason = dto.getReason();
         if (!StringUtils.hasText(reason)) {
             reason = "Unsubscribed by user manually via web portal";

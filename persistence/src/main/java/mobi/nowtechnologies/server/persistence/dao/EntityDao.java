@@ -9,7 +9,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,21 +22,6 @@ public class EntityDao extends JpaDaoSupport {
     private static final String _AND_ = " and ";
     private static final String _O_WHERE_ = " o where ";
     private static final String _OR_ = " or ";
-
-    public <T> T findById(Class<T> entityClass, Object id) {
-        if (id == null) {
-            throw new NullPointerException("The parameter id is null");
-        }
-        if (entityClass == null) {
-            throw new NullPointerException("The parameter entityClass is null");
-        }
-        try {
-            return getJpaTemplate().find(entityClass, id);
-        } catch (DataAccessException dae) {
-            LOGGER.error(dae.getMessage(), dae);
-            throw new PersistenceException(dae);
-        }
-    }
 
     public <T> List<T> findAll(Class<T> entityClass) {
         return getJpaTemplate().find("select o from " + entityClass.getSimpleName() + " o");
@@ -89,22 +73,6 @@ public class EntityDao extends JpaDaoSupport {
             LOGGER.error(e.getMessage(), e);
             throw new PersistenceException("Couldn't remove entity");
         }
-    }
-
-    public <T> List<T> findListByProperty(Class<T> entityClass, String fieldName, Object fieldValue) {
-        if (entityClass == null) {
-            throw new PersistenceException("The parameter entityClass is null");
-        }
-        if (fieldName == null) {
-            throw new PersistenceException("The parameter fieldName is null");
-        }
-        if (fieldName.isEmpty()) {
-            throw new PersistenceException("The parameter fieldName is empty");
-        }
-
-        Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-        fieldNameValueMap.put(fieldName, fieldValue);
-        return findByPropertiesInternal(entityClass, fieldNameValueMap);
     }
 
     public <T> T findByProperty(Class<T> entityClass, String fieldName, Object fieldValue) {

@@ -63,16 +63,11 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 @Transactional
 @Ignore
 public class SMSNotificationIT {
-
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 
     @Autowired
     private SMSNotification smsNotificationFixture;
-
-    @Autowired
-    @Qualifier("service.WeeklyUpdateService")
-    private WeeklyUpdateService weeklyUpdateService;
 
     @Autowired
     @Qualifier("service.SpyUserService")
@@ -136,7 +131,6 @@ public class SMSNotificationIT {
         user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 
         Mockito.doReturn(null).when(userService).unsubscribeUser(any(User.class), anyString());
-        Mockito.doReturn(user).when(entityService).findById(any(Class.class), any(Object.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
