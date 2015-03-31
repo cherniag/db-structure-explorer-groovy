@@ -1,19 +1,25 @@
 package mobi.nowtechnologies.server.service.nz.impl;
 
-import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoProvider;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
-import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-import org.springframework.ws.client.WebServiceFaultException;
-import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBElement;
+
+import com.google.common.base.Preconditions;
+import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.ObjectFactory;
+import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.TChannel;
+import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.TConnectionRequest;
+import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.TConnectionResponse;
+import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.TConnectionResponseInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.util.Assert;
+import org.springframework.ws.client.WebServiceFaultException;
+import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 /**
  * @author Anton Zemliankin
