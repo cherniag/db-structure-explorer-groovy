@@ -1,3 +1,0 @@
-ALTER TABLE tb_paymentDetails
-ADD COLUMN token VARCHAR(40) DEFAULT NULL AFTER billingAgreementTxId,
-ADD COLUMN payerId VARCHAR(30) DEFAULT NULL AFTER token;
