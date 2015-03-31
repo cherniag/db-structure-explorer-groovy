@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.applicationtests.services.http.googleplus;
 
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
+import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService;
 
 import javax.annotation.Resource;
 

@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.applicationtests.services.http.facebook;
 
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
 
 import javax.annotation.Resource;
 
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class FacebookUserInfoGenerator {
 
-    public static final Gender GENDER = Gender.MALE;
     public static final String CITY = "Pripyat";
     public static final String COUNTRY = "USSR";
     public static final String FIRST_NAME = "Firstname";
@@ -44,10 +43,10 @@ public class FacebookUserInfoGenerator {
     }
 
     private SocialNetworkInfo doCreateAccessTokenInfo(String email, String userName, String facebookUserId, boolean excludeCountry) {
-        SocialNetworkInfo info = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
+        SocialNetworkInfo info = new SocialNetworkInfo(SocialNetworkType.FACEBOOK);
         info.setBirthday(new Date());
         info.setEmail(email);
-        info.setGender(GENDER);
+        info.setGenderType(GenderType.MALE);
         info.setCity(CITY);
         info.setUserName(userName);
         info.setSocialNetworkId(facebookUserId);

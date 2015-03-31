@@ -2,7 +2,7 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.service.social.facebook.impl;
+package mobi.nowtechnologies.server.service.social.facebook;
 
 /**
  * Created by enes on 3/11/15.

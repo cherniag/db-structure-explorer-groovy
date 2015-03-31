@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl;
 
-import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.service.social.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
-import mobi.nowtechnologies.server.shared.enums.Gender;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -35,7 +35,7 @@ public class FacebookClientImplTest {
         when(facebookProfile.getEmail()).thenReturn("email@dot.com");
         when(facebookProfile.getId()).thenReturn("101");
         when(facebookProfile.getBirthday()).thenReturn("24/06/1985");
-        when(facebookProfile.getGender()).thenReturn(Gender.MALE.getKey());
+        when(facebookProfile.getGender()).thenReturn(GenderType.MALE.getKey());
         when(facebookProfile.getLocation()).thenReturn(new Reference("1", "Kiev, Ukraine"));
         when(facebookProfile.getFirstName()).thenReturn("firstName");
         when(facebookProfile.getLastName()).thenReturn("lastName");
@@ -54,7 +54,7 @@ public class FacebookClientImplTest {
         assertEquals("email@dot.com", convert.getEmail());
         assertEquals("firstName", convert.getFirstName());
         assertEquals("lastName", convert.getLastName());
-        assertEquals(Gender.MALE, convert.getGender());
+        assertEquals(GenderType.MALE, convert.getGenderType());
         assertEquals("Kiev", convert.getCity());
         assertEquals("Ukraine", convert.getCountry());
         assertEquals(DateUtils.parseDate("24/06/1985", FacebookClient.DATE_FORMAT), convert.getBirthday());

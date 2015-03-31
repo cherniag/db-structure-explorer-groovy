@@ -1,14 +1,14 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.SocialInfoType;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
-import mobi.nowtechnologies.server.shared.enums.Gender;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 
@@ -46,11 +46,11 @@ public class UserDetailsDtoAsmTest {
         when(googlePlusUserInfo.getSocialNetworkId()).thenReturn("000001");
         when(googlePlusUserInfo.getFirstName()).thenReturn("Name");
         when(googlePlusUserInfo.getLastName()).thenReturn("Surname");
-        when(googlePlusUserInfo.getGender()).thenReturn(Gender.FEMALE);
+        when(googlePlusUserInfo.getGenderType()).thenReturn(GenderType.FEMALE);
         when(googlePlusUserInfo.getCity()).thenReturn("London");
         when(googlePlusUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
 
-        when(socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)).thenReturn(googlePlusUserInfo);
+        when(socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)).thenReturn(googlePlusUserInfo);
 
 
         // invoke
@@ -64,7 +64,7 @@ public class UserDetailsDtoAsmTest {
         assertEquals("000001", dtoUserDetails.getGooglePlusId());
         assertEquals("Name", dtoUserDetails.getFirstName());
         assertEquals("Surname", dtoUserDetails.getSurname());
-        assertEquals(Gender.FEMALE, dtoUserDetails.getGender());
+        assertEquals(GenderType.FEMALE.name(), dtoUserDetails.getGender());
         assertEquals("London", dtoUserDetails.getLocation());
         assertEquals("07/12/1980", dtoUserDetails.getBirthDay());
         assertEquals(SocialInfoType.GooglePlus, dtoUserDetails.getSocialInfoType());
@@ -82,10 +82,10 @@ public class UserDetailsDtoAsmTest {
         when(facebookUserInfo.getEmail()).thenReturn("a@bc.com");
         when(facebookUserInfo.getSocialNetworkId()).thenReturn("000001");
         when(facebookUserInfo.getCity()).thenReturn("London");
-        when(facebookUserInfo.getGender()).thenReturn(Gender.FEMALE);
+        when(facebookUserInfo.getGenderType()).thenReturn(GenderType.FEMALE);
         when(facebookUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
 
-        when(socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK)).thenReturn(facebookUserInfo);
+        when(socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK)).thenReturn(facebookUserInfo);
 
 
         // invoke
@@ -100,7 +100,7 @@ public class UserDetailsDtoAsmTest {
         assertEquals(String.format("%s%s/picture?type=large", GraphApi.GRAPH_API_URL, "000001"), dtoUserDetails.getProfileUrl());
         assertEquals("000001", dtoUserDetails.getFacebookId());
         assertEquals("London", dtoUserDetails.getLocation());
-        assertEquals(Gender.FEMALE, dtoUserDetails.getGender());
+        assertEquals(GenderType.FEMALE.name(), dtoUserDetails.getGender());
         assertEquals("07/12/1980", dtoUserDetails.getBirthDay());
         assertEquals(SocialInfoType.Facebook, dtoUserDetails.getSocialInfoType());
     }

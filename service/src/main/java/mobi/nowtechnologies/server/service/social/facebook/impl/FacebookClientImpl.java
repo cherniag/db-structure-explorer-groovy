@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl;
 
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.enums.Gender;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.service.social.facebook.FacebookProfileImage;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 
 import javax.annotation.Resource;
 
@@ -43,12 +44,12 @@ public class FacebookClientImpl implements FacebookClient {
             throw INVALID_FACEBOOK_TOKEN_EXCEPTION;
         }
 
-        SocialNetworkInfo details = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
+        SocialNetworkInfo details = new SocialNetworkInfo(SocialNetworkType.FACEBOOK);
         String id = profile.getId();
 
         details.setEmail(getEmail(profile));
         details.setBirthday(getBirthdayDate(profile));
-        details.setGender(Gender.restore(profile.getGender()));
+        details.setGenderType(GenderType.restore(profile.getGender()));
         assignCityAndCountry(profile, details);
 
         details.setFirstName(profile.getFirstName());

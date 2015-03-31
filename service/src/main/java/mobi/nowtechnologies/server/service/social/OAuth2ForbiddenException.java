@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.social.core;
+package mobi.nowtechnologies.server.service.social;
 
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 

@@ -5,12 +5,12 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
@@ -104,12 +104,13 @@ public class ReferralService {
         final ProviderType providerType = referral.getProviderType();
         final String contact = referral.getContact();
 
+        Integer id = community.getId();
         if (providerType == ProviderType.EMAIL) {
             User byContact = userRepository.findByUserNameAndCommunityUrl(contact, community.getRewriteUrlParameter());
-            return byContact != null && byContact.getCommunityId().equals(community.getId());
+            return byContact != null && byContact.getCommunityId().equals(id);
         }
         if (providerType == ProviderType.FACEBOOK || providerType == ProviderType.GOOGLE_PLUS) {
-            return !socialNetworkInfoRepository.findByEmailOrSocialId(contact, community, OAuthProvider.FACEBOOK).isEmpty();
+            return !socialNetworkInfoRepository.findByEmailOrSocialId(contact, id, SocialNetworkType.FACEBOOK).isEmpty();
         }
         throw new IllegalArgumentException("Not supported type: " + providerType + " to find by " + contact);
     }

@@ -2,7 +2,7 @@ package mobi.nowtechnologies.applicationtests.configuration;
 
 import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
+import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService;
 import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
 

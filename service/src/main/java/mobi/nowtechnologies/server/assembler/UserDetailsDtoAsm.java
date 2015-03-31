@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
@@ -26,14 +26,14 @@ public class UserDetailsDtoAsm {
 
     public UserDetailsDto toUserDetailsDto(User user) {
         if (ProviderType.FACEBOOK == user.getProvider()) {
-            SocialNetworkInfo facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+            SocialNetworkInfo facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
             if (facebookUserInfo != null) {
                 return convertFacebookInfoToDetails(facebookUserInfo);
             }
         }
 
         if (ProviderType.GOOGLE_PLUS == user.getProvider()) {
-            SocialNetworkInfo googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE);
+            SocialNetworkInfo googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE);
             if (googlePlusUserInfo != null) {
                 return convertGooglePlusInfoToDetails(googlePlusUserInfo);
             }
@@ -49,7 +49,7 @@ public class UserDetailsDtoAsm {
         result.setGooglePlusId(googlePlusUserInfo.getSocialNetworkId());
         result.setFirstName(googlePlusUserInfo.getFirstName());
         result.setSurname(googlePlusUserInfo.getLastName());
-        result.setGender(googlePlusUserInfo.getGender());
+        result.setGender(googlePlusUserInfo.getGenderType().name());
         result.setLocation(googlePlusUserInfo.getCity());
         result.setBirthDay(convertBirthday(googlePlusUserInfo.getBirthday()));
         return result;
@@ -64,7 +64,7 @@ public class UserDetailsDtoAsm {
         result.setProfileUrl(String.format("%s%s/picture?type=large", GraphApi.GRAPH_API_URL, details.getSocialNetworkId()));
         result.setFacebookId(details.getSocialNetworkId());
         result.setLocation(details.getCity());
-        result.setGender(details.getGender());
+        result.setGender(details.getGenderType().name());
         result.setBirthDay(convertBirthday(details.getBirthday()));
         return result;
     }

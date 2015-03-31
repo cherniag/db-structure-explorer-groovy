@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl.mock;
 
+import mobi.nowtechnologies.server.service.social.facebook.FacebookProfileImage;
 import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookOperationsAdaptor;
-import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
 
 import javax.annotation.Resource;
 

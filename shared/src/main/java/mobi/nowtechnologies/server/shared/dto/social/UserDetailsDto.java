@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.social;
 
 
-import mobi.nowtechnologies.server.shared.enums.Gender;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,7 +25,7 @@ public abstract class UserDetailsDto {
     private String location;
 
     private String userName;
-    private Gender gender;
+    private String gender;
     private String birthDay;
 
     public String getUserName() {
@@ -46,11 +44,11 @@ public abstract class UserDetailsDto {
         this.location = location;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 

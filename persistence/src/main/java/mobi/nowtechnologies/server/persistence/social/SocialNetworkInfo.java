@@ -1,7 +1,4 @@
-package mobi.nowtechnologies.server.social.domain;
-
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.enums.Gender;
+package mobi.nowtechnologies.server.persistence.social;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +12,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "social_network_info")
@@ -31,7 +28,7 @@ public class SocialNetworkInfo {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "social_network_type")
-    private OAuthProvider socialNetworkType;
+    private SocialNetworkType socialNetworkType;
 
     @Column(name = "social_network_id")
     private String socialNetworkId;
@@ -40,14 +37,11 @@ public class SocialNetworkInfo {
     private String email;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "gender")
-    private Gender gender;
+    @Column(name = "gender_type")
+    private GenderType genderType;
 
     @Column(name = "date_of_birth")
     private Date birthday;
-
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
 
     @Column(name = "last_name")
     private String lastName;
@@ -70,18 +64,22 @@ public class SocialNetworkInfo {
     @Column(name = "age_range_max")
     private Integer ageRangeMax;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @Column(name = "profile_image_silhouette")
     private boolean profileImageSilhouette;
 
-    protected SocialNetworkInfo(){}
+    protected SocialNetworkInfo() {}
 
-    public SocialNetworkInfo(OAuthProvider socialNetworkType){
+    public SocialNetworkInfo(SocialNetworkType socialNetworkType) {
         this.socialNetworkType = Preconditions.checkNotNull(socialNetworkType);
     }
 
     public String getEmail() {
         return email;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -89,20 +87,23 @@ public class SocialNetworkInfo {
     public Date getBirthday() {
         return birthday;
     }
+
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
-    public Gender getGender() {
-        return gender;
+    public GenderType getGenderType() {
+        return genderType;
     }
-    public void setGender(Gender gender) {
-        this.gender = gender;
+
+    public void setGenderType(GenderType genderType) {
+        this.genderType = genderType;
     }
 
     public String getFirstName() {
         return firstName;
     }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -110,6 +111,7 @@ public class SocialNetworkInfo {
     public String getLastName() {
         return lastName;
     }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -117,6 +119,7 @@ public class SocialNetworkInfo {
     public String getUserName() {
         return userName;
     }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -124,6 +127,7 @@ public class SocialNetworkInfo {
     public String getCity() {
         return city;
     }
+
     public void setCity(String city) {
         this.city = city;
     }
@@ -131,6 +135,7 @@ public class SocialNetworkInfo {
     public String getCountry() {
         return country;
     }
+
     public void setCountry(String country) {
         this.country = country;
     }
@@ -138,6 +143,7 @@ public class SocialNetworkInfo {
     public Integer getAgeRangeMin() {
         return ageRangeMin;
     }
+
     public void setAgeRangeMin(Integer ageRangeMin) {
         this.ageRangeMin = ageRangeMin;
     }
@@ -145,6 +151,7 @@ public class SocialNetworkInfo {
     public Integer getAgeRangeMax() {
         return ageRangeMax;
     }
+
     public void setAgeRangeMax(Integer ageRangeMax) {
         this.ageRangeMax = ageRangeMax;
     }
@@ -152,6 +159,7 @@ public class SocialNetworkInfo {
     public String getProfileImageUrl() {
         return profileImageUrl;
     }
+
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
@@ -159,15 +167,17 @@ public class SocialNetworkInfo {
     public boolean isProfileImageSilhouette() {
         return profileImageSilhouette;
     }
+
     public void setProfileImageSilhouette(boolean profileImageSilhouette) {
         this.profileImageSilhouette = profileImageSilhouette;
     }
 
-    public void setSocialNetworkId(String socialNetworkId) {
-        this.socialNetworkId = socialNetworkId;
-    }
     public String getSocialNetworkId() {
         return socialNetworkId;
+    }
+
+    public void setSocialNetworkId(String socialNetworkId) {
+        this.socialNetworkId = socialNetworkId;
     }
 
     public void setUserId(Integer userId) {

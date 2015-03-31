@@ -1,15 +1,11 @@
-package mobi.nowtechnologies.server.service.social.core;
+package mobi.nowtechnologies.server.service;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.ActivationEmailService;
-import mobi.nowtechnologies.server.service.MergeResult;
-import mobi.nowtechnologies.server.service.ReferralService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
 
 import javax.annotation.Resource;
@@ -63,7 +59,8 @@ public class UserPromoService {
         return mergeResult;
     }
 
-    private MergeResult doApplyPromo(User userAfterSignUp, SocialNetworkInfo socialNetworkInfo, SocialNetworkInfoRepository socialNetworkInfoRepository, ProviderType providerType, boolean disableReactivationForUser) {
+    private MergeResult doApplyPromo(User userAfterSignUp, SocialNetworkInfo socialNetworkInfo, SocialNetworkInfoRepository socialNetworkInfoRepository, ProviderType providerType,
+                                     boolean disableReactivationForUser) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
         User userForMerge = getUserForMerge(refreshedSignUpUser, socialNetworkInfo.getEmail());
         MergeResult mergeResult = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);

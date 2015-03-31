@@ -12,7 +12,8 @@ http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
        profile="application-tests">
 
     <utils:list id="listOfPackagesToScan">
-        <value>mobi.nowtechnologies.server.*.domain</value>
+        <value>mobi.nowtechnologies.server.persistence.social</value>
+        <value>mobi.nowtechnologies.server.persistence.domain</value>
         <value>mobi.nowtechnologies.server.persistence.apptests.domain</value>
     </utils:list>
 

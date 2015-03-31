@@ -9,8 +9,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd" profile="applicati
         <bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
 
         <!-- Google Plus -->
-        <bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService" />
-        <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTemplateProvider"/>
+        <bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService" />
+        <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTemplateProvider"/>
 
         <!-- O2 -->
         <bean id="service.O2Service" class="mobi.nowtechnologies.server.apptests.provider.o2.O2ServiceStub">

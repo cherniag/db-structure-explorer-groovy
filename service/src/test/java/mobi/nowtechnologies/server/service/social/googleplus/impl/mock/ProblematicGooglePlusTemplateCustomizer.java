@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.controller.googleplus;
+package mobi.nowtechnologies.server.service.social.googleplus.impl.mock;
 
 import org.springframework.http.HttpStatus;
 

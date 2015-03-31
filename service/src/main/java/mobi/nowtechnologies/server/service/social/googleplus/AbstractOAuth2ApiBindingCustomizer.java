@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.social.core;
+package mobi.nowtechnologies.server.service.social.googleplus;
 
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 

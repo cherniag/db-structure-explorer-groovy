@@ -18,12 +18,12 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
 import org.springframework.stereotype.Component
@@ -96,7 +96,7 @@ class FacebookSuccessFeature {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
-            def facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK)
+            def facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK)
 
             assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(user.getLastPromo().getCode(),
@@ -209,7 +209,7 @@ class FacebookSuccessFeature {
             assertEquals(phoneState.facebookUserId, expected.id)
 
             def user = userDbService.findUser(phoneState, it)
-            def actual = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK)
+            def actual = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK)
 
             assertEquals(expected.id, actual.getSocialNetworkId())
             assertEquals(expected.id, actual.getUserName())

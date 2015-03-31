@@ -17,9 +17,9 @@ import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataServi
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider
+import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
 import org.springframework.stereotype.Component
@@ -148,7 +148,7 @@ class GooglePlusSuccessFeature {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)
 
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
         }
@@ -184,7 +184,7 @@ class GooglePlusSuccessFeature {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)
             def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())

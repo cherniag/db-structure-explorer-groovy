@@ -7,14 +7,14 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
+import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
@@ -68,12 +68,12 @@ class CommonAssertionsService {
 
     def checkFacebookUserWasNotChanged(User before, User after) {
         checkUserWasNotChanged(before, after);
-        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), OAuthProvider.FACEBOOK));
+        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), SocialNetworkType.FACEBOOK));
     }
 
     def checkGooglePlusUserWasNotChanged(User before, User after) {
         checkUserWasNotChanged(before, after);
-        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), OAuthProvider.GOOGLE));
+        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), SocialNetworkType.GOOGLE));
     }
 
     def checkDeviceTypeField(UserDeviceData device, ClientDevicesSet devicesSet) {
@@ -200,7 +200,7 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK)
+            def facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK)
             def facebookProfile = appTestFacebookTokenService.parseToken(phoneState.facebookAccessToken)
             assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(facebookUserInfo.getFirstName(), FacebookUserInfoGenerator.FIRST_NAME)
@@ -247,7 +247,7 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.GOOGLE)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)
             def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())

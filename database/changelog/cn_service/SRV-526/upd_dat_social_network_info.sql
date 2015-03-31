@@ -1,7 +1,8 @@
 -- reusable script. no need transactions
 
 INSERT INTO social_network_info
-(id, user_id, social_network_type, social_network_id, email, gender, date_of_birth, profile_image_url, last_name, first_name, country, city, user_name, age_range_min, age_range_max, profile_image_silhouette)
+(id, user_id, social_network_type, social_network_id, email, gender_type, date_of_birth, profile_image_url, last_name, first_name, country, city, user_name, age_range_min, age_range_max,
+profile_image_silhouette)
   SELECT fb.id,
     si.user_id,
     'FACEBOOK',
@@ -23,7 +24,7 @@ INSERT INTO social_network_info
   WHERE fb.id NOT IN(SELECT id FROM social_network_info);
 
 INSERT INTO social_network_info
-(id, user_id, social_network_type, social_network_id, email, gender, date_of_birth, profile_image_url, last_name, first_name, country, city, user_name, age_range_min, age_range_max, profile_image_silhouette)
+(id, user_id, social_network_type, social_network_id, email, gender_type, date_of_birth, profile_image_url, last_name, first_name, country, city, user_name, age_range_min, age_range_max, profile_image_silhouette)
   SELECT gp.id,
     si.user_id,
     'GOOGLE',

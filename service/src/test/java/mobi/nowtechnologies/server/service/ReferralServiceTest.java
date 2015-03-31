@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;

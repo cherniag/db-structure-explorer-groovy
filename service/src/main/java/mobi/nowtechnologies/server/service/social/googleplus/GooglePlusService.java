@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.service.social.googleplus;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
-import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.enums.Gender;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
+import mobi.nowtechnologies.server.service.social.OAuth2ForbiddenException;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
 
 import javax.annotation.Resource;
 
@@ -49,13 +48,13 @@ public class GooglePlusService {
     }
 
     private SocialNetworkInfo convertForUser(Person personFromGooglePlus) {
-        SocialNetworkInfo result = new SocialNetworkInfo(OAuthProvider.GOOGLE);
+        SocialNetworkInfo result = new SocialNetworkInfo(SocialNetworkType.GOOGLE);
         result.setEmail(personFromGooglePlus.getAccountEmail());
         result.setSocialNetworkId(personFromGooglePlus.getId());
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
         result.setUserName(personFromGooglePlus.getDisplayName());
         result.setProfileImageUrl(extractImageUrl(personFromGooglePlus));
-        result.setGender(Gender.restore(personFromGooglePlus.getGender()));
+        result.setGenderType(GenderType.restore(personFromGooglePlus.getGender()));
         result.setCity(extractLocation(personFromGooglePlus));
         result.setFirstName(personFromGooglePlus.getGivenName());
         result.setLastName(personFromGooglePlus.getFamilyName());

@@ -53,7 +53,7 @@ public class AccountCheckDTO {
     public String promotionLabel;
 
     public boolean fullyRegistred;
-    public OAuthProvider oAuthProvider;
+    public String oAuthProvider;
     public boolean promotedDevice;
     public int promotedWeeks;
     public boolean hasPotentialPromoCodePromotion;

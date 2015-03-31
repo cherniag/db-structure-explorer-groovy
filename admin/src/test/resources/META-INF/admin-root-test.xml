@@ -6,7 +6,7 @@
     <import resource="classpath:META-INF/admin-services-test.xml"/>
     <import resource="classpath:META-INF/service-test.xml"/>
     <import resource="classpath:META-INF/dao-test.xml"/>
-    <import resource="classpath:META-INF/admin-dao-test.xml"/>
+    <!--<import resource="classpath:META-INF/admin-dao-test.xml"/>-->
     <import resource="classpath:META-INF/security-test.xml"/>
     <import resource="classpath:META-INF/shared.xml"/>
 

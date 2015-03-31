@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.applicationtests.services.http.domain.google_plus;
+package mobi.nowtechnologies.applicationtests.services.http.facebook;
 
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.Response;
@@ -8,21 +8,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author kots
- * @since 9/11/2014.
+ * @since 8/20/2014.
  */
 @XmlRootElement(name = "response")
-public class GooglePlusResponse {
+public class FacebookResponse {
 
-    private Error errorMessage;
+    //json hack
     private Response response;
     private User user;
+    private Error errorMessage;
 
-    public Response getResponse() {
-        return response;
+    public Error getErrorMessage() {
+        return errorMessage != null ?
+               errorMessage :
+               response.getData().get(0).getErrorMessage();
     }
 
-    public void setResponse(Response response) {
-        this.response = response;
+    public void setErrorMessage(Error errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public User getUser() {
@@ -36,22 +39,20 @@ public class GooglePlusResponse {
         this.user = user;
     }
 
-    public Error getErrorMessage() {
-        return errorMessage != null ?
-               errorMessage :
-               response.getData().get(0).getErrorMessage();
+    public Response getResponse() {
+        return response;
     }
 
-    public void setErrorMessage(Error errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
     @Override
     public String toString() {
-        return "GooglePlusResponse{" +
-               "errorMessage=" + errorMessage +
-               ", response=" + response +
+        return "FacebookResponse{" +
+               "response=" + response +
                ", user=" + user +
+               ", errorMessage=" + errorMessage +
                '}';
     }
 }

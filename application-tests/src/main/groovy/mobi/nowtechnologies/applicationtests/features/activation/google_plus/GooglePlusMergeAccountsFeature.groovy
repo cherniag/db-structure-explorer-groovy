@@ -16,7 +16,7 @@ import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataServi
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
+import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource

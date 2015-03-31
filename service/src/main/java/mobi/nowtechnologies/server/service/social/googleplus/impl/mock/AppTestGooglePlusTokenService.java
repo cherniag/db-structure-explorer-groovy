@@ -1,6 +1,6 @@
-package mobi.nowtechnologies.server.apptests.googleplus;
+package mobi.nowtechnologies.server.service.social.googleplus.impl.mock;
 
-import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
 
 import java.util.Collections;
 import java.util.Date;
@@ -77,8 +77,8 @@ public class AppTestGooglePlusTokenService {
             @Override
             public String getGender() {
                 return (Boolean.valueOf(values[7])) ?
-                       Gender.MALE.getKey() :
-                       Gender.FEMALE.getKey();
+                       GenderType.MALE.getKey() :
+                       GenderType.FEMALE.getKey();
             }
 
             @Override

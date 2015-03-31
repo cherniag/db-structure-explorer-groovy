@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
-import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
-import mobi.nowtechnologies.server.service.social.facebook.impl.FacebookProfileImage;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
+import mobi.nowtechnologies.server.service.social.OAuth2ForbiddenException;
 
 /**
  * Created by zam on 2/13/2015.

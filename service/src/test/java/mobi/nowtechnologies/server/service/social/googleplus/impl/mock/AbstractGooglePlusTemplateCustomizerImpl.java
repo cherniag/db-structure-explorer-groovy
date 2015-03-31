@@ -1,6 +1,6 @@
-package mobi.nowtechnologies.server.transport.controller.googleplus;
+package mobi.nowtechnologies.server.service.social.googleplus.impl.mock;
 
-import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
+import mobi.nowtechnologies.server.service.social.googleplus.AbstractOAuth2ApiBindingCustomizer;
 
 import java.io.File;
 import java.io.IOException;

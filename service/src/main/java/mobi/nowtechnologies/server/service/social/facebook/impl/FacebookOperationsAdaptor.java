@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl;
 
+import mobi.nowtechnologies.server.service.social.facebook.FacebookProfileImage;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;

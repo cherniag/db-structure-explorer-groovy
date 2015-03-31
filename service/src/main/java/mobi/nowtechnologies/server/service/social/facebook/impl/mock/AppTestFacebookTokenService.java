@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.social.facebook.impl.mock;
 
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -43,7 +43,7 @@ public class AppTestFacebookTokenService {
                info.getUserName() + "#" +           // 5
                // for the case when we need to omit the country: put NULL_VALUE_MARKER value instead and recognize it later (unparse)
                maskNullValueIfNeed(info.getCountry()) + "#" + // 6
-               info.getGender().name().toLowerCase() + "#" +  // 7
+               info.getGenderType().name().toLowerCase() + "#" +  // 7
                birthdayString;                                // 8
     }
 

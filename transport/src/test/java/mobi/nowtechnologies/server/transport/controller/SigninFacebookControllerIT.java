@@ -7,18 +7,18 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
-import mobi.nowtechnologies.server.social.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
+import mobi.nowtechnologies.server.persistence.social.GenderType;
 import static mobi.nowtechnologies.server.transport.controller.AccountCheckResponseConstants.USER_DETAILS_JSON_PATH;
 import static mobi.nowtechnologies.server.transport.controller.AccountCheckResponseConstants.USER_DETAILS_XML_PATH;
 import static mobi.nowtechnologies.server.transport.controller.AccountCheckResponseConstants.USER_JSON_PATH;
@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
-    public static final Gender GENDER = Gender.MALE;
+    public static final GenderType GENDER = GenderType.MALE;
     public static final String COUNTRY = "USSR";
     private final Date currentDate = new Date();
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
@@ -86,10 +86,10 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     private UserGroupRepository userGroupRepository;
 
     private SocialNetworkInfo doCreateAccessTokenInfo(String fbUserId, String otherFacebookEmail) {
-        SocialNetworkInfo info = new SocialNetworkInfo(OAuthProvider.FACEBOOK);
+        SocialNetworkInfo info = new SocialNetworkInfo(SocialNetworkType.FACEBOOK);
         info.setBirthday(currentDate);
         info.setEmail(otherFacebookEmail);
-        info.setGender(GENDER);
+        info.setGenderType(GENDER);
         info.setCity(locationInResponse);
         info.setCountry(COUNTRY);
         info.setUserName(fbUserId);
@@ -110,7 +110,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
 
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", user.getUserName()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
                                                                                       .param("DEVICE_UID", deviceUID).param("WIDTHXHEIGHT", widthHeight)).andExpect(status().isOk());
@@ -126,7 +126,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
 
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", user.getUserName()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
                                                                                        .param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
@@ -206,7 +206,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId, fbToken, true)).andExpect(status().isOk())
                .andDo(print());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(otherFacebookEmail, fbDetails.getEmail());
         assertEquals(otherFacebookUserId, fbDetails.getSocialNetworkId());
     }
@@ -219,13 +219,13 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
 
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
         user = userRepository.findByDeviceUIDAndCommunity(otherDeviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
     }
 
@@ -235,12 +235,12 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk()).andDo(print());
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
     }
 
@@ -296,7 +296,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                .andExpect(status().isOk());
         assertNull(reactivationUserInfoRepository.isUserShouldBeReactivated(user));
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", user.getUserName()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
                                                                                        .param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
@@ -313,7 +313,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         String userToken = getUserToken(resultActions, timestamp);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", user.getUserName()).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
                                                                                        .param("DEVICE_UID", deviceUID)).andExpect(status().isOk());
@@ -335,7 +335,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, false)).andExpect(status().isOk())
                .andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(true));
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, false)).andDo(print())
@@ -350,7 +350,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), OAuthProvider.FACEBOOK);
+        SocialNetworkInfo fbDetails = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK);
         assertEquals(fbEmail, fbDetails.getEmail());
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)).andDo(print())

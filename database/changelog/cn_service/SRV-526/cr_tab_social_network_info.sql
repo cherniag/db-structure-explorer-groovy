@@ -4,7 +4,7 @@ CREATE TABLE social_network_info (
   social_network_type varchar(10) NOT NULL,
   social_network_id varchar(100) NOT NULL,
   email varchar(100) DEFAULT NULL,
-  gender varchar(10) DEFAULT NULL,
+  gender_type varchar(10) DEFAULT NULL,
   date_of_birth date DEFAULT NULL,
   profile_image_url varchar(255) DEFAULT NULL,
   last_name varchar(100) DEFAULT NULL,

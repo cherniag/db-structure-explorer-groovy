@@ -14,7 +14,7 @@ import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNu
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -162,8 +162,8 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.eligibleForVideo = user.isEligibleForVideo();
 
         accountCheckDTO.oAuthProvider = (StringUtils.hasText(user.getFacebookId()) ?
-                                         OAuthProvider.FACEBOOK :
-                                         OAuthProvider.NONE);
+                                         SocialNetworkType.FACEBOOK.name() :
+                                         SocialNetworkType.NONE.name());
         accountCheckDTO.nextSubPaymentSeconds = nextSubPayment;
 
         if (potentialPromotion != null) {

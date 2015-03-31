@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.apptests.googleplus;
+package mobi.nowtechnologies.server.service.social.googleplus.impl.mock;
 
 import org.springframework.social.google.api.plus.Person;
 
