@@ -64,7 +64,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
     private DeviceService deviceService;
-    private CommunityService communityService;
     private UserTransactionRepository userTransactionRepository;
     private UserGroupRepository userGroupRepository;
     private UserRepository userRepository;
@@ -470,10 +469,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
     }
 
     public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {

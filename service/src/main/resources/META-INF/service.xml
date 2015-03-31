@@ -257,7 +257,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="userBannedRepository" ref="userBannedRepository" />
         <property name="deviceService" ref="service.DeviceService" />
-        <property name="communityService" ref="service.communityService"/>
         <property name="userTransactionRepository" ref="userTransactionRepository"/>
         <property name="userGroupRepository" ref="userGroupRepository"/>
         <property name="userRepository" ref="userRepository"/>
@@ -427,16 +426,16 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 
 	<bean id="service.MessageService" class="mobi.nowtechnologies.server.service.MessageService">
-		<property name="userService" ref="service.UserService" />
 		<property name="filterService" ref="service.FilterService" />
-		<property name="communityService" ref="service.communityService" />
 		<property name="messageRepository" ref="messageRepository" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
+        <property name="communityRepository" ref="communityRepository" />
 	</bean>
 
 	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
 		<property name="filterService" ref="service.FilterService" />
 		<property name="offerRepository" ref="offerRepository" />
+		<property name="communityRepository" ref="communityRepository" />
 		<property name="itemRepository" ref="itemRepository" />
 		<property name="userRepository" ref="userRepository" />
 		<property name="accountLogService" ref="service.AccountLogService" />

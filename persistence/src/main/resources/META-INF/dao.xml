@@ -99,17 +99,6 @@ http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframewor
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.CommunityDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
 			value="mobi.nowtechnologies.server.persistence.dao.UserStatusDao.setEntityDao" />
 		<property name="arguments">
 			<list>

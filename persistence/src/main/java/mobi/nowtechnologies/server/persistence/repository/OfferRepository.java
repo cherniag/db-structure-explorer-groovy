@@ -14,9 +14,6 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface OfferRepository extends JpaRepository<Offer, Integer> {
 
-    @Query("select COUNT(distinct offer) from Offer offer where offer.community=?")
-    long countWithFiltersByCommunity(Community community);
-
     @Query("select distinct offer from Offer offer left join FETCH offer.filterWithCtiteria where offer.community=? order by offer.title asc")
     List<Offer> findWithFiltersByCommunity(Community community);
 
