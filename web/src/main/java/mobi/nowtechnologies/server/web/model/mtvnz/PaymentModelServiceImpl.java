@@ -66,7 +66,7 @@ class PaymentModelServiceImpl implements PaymentModelService {
         model.put("smsPaymentPolicy", Iterables.getFirst(sorted, null));
 
         if(user.isPremium(timeService.now())) {
-            boolean vfPaymentType = user.getCurrentPaymentDetails() != null && PaymentDetails.VF_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());
+            boolean vfPaymentType = user.getCurrentPaymentDetails() != null && PaymentDetails.MTVNZ_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());
 
             model.put("vf", vfPaymentType);
 
