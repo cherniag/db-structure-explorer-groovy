@@ -166,6 +166,7 @@ public class PaymentDetailsService {
         return paymentDetails;
     }
 
+    @Transactional
     public PaymentDetails commitPaymentDetails(User user, PaymentDetails paymentDetails) {
         LOGGER.info("Start creation psms payment details for user [{}] and paymentPolicyId [{}]...", new Object[] {user.getUserName(), paymentDetails.getPaymentPolicy().getId()});
 

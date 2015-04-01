@@ -1,25 +1,30 @@
 package mobi.nowtechnologies.server.web.controller;
 
+import mobi.nowtechnologies.common.util.PhoneData;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.web.PaymentServiceFacade;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import mobi.nowtechnologies.server.web.model.EnterPhoneModelService;
+
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
-
 @Controller
 @RequestMapping("phone")
 public class EnterPhoneNumberController extends CommonController {
+    CommunityServiceFactory communityServiceFactory;
     @Resource
     UserRepository userRepository;
-
-    CommunityServiceFactory communityServiceFactory;
+    @Resource
+    PaymentServiceFacade paymentServiceFacade;
 
     @RequestMapping(value = {"check"}, method = RequestMethod.GET)
     public ModelAndView check() {
@@ -33,7 +38,7 @@ public class EnterPhoneNumberController extends CommonController {
 
     @RequestMapping(value = {"change"}, method = RequestMethod.GET)
     public ModelAndView reassign(@RequestParam("phone") String phone) {
-        ModelAndView modelAndView = process(phone);
+        ModelAndView modelAndView = process(phone, true);
         modelAndView.setViewName("phone/result");
         modelAndView.addObject("reassigned", true);
         return modelAndView;
@@ -41,13 +46,23 @@ public class EnterPhoneNumberController extends CommonController {
 
     @RequestMapping(value = {"result"}, method = RequestMethod.GET)
     public ModelAndView result(@RequestParam("phone") String phone) {
-        ModelAndView modelAndView = process(phone);
+        ModelAndView modelAndView = process(phone, false);
         modelAndView.setViewName("phone/result");
         return modelAndView;
     }
 
-    private ModelAndView process(String phone) {
+    private ModelAndView process(String phone, boolean reassign) {
         User user = userRepository.findOne(getUserId());
+
+        if(reassign) {
+            PhoneData phoneData = new PhoneData(phone);
+            user.setMobile(phoneData.getMobile());
+            if(user.hasActivePaymentDetails()) {
+                PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
+                paymentServiceFacade.createPaymentDetails(user, paymentPolicy);
+            }
+            userRepository.save(user);
+        }
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("phone", phone);
