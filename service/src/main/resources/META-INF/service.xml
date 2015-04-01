@@ -343,10 +343,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="paymentPolicyRepository" ref="paymentPolicyRepository" />
 	</bean>
 
-	<bean id="service.PaymentService" class="mobi.nowtechnologies.server.service.PaymentService">
-		<property name="paymentDao" ref="persistence.PaymentDao" />
-	</bean>
-
     <bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
         <property name="o2TariffService" ref="service.O2TariffService"/>
         <property name="restTemplate" ref="service.RestTemplate" />

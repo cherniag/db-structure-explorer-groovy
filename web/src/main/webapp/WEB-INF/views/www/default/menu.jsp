@@ -20,8 +20,6 @@
 		thirdItemCurrentStyle += current;
 	else if (uri.contains("one_click_subscription_successful.html"))
 		thirdItemCurrentStyle += current;
-	else if (uri.contains("payment_history.html"))
-		forthItemCurrentStyle += current;
 	else if (uri.contains("purchased_tracks.html"))
 		lastItemCurrentStyle += current;
 
@@ -49,10 +47,6 @@
 			<li class="${thirdItemCurrentStyle}">
 				<a href="payments_inapp.html"><s:message
 						code='page.main.menu.manage.payment' /> </a>
-			</li>
-			<li class="${forthItemCurrentStyle}">
-				<a href="payment_history.html?maxResults=10"><s:message
-						code='page.main.menu.trans.history' /> </a>
 			</li>
 			<li class="${lastItemCurrentStyle}">
 				<a href="purchased_tracks.html"><s:message

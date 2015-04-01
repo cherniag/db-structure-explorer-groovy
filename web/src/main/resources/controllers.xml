@@ -44,12 +44,6 @@
         <property name="specificCommunityResourcesFolderPath" value="${specificCommunityResourcesFolderPath}"/>
     </bean>
 
-    <bean name="web.PaymentHistoryController"
-          class="mobi.nowtechnologies.server.web.controller.PaymentHistoryController">
-        <property name="paymentService" ref="service.PaymentService"/>
-        <property name="messageSource" ref="messageSource"/>
-    </bean>
-
     <bean name="web.TracksController" class="mobi.nowtechnologies.server.web.controller.TracksController">
         <property name="mediaLogService" ref="service.MediaLogService"/>
         <property name="fileService" ref="service.FileService"/>
