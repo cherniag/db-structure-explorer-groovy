@@ -71,7 +71,6 @@
 	<bean id="service.migHttpService" class="mobi.nowtechnologies.server.service.payment.http.MigHttpService">
 		<property name="freeSMSURL" value="${mig.freeSMSURL}" />
 		<property name="premiumSMSURL" value="${mig.premiumSMSURL}" />
-		<property name="otaUrl" value="${mig.otaUrl}" />
 		<property name="postService" ref="shared.PostService" />
 		<property name="request">
 			<bean class="mobi.nowtechnologies.server.service.payment.request.MigRequest" />

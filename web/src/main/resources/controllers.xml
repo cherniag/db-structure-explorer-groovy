@@ -33,10 +33,6 @@
         <property name="authenticationManager" ref="authenticationManager"/>
     </bean>
 
-    <bean class="mobi.nowtechnologies.server.web.controller.GetAppController">
-        <property name="userService" ref="service.UserService"/>
-    </bean>
-
     <bean name="web.AccountController" class="mobi.nowtechnologies.server.web.controller.AccountController">
         <property name="userRepository" ref="userRepository"/>
         <property name="userService" ref="service.UserService"/>

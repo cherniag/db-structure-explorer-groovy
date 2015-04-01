@@ -12,9 +12,7 @@
 	String lastItemCurrentStyle = "lastItem";
 	String uri = (String) request.getAttribute("javax.servlet.forward.request_uri");
 
-	if (uri.contains("getapp.html"))
-		firstItemCurrentStyle += current;
-	else if (uri.contains("account.html"))
+	if (uri.contains("account.html"))
 		secondItemCurrentStyle += current;
 	else if (uri.contains("payments_inapp.html"))
 		thirdItemCurrentStyle += current;

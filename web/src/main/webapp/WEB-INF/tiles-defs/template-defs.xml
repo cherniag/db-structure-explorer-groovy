@@ -40,15 +40,7 @@
   </definition>
 
   <!-- END Unauthenticated pages -->
-  
-  <definition name="getapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/getapp/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/getapp/content.jsp"/>
-	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/footer.jsp"/>
-	  <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/footSection.jsp"/>
-  </definition>
-  
+
   <definition name="account" extends="mainTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/account/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>

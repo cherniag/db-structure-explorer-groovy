@@ -637,21 +637,6 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = REQUIRED)
-    public boolean sendSMSWithOTALink(String phone, int userId) {
-        User user = userRepository.findOne(userId);
-        String code = Utils.getOTACode(user.getId(), user.getUserName());
-        String[] args = {migHttpService.getOtaUrl() + "&CODE=" + code};
-        String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(phone);
-
-        user.setCode(code);
-        updateUser(user);
-        MigResponse response = migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-                                                                 messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toLowerCase(), "sms.otalink.text", args, null));
-        LOGGER.info("OTA link has been sent to user {}", userId);
-        return response.getHttpStatus() == 200;
-    }
-
     public void saveAccountDetails(AccountDto accountDto, int userId) {
         LOGGER.debug("input parameters accountDto: [{}]", accountDto);
 
