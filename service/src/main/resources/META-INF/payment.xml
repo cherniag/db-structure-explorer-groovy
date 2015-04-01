@@ -111,7 +111,7 @@
     <bean id="mtvnzPaymentSystemService" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService" parent="service.AbstractPaymentSystemService">
         <property name="retriesOnError" value="${mtvnz.retriesOnError}" />
         <property name="expireMillis" value="${mtvnz.pendingExpireMillis}" />
-        <property name="nzSubscriberInfoService" ref="service.NZSubscriberInfoService" />
+        <property name="nzSubscriberInfoProvider" ref="service.NZSubscriberInfoGateway" />
         <property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>
         <property name="smsGatewayService" ref="vf_nz.service.VFNZSMSGatewayService"/>
         <property name="paymentEventNotifier" ref="mtvnzPaymentEventNotifier"/>

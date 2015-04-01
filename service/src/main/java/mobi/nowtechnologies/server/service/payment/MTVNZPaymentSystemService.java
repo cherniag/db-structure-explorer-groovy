@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.server.service.payment;
 
+import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
 import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
-import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
-import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
+import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoProvider;
+import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
+import mobi.nowtechnologies.server.service.nz.ProviderConnectionException;
 import mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
@@ -28,7 +30,7 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     private static final Logger LOGGER = LoggerFactory.getLogger(MTVNZPaymentSystemService.class);
 
-    private NZSubscriberInfoService nzSubscriberInfoService;
+    private NZSubscriberInfoProvider nzSubscriberInfoProvider;
     private VFNZSMSGatewayServiceImpl smsGatewayService;
     private CommunityResourceBundleMessageSource messageSource;
     private PendingPaymentRepository pendingPaymentRepository;
@@ -36,16 +38,16 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     @Override
     @Transactional(propagation = REQUIRED)
     public void startPayment(PendingPayment pendingPayment) throws Exception {
-        String phoneNumber = null;
+        LOGGER.info("Start payment: {}", pendingPayment);
+        final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
+        final String phoneNumber = paymentDetails.getPhoneNumber();
+        final String normalizedPhoneNumber = phoneNumber.replaceFirst("\\+", "");
         try {
-            LOGGER.info("Start payment: {}", pendingPayment);
-            final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
-            phoneNumber = paymentDetails.getPhoneNumber();
-            phoneNumber = phoneNumber.replaceFirst("\\+", "");
-            boolean belongs = nzSubscriberInfoService.belongs(phoneNumber);
-            if(!belongs){
-                LOGGER.info("User {} is not VF subscriber", phoneNumber);
-                processPaymentFromNotSubscriber(pendingPayment);
+            NZSubscriberResult subscriberResult = nzSubscriberInfoProvider.getSubscriberResult(normalizedPhoneNumber);
+            NZProviderType nzProviderType = NZProviderType.of(subscriberResult.getProviderName());
+            if(nzProviderType != NZProviderType.VODAFONE){
+                LOGGER.info("User {} is not VF subscriber", normalizedPhoneNumber);
+                finishPaymentForNotSubscriber(pendingPayment);
                 return;
             }
             String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
@@ -55,17 +57,22 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
             if(smsResponse.isSuccessful()){
                 LOGGER.info("Payment request {} has been sent successfully", pendingPayment);
             } else {
-                LOGGER.warn("Could not send SMS payment request : {}, skip current attempt", smsResponse.getDescriptionError());
+                LOGGER.warn("Could not send SMS payment request for {} : {}, skip current attempt", phoneNumber, smsResponse.getDescriptionError());
                 skipCurrentPaymentAttempt(pendingPayment, smsResponse.getDescriptionError());
             }
-        }catch (MsisdnNotFoundException m){
-            LOGGER.warn("Couldn't clarify provider for msisdn [{}]. {}", phoneNumber, m.getMessage());
-            processPaymentForUnknownSubscriber(pendingPayment);
-        }catch (ProviderNotAvailableException e) {
-            LOGGER.warn("NZ subscriber service is not available: {}", e.getMessage());
+        } catch (ProviderConnectionException e) {
+            LOGGER.warn("Connection problem to NZ subscriber service: {}", e.getMessage());
             skipCurrentPaymentAttempt(pendingPayment, e.getMessage());
+        } catch (MsisdnNotFoundException e) {
+            LOGGER.warn("User {} with phone number {} was not found", pendingPayment.getUserId(), normalizedPhoneNumber);
+            finishPaymentForUnknownSubscriber(pendingPayment);
         }
 
+    }
+
+    @Override
+    public PaymentSystemResponse getExpiredResponse() {
+        return MTVNZResponse.errorResponse(null, null, "MTVNZ payment was expired");
     }
 
     @Override
@@ -79,14 +86,12 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
         super.commitPayment(pendingPayment, serviceUnavailableResponse);
     }
 
-    private void processPaymentFromNotSubscriber(PendingPayment pendingPayment) {
-        LOGGER.info("Attempt to unsubscribe user [{}] because he is already non vf user");
+    private void finishPaymentForNotSubscriber(PendingPayment pendingPayment) {
         processPaymentForWrongSubscriber(pendingPayment, "User does not belong to VF");
     }
 
-    private void processPaymentForUnknownSubscriber(PendingPayment pendingPayment) {
-        LOGGER.info("Attempt to unsubscribe user by unknown user's msisdn VF response");
-        processPaymentForWrongSubscriber(pendingPayment, "VF doesn't know this user");
+    private void finishPaymentForUnknownSubscriber(PendingPayment pendingPayment) {
+        processPaymentForWrongSubscriber(pendingPayment, "MSISDN not found");
     }
 
     private void processPaymentForWrongSubscriber(PendingPayment pendingPayment, String reason) {
@@ -101,11 +106,6 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
         getPaymentEventNotifier().onUnsubscribe(pendingPayment.getUser());
     }
 
-    @Override
-    public PaymentSystemResponse getExpiredResponse() {
-        return MTVNZResponse.errorResponse(null, null, "MTVNZ payment was expired");
-    }
-
     private String getPaymentNotificationText(PendingPayment pendingPayment, String shortCode) {
         Period period = pendingPayment.getPeriod();
         String communityRewriteUrl = pendingPayment.getUser().getCommunityRewriteUrl();
@@ -116,8 +116,8 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
         return messageSource.getMessage(communityRewriteUrl, key, args, null);
     }
 
-    public void setNzSubscriberInfoService(NZSubscriberInfoService nzSubscriberInfoService) {
-        this.nzSubscriberInfoService = nzSubscriberInfoService;
+    public void setNzSubscriberInfoProvider(NZSubscriberInfoProvider nzSubscriberInfoProvider) {
+        this.nzSubscriberInfoProvider = nzSubscriberInfoProvider;
     }
 
     public void setSmsGatewayService(VFNZSMSGatewayServiceImpl smsGatewayService) {

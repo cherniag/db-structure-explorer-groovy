@@ -46,6 +46,7 @@ import com.sentaca.spring.smpp.mt.MTMessage;
 
 import org.junit.*;
 import org.junit.runner.*;
+import org.mockito.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
@@ -55,6 +56,8 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
 public class MTVNZPaymentSystemServiceIT {
+    private static final String SHORT_CODE = "2150";
+    private static final String COMMUNITY_REWRITE_URL = "mtv1";
 
     @Resource(name = "mtvnzPaymentSystemService")
     private MTVNZPaymentSystemService mtvnzPaymentSystemService;
@@ -80,76 +83,80 @@ public class MTVNZPaymentSystemServiceIT {
     private AccountLogRepository accountLogRepository;
     @Resource(name = "vf_nz.service.VFNZSMSGatewayService")
     private VFNZSMSGatewayServiceImpl smsGatewayService;
-    private SMPPServiceImpl smppService;
+
+    private ArgumentCaptor<MTMessage> messageArgumentCaptor = ArgumentCaptor.forClass(MTMessage.class);
 
     private BigDecimal subcost = BigDecimal.valueOf(1.29);
     private User user;
-    private PaymentDetails paymentDetails;
+    private MTVNZPSMSPaymentDetails paymentDetails;
     private PaymentPolicy paymentPolicy;
 
     @Before
     public void setUp() throws Exception {
-        smppService = mock(SMPPServiceImpl.class);
+        SMPPServiceImpl smppService = mock(SMPPServiceImpl.class);
         SMSResponse smsResponse = mock(SMSResponse.class);
         when(smsResponse.isSuccessful()).thenReturn(true);
-        when(smppService.sendMessage(any(MTMessage.class))).thenReturn(smsResponse);
+        when(smppService.sendMessage(messageArgumentCaptor.capture())).thenReturn(smsResponse);
         smsGatewayService.setSmppService(smppService);
+
         taskRepository.deleteAll();
     }
 
 
     @Test
-    public void startPayment() throws Exception {
-        final String vFPhoneNumber = "641000000";
-        final String communityRewriteUrl = "mtv1";
-        user = createUser(Utils.getRandomUUID(), Utils.getRandomUUID(), communityRewriteUrl);
-        paymentPolicy = createPaymentPolicy(communityRewriteUrl, PaymentPolicyType.RECURRENT);
-        paymentDetails = createPaymentDetails(user, paymentPolicy, vFPhoneNumber);
-        PendingPayment pendingPayment = createPendingPayment(user, paymentDetails);
+    public void startPaymentSuccess() throws Exception {
+        final String validVFPhoneNumber = "+641000000";
+        PendingPayment pendingPayment = createPendingPayment(validVFPhoneNumber);
 
         mtvnzPaymentSystemService.startPayment(pendingPayment);
 
-        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.SUCCESSFUL));
-        assertEquals(0, submittedPayments.size());
+        paymentSMSWasSentToProvider(validVFPhoneNumber);
+        userHasNotPaid(); // async vf response has not been received yet
+        noSubmittedPaymentsForUser();
+        pendingPaymentExists(); // until vf response received
 
-        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
-        assertEquals(1, pendingPayments.size());
-        assertEquals(PaymentDetails.MTVNZ_PSMS_TYPE, pendingPayments.get(0).getPaymentSystem());
-        assertEquals(BigDecimal.valueOf(1.29), pendingPayments.get(0).getAmount());
     }
 
     @Test
-    public void startPaymentIfUserNotSubscriber() throws Exception {
-        final String notVFPhoneNumber = "649000000";
-        final String communityRewriteUrl = "mtv1";
-        user = createUser(Utils.getRandomUUID(), Utils.getRandomUUID(), communityRewriteUrl);
-        paymentPolicy = createPaymentPolicy(communityRewriteUrl, PaymentPolicyType.RECURRENT);
-        paymentDetails = createPaymentDetails(user, paymentPolicy, notVFPhoneNumber);
-        PendingPayment pendingPayment = createPendingPayment(user, paymentDetails);
+    public void startPaymentIfUserDoesNotBelongToVF() throws Exception {
+        final String notBelongToVFPhoneNumber = "+649000000";
+        PendingPayment pendingPayment = createPendingPayment(notBelongToVFPhoneNumber);
 
         mtvnzPaymentSystemService.startPayment(pendingPayment);
 
-        User found = userRepository.findOne(user.getId());
-        assertFalse(found.isSubscribedStatus());
-        assertTrue(found.getNextSubPayment() < timeService.nowSeconds());
-        assertNull(found.getLastSubscribedPaymentSystem());
+        userHasNotPaid();
+        paymentDetailsWereDisabled("User does not belong to VF");
+        noPendingPaymentsForUser();
+        noSubmittedPaymentsForUser();
+        sendUnsubscribeNotificationTaskIsSheduled();
+    }
 
-        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
-        assertFalse(foundPaymentDetails.isActivated());
-        assertEquals("User does not belong to VF", foundPaymentDetails.getDescriptionError());
-        assertEquals(PaymentDetailsStatus.ERROR, foundPaymentDetails.getLastPaymentStatus());
-        assertTrue(foundPaymentDetails.getDisableTimestampMillis() > 0);
+    @Test
+    public void startPaymentIfMSISDNNotFound() throws Exception {
+        final String notFoundInVFPhoneNumber = "+380939000000";
+        PendingPayment pendingPayment = createPendingPayment(notFoundInVFPhoneNumber);
 
-        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
-        assertEquals(0, pendingPayments.size());
+        mtvnzPaymentSystemService.startPayment(pendingPayment);
 
-        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.ERROR));
-        assertEquals(0, submittedPayments.size());
+        userHasNotPaid();
+        paymentDetailsWereDisabled("MSISDN not found");
+        noPendingPaymentsForUser();
+        noSubmittedPaymentsForUser();
+        sendUnsubscribeNotificationTaskIsSheduled();
+    }
 
-        List<UserTask> userTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendUnsubscribeNotificationTask.TASK_TYPE);
-        assertEquals(user.getId(), userTasks.get(0).getUser().getId());
-        assertTrue(userTasks.get(0).getExecutionTimestamp() < timeService.now().getTime());
-        assertTrue(userTasks.get(0).getCreationTimestamp() < timeService.now().getTime());
+    @Test
+    public void startPaymentIfProviderConnectionProblem() throws Exception {
+        final String connectionProblemVFPhoneNumber = "+648000000";
+        PendingPayment pendingPayment = createPendingPayment(connectionProblemVFPhoneNumber);
+
+        mtvnzPaymentSystemService.startPayment(pendingPayment);
+
+        userHasNotPaid();
+        paymentDetailsWithErrorStatusButStillActivatedWithoutIncrement();
+        noPendingPaymentsForUser();
+        submittedPaymentExists();
+        noSendUnsubscribeNotificationTaskForUser();
     }
 
     @After
@@ -167,7 +174,87 @@ public class MTVNZPaymentSystemServiceIT {
         userRepository.delete(user);
     }
 
-    private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails){
+    private PendingPayment createPendingPayment(String validVFPhoneNumber) {
+        createUser();
+        createPaymentPolicy();
+        createPaymentDetails(validVFPhoneNumber);
+        return createPendingPayment();
+    }
+
+    private void paymentSMSWasSentToProvider(String msisdn) {
+        MTMessage sentMessage = messageArgumentCaptor.getValue();
+        assertEquals(SHORT_CODE, sentMessage.getOriginatingAddress());
+        assertEquals(msisdn, sentMessage.getDestinationAddress());
+        assertEquals("Your payment for your weekly MTV Trax subscription was successful. You were charged $" + subcost + ". To unsubscribe, text STOP to 2150", sentMessage.getContent());
+    }
+
+
+    private void submittedPaymentExists() {
+        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.values()));
+        assertEquals(1, submittedPayments.size());
+        assertEquals(PaymentDetailsStatus.ERROR, submittedPayments.get(0).getStatus());
+        assertEquals(PaymentDetails.MTVNZ_PSMS_TYPE, submittedPayments.get(0).getPaymentSystem());
+        assertEquals(subcost, submittedPayments.get(0).getAmount());
+    }
+
+    private void paymentDetailsWithErrorStatusButStillActivatedWithoutIncrement() {
+        User found = userRepository.findOne(user.getId());
+        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
+        assertTrue(foundPaymentDetails.isActivated());
+        assertEquals("Unexpected http status code [503] so the madeRetries won't be incremented", foundPaymentDetails.getDescriptionError());
+        assertEquals(PaymentDetailsStatus.ERROR, foundPaymentDetails.getLastPaymentStatus());
+        assertEquals(0, foundPaymentDetails.getDisableTimestampMillis());
+        assertEquals(0, foundPaymentDetails.getMadeAttempts());
+        assertEquals(-1, foundPaymentDetails.getMadeRetries());
+    }
+
+    private void noSendUnsubscribeNotificationTaskForUser() {
+        List<UserTask> userTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendUnsubscribeNotificationTask.TASK_TYPE);
+        assertTrue(userTasks.isEmpty());
+    }
+
+    private User userHasNotPaid() {
+        User found = userRepository.findOne(user.getId());
+        assertFalse(found.isSubscribedStatus());
+        assertTrue(found.getNextSubPayment() < timeService.nowSeconds());
+        assertNull(found.getLastSubscribedPaymentSystem());
+        return found;
+    }
+
+    private void noPendingPaymentsForUser() {
+        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
+        assertEquals(0, pendingPayments.size());
+    }
+
+    private void sendUnsubscribeNotificationTaskIsSheduled() {
+        List<UserTask> userTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendUnsubscribeNotificationTask.TASK_TYPE);
+        assertEquals(user.getId(), userTasks.get(0).getUser().getId());
+        assertTrue(userTasks.get(0).getExecutionTimestamp() < timeService.now().getTime());
+        assertTrue(userTasks.get(0).getCreationTimestamp() < timeService.now().getTime());
+    }
+
+    private void paymentDetailsWereDisabled(String reason) {
+        User found = userRepository.findOne(user.getId());
+        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
+        assertFalse(foundPaymentDetails.isActivated());
+        assertEquals(reason, foundPaymentDetails.getDescriptionError());
+        assertEquals(PaymentDetailsStatus.ERROR, foundPaymentDetails.getLastPaymentStatus());
+        assertTrue(foundPaymentDetails.getDisableTimestampMillis() > 0);
+    }
+
+    private void pendingPaymentExists() {
+        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
+        assertEquals(1, pendingPayments.size());
+        assertEquals(PaymentDetails.MTVNZ_PSMS_TYPE, pendingPayments.get(0).getPaymentSystem());
+        assertEquals(BigDecimal.valueOf(1.29), pendingPayments.get(0).getAmount());
+    }
+
+    private void noSubmittedPaymentsForUser() {
+        List<SubmittedPayment>  submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.values()));
+        assertEquals(0, submittedPayments.size());
+    }
+
+    private PendingPayment createPendingPayment(){
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(paymentDetails);
@@ -176,25 +263,24 @@ public class MTVNZPaymentSystemServiceIT {
         pendingPayment.setPeriod(paymentDetails.getPaymentPolicy().getPeriod());
         pendingPayment.setAmount(paymentDetails.getPaymentPolicy().getSubcost());
         pendingPayment.setCurrencyISO(paymentDetails.getPaymentPolicy().getCurrencyISO());
-        return pendingPaymentRepository.saveAndFlush(pendingPayment);
+        return pendingPaymentRepository.save(pendingPayment);
     }
 
-    private User createUser(String userName, String deviceUID, String communityRewriteUrl) {
-        User user = new User();
-        user.setDeviceUID(deviceUID);
-        user.setUserName(userName);
-        UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
+    private void createUser() {
+        user = new User();
+        user.setUserName(Utils.getRandomUUID());
+        user.setDeviceUID(Utils.getRandomUUID());
+        UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(COMMUNITY_REWRITE_URL);
         user.setUserGroup(userGroup);
         user.setNextSubPayment(timeService.nowSeconds() - 10);
         user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
         user.setStatus(UserStatusDao.getLimitedUserStatus());
         user.setActivationStatus(ActivationStatus.ACTIVATED);
-        user = userRepository.saveAndFlush(user);
-        return user;
+        userRepository.save(user);
     }
 
-    private PaymentDetails createPaymentDetails(User user, PaymentPolicy paymentPolicy, String phoneNumber){
-        MTVNZPSMSPaymentDetails paymentDetails = new MTVNZPSMSPaymentDetails();
+    private void createPaymentDetails(String phoneNumber){
+        paymentDetails = new MTVNZPSMSPaymentDetails();
         paymentDetails.setActivated(true);
         paymentDetails.setOwner(user);
         paymentDetails.setPaymentPolicy(paymentPolicy);
@@ -203,21 +289,20 @@ public class MTVNZPaymentSystemServiceIT {
         paymentDetails.resetMadeAttemptsForFirstPayment();
         paymentDetails = paymentDetailsRepository.save(paymentDetails);
         user.setCurrentPaymentDetails(paymentDetails);
-        userRepository.saveAndFlush(user);
-        return paymentDetails;
+        userRepository.save(user);
     }
 
-    private PaymentPolicy createPaymentPolicy(String communityRewriteUrl, PaymentPolicyType paymentPolicyType){
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
+    private void createPaymentPolicy(){
+        paymentPolicy = new PaymentPolicy();
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(PaymentDetails.MTVNZ_PSMS_TYPE);
         paymentPolicy.setSubcost(subcost);
         paymentPolicy.setPeriod(new Period(WEEKS, 1));
         paymentPolicy.setMediaType(MediaType.AUDIO);
-        paymentPolicy.setShortCode("2150");
+        paymentPolicy.setShortCode(SHORT_CODE);
         paymentPolicy.setTariff(Tariff._3G);
-        paymentPolicy.setPaymentPolicyType(paymentPolicyType);
-        paymentPolicy.setCommunity(communityRepository.findByRewriteUrlParameter(communityRewriteUrl));
-        return paymentPolicyRepository.saveAndFlush(paymentPolicy);
+        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.RECURRENT);
+        paymentPolicy.setCommunity(communityRepository.findByRewriteUrlParameter(COMMUNITY_REWRITE_URL));
+        paymentPolicyRepository.save(paymentPolicy);
     }
 }
