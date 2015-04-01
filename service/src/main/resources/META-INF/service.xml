@@ -294,7 +294,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
-		<property name="mediaService" ref="service.MediaService" />
         <property name="mediaRepository" ref="mediaRepository"/>
 	</bean>
 

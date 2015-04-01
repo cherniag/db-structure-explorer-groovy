@@ -335,7 +335,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     @Transactional(propagation = REQUIRED)
     protected Promotion setPotentialPromoByPromoCode(User user, String code) {
         LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
-        Community community = user.getUserGroup().getCommunity();
         if (code != null) {
             Promotion potentialPromoCodePromotion = getActivePromotion(user.getUserGroup(), code);
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
@@ -398,12 +397,8 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     }
 
     public boolean isUserNotBanned(User user) {
-        UserBanned userBanned = getUserBanned(user.getId());
+        UserBanned userBanned = userBannedRepository.findOne(user.getId());
         return isNull(userBanned) || userBanned.isGiveAnyPromotion();
-    }
-
-    private UserBanned getUserBanned(Integer userId) {
-        return userBannedRepository.findOne(userId);
     }
 
     private boolean couldNotBeApplied(User user, Promotion promotion) {

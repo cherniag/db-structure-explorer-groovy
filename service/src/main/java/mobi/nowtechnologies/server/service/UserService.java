@@ -482,9 +482,6 @@ public class UserService {
     }
 
     public String convertPhoneNumberFromGreatBritainToInternationalFormat(String mobile) {
-        if (mobile == null) {
-            throw new ServiceException("The parameter mobile is null");
-        }
         if (!mobile.startsWith("0044")) {
             return mobile.replaceFirst("0", "0044");
         }

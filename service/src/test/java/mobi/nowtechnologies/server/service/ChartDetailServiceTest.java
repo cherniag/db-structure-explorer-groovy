@@ -711,7 +711,6 @@ public class ChartDetailServiceTest {
         mediaRepository = PowerMockito.mock(MediaRepository.class);
         mockMediaService = PowerMockito.mock(MediaService.class);
 
-        fixtureChartDetailService.setMediaService(mockMediaService);
         fixtureChartDetailService.setMediaRepository(mediaRepository);
     }
 

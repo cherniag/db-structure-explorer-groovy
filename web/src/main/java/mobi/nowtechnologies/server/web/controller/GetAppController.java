@@ -2,17 +2,13 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.GetPhoneDto;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.GetAppValidator;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,20 +23,19 @@ public class GetAppController extends CommonController {
     private UserService userService;
 
     @InitBinder(GetPhoneDto.NAME)
-    public void initBinder(HttpServletRequest request, WebDataBinder binder) {
+    public void initBinder(WebDataBinder binder) {
         binder.setValidator(new GetAppValidator());
     }
 
     @RequestMapping(value = "getapp.html", method = RequestMethod.GET)
-    public ModelAndView getAppPage(HttpServletRequest request) {
+    public ModelAndView getAppPage() {
         ModelAndView modelAndView = new ModelAndView(VIEW_NAME);
         modelAndView.addObject(GetPhoneDto.NAME, new GetPhoneDto());
         return modelAndView;
     }
 
     @RequestMapping(value = "getapp.html", method = RequestMethod.POST)
-    public ModelAndView senOtaLink(HttpServletRequest request, @Valid @ModelAttribute(GetPhoneDto.NAME) GetPhoneDto getPhoneDto, BindingResult bindingResult,
-                                   @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+    public ModelAndView senOtaLink(@Valid @ModelAttribute(GetPhoneDto.NAME) GetPhoneDto getPhoneDto, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
         boolean sentStatus = false;
         if (!bindingResult.hasErrors()) {

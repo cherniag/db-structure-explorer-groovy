@@ -73,13 +73,11 @@
 				<value>mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.ChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.Response</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.DeviceSet</value>
 				<value>mobi.nowtechnologies.server.shared.dto.DrmDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.DrmItemDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.SetPassword</value>
 				<value>mobi.nowtechnologies.server.shared.dto.BuyTrackDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.ErrorMessage</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
