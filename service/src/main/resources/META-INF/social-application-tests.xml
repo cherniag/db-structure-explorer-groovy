@@ -10,7 +10,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd" profile="applicati
 
         <!-- Google Plus -->
         <bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService" />
-        <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTemplateProvider"/>
+        <bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusOperationsAdaptor"/>
 
         <!-- O2 -->
         <bean id="service.O2Service" class="mobi.nowtechnologies.server.apptests.provider.o2.O2ServiceStub">

@@ -5,7 +5,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- Google Plus -->
-    <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusTemplateProviderImpl"/>
+    <bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.googleplus.impl.GooglePlusOperationsAdaptor"/>
+    <bean id="service.GooglePlusClient" class="mobi.nowtechnologies.server.service.social.googleplus.impl.GooglePlusClientImpl"/>
+
     <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
     <!-- Facebook -->

@@ -130,7 +130,7 @@ class GooglePlusSuccessFeature {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def googlePlusInfo = phoneState.lastGooglePlusInfo.userDetails
-            def person = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
+            def person = appTestGooglePlusTokenService.parseToken(phoneState.googlePlusToken)
 
             assertEquals(googlePlusInfo.googlePlusId, person.id)
             assertEquals(googlePlusInfo.birthDay, dateFormat.format(person.birthday))
@@ -185,7 +185,7 @@ class GooglePlusSuccessFeature {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)
-            def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
+            def googlePlusProfile = appTestGooglePlusTokenService.parseToken(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())
             assertEquals(googlePlusUserInfo.getLastName(), googlePlusProfile.getFamilyName())

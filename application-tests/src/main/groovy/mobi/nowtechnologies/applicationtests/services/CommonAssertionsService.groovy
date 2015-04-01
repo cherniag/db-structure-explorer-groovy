@@ -248,7 +248,7 @@ class CommonAssertionsService {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)
-            def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
+            def googlePlusProfile = appTestGooglePlusTokenService.parseToken(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())
             assertEquals(googlePlusUserInfo.getLastName(), googlePlusProfile.getFamilyName())

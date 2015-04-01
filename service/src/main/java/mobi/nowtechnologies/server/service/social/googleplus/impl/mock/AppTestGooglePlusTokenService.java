@@ -1,95 +1,46 @@
 package mobi.nowtechnologies.server.service.social.googleplus.impl.mock;
 
 import mobi.nowtechnologies.server.persistence.social.GenderType;
+import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.social.google.api.plus.Person;
+import org.springframework.web.client.RestClientException;
 
 public class AppTestGooglePlusTokenService {
 
     private static final String AUTH_ERROR = "AUTH_ERROR";
 
-    public String build(String id, String email, long time, String displayName, String givenName, String familyName, String imageUrl, boolean male, String location, String homepageUrl) {
-        return                        // index
-            id + "#" +            // 0
-            email + "#" +         // 1
-            time + "#" +          // 2
-            displayName + "#" +   // 3
-            givenName + "#" +     // 4
-            familyName + "#" +    // 5
-            imageUrl + "#" +      // 6
-            male + "#" +         // 7
-            location + "#" +      // 8
-            homepageUrl;    // 9
+    public String buildToken(SocialNetworkInfo info) {
+        return                                      // index
+               info.getSocialNetworkId() + "#" +    // 0
+               info.getEmail() + "#" +              // 1
+               info.getBirthday().getTime() + "#" + // 2
+               info.getUserName() + "#" +           // 3
+               info.getFirstName() + "#" +          // 4
+               info.getLastName() + "#" +           // 5
+               info.getProfileImageUrl() + "#" +    // 6
+               info.getGenderType() + "#" +         // 7
+               info.getCity();                      // 8
     }
 
-    public String buildTokenWithTokenError(String id, String email, long time, String displayName, String givenName, String familyName, String imageUrl, boolean male, String location,
-                                           String homepageUrl) {
-        return build(id, email, time, displayName, givenName, familyName, imageUrl, male, location, homepageUrl) + "#" + AUTH_ERROR;   // 10
+    public String buildTokenWithTokenError(SocialNetworkInfo info) {
+        return buildToken(info) + "#" + AUTH_ERROR;   // 9
     }
 
-    public Person parse(String token) {
-        final String[] values = token.split("#");
+    public Person parseToken(String token) {
+        final String[] split = token.split("#");
 
-        if (values.length == 11 && values[10].equals(AUTH_ERROR)) {
-            return new FailureGooglePlusPerson();
+        if (split.length == 10 && split[9].equals(AUTH_ERROR)) {
+            throw new RestClientException("token error");
+        } else {
+            GenderType gender = GenderType.valueOf(split[7]);
+            Date birthday = new Date(Long.parseLong(split[2]));
+
+            return new SuccessfulGooglePlusProfile(split[0], split[4], split[5], split[3], split[6], birthday, gender.getKey(), split[1], Collections.singletonMap(split[8], true));
         }
 
-        return new Person() {
-            @Override
-            public String getUrl() {
-                return values[9];
-            }
-
-            @Override
-            public String getId() {
-                return values[0];
-            }
-
-            @Override
-            public String getGivenName() {
-                return values[4];
-            }
-
-            @Override
-            public String getFamilyName() {
-                return values[5];
-            }
-
-            @Override
-            public String getDisplayName() {
-                return values[3];
-            }
-
-            @Override
-            public String getImageUrl() {
-                return values[6];
-            }
-
-            @Override
-            public Date getBirthday() {
-                return new Date(Long.parseLong(values[2]));
-            }
-
-            @Override
-            public String getGender() {
-                return (Boolean.valueOf(values[7])) ?
-                       GenderType.MALE.getKey() :
-                       GenderType.FEMALE.getKey();
-            }
-
-            @Override
-            public String getAccountEmail() {
-                return values[1];
-            }
-
-            @Override
-            public Map<String, Boolean> getPlacesLived() {
-                return Collections.singletonMap(values[8], true);
-            }
-        };
     }
 }
