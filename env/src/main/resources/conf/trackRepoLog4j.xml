@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-  ~ Copyright 2015 Musicqubed.com. All Rights Reserved.
-  -->
-
 <!DOCTYPE log4j:configuration SYSTEM
         "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 
-<!--Web log config file-->
-
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-    <appender name="admin-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/admin.log"/>
+    <appender name="track-repo-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/track-repo.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/admin_%d{yyyy-MM-dd}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/track-repo_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
@@ -22,11 +16,11 @@
         </layout>
     </appender>
 
-    <appender name="errors-admin-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/errors-admin.log"/>
+    <appender name="errors-track-repo-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/errors-track-repo.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/errors-admin_%d{yyyy-MM-dd}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/errors-track-repo_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
@@ -40,11 +34,11 @@
         </filter>
     </appender>
 
-    <appender name="business-logic-admin-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/business-logic-admin.log"/>
+    <appender name="business-logic-track-repo-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/business-logic-track-repo.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/business-logic-admin_%d{yyyy-MM-dd}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/business-logic-track-repo_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
@@ -53,11 +47,11 @@
         </layout>
     </appender>
 
-    <appender name="persistence-admin-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/persistence-admin.log"/>
+    <appender name="persistence-track-repo-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/persistence-track-repo.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/persistence-admin_%d{yyyy-MM-dd}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/persistence-track-repo_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
@@ -68,67 +62,59 @@
 
     <logger name="org.springframework">
         <level value="WARN"></level>
-        <appender-ref ref="business-logic-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.apache.commons">
         <level value="WARN"></level>
-        <appender-ref ref="business-logic-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="net.sf.hibernate.cfg">
         <level value="INFO"></level>
-        <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
+        <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.hibernate.SQL">
         <level value="INFO"></level>
-        <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
+        <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.hibernate.type">
         <level value="INFO"></level>
-        <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
+        <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.hibernate.annotations.common.Version">
         <level value="INFO"></level>
-        <appender-ref ref="business-logic-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.service">
         <level value="DEBUG"></level>
-        <appender-ref ref="business-logic-admin-RollingFileAppender"/>
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.persistence">
         <level value="DEBUG"></level>
-        <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--
-                <appender-ref ref="stdout"/>
-                <appender-ref ref="stderr"/>
-         -->
-    </logger>
-    <logger name="mobi.nowtechnologies.server.admin">
-        <level value="DEBUG"></level>
-        <appender-ref ref="admin-RollingFileAppender"/>
-    </logger>
-
-    <logger name="org.apache.tiles">
-        <level value="WARN"></level>
+        <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.trackrepo">
         <level value="DEBUG"></level>
-        <appender-ref ref="admin-RollingFileAppender"/>
+        <appender-ref ref="track-repo-RollingFileAppender"/>
+    </logger>
+
+    <logger name="httpclient">
+        <level value="WARN"></level>
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
+    </logger>
+
+    <logger name="org.apache.commons.httpclient">
+        <level value="WARN"></level>
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
+    </logger>
+
+    <logger name="com.rackspacecloud">
+        <level value="WARN"></level>
+        <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
 
     <root>
-        <appender-ref ref="errors-admin-RollingFileAppender"/>
+        <level value="DEBUG"></level>
+        <appender-ref ref="errors-track-repo-RollingFileAppender"/>
     </root>
 
 </log4j:configuration>
