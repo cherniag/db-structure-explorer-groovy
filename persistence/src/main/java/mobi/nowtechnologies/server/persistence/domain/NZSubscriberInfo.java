@@ -1,10 +1,18 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import java.util.Date;
+
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
-import java.util.Date;
 
 /**
  * @author Anton Zemliankin
@@ -129,11 +137,11 @@ public class NZSubscriberInfo {
                 .append("id", id)
                 .append("userId", userId)
                 .append("MSISDN", msisdn)
-                .append("payIndicator", payIndicator)
                 .append("providerName", providerName)
+                .append("callCount", callCount)
                 .append("billingAccountNumber", billingAccountNumber)
                 .append("billingAccountName", billingAccountName)
-                .append("callCount", callCount)
+                .append("payIndicator", payIndicator)
                 .append("updateTimestamp", updateTimestamp)
                 .append("createTimestamp", createTimestamp)
                 .toString();

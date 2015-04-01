@@ -45,5 +45,16 @@ public class MTVNZResponse extends PaymentSystemResponse {
         return phoneNumber;
     }
 
-
+    @Override
+    public String toString() {
+        return "MTVNZResponse{" +
+               "phoneNumber='" + phoneNumber + '\'' +
+               ", isSuccessful=" + isSuccessful +
+               ", isFuture=" + isFuture +
+               ", descriptionError='" + descriptionError + '\'' +
+               ", httpStatus=" + httpStatus +
+               ", message='" + message + '\'' +
+               ", errorCode='" + errorCode + '\'' +
+               '}';
+    }
 }

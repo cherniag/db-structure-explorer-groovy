@@ -45,14 +45,14 @@ public class MTVNZPaymentSMSMessageProcessor implements SMSMessageProcessor<MTVN
         logger.info("Processing receipt: {}", data);
         DeliverSm deliverSm = (DeliverSm) data;
         final MTVNZResponse mtvnzResponse = mtvnzPaymentResponseParser.parse(deliverSm);
-        logger.debug("Parse result: {}", mtvnzResponse);
+        logger.info("Parse result: {}", mtvnzResponse);
         process(mtvnzResponse);
     }
 
     @Override
     public void process(MTVNZResponse mtvnzResponse) {
         final NZSubscriberInfo subscriberInfo = nzSubscriberInfoRepository.findSubscriberInfoByMsisdn(mtvnzResponse.getPhoneNumber());
-        logger.debug("Subscriber Info {} for {} msisdn", subscriberInfo, mtvnzResponse.getPhoneNumber());
+        logger.info("Got for phone {} NZ Subscriber Info {}", mtvnzResponse.getPhoneNumber(), subscriberInfo);
         if(subscriberInfo == null) {
             throw new ServiceException("No NZSubscriberInfo found for " + mtvnzResponse.getPhoneNumber());
         }
@@ -69,6 +69,6 @@ public class MTVNZPaymentSMSMessageProcessor implements SMSMessageProcessor<MTVN
     }
 
     public void setPaymentShortCodes(Set<String> paymentShortCodes) {
-        this.paymentShortCodes = paymentShortCodes;
+        this.paymentShortCodes.addAll(paymentShortCodes);
     }
 }

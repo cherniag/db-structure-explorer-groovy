@@ -63,7 +63,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         final User user = pendingPayment.getUser();
         final T paymentDetails = (T) pendingPayment.getPaymentDetails();
 
-        LOGGER.info("Sent request to [{}] external system with pending payment [{}] and received response [{}]", new Object[] {paymentDetails.getPaymentType(), pendingPayment.getI(), response});
+        LOGGER.info("Sent request to [{}] external system with pending payment [{}] and received response [{}]", paymentDetails.getPaymentType(), pendingPayment.getI(), response);
         if (!response.isSuccessful()) {
             LOGGER.error("External exception while making payment [{}] psms transaction for user with id: [{}] and paymentDetails ", new Object[] {paymentDetails.getPaymentType(), user.getId()});
         }

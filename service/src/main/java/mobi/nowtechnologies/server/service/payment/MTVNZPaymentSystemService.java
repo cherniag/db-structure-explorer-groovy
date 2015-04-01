@@ -21,14 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.transaction.annotation.Transactional;
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 2/26/2015
  */
 public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MTVNZPaymentSystemService.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private NZSubscriberInfoProvider nzSubscriberInfoProvider;
     private VFNZSMSGatewayServiceImpl smsGatewayService;
@@ -36,17 +35,18 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
     private PendingPaymentRepository pendingPaymentRepository;
 
     @Override
-    @Transactional(propagation = REQUIRED)
+    @Transactional
     public void startPayment(PendingPayment pendingPayment) throws Exception {
-        LOGGER.info("Start payment: {}", pendingPayment);
+        logger.info("Start payment: {}", pendingPayment);
         final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
         final String phoneNumber = paymentDetails.getPhoneNumber();
-        final String normalizedPhoneNumber = phoneNumber.replaceFirst("\\+", "");
+        final String normalizePhoneNumber = normalizePhoneNumber(phoneNumber);
+
         try {
-            NZSubscriberResult subscriberResult = nzSubscriberInfoProvider.getSubscriberResult(normalizedPhoneNumber);
+            NZSubscriberResult subscriberResult = nzSubscriberInfoProvider.getSubscriberResult(normalizePhoneNumber);
             NZProviderType nzProviderType = NZProviderType.of(subscriberResult.getProviderName());
             if(nzProviderType != NZProviderType.VODAFONE){
-                LOGGER.info("User {} is not VF subscriber", normalizedPhoneNumber);
+                logger.info("User {} is not VF subscriber", normalizePhoneNumber);
                 finishPaymentForNotSubscriber(pendingPayment);
                 return;
             }
@@ -55,16 +55,16 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
 
             SMSResponse smsResponse = smsGatewayService.send(phoneNumber, message, shortCode, SMSCDeliveryReceipt.SUCCESS_FAILURE, getExpireMillis());
             if(smsResponse.isSuccessful()){
-                LOGGER.info("Payment request {} has been sent successfully", pendingPayment);
+                logger.info("Payment request {} has been sent successfully", pendingPayment);
             } else {
-                LOGGER.warn("Could not send SMS payment request for {} : {}, skip current attempt", phoneNumber, smsResponse.getDescriptionError());
+                logger.warn("Could not send SMS payment request for {} : {}, skip current attempt", phoneNumber, smsResponse.getDescriptionError());
                 skipCurrentPaymentAttempt(pendingPayment, smsResponse.getDescriptionError());
             }
         } catch (ProviderConnectionException e) {
-            LOGGER.warn("Connection problem to NZ subscriber service: {}", e.getMessage());
+            logger.warn("Connection problem to NZ subscriber service: {}", e.getMessage());
             skipCurrentPaymentAttempt(pendingPayment, e.getMessage());
         } catch (MsisdnNotFoundException e) {
-            LOGGER.warn("User {} with phone number {} was not found", pendingPayment.getUserId(), normalizedPhoneNumber);
+            logger.warn("User {} with phone number {} was not found", pendingPayment.getUserId(), normalizePhoneNumber);
             finishPaymentForUnknownSubscriber(pendingPayment);
         }
 
@@ -114,6 +114,13 @@ public class MTVNZPaymentSystemService extends BasicPSMSPaymentServiceImpl {
         Object[] args = {preFormatCurrency(pendingPayment.getAmount()), period.getDuration()};
 
         return messageSource.getMessage(communityRewriteUrl, key, args, null);
+    }
+
+    private String normalizePhoneNumber(String phoneNumber) {
+        if(phoneNumber.startsWith("+")) {
+            return phoneNumber.substring(1);
+        }
+        return phoneNumber;
     }
 
     public void setNzSubscriberInfoProvider(NZSubscriberInfoProvider nzSubscriberInfoProvider) {
