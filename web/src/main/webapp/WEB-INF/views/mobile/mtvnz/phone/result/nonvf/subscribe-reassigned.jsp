@@ -9,7 +9,7 @@
 
     <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel"
        onclick="returnToApp();">
-        <span><s:message code='button.cancel.title'/></span>
+        <span><s:message code='button.back.to.the.app.title'/></span>
     </a>
 </div>
 
