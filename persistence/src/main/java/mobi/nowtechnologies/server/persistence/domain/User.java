@@ -18,7 +18,6 @@ import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-import static mobi.nowtechnologies.server.persistence.domain.Community.MTV_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.UserStatus.LIMITED;
@@ -371,19 +370,10 @@ public class User implements Serializable {
     }
 
     private boolean isPaymentPolicyInvalidByProvider() {
-
-        if(isMtvNzCommunityUser()){
-            return false;
-        }
-
         ProviderType paymentPolicyProvider = currentPaymentDetails.getPaymentPolicy().getProvider();
         ProviderType userProvider = getProvider();
 
         return isNotNull(paymentPolicyProvider) && !paymentPolicyProvider.equals(userProvider);
-    }
-
-    public boolean isMtvNzCommunityUser() {
-        return MTV_NZ_COMMUNITY_REWRITE_URL.equals(getCommunity().getRewriteUrlParameter());
     }
 
     public boolean isNonO2User() {

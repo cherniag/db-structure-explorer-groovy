@@ -7,8 +7,6 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <import resource="model-service.xml" />
-
     <bean class="mobi.nowtechnologies.server.web.service.impl.PinService" />
 
     <bean id="subscriptionInfoAsm" class="mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm">
@@ -48,17 +46,7 @@
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
         <property name="subscriptionInfoAsm" ref="subscriptionInfoAsm"/>
-        <property name="communityServiceFactory" ref="communityServiceFactory"/>
     </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">
-        <property name="communityServiceFactory" ref="communityServiceFactory"/>
-    </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.SmsPaymentController">
-    </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.PinController" />
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
         <property name="countryService" ref="service.CountryService"/>

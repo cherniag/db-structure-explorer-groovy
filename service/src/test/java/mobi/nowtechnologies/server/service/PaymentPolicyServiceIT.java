@@ -55,6 +55,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class PaymentPolicyServiceIT {
 
     @Resource(name = "service.PaymentPolicyService")
@@ -220,7 +221,7 @@ public class PaymentPolicyServiceIT {
 
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            user.setLastSuccessfulPaymentDetails(null);
+            //user.setLastSuccessfulPaymentDetails(null);
             userRepository.save(user.withCurrentPaymentDetails(null));
         }
 

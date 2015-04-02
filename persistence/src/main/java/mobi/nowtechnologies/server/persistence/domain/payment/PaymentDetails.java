@@ -46,7 +46,6 @@ public class PaymentDetails {
     public static final String MIG_SMS_TYPE = "migSms";
     public static final String O2_PSMS_TYPE = "o2Psms";
     public static final String VF_PSMS_TYPE = "vfPsms";
-    public static final String MTVNZ_PSMS_TYPE = "mtvnzPsms";
     public static final String PSMS_TYPE = "psms";
     public static final String ITUNES_SUBSCRIPTION = "iTunesSubscription";
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetails.class);

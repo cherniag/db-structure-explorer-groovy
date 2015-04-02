@@ -57,7 +57,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     private String rememberMeTokenCookieName;
     private DeviceService deviceService;
     private SmsServiceFacade smsServiceFacade;
-    private String unsubscribeMtvNzShortCode;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -117,10 +116,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     public void setSmsServiceFacade(SmsServiceFacade smsServiceFacade) {
         this.smsServiceFacade = smsServiceFacade;
-    }
-
-    public void setUnsubscribeMtvNzShortCode(String unsubscribeMtvNzShortCode) {
-        this.unsubscribeMtvNzShortCode = unsubscribeMtvNzShortCode;
     }
 
     @Async
@@ -226,10 +221,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 String durationUnitPart = getDurationUnitPart(community, period);
                 String currencyISO = paymentPolicy.getCurrencyISO();
                 String shortCode = paymentPolicy.getShortCode();
-
-                if(currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE)){
-                    shortCode = unsubscribeMtvNzShortCode;
-                }
 
                 boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] {unsubscribeUrl, currencyISO, subCost, durationUnitPart, shortCode});
 

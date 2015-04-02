@@ -17,8 +17,6 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm;
-import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
-import mobi.nowtechnologies.server.web.model.PaymentModelService;
 import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionStateFactory;
@@ -57,7 +55,6 @@ public class PaymentsController extends CommonController {
     private PaymentPolicyService paymentPolicyService;
     private UserRepository userRepository;
     private PromotionService promotionService;
-    private CommunityServiceFactory communityServiceFactory;
     private PaymentDetailsRepository paymentDetailsRepository;
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
@@ -90,10 +87,6 @@ public class PaymentsController extends CommonController {
 
     public void setSubscriptionInfoAsm(SubscriptionInfoAsm subscriptionInfoAsm) {
         this.subscriptionInfoAsm = subscriptionInfoAsm;
-    }
-
-    public void setCommunityServiceFactory(CommunityServiceFactory communityServiceFactory) {
-        this.communityServiceFactory = communityServiceFactory;
     }
 
     protected ModelAndView getManagePaymentsPage(String viewName, Locale locale, String scopePrefix) {
@@ -140,11 +133,6 @@ public class PaymentsController extends CommonController {
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
         mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user));
         mav.addObject("paymentsPage", paymentsPage);
-
-        PaymentModelService paymentModelService = communityServiceFactory.find(user.getCommunity(), PaymentModelService.class);
-        if(paymentModelService != null) {
-            mav.addObject("paymentData", paymentModelService.getModel(user));
-        }
 
         return mav;
     }
