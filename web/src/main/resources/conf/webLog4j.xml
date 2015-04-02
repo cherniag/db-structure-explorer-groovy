@@ -11,7 +11,7 @@
         </rollingPolicy>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
-                   value="time=[%-24d{ISO8601}]; uri=[%X{command}]; userId=[%X{userId}]; userName=[%X{userName}]; userMobile=[%X{userMobile}]; community=[%X{community}]; remoteAddr=[%X{remoteAddr}]; %m%n"/>
+                   value="time=[%-24d{ISO8601}]; uri=[%X{command}]; userId=[%X{userId}]; userName=[%X{userName}]; userMobile=[%X{userMobile}]; community=[%X{community}]; remoteAddr=[%X{remoteAddr}]; %C{1}.%M() %m%n"/>
         </layout>
         <filter class="mobi.nowtechnologies.server.shared.log.RegExpLogCommandFilter">
             <param name="onMatch" value="1"/>
@@ -40,7 +40,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
@@ -53,7 +53,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="WARN"/>
@@ -71,7 +71,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
@@ -84,7 +84,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
@@ -93,7 +93,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n"/>
+                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %C{1}.%M() %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="TRACE"/>
@@ -107,7 +107,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n"/>
+                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %C{1}.%M() %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="WARN"/>
@@ -123,7 +123,7 @@
             <param name="fileNamePattern" value="${catalina.base}/logs/slow-requests_%d{yyyy-ww}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern" value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+            <param name="ConversionPattern" value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
@@ -135,7 +135,7 @@
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}: [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
