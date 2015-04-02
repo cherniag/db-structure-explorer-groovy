@@ -172,7 +172,7 @@ public class UserServiceTest {
     private CommunityService communityServiceMock;
     private CountryService countryServiceMock;
     private O2ProviderService o2ClientServiceMock;
-    private DeviceService deviceServiceMock;
+    private DevicePromotionsService deviceServiceMock;
     private RefundService refundServiceMock;
     private User actualUser;
     private User user;
@@ -210,7 +210,7 @@ public class UserServiceTest {
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
         entityServiceMock = PowerMockito.mock(EntityService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
-        deviceServiceMock = PowerMockito.mock(DeviceService.class);
+        deviceServiceMock = PowerMockito.mock(DevicePromotionsService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
         accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
         o2ClientServiceMock = PowerMockito.mock(O2ProviderService.class);

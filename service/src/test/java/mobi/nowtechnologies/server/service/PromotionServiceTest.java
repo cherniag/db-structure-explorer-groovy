@@ -104,7 +104,7 @@ public class PromotionServiceTest {
     @Mock
     EntityService entityServiceMock;
     @Mock
-    DeviceService deviceServiceMock;
+    DevicePromotionsService deviceServiceMock;
     @Mock
     RuleServiceSupport ruleServiceSupportMock;
     private PromotionService promotionServiceSpy;

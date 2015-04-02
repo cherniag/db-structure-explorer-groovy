@@ -17,9 +17,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceServiceTest {
+public class DevicePromotionsServiceTest {
 
-    private DeviceService fixture;
+    private DevicePromotionsService fixture;
 
     @Mock
     private CommunityResourceBundleMessageSourceImpl mockMessageSource;
@@ -168,7 +168,7 @@ public class DeviceServiceTest {
     @Before
     public void setUp() throws Exception {
 
-        fixture = new DeviceService();
+        fixture = new DevicePromotionsService();
         fixture.setMessageSource(mockMessageSource);
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
 package mobi.nowtechnologies.server.persistence.domain;
 
 import javax.persistence.Column;
@@ -9,7 +13,7 @@ import javax.persistence.MappedSuperclass;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @MappedSuperclass
-abstract public class Device {
+public abstract class DevicePromotion {
 
     @Id
     @Column(nullable = false)

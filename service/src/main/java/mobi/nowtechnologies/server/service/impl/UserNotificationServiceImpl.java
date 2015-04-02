@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PeriodMessageKeyBuilder;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -55,7 +55,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     private String unsubscribeUrl;
     private String tinyUrlService;
     private String rememberMeTokenCookieName;
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     private SmsServiceFacade smsServiceFacade;
     private String unsubscribeMtvNzShortCode;
 
@@ -71,7 +71,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         this.messageSource = messageSource;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 

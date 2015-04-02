@@ -18,7 +18,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -75,7 +75,7 @@ public class UserNotificationServiceImplTest {
     private RestTemplate restTemplateMock;
     private MigHttpService migHttpServiceMock;
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
-    private DeviceService deviceServiceMock;
+    private DevicePromotionsService deviceServiceMock;
     private PaymentDetailsRepository paymentDetailsRepository;
     private String forNWeeks;
     private SmsServiceFacade smsServiceFacadeMock;
@@ -2898,7 +2898,7 @@ public class UserNotificationServiceImplTest {
         nowTechTokenBasedRememberMeServicesMock = mock(NowTechTokenBasedRememberMeServices.class);
         restTemplateMock = mock(RestTemplate.class);
         migHttpServiceMock = mock(MigHttpService.class);
-        deviceServiceMock = mock(DeviceService.class);
+        deviceServiceMock = mock(DevicePromotionsService.class);
         paymentDetailsRepository = mock(PaymentDetailsRepository.class);
         smsServiceFacadeMock = mock(SmsServiceFacade.class);
 

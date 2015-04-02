@@ -128,7 +128,7 @@ public class UserService {
     private CommunityService communityService;
     private MailService mailService;
 
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     private AccountLogService accountLogService;
     private UserRepository userRepository;
     private OtacValidationService otacValidationService;
@@ -1255,7 +1255,7 @@ public class UserService {
         this.otacValidationService = otacValidationService;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 
