@@ -120,7 +120,7 @@ public class SMSNotification {
         Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
         try {
             User user = userRepository.findOne(userId);
-            userNotificationService.sendUnsubscribePotentialSMS(user);
+            userNotificationService.sendSubscriptionChangedSMS(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
