@@ -467,11 +467,6 @@ public class UserService {
         return promotion != null;
     }
 
-    public void contactWithUser(String from, String name, String subject) throws ServiceException {
-        String message = messageSource.getMessage(null, "support.email", null, null);
-        mailService.sendMessage(from, new String[] {message}, "From User " + name, subject, null);
-    }
-
     @Transactional(propagation = REQUIRED)
     public User updateUser(User user) {
         return userRepository.save(user);

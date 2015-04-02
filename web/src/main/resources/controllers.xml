@@ -111,13 +111,6 @@
         </property>
     </bean>
 
-    <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
-        <property name="userService" ref="service.UserService"/>
-        <property name="userRepository" ref="userRepository"/>
-    </bean>
-
-    <bean name="web.FaqController" class="mobi.nowtechnologies.server.web.controller.FaqController"/>
-
     <bean class="mobi.nowtechnologies.server.web.controller.TermsController"/>
 
     <bean name="web.ErrorController" class="mobi.nowtechnologies.server.web.controller.ErrorController"/>
