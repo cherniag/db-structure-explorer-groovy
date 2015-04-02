@@ -23,7 +23,7 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "type", nullable = false, updatable = false)
+    @Column(name = "type", columnDefinition = "varchar(25)", nullable = false, updatable = false)
     private String type;
 
     protected Device() {
