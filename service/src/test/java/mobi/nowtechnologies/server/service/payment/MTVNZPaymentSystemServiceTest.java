@@ -1,39 +1,24 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.Period;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
-import mobi.nowtechnologies.server.service.EntityService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoProvider;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import mobi.nowtechnologies.server.service.nz.ProviderConnectionException;
 import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
-import mobi.nowtechnologies.server.service.sms.SMSResponse;
-import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
-import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
-import java.math.BigDecimal;
-
-import static org.jsmpp.bean.SMSCDeliveryReceipt.SUCCESS_FAILURE;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import org.mockito.invocation.*;
 import org.mockito.runners.*;
-import org.mockito.stubbing.*;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+/**
+ * Author: Gennadii Cherniaiev Date: 4/2/2015
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class MTVNZPaymentSystemServiceTest {
     private static final String USER_DOES_NOT_BELONG_TO_VF = "User does not belong to VF";
@@ -41,82 +26,37 @@ public class MTVNZPaymentSystemServiceTest {
     private static final String VODAFONE = "Vodafone";
     private static final String NON_VODAFONE = "Not Vodafone";
     @Mock
-    private NZSubscriberInfoProvider nzSubscriberInfoProvider;
+    NZSubscriberInfoProvider nzSubscriberInfoProvider;
     @Mock
-    private VFNZSMSGatewayServiceImpl smsGatewayService;
-    @Mock
-    private CommunityResourceBundleMessageSource messageSource;
-    @Mock
-    private PendingPaymentRepository pendingPaymentRepository;
-    @Mock
-    private PaymentDetailsRepository paymentDetailsRepository;
-    @Mock
-    private PaymentDetailsService paymentDetailsService;
-    @Mock
-    private UserService userService;
-    @Mock
-    private PaymentEventNotifier paymentEventNotifier;
-    @Mock
-    private EntityService entityService;
+    MTVNZPaymentHelper mtvnzPaymentHelper;
     @InjectMocks
-    private MTVNZPaymentSystemService mtvnzPaymentSystemService;
+    MTVNZPaymentSystemService mtvnzPaymentSystemService;
 
     @Mock
     private PendingPayment pendingPayment;
     @Mock
     private PSMSPaymentDetails paymentDetails;
     @Mock
-    private PaymentPolicy paymentPolicy;
-    @Mock
-    private User user;
-    @Mock
-    private SMSResponse smsResponse;
-    @Mock
     private NZSubscriberResult nzSubscriberResult;
     // business fields
-    private String communityUrl = "mtvnz";
-    private Period period = new Period(DurationUnit.WEEKS, 2);
-    private long expireMillis = 100L;
-    private String phoneNumber = "+64123456789";
-    private String shortCode = "1234";
-    private BigDecimal amount = BigDecimal.TEN;
-    private String smsText = "SMS text message";
-    private Object[] args = new Object[]{amount.toString(), period.getDuration()};
+    private final String phoneNumber = "+64123456789";
     private final String normalizedPhoneNumber = phoneNumber.replaceFirst("\\+", "");
 
     @Before
     public void setUp() throws Exception {
-        mtvnzPaymentSystemService.setExpireMillis(expireMillis);
-        when(user.getCommunityRewriteUrl()).thenReturn(communityUrl);
-
-        when(pendingPayment.getPeriod()).thenReturn(period);
         when(pendingPayment.getPaymentDetails()).thenReturn(paymentDetails);
-        when(pendingPayment.getUser()).thenReturn(user);
-        when(pendingPayment.getAmount()).thenReturn(amount);
-
         when(paymentDetails.getPhoneNumber()).thenReturn(phoneNumber);
-        when(paymentDetails.getPaymentPolicy()).thenReturn(paymentPolicy);
-
-        when(paymentPolicy.getShortCode()).thenReturn(shortCode);
-        when(smsGatewayService.send(phoneNumber, smsText, shortCode, SUCCESS_FAILURE, expireMillis)).thenReturn(smsResponse);
-        when(messageSource.getMessage(communityUrl, "sms.mtvnzPsms.payment.text.1234.WEEKS", args, null)).thenReturn(smsText);
-
-        when(entityService.updateEntity(any())).thenAnswer(getAnswer());
-
         when(nzSubscriberInfoProvider.getSubscriberResult(normalizedPhoneNumber)).thenReturn(nzSubscriberResult);
     }
 
     @Test
     public void startPaymentSuccess() throws Exception {
-        final boolean smsWasSent = true;
         when(nzSubscriberResult.getProviderName()).thenReturn(VODAFONE);
-        when(smsResponse.isSuccessful()).thenReturn(smsWasSent);
 
         mtvnzPaymentSystemService.startPayment(pendingPayment);
 
         verify(nzSubscriberInfoProvider).getSubscriberResult(normalizedPhoneNumber);
-        verifySMSWasSentToGateway();
-        verifyUserWasNotUnSubscribedBecauseOfProvider();
+        verify(mtvnzPaymentHelper).startPayment(pendingPayment);
     }
 
     @Test
@@ -126,20 +66,7 @@ public class MTVNZPaymentSystemServiceTest {
         mtvnzPaymentSystemService.startPayment(pendingPayment);
 
         verify(nzSubscriberInfoProvider).getSubscriberResult(normalizedPhoneNumber);
-        verifyUserWasUnSubscribedBecauseOfProvider();
-        verifySMSWasNotSentToGateway();
-    }
-
-    @Test
-    public void startPaymentWhenProviderConnectionProblem() throws Exception {
-        when(nzSubscriberInfoProvider.getSubscriberResult(normalizedPhoneNumber)).thenThrow(new ProviderConnectionException("cause", new Exception()));
-
-        mtvnzPaymentSystemService.startPayment(pendingPayment);
-
-        verify(nzSubscriberInfoProvider).getSubscriberResult(normalizedPhoneNumber);
-        verifyUserWasNotUnSubscribedBecauseOfProvider();
-        verifySMSWasNotSentToGateway();
-        verifyErrorResponseWithoutIncrementWasCommitted();
+        verify(mtvnzPaymentHelper).finishPaymentForNotVFUser(pendingPayment, USER_DOES_NOT_BELONG_TO_VF);
     }
 
     @Test
@@ -152,8 +79,17 @@ public class MTVNZPaymentSystemServiceTest {
 
         //then
         verify(nzSubscriberInfoProvider).getSubscriberResult(normalizedPhoneNumber);
-        verifyUserWasUnSubscribedBecauseOfUnknownMSISDN();
-        verifySMSWasNotSentToGateway();
+        verify(mtvnzPaymentHelper).finishPaymentForNotVFUser(pendingPayment, VF_DOES_NOT_KNOW_THIS_USER);
+    }
+
+    @Test
+    public void startPaymentWhenProviderConnectionProblem() throws Exception {
+        when(nzSubscriberInfoProvider.getSubscriberResult(normalizedPhoneNumber)).thenThrow(new ProviderConnectionException("cause", new Exception()));
+
+        mtvnzPaymentSystemService.startPayment(pendingPayment);
+
+        verify(nzSubscriberInfoProvider).getSubscriberResult(normalizedPhoneNumber);
+        verify(mtvnzPaymentHelper).skipAttemptWithoutRetryIncrement(pendingPayment, "cause");
     }
 
     @Test(expected = ProviderNotAvailableException.class)
@@ -161,72 +97,5 @@ public class MTVNZPaymentSystemServiceTest {
         when(nzSubscriberInfoProvider.getSubscriberResult(normalizedPhoneNumber)).thenThrow(new ProviderNotAvailableException("cause", new Exception()));
 
         mtvnzPaymentSystemService.startPayment(pendingPayment);
-    }
-
-    @Test
-    public void startPaymentWhenSMSWasNotSent() throws Exception {
-        final boolean smsWasSent = false;
-
-        when(nzSubscriberResult.getProviderName()).thenReturn(VODAFONE);
-        when(smsResponse.isSuccessful()).thenReturn(smsWasSent);
-
-        mtvnzPaymentSystemService.startPayment(pendingPayment);
-
-        verify(nzSubscriberInfoProvider).getSubscriberResult(normalizedPhoneNumber);
-        verifyUserWasNotUnSubscribedBecauseOfProvider();
-        verifySMSWasSentToGateway();
-        verifyErrorResponseWithoutIncrementWasCommitted();
-    }
-
-    private void verifySMSWasSentToGateway() {
-        verify(messageSource).getMessage(communityUrl, "sms.mtvnzPsms.payment.text.1234.WEEKS", args, null);
-        verify(smsGatewayService).send(phoneNumber, smsText, shortCode, SUCCESS_FAILURE, expireMillis);
-    }
-
-    private void verifyUserWasUnSubscribedBecauseOfProvider() {
-        verify(paymentDetailsRepository).save(paymentDetails);
-        verify(paymentDetails).completedWithError(USER_DOES_NOT_BELONG_TO_VF);
-        verify(userService).unsubscribeUser(user, USER_DOES_NOT_BELONG_TO_VF);
-        verify(pendingPaymentRepository).delete(pendingPayment);
-        verify(paymentEventNotifier).onUnsubscribe(user);
-    }
-
-    private void verifyErrorResponseWithoutIncrementWasCommitted() {
-        verify(entityService, atLeastOnce()).updateEntity(any(SubmittedPayment.class));
-        verify(paymentDetails).setLastPaymentStatus(PaymentDetailsStatus.ERROR);
-        verify(paymentDetails, never()).incrementMadeAttemptsAccordingToMadeRetries();
-        verify(entityService, atLeastOnce()).updateEntity(paymentDetails);
-        verify(paymentEventNotifier).onError(paymentDetails);
-        verify(paymentDetails).shouldBeUnSubscribed();
-        verify(entityService).removeEntity(PendingPayment.class, pendingPayment.getI());
-    }
-
-    private void verifySMSWasNotSentToGateway() {
-        verify(messageSource, never()).getMessage(communityUrl, "sms.mtvnzPsms.payment.text.1234.WEEKS", args, null);
-        verify(smsGatewayService, never()).send(normalizedPhoneNumber, smsText, shortCode, SUCCESS_FAILURE, expireMillis);
-    }
-
-    private void verifyUserWasNotUnSubscribedBecauseOfProvider() {
-        verify(pendingPaymentRepository, never()).delete(pendingPayment);
-        verify(paymentDetails, never()).completedWithError(anyString());
-        verify(userService, never()).unsubscribeUser(eq(user), anyString());
-        verify(paymentEventNotifier, never()).onUnsubscribe(user);
-    }
-
-    private void verifyUserWasUnSubscribedBecauseOfUnknownMSISDN() {
-        verify(pendingPaymentRepository).delete(pendingPayment);
-        verify(paymentDetails).completedWithError(VF_DOES_NOT_KNOW_THIS_USER);
-        verify(paymentDetailsRepository).save(paymentDetails);
-        verify(userService).unsubscribeUser(user, VF_DOES_NOT_KNOW_THIS_USER);
-        verify(paymentEventNotifier).onUnsubscribe(user);
-    }
-
-    private Answer<?> getAnswer(){
-        return new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArguments()[0];
-            }
-        };
     }
 }
