@@ -3,7 +3,9 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
+import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -19,9 +21,8 @@ import java.util.List;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import com.sentaca.spring.smpp.mt.MTMessage;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,11 +47,10 @@ import static org.mockito.Mockito.*;
 //TODO: Rebuild test not to use mocks.
 public class UserNotificationServiceImplIT {
 
-    @Autowired
-    private UserNotificationServiceImpl userNotificationService;
+    @Resource
+    private UserNotificationService userNotificationService;
 
-    @Autowired
-    @Qualifier("vf_nz.service.SmsProviderSpy")
+    @Resource(name = "vf_nz.service.SmsProviderSpy")
     private VFNZSMSGatewayServiceImpl smsGatewayService;
 
     @Resource
@@ -58,16 +58,18 @@ public class UserNotificationServiceImplIT {
 
     @Value("${sms.temporaryFolder}")
     private File smsTemporaryFolder;
+    private SMPPServiceImpl smppService;
 
     @Before
     public void setUp() throws Exception {
         reset(smsGatewayService);
-        SMPPServiceImpl smppService = mock(SMPPServiceImpl.class);
+        smppService = mock(SMPPServiceImpl.class);
         smsGatewayService.setSmppService(smppService);
     }
 
     @Test
     public void checkSendChargeNotificationReminderShouldBeSent() throws Exception {
+        when(smppService.sendMessage(any(MTMessage.class))).thenReturn(getSmsResponse());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("vf_nz");
         user.setProvider(ProviderType.VF);
@@ -134,6 +136,20 @@ public class UserNotificationServiceImplIT {
         Assert.assertEquals(1, list.length);
 
         return list[0];
+    }
+
+    private SMSResponse getSmsResponse() {
+        return new SMSResponse() {
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public String getDescriptionError() {
+                return null;
+            }
+        };
     }
 
 }

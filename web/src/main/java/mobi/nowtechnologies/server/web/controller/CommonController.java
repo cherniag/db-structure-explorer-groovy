@@ -32,7 +32,7 @@ public abstract class CommonController implements MessageSourceAware {
     public static final String PAGE_EXT = ".html";
     public static final String PAGE_VERIFY = PATH_DELIM + "verify.html";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MessageSource messageSource;
 
@@ -40,12 +40,12 @@ public abstract class CommonController implements MessageSourceAware {
         return (SecurityContextDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    protected int getUserId() {
-        SecurityContextDetails securityContextDetails = getSecurityContextDetails();
-        int userId = securityContextDetails.getUserId();
-        LOGGER.debug("Output parameter userId=[{}]", userId);
-        return userId;
-    }
+	protected int getUserId() {
+		SecurityContextDetails securityContextDetails = getSecurityContextDetails();
+		int userId = securityContextDetails.getUserId();
+		logger.debug("Output parameter userId=[{}]", userId);
+		return userId;
+	}
 
     @Override
     public void setMessageSource(MessageSource messageSource) {
@@ -74,7 +74,7 @@ public abstract class CommonController implements MessageSourceAware {
             URL reconstructedURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());
             return reconstructedURL.toString();
         } catch (MalformedURLException e) {
-            LOGGER.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }

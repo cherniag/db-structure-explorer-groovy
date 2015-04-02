@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.DrmDao;
 import mobi.nowtechnologies.server.persistence.dao.DrmTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Drm;
@@ -31,7 +30,6 @@ public class DrmService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DrmService.class);
 
     private EntityService entityService;
-    private DrmDao drmDao;
     private MediaService mediaService;
 
     private DrmRepository drmRepository;
@@ -42,10 +40,6 @@ public class DrmService {
 
     public void setEntityService(EntityService entityService) {
         this.entityService = entityService;
-    }
-
-    public void setDrmDao(DrmDao drmDao) {
-        this.drmDao = drmDao;
     }
 
     public void setMediaService(MediaService mediaService) {
@@ -96,13 +90,6 @@ public class DrmService {
 
         LOGGER.info("Output parameter findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy)=[{}]", drm);
         return drm;
-    }
-
-    public List<Drm> findDrmAndDrmTypeTree(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-        List<Drm> drms = drmDao.findDrmAndDrmTypeTree(userId);
-        LOGGER.debug("Output parameter drms=[{}]", drms);
-        return drms;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

@@ -17,6 +17,7 @@ import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
+import static mobi.nowtechnologies.server.persistence.domain.Community.MTV_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.UserStatus.LIMITED;
@@ -67,12 +68,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
@@ -292,6 +296,21 @@ public class User implements Serializable {
         return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated() && getCurrentPaymentDetails().getPaymentType().equals(paymentType);
     }
 
+    public boolean isPremium(Date time) {
+        final boolean isIos = DeviceType.IOS.equals(getDeviceType().getName());
+
+        if (isIos) {
+            boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(getLastSubscribedPaymentSystem()) &&
+                    (getCurrentPaymentDetails() == null || getCurrentPaymentDetails().isDeactivated()) &&
+                    getNextSubPaymentAsDate().after(time);
+            boolean hasAnotherCurrentPaymentDetails = getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated();
+
+            return hasITunesSubscription || hasAnotherCurrentPaymentDetails;
+        } else {
+            return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated();
+        }
+    }
+
     public boolean isHasPromo() {
         return hasPromo;
     }
@@ -349,10 +368,19 @@ public class User implements Serializable {
     }
 
     private boolean isPaymentPolicyInvalidByProvider() {
+
+        if(isMtvNzCommunityUser()){
+            return false;
+        }
+
         ProviderType paymentPolicyProvider = currentPaymentDetails.getPaymentPolicy().getProvider();
         ProviderType userProvider = getProvider();
 
         return isNotNull(paymentPolicyProvider) && !paymentPolicyProvider.equals(userProvider);
+    }
+
+    public boolean isMtvNzCommunityUser() {
+        return MTV_NZ_COMMUNITY_REWRITE_URL.equals(getCommunity().getRewriteUrlParameter());
     }
 
     public boolean isNonO2User() {
@@ -1373,18 +1401,6 @@ public class User implements Serializable {
         return isNotNull(lastPromo) && lastPromo.isWhiteListed();
     }
 
-    public PaymentDetails getPaymentDetails(Class<?> clazz) {
-        if (paymentDetailsList != null && clazz != null) {
-            for (PaymentDetails paymentDetails : paymentDetailsList) {
-                if (paymentDetails.getPaymentType().getClass() == clazz) {
-                    return paymentDetails;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public boolean hasLimitedStatus() {
         return status.getName().equals(LIMITED);
     }
@@ -1395,6 +1411,19 @@ public class User implements Serializable {
 
     public boolean hasAppReceiptInLimitedState() {
         return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
+    }
+
+    public PaymentDetails getPreviousPaymentDetails() {
+        if(paymentDetailsList.size() > 1){
+            Collections.sort(paymentDetailsList, new Comparator<PaymentDetails>() {
+                @Override
+                public int compare(PaymentDetails pd1, PaymentDetails pd2) {
+                    return ComparisonChain.start().compare(pd2.getCreationTimestampMillis(), pd1.getCreationTimestampMillis()).result();
+                }
+            });
+            return paymentDetailsList.get(1);
+        }
+        return null;
     }
 
     public User withOldUser(User oldUser) {
@@ -1516,8 +1545,7 @@ public class User implements Serializable {
                           .add("address2", country).add("city", city).add("title", title).add("displayName ", displayName).add("firstName", firstName).add("lastName", lastName)
                           .add("ipAddress", ipAddress).add("canContact", canContact).add("deviceString", deviceString).add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
                           .add("freeTrialExpiredMillis", freeTrialExpiredMillis).add("activationStatus", activationStatus).add("segment", segment).add("provider", provider).add("tariff", tariff)
-                          .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo)
-                          .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
+                          .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo).add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 
     public boolean isPaymentInProgress() {

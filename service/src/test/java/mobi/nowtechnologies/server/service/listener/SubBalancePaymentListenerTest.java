@@ -182,9 +182,7 @@ public class SubBalancePaymentListenerTest {
 
         fixtureSubBalancePaymentListener = new SubBalancePaymentListener();
         fixtureSubBalancePaymentListener.setPromotionService(mockPromotionService);
-        fixtureSubBalancePaymentListener.setMessageSource(mockCommunityResourceBundleMessageSource);
         fixtureSubBalancePaymentListener.setUserService(mockUserService);
-        fixtureSubBalancePaymentListener.setMigHttpService(mockMigHttpService);
         fixtureSubBalancePaymentListener.setUserNotificationService(mockUserNotificationService);
     }
 }

@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -24,8 +25,8 @@ public interface TaskRepository<T extends Task> extends JpaRepository<T, Long> {
     @Query("delete from UserTask task where " + "task.user.id = :userId and task.taskType = :taskType")
     public int deleteByUserIdAndTaskType(@Param("userId") int userId, @Param("taskType") String taskType);
 
-    @Query("select task from Task task where task.taskStatus = 'ACTIVE' and task.executionTimestamp < :executionTimestamp")
-    List<Task> findTasksToExecute(@Param("executionTimestamp") long executionTimestamp, Pageable pageable);
+    @Query("select task from Task task where task.taskStatus = 'ACTIVE' and task.executionTimestamp < :executionTimestamp and task.taskType in :supportedTypes")
+    List<Task> findTasksToExecute(@Param("executionTimestamp") long executionTimestamp, @Param("supportedTypes") Collection<String> supportedTypes, Pageable pageable);
 
     @Query("select count(task) from Task task where task.taskStatus = 'ACTIVE' and task.executionTimestamp < :executionTimestamp")
     long countTasksToExecute(@Param("executionTimestamp") long executionTimestamp);

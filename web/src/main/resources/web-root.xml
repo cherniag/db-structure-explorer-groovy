@@ -8,6 +8,5 @@
     <import resource="classpath:META-INF/dao.xml"/>
     <import resource="classpath:META-INF/shared.xml"/>
     <import resource="classpath:security.xml"/>
-    <import resource="classpath:META-INF/smpp.xml"/>
 
 </beans>

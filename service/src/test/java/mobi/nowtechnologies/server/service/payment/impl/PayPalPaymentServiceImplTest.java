@@ -20,6 +20,7 @@ import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.PaymentEventNotifier;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
@@ -86,6 +87,9 @@ public class PayPalPaymentServiceImplTest{
 
     @InjectMocks
     private PayPalPaymentServiceImpl payPalPaymentService;
+
+    @Mock
+    private PaymentEventNotifier paymentEventNotifier;
 
     @Captor
     private ArgumentCaptor<Object> updateEntityServiceCaptor;

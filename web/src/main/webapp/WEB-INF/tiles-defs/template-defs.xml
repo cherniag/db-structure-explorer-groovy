@@ -40,15 +40,7 @@
   </definition>
 
   <!-- END Unauthenticated pages -->
-  
-  <definition name="getapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/getapp/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/getapp/content.jsp"/>
-	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/footer.jsp"/>
-	  <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/footSection.jsp"/>
-  </definition>
-  
+
   <definition name="account" extends="mainTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/account/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
@@ -61,12 +53,7 @@
 	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/change_account/content.jsp"/>
   </definition>
   
-   <definition name="payment_history" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/payment_history/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payment_history/content.jsp"/>
-  </definition>
-  
+
    <definition name="purchased_tracks" extends="mainTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/purchased_tracks/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
@@ -133,6 +120,9 @@
 		<definition name="payments_inapp/creditcard" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/creditcard/content.jsp"/>
 		</definition>
+        <definition name="payments_inapp/unsubscribeConfirmation" extends="payments_inapp" preparer="web.CommunityViewPreparer">
+            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/unsubscribe/confirmation.jsp"/>
+        </definition>
 		<definition name="payments_inapp/creditcard_preview" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/creditcard_preview/content.jsp"/>
 		</definition>
@@ -176,24 +166,12 @@
         <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_common/can_not_change_payment_options.jsp"/>
     </definition>
 
- <definition name="contact_us" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-  	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/contact_us/headSection.jsp"/>
-	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/contact_us/content.jsp"/>
-  </definition>
-  
    <definition name="privacy_policy" extends="mainTemplate" preparer="web.CommunityViewPreparer">
   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/privacy_policy/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
 	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/privacy_policy/content.jsp"/>
   </definition>
-  
-  <definition name="faq" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/faq/headSection.jsp"/>
-	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/faq/content.jsp"/>
-  </definition>
-  
+
   <definition name="terms" extends="mainTemplate" preparer="web.CommunityViewPreparer">
    	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/terms/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
@@ -268,5 +246,50 @@
       <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
       <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_coming_soon/content.jsp"/>
   </definition>
+
+
+    <!-- Phone and pin staff -->
+    <definition name="phone/check" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/phone/check/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+    </definition>
+    <definition name="phone/reassign" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/phone/reassign/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+    </definition>
+    <definition name="phone/result" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/phone/result/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/phone/stub.jsp"/>
+    </definition>
+    <definition name="pin/check" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/pin/check/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+    </definition>
+    <definition name="pin/result" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/pin/result/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
+    </definition>
+    <definition name="smspayment/result" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/smspayment/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+    </definition>
 
 </tiles-definitions>

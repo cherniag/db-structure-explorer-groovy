@@ -2,12 +2,12 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ItemAsm;
 import mobi.nowtechnologies.server.assembler.OfferAsm;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Item;
 import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ItemRepository;
 import mobi.nowtechnologies.server.persistence.repository.OfferRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -39,6 +39,7 @@ public class OfferService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferService.class);
 
     private OfferRepository offerRepository;
+    private CommunityRepository communityRepository;
     private ItemRepository itemRepository;
     private FilterService filterService;
     private UserRepository userRepository;
@@ -49,7 +50,7 @@ public class OfferService {
     public List<OfferDto> getOffers(String communityURL) {
         LOGGER.debug("input parameters communityURL: [{}]", communityURL);
 
-        Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL);
 
         List<Offer> offers = offerRepository.findWithFiltersByCommunity(community);
         List<OfferDto> offerDtos = OfferAsm.toOfferDtos(offers);
@@ -81,7 +82,7 @@ public class OfferService {
     private Offer saveOrUpdate(OfferDto offerDto, String communityURL, Offer offer) {
         LOGGER.debug("input parameters offerDto, communityURL, offer: [{}], [{}]", new Object[] {offerDto, communityURL, offer});
 
-        Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL);
 
         final Set<FilterDto> filterDtos = offerDto.getFilterDtos();
         final Set<AbstractFilterWithCtiteria> filterWithCtiteria;
@@ -208,17 +209,6 @@ public class OfferService {
     }
 
     @Transactional(readOnly = true)
-    public boolean hasOffers(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
-
-        long count = offerRepository.countWithFiltersByCommunity(user.getUserGroup().getCommunity());
-
-        boolean hasOffers = count > 0;
-        LOGGER.debug("Output parameter [{}]", count);
-        return hasOffers;
-    }
-
-    @Transactional(readOnly = true)
     public List<ContentOfferDto> getContentOfferDtos(Integer userId) {
         LOGGER.debug("input parameters userId: [{}]", userId);
 
@@ -257,6 +247,10 @@ public class OfferService {
 
         LOGGER.debug("Output parameter [{}]", file);
         return offer;
+    }
+
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
     }
 
     public void setOfferRepository(OfferRepository offerRepository) {

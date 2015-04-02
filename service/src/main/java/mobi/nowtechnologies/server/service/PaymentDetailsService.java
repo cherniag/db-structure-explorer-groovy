@@ -2,9 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -12,21 +10,18 @@ import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
-import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
+import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
@@ -40,6 +35,7 @@ import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_COD
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.Validate.notNull;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,16 +61,17 @@ public class PaymentDetailsService {
     private PayPalPaymentService payPalPaymentService;
     private MigPaymentService migPaymentService;
 
-    private PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService;
-
     private PromotionService promotionService;
     private UserService userService;
     private CommunityService communityService;
-    private OfferService offerService;
-    private PaymentPolicyRepository paymentPolicyRepository;
-    private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
+    private UserNotificationService userNotificationService;
+    private O2PaymentServiceImpl o2PaymentService;
+
+    public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
+        this.o2PaymentService = o2PaymentService;
+    }
 
     public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
         this.paymentDetailsDao = paymentDetailsDao;
@@ -83,6 +79,10 @@ public class PaymentDetailsService {
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
     }
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
@@ -113,24 +113,12 @@ public class PaymentDetailsService {
         this.communityService = communityService;
     }
 
-    public void setOfferService(OfferService offerService) {
-        this.offerService = offerService;
-    }
-
-    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
-        this.paymentPolicyRepository = paymentPolicyRepository;
-    }
-
-    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
-        this.paymentPolicyDao = paymentPolicyDao;
-    }
-
-    public void setO2PaymentService(PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService) {
-        this.o2PaymentService = o2PaymentService;
-    }
-
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
         this.paymentDetailsRepository = paymentDetailsRepository;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -161,7 +149,8 @@ public class PaymentDetailsService {
                 }
                 paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
             } else if (dto.getPaymentType().equals(O2_PSMS)) {
-                paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
+                paymentDetails = new O2PSMSPaymentDetails(paymentPolicy, user, o2PaymentService.getRetriesOnError());
+                paymentDetails = commitPaymentDetails(user, paymentDetails);
             }
 
             if (null != paymentDetails) {
@@ -175,6 +164,32 @@ public class PaymentDetailsService {
         }
 
         return paymentDetails;
+    }
+
+    @Transactional
+    public PaymentDetails commitPaymentDetails(User user, PaymentDetails paymentDetails) {
+        LOGGER.info("Start creation psms payment details for user [{}] and paymentPolicyId [{}]...", new Object[] {user.getUserName(), paymentDetails.getPaymentPolicy().getId()});
+
+        deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        PaymentDetails details = paymentDetailsRepository.save(paymentDetails);
+        userService.updateUser(user);
+
+        LOGGER.info("Done commitment of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});
+
+        sendSubscriptionChangedSMS(user);
+
+        return details;
+    }
+
+    private void sendSubscriptionChangedSMS(User user) {
+        try {
+            userNotificationService.sendSubscriptionChangedSMS(user);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -246,59 +261,10 @@ public class PaymentDetailsService {
         return user.getPendingPaymentDetails();
     }
 
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> findActivatedPaymentDetails(String operatorName, String phoneNumber) {
-        return paymentDetailsRepository.findActivatedPaymentDetails(operatorName, phoneNumber);
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
         Community community = communityService.getCommunityByUrl(communityUrl);
         return paymentDetailsDao.getAvailableOperators(community, paymentType);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void buyByPayPalPaymentDetails(String token, String communityUrl, int userId, Integer offerId) throws ServiceException {
-        LOGGER.debug("buyByPayPalPaymentDetails input parameters token, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] {token, communityUrl, userId, offerId});
-
-        User user = userRepository.findOne(userId);
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(user.getOperator(), PAY_PAL, community.getId());
-
-        if (null != paymentPolicy) {
-            Offer offer = offerService.getOffer(offerId);
-
-            PaymentDetailsDto pdto = new PaymentDetailsDto();
-            pdto.setOfferId(offerId);
-            pdto.setCurrency(offer.getCurrency());
-            pdto.setAmount(offer.getPrice().toString());
-            pdto.setToken(token);
-
-            payPalPaymentService.makePaymentWithPaymentDetails(pdto, user, paymentPolicy);
-        }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void buyByCreditCardPaymentDetails(CreditCardDto creditCardDto, String communityUrl, int userId, Integer offerId) {
-        LOGGER
-            .debug("buyByCreditCardPaymentDetails input parameters creditCardDto, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] {creditCardDto, communityUrl, userId, offerId});
-
-        User user = userRepository.findOne(userId);
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), CREDIT_CARD, community.getId());
-
-        if (null != paymentPolicy) {
-            Offer offer = offerService.getOffer(offerId);
-
-            PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(creditCardDto);
-            pdto.setOfferId(offerId);
-            pdto.setCurrency(offer.getCurrency());
-            pdto.setAmount(offer.getPrice().toString());
-            pdto.setVendorTxCode(UUID.randomUUID().toString());
-            pdto.setDescription("Making payment by Credit Card  for user " + user.getUserName());
-
-            sagePayPaymentService.makePaymentWithPaymentDetails(pdto, user, paymentPolicy);
-        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -311,15 +277,11 @@ public class PaymentDetailsService {
         return migPaymentService.sendPin(phone, messageSource.getMessage(communityUri, "sms.freeMsg", args, null));
     }
 
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails activatePaymentDetailsByPayment(Long paymentDetailsId) {
         LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
 
-        final PaymentDetails paymentDetails = paymentDetailsDao.find(paymentDetailsId);
+        final PaymentDetails paymentDetails = paymentDetailsRepository.findOne(paymentDetailsId);
         final User user = paymentDetails.getOwner();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if (currentPaymentDetails != null) {
@@ -338,37 +300,9 @@ public class PaymentDetailsService {
         return paymentDetails;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetailsByPaymentDto getPaymentDetailsTypeByPayment(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-
-        List<PaymentDetails> paymentDetailsList = paymentDetailsDao.find(userId, PaymentDetailsType.PAYMENT);
-
-        final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto;
-        if (paymentDetailsList.isEmpty()) {
-            paymentDetailsByPaymentDto = null;
-        } else {
-            paymentDetailsByPaymentDto = paymentDetailsList.get(0).toPaymentDetailsByPaymentDto();
-        }
-
-        LOGGER.debug("Output parameter [{}]", paymentDetailsByPaymentDto);
-        return paymentDetailsByPaymentDto;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails update(PaymentDetails paymentDetails) {
-        LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
-
-        paymentDetails = paymentDetailsRepository.save(paymentDetails);
-
-        LOGGER.info("Output parameter paymentDetails=[{}]", paymentDetails);
-        return paymentDetails;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)
     public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
         LOGGER.info("Deactivate current payment details for user {} reason {}", user.shortInfo(), reason);
-
 
         notNull(user, "The parameter user is null");
         user = userService.setToZeroSmsAccordingToLawAttributes(user);
@@ -380,7 +314,8 @@ public class PaymentDetailsService {
             if (inPending) {
                 throw new CanNotDeactivatePaymentDetailsException();
             }
-            disablePaymentDetails(currentPaymentDetails, reason);
+            currentPaymentDetails.disable(reason, new Date());
+            paymentDetailsRepository.save(currentPaymentDetails);
             user = userService.updateUser(user);
         }
 
@@ -398,16 +333,5 @@ public class PaymentDetailsService {
                 promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
             }
         }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
-        LOGGER.debug("Disable payment details {}", paymentDetail);
-        return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
-    }
-
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
-        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
     }
 }

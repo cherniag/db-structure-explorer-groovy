@@ -47,6 +47,9 @@ public class SubmittedPayment extends AbstractPayment {
         SubmittedPayment payment = new SubmittedPayment();
         BeanUtils.copyProperties(pendingPayment, payment);
         payment.setI(null);
+        if (payment.getExternalTxId() == null) {
+            payment.setExternalTxId("");
+        }
         return payment;
     }
 

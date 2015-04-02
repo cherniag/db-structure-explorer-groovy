@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.aop;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 
@@ -32,39 +31,6 @@ public class SMSNotification {
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
-    protected void startCreditCardPayment() {
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl.startPayment(..))")
-    protected void startPayPalPayment() {
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.startPayment(..))")
-    protected void startO2PSMSPayment() {
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.commitPayment(..))")
-    protected void startVFPSMSPayment() {
-    }
-
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
-    protected void startMigPayment() {
-    }
-
-    /**
-     * Sending sms after any payment system has spent all retries with failure
-     */
-    @Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
-    public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
-        PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
-        LOGGER.info("start payment: {}", pendingPayment);
-        Object object = joinPoint.proceed();
-        userNotificationService.sendPaymentFailSMS(pendingPayment);
-        LOGGER.info("finish payment {}", pendingPayment);
-        return object;
     }
 
     /**
@@ -145,10 +111,6 @@ public class SMSNotification {
     protected void createdMigPaymentDetails() {
     }
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPaymentDetails(..))")
-    protected void createdPsmsPaymentDetails() {
-    }
-
     /**
      * Sending sms after user was subscribed with some payment details
      */
@@ -158,19 +120,7 @@ public class SMSNotification {
         Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
         try {
             User user = userRepository.findOne(userId);
-            userNotificationService.sendUnsubscribePotentialSMS(user);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return object;
-    }
-
-    @Around("createdPsmsPaymentDetails()")
-    public Object createdPsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object object = joinPoint.proceed();
-        User user = (User) joinPoint.getArgs()[0];
-        try {
-            userNotificationService.sendUnsubscribePotentialSMS(user);
+            userNotificationService.sendSubscriptionChangedSMS(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

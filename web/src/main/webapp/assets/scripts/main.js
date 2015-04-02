@@ -99,6 +99,10 @@ function applyDefaultText() {
 
 var COOKIE_ALERT_NAME="cookie_alert_message";
 
+function goBack() {
+    history.go(-1);
+}
+
 function setCookie (name, value, expires, path, domain, secure) {
     document.cookie = name + "=" + escape(value) +
     ((expires) ? "; expires=" + expires : "") +

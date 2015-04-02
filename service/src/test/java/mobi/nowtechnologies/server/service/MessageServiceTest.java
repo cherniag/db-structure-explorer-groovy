@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.MessageFactory;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
@@ -46,13 +47,13 @@ public class MessageServiceTest {
 
     private MessageService messageServiceSpy;
     private MessageRepository mockMessageRepository;
-    private CommunityService mockCommunityService;
     private FilterService mockFilterService;
     private CloudFileService mockCloudFileService;
+    private CommunityRepository communityRepository;
 
     @Test
     public void testDelete_Success() throws Exception {
-        Integer messageId = new Integer(1);
+        Integer messageId = 1;
 
         Message message = MessageFactory.createMessage("https://i.ua");
 
@@ -78,7 +79,7 @@ public class MessageServiceTest {
         Collection<Message> messages = MessageFactory.createCollection();
         List<Message> messageList = new ArrayList<Message>(messages);
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockMessageRepository.findByCommunityAndMessageTypesAndPublishTimeMillis(Mockito.any(Community.class), Mockito.anyListOf(MessageType.class), Mockito.anyLong())).thenReturn(null);
         Mockito.when(mockMessageRepository.findByCommunityAndMessageTypes(Mockito.any(Community.class), Mockito.anyListOf(MessageType.class))).thenReturn(messageList);
 
@@ -88,7 +89,7 @@ public class MessageServiceTest {
 
         assertEquals(messageList, result);
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockMessageRepository, Mockito.times(0))
                .findByCommunityAndMessageTypesAndPublishTimeMillis(Mockito.any(Community.class), Mockito.anyListOf(MessageType.class), Mockito.anyLong());
         Mockito.verify(mockMessageRepository, Mockito.times(1)).findByCommunityAndMessageTypes(Mockito.any(Community.class), Mockito.anyListOf(MessageType.class));
@@ -109,7 +110,7 @@ public class MessageServiceTest {
 
         String imageFileName = MessageType.AD + "_" + Utils.getEpochMillis() + "_" + message.getId();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.findMaxPosition(community, MessageType.AD, 0L)).thenReturn(position);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
@@ -121,7 +122,7 @@ public class MessageServiceTest {
         assertEquals(message, result);
         assertEquals(1, result.getPosition());
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).findMaxPosition(community, MessageType.AD, 0L);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
@@ -143,7 +144,7 @@ public class MessageServiceTest {
 
         String imageFileName = MessageType.AD + "_" + Utils.getEpochMillis() + "_" + message.getId();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.findMaxPosition(community, MessageType.AD, 0L)).thenReturn(position);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
@@ -156,7 +157,7 @@ public class MessageServiceTest {
         assertEquals(1, result.getPosition());
         assertEquals(null, result.getImageFileName());
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).findMaxPosition(community, MessageType.AD, 0L);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
@@ -177,7 +178,7 @@ public class MessageServiceTest {
 
         String imageFileName = MessageType.AD + "_" + Utils.getEpochMillis() + "_" + message.getId();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.findMaxPosition(community, MessageType.AD, 0L)).thenReturn(position);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
@@ -189,7 +190,7 @@ public class MessageServiceTest {
         assertEquals(message, result);
         assertEquals(position + 1, result.getPosition());
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).findMaxPosition(community, MessageType.AD, 0L);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
@@ -208,7 +209,7 @@ public class MessageServiceTest {
         Set<FilterDto> filterDtos = Collections.<FilterDto>emptySet();
         Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
         Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
@@ -218,7 +219,7 @@ public class MessageServiceTest {
         assertNotNull(result);
         assertEquals(message, result);
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
         Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, message.getImageFileName());
@@ -236,7 +237,7 @@ public class MessageServiceTest {
         Set<FilterDto> filterDtos = Collections.<FilterDto>emptySet();
         Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
         Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
@@ -246,7 +247,7 @@ public class MessageServiceTest {
         assertNotNull(result);
         assertEquals(message, result);
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
         Mockito.verify(mockCloudFileService, Mockito.times(1)).uploadFile(multipartFile, message.getImageFileName());
@@ -266,7 +267,7 @@ public class MessageServiceTest {
 
         String imageFileName = MessageType.AD + "_" + System.currentTimeMillis() + "_" + message.getId();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
         Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
@@ -276,7 +277,7 @@ public class MessageServiceTest {
         assertNotNull(result);
         assertEquals(message, result);
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
         Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, imageFileName);
@@ -296,7 +297,7 @@ public class MessageServiceTest {
 
         String imageFileName = MessageType.AD + "_" + System.currentTimeMillis() + "_" + message.getId();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenThrow(new Exception());
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenThrow(new Exception());
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
         Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
@@ -306,7 +307,7 @@ public class MessageServiceTest {
         assertNotNull(result);
         assertEquals(message, result);
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(0)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(0)).save(message);
         Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, imageFileName);
@@ -324,7 +325,7 @@ public class MessageServiceTest {
         Set<FilterDto> filterDtos = Collections.<FilterDto>emptySet();
         Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
 
-        Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        Mockito.when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
         Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
         Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
@@ -335,7 +336,7 @@ public class MessageServiceTest {
         assertEquals(message, result);
         assertEquals(null, result.getImageFileName());
 
-        Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+        Mockito.verify(communityRepository, Mockito.times(1)).findByRewriteUrlParameter(communityURL);
         Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
         Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
         Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, message.getImageFileName());
@@ -449,7 +450,7 @@ public class MessageServiceTest {
 
         final Community community = CommunityFactory.createCommunity();
 
-        when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         when(mockMessageRepository.findMaxPosition(community, messageDto.getMessageType(), messageDto.getPublishTime().getTime())).thenReturn(position);
 
         Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
@@ -476,7 +477,7 @@ public class MessageServiceTest {
         assertEquals(messageDto.getActionType(), actualMessage.getActionType());
         assertEquals(messageDto.getActionButtonText(), actualMessage.getActionButtonText());
 
-        verify(mockCommunityService, times(1)).getCommunityByUrl(communityURL);
+        verify(communityRepository, times(1)).findByRewriteUrlParameter(communityURL);
         verify(mockMessageRepository, times(0)).findMaxPosition(community, messageDto.getMessageType(), messageDto.getPublishTime().getTime());
         verify(mockMessageRepository, times(1)).save(message);
 
@@ -501,7 +502,7 @@ public class MessageServiceTest {
 
         final Community community = CommunityFactory.createCommunity();
 
-        when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         when(mockMessageRepository.findMaxPosition(community, messageDto.getMessageType(), messageDto.getPublishTime().getTime())).thenReturn(position);
 
         Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
@@ -528,7 +529,7 @@ public class MessageServiceTest {
         assertEquals(messageDto.getActionType(), actualMessage.getActionType());
         assertEquals(messageDto.getActionButtonText(), actualMessage.getActionButtonText());
 
-        verify(mockCommunityService, times(1)).getCommunityByUrl(communityURL);
+        verify(communityRepository, times(1)).findByRewriteUrlParameter(communityURL);
         verify(mockMessageRepository, times(1)).findMaxPosition(community, messageDto.getMessageType(), messageDto.getPublishTime().getTime());
         verify(mockMessageRepository, times(1)).save(message);
 
@@ -553,7 +554,7 @@ public class MessageServiceTest {
 
         final Community community = CommunityFactory.createCommunity();
 
-        when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter(communityURL)).thenReturn(community);
         when(mockMessageRepository.findMaxPosition(community, messageDto.getMessageType(), messageDto.getPublishTime().getTime())).thenReturn(position);
 
         Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
@@ -580,7 +581,7 @@ public class MessageServiceTest {
         assertEquals(messageDto.getActionType(), actualMessage.getActionType());
         assertEquals(messageDto.getActionButtonText(), actualMessage.getActionButtonText());
 
-        verify(mockCommunityService, times(1)).getCommunityByUrl(communityURL);
+        verify(communityRepository, times(1)).findByRewriteUrlParameter(communityURL);
         verify(mockMessageRepository, times(1)).findMaxPosition(community, messageDto.getMessageType(), messageDto.getPublishTime().getTime());
         verify(mockMessageRepository, times(1)).save(message);
 
@@ -607,16 +608,15 @@ public class MessageServiceTest {
     public void setUp() throws Exception {
 
         mockMessageRepository = Mockito.mock(MessageRepository.class);
-        mockCommunityService = Mockito.mock(CommunityService.class);
         mockFilterService = Mockito.mock(FilterService.class);
         mockCloudFileService = Mockito.mock(CloudFileService.class);
+        communityRepository = Mockito.mock(CommunityRepository.class);
 
         messageServiceSpy = spy(new MessageService());
         messageServiceSpy.setCloudFileService(mockCloudFileService);
         messageServiceSpy.setMessageRepository(mockMessageRepository);
         messageServiceSpy.setFilterService(mockFilterService);
-        messageServiceSpy.setCommunityService(mockCommunityService);
-        messageServiceSpy.setUserService(new UserService());
+        messageServiceSpy.setCommunityRepository(communityRepository);
         messageServiceSpy.dateFormat = new SimpleDateFormat();
 
         PowerMockito.mockStatic(Utils.class);

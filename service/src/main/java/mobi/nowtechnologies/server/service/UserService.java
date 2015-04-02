@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -32,7 +33,6 @@ import mobi.nowtechnologies.server.service.exception.ReactivateUserException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -122,6 +122,7 @@ public class UserService {
     private PromotionService promotionService;
     private CommunityResourceBundleMessageSource messageSource;
     private PaymentDetailsService paymentDetailsService;
+    private PaymentDetailsRepository paymentDetailsRepository;
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
     private CommunityService communityService;
@@ -392,7 +393,7 @@ public class UserService {
     public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
         LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
 
-        List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
+        List<PaymentDetails> paymentDetails = paymentDetailsRepository.findActivatedPaymentDetails(operatorName, phoneNumber);
         LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
         final String reason = "STOP sms";
         for (PaymentDetails paymentDetail : paymentDetails) {
@@ -400,7 +401,9 @@ public class UserService {
             if (isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())) {
                 unsubscribeUser(owner, reason);
             } else {
-                paymentDetailsService.disablePaymentDetails(paymentDetail, reason);
+                paymentDetail.disable(reason, new Date());
+                paymentDetailsRepository.save(paymentDetail);
+                LOGGER.info("Payment details [{}] was successfully disabled", paymentDetail.getI());
             }
             LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
         }
@@ -412,7 +415,7 @@ public class UserService {
     @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(int userId, UnsubscribeDto dto) {
         LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
-        User user = entityService.findById(User.class, userId);
+        User user = userRepository.findOne(userId);
         String reason = dto.getReason();
         if (!StringUtils.hasText(reason)) {
             reason = "Unsubscribed by user manually via web portal";
@@ -464,11 +467,6 @@ public class UserService {
         return promotion != null;
     }
 
-    public void contactWithUser(String from, String name, String subject) throws ServiceException {
-        String message = messageSource.getMessage(null, "support.email", null, null);
-        mailService.sendMessage(from, new String[] {message}, "From User " + name, subject, null);
-    }
-
     @Transactional(propagation = REQUIRED)
     public User updateUser(User user) {
         return userRepository.save(user);
@@ -479,9 +477,6 @@ public class UserService {
     }
 
     public String convertPhoneNumberFromGreatBritainToInternationalFormat(String mobile) {
-        if (mobile == null) {
-            throw new ServiceException("The parameter mobile is null");
-        }
         if (!mobile.startsWith("0044")) {
             return mobile.replaceFirst("0", "0044");
         }
@@ -628,21 +623,6 @@ public class UserService {
         user.setStatus(UserStatusDao.getEulaUserStatus());
         user.setFacebookId(userRegDetailsDto.getFacebookId());
         return user;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public boolean sendSMSWithOTALink(String phone, int userId) {
-        User user = userRepository.findOne(userId);
-        String code = Utils.getOTACode(user.getId(), user.getUserName());
-        String[] args = {migHttpService.getOtaUrl() + "&CODE=" + code};
-        String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(phone);
-
-        user.setCode(code);
-        updateUser(user);
-        MigResponse response = migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-                                                                 messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toLowerCase(), "sms.otalink.text", args, null));
-        LOGGER.info("OTA link has been sent to user {}", userId);
-        return response.getHttpStatus() == 200;
     }
 
     public void saveAccountDetails(AccountDto accountDto, int userId) {
@@ -1259,9 +1239,6 @@ public class UserService {
         this.mobileProviderService = mobileProviderService;
     }
 
-    public void setO2ClientService(O2ProviderService o2ClientService) {
-    }
-
     public void setOtacValidationService(OtacValidationService otacValidationService) {
         this.otacValidationService = otacValidationService;
     }
@@ -1272,6 +1249,10 @@ public class UserService {
 
     public void setUrbanAirshipTokenService(UrbanAirshipTokenService urbanAirshipTokenService) {
         this.urbanAirshipTokenService = urbanAirshipTokenService;
+    }
+
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {

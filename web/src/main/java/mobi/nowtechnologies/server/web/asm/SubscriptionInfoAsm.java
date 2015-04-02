@@ -23,7 +23,7 @@ public class SubscriptionInfoAsm {
 
         SubscriptionInfo info = new SubscriptionInfo();
         info.setIos(isIos);
-        info.setPremium(calcIsPremium(isIos, user));
+        info.setPremium(user.isPremium(timeService.now()));
         info.setFreeTrial(user.isOnFreeTrial());
         info.setOnPaidPeriod(isOnPaidPeriod(user));
 
@@ -66,16 +66,6 @@ public class SubscriptionInfoAsm {
             }
         }
         return included;
-    }
-
-    private boolean calcIsPremium(boolean isIos, User user) {
-        if (isIos) {
-            return ITUNES_SUBSCRIPTION.equals(user.getLastSubscribedPaymentSystem()) &&
-                   (user.getCurrentPaymentDetails() == null || user.getCurrentPaymentDetails().isDeactivated()) &&
-                   user.getNextSubPaymentAsDate().after(timeService.now());
-        } else {
-            return user.getCurrentPaymentDetails() != null && user.getCurrentPaymentDetails().isActivated();
-        }
     }
 
     public void setTimeService(TimeService timeService) {

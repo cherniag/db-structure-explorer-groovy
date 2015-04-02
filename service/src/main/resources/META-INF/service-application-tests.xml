@@ -18,4 +18,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd" profile="applicati
         <property name="cacheSeconds" value="180"/>
         <property name="useCodeAsDefaultMessage" value="true"/>
     </bean>
+
+    <bean id="service.NZSubscriberInfoGateway" class="mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock"/>
+
+    <bean id="vf_nz.service.VFNZSMSGatewayService" class="mobi.nowtechnologies.server.apptests.VFNZSMSGatewayServiceImplMock" />
 </beans>

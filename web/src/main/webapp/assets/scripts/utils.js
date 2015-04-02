@@ -64,6 +64,57 @@ var Templates = {
     }
 }
 
+function PinCodeControl(controlId){
+    this.controlId = controlId;
+
+    $('#'+this.controlId).find('input[type=text]').each(function(){
+        $(this)
+            .on('focus', function(){
+                var prev = $(this).prev('input[type=text]');
+                if(prev && prev.length && !prev.val() && !$(this).val()){
+                    prev[0].focus();
+                }
+            })
+            .on('keyup', function(e){
+                var next = $(this).next('input[type=text]');
+                var prev = $(this).prev('input[type=text]');
+
+                if(e.keyCode==46 && next.length && !(prev.length && prev.val())) {
+                    next[0].focus();
+                    if(next.val().length) next[0].setSelectionRange(0, 0);
+                    return;
+                }
+
+                if($(this).val() && next.length && !next.val()){
+                    next[0].focus();
+                    if(next.val().length) next[0].setSelectionRange(1, 1);
+                } else if (!$(this).val() && !next.val() && prev.length) {
+                    prev[0].focus();
+                    if(prev.val().length) prev[0].setSelectionRange(1, 1);
+                }
+            })
+            .on('keydown', function(e){
+                var next = $(this).next('input[type=text]'),
+                    val = $(this).val(),
+                    charCode = (e.which) ? e.which : e.keyCode;
+
+                if(val && this.selectionStart == 1 && next.length && !next.val() && (charCode >= 48 && charCode <= 57)){
+                    next.val(String.fromCharCode(charCode));
+                    next[0].focus();
+                    next[0].setSelectionRange(1, 1);
+                }
+            });
+    });
+}
+
+PinCodeControl.prototype.getValue = function() {
+    var val = "";
+    $('#'+this.controlId).find('input[type=text]').each(function(){
+        val += $(this).val();
+    });
+    return val;
+};
+
 function createCookie(name, value, days) {
 	var expires = "";
 	if (days) {

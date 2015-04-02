@@ -64,22 +64,6 @@ public class OfferPaymentsPayPalController extends CommonController {
         return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
     }
 
-    @RequestMapping(value = PAGE_PAYMENTS_PAYPAL_CALLBACK, method = RequestMethod.GET)
-    public ModelAndView buyByPaymentDetails(@PathVariable(OfferDto.OFFER_ID) Integer offerId, @RequestParam(value = REQUEST_PARAM_PAYPAL) String result,
-                                            @RequestParam(value = REQUEST_PARAM_PAYPAL_TOKEN) String token,
-                                            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-        ModelAndView modelAndModel = new ModelAndView(VIEW_PAYMENTS_PAYPAL);
-
-        if (result.equals(SUCCESSFUL_RESULT)) {
-            paymentDetailsService.buyByPayPalPaymentDetails(token, communityUrl.getValue(), getSecurityContextDetails().getUserId(), offerId);
-        }
-
-        modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
-        modelAndModel.addObject(OfferDto.OFFER_ID, offerId);
-
-        return modelAndModel;
-    }
-
     @ExceptionHandler(value = ServiceException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleExceptions(HttpServletRequest request, ServiceException exception, Locale locale) {

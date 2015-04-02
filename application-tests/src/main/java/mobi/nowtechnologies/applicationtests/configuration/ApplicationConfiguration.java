@@ -2,8 +2,8 @@ package mobi.nowtechnologies.applicationtests.configuration;
 
 import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
-import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService;
-import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
+import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
+import mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService;
 import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
 
 import javax.persistence.EntityManagerFactory;
@@ -40,7 +40,11 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(
     basePackages = {"mobi.nowtechnologies.applicationtests.services", "mobi.nowtechnologies.applicationtests.features"})
 @Import(PropertyPlaceholderConfiguration.class)
-@ImportResource({"classpath:META-INF/dao.xml", "classpath:context/services.xml", "classpath:META-INF/service-application-tests.xml"})
+@ImportResource({
+        "classpath:META-INF/dao.xml",
+        "classpath:context/services.xml"
+        /*"classpath:META-INF/service-application-tests.xml"*/
+})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class ApplicationConfiguration {
 
@@ -80,8 +84,8 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public PhoneExtensionsService getPhoneExtensionsService() {
-        return new PhoneExtensionsService();
+    public O2PhoneExtensionsService getPhoneExtensionsService() {
+        return new O2PhoneExtensionsService();
     }
 
     @Bean(name = "applicationTestsEntityManager")

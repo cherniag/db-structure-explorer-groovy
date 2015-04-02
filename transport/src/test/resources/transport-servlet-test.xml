@@ -32,4 +32,6 @@
     <bean id="reporter" class="mobi.nowtechnologies.server.httpinvoker.Reporter">
         <property name="dir" value="classpath:http_invoker_report" />
     </bean>
+
+    <bean id="sendChargeNotificationThreadExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 </beans>

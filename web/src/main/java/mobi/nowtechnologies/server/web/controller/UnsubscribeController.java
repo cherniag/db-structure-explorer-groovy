@@ -58,6 +58,11 @@ public class UnsubscribeController extends CommonController {
         return modelAndView;
     }
 
+    @RequestMapping(value = SCOPE_PREFIX + "/unsubscribeConfirmation.html", method = RequestMethod.GET)
+    public ModelAndView getUnsubscribeConfirmationPage(@PathVariable("scopePrefix") String scopePrefix) {
+        return new ModelAndView(scopePrefix + "/unsubscribeConfirmation");
+    }
+
     @RequestMapping(value = PAGE_UNSUBSCRIBE_BY_PAYPAL, method = RequestMethod.GET)
     public ModelAndView getUnsubscribePageForPayPal(@PathVariable("scopePrefix") String scopePrefix) {
         ModelAndView modelAndView = new ModelAndView(scopePrefix + "/unsubscribeByPayPal");

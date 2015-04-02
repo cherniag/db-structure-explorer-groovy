@@ -40,14 +40,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity
 @Table(name = "tb_paymentPolicy")
 @NamedQueries(value = {@NamedQuery(name = PaymentPolicy.GET_OPERATORS_LIST,
-                                   query = "select paymentPolicy.operator from PaymentPolicy paymentPolicy where paymentPolicy.communityId=?1 and paymentPolicy.paymentType=?2"), @NamedQuery(
-    name = PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE,
-    query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
+                                   query = "select paymentPolicy.operator from PaymentPolicy paymentPolicy where paymentPolicy.communityId=?1 and paymentPolicy.paymentType=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
-
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
-    public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -110,14 +106,6 @@ public class PaymentPolicy {
     private PaymentPolicyType paymentPolicyType;
     @Column(name = "payment_order", nullable = false, columnDefinition = "int default 0")
     private int order;
-
-    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
-        for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
-        }
-        return offerPaymentPolicyDtos;
-    }
 
     public Integer getId() {
         return id;
@@ -217,14 +205,6 @@ public class PaymentPolicy {
 
     public int getOrder() {
         return order;
-    }
-
-    public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
-        OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
-
-        offerPaymentPolicyDto.setPaymentType(paymentType);
-
-        return offerPaymentPolicyDto;
     }
 
     public SegmentType getSegment() {
@@ -478,7 +458,4 @@ public class PaymentPolicy {
                                         .append("online", online).append("order", order).toString();
     }
 
-    public static enum Fields {
-        communityId
-    }
 }

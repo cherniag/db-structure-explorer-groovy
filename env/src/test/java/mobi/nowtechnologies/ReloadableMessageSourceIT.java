@@ -1,26 +1,26 @@
 package mobi.nowtechnologies;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
-
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Properties;
-import static java.util.Locale.ENGLISH;
-
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.junit.Ignore;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
-import org.junit.*;
-import org.junit.experimental.theories.*;
-import org.junit.runner.*;
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Properties;
 
+import static java.util.Locale.ENGLISH;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 // @author Titov Mykhaylo (titov) on 06.01.2015.
 //To run this test in idea IDE please run following command: maven -Dtest=ReloadableMessageSourceIT test -DfailIfNoTests=false

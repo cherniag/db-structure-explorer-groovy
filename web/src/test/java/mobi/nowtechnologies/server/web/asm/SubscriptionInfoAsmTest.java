@@ -46,13 +46,14 @@ public class SubscriptionInfoAsmTest {
     ITunesPaymentService iTunesPaymentService;
     @InjectMocks
     SubscriptionInfoAsm subscriptionInfoAsm;
+    @Mock
+    private PaymentPolicy policy;
+
     //
     // Variables
     //
     Locale locale = Locale.CANADA;
     Period period = new Period(WEEKS, 3);
-    @Mock
-    private PaymentPolicy policy;
 
     @Before
     public void setUp() throws Exception {
@@ -197,6 +198,7 @@ public class SubscriptionInfoAsmTest {
         when(details.isActivated()).thenReturn(true);
         when(user.getCurrentPaymentDetails()).thenReturn(details);
         when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.isPremium(now)).thenReturn(true);
 
         return user;
     }
@@ -208,6 +210,7 @@ public class SubscriptionInfoAsmTest {
         when(user.getCurrentPaymentDetails()).thenReturn(null);
         when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
         when(user.isSubscribedStatus()).thenReturn(true);
+        when(user.isPremium(now)).thenReturn(true);
 
         return user;
     }

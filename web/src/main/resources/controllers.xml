@@ -7,6 +7,10 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <import resource="model-service.xml" />
+
+    <bean class="mobi.nowtechnologies.server.web.service.impl.PinService" />
+
     <bean id="subscriptionInfoAsm" class="mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm">
         <property name="timeService" ref="timeService"/>
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
@@ -29,21 +33,11 @@
         <property name="authenticationManager" ref="authenticationManager"/>
     </bean>
 
-    <bean class="mobi.nowtechnologies.server.web.controller.GetAppController">
-        <property name="userService" ref="service.UserService"/>
-    </bean>
-
     <bean name="web.AccountController" class="mobi.nowtechnologies.server.web.controller.AccountController">
         <property name="userRepository" ref="userRepository"/>
         <property name="userService" ref="service.UserService"/>
         <property name="messageSource" ref="messageSource"/>
         <property name="specificCommunityResourcesFolderPath" value="${specificCommunityResourcesFolderPath}"/>
-    </bean>
-
-    <bean name="web.PaymentHistoryController"
-          class="mobi.nowtechnologies.server.web.controller.PaymentHistoryController">
-        <property name="paymentService" ref="service.PaymentService"/>
-        <property name="messageSource" ref="messageSource"/>
     </bean>
 
     <bean name="web.TracksController" class="mobi.nowtechnologies.server.web.controller.TracksController">
@@ -54,14 +48,23 @@
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-        <property name="communityService" ref="service.communityService"/>
         <property name="userRepository" ref="userRepository"/>
-    	<property name="userService" ref="service.UserService"/>
+        <property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
     	<property name="promotionService" ref="service.PromotionService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
         <property name="subscriptionInfoAsm" ref="subscriptionInfoAsm"/>
+        <property name="communityServiceFactory" ref="communityServiceFactory"/>
     </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">
+        <property name="communityServiceFactory" ref="communityServiceFactory"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.SmsPaymentController">
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.PinController" />
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
         <property name="countryService" ref="service.CountryService"/>
@@ -108,13 +111,6 @@
         </property>
     </bean>
 
-    <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
-        <property name="userService" ref="service.UserService"/>
-        <property name="userRepository" ref="userRepository"/>
-    </bean>
-
-    <bean name="web.FaqController" class="mobi.nowtechnologies.server.web.controller.FaqController"/>
-
     <bean class="mobi.nowtechnologies.server.web.controller.TermsController"/>
 
     <bean name="web.ErrorController" class="mobi.nowtechnologies.server.web.controller.ErrorController"/>
@@ -123,11 +119,6 @@
         <property name="offerService" ref="service.OfferService"/>
         <property name="filesURL" value="${cloudFile.filesURL}"/>
         <property name="coverStorePath" value="${web.coverStorePath}"/>
-    </bean>
-
-    <bean name="web.OfferPaymentMethodsController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentMethodsController">
-        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 
     <bean name="web.OfferPaymentsPayPalController"

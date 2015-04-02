@@ -1,23 +1,31 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<div class="holding_page_main_container">
-    <div class="holding_page_content_container">
-        <div class="holding_page_close_button_small">
-            <button onClick="returnToApp()"></button>
-        </div>
-        <div class="holding_page_logo"></div>
-        <div class="holding_page_img"></div>
-        <div class="holding_page_relax">
-            <s:message code="holding.page.relax.message" />
-        </div>
-        <div class="holding_page_enjoy">
-            <s:message code="holding.page.enjoy.message" />
-        </div>
-        <div class="holding_page_close_button_big">
-            <button onClick="returnToApp()"><s:message code="holding.page.close.message" /></button>
-        </div>
+
+<div class="page-container">
+    <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_close_72.png" class="go-premium-button-target go-premium-button-close" onclick="returnToApp();" />
+
+    <div class="center-container">
+        <img src="${requestScope.assetsPathAccordingToCommunity}imgs/logo_holding_big.png" class="holding-logo-app" />
+        <img src="${requestScope.assetsPathAccordingToCommunity}imgs/img_holding_big.png" class="holding-logo" />
     </div>
+
+    <div class="center-container holding-header">
+        <br/>
+        Relax.
+        <br/>
+        You're on a free trial
+        <br/>
+        <br/>
+    </div>
+
+    <div class="message">
+        Enjoy the music and we'll let you know when it's time to upgrade
+    </div>
+
+    <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="returnToApp();">
+        <span>
+            Close
+        </span>
+    </a>
 </div>
+
 

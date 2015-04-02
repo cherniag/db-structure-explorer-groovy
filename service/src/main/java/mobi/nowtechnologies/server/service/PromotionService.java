@@ -31,7 +31,6 @@ import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_
 import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
@@ -55,7 +54,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
-    private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
+    private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g";
 
     private PromotionDao promotionDao;
     private EntityService entityService;
@@ -64,7 +63,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
     private DeviceService deviceService;
-    private CommunityService communityService;
     private UserTransactionRepository userTransactionRepository;
     private UserGroupRepository userGroupRepository;
     private UserRepository userRepository;
@@ -241,12 +239,12 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         String contract = user.getContract().name();
         if (contractChannel == null) {
             LOGGER.warn("The user contract channel is null, DIRECT will be used");
-            messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
+            messageCodeForPromoCode = PROMO_CODE_FOR_O2_CONSUMER_4G + "." + contract + "." + DIRECT.name();
         } else {
-            messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
+            messageCodeForPromoCode = PROMO_CODE_FOR_O2_CONSUMER_4G + "." + contract + "." + contractChannel.name();
         }
         LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
-        return messageCodeForPromoCode;
+        return messageCodeForPromoCode.toLowerCase();
     }
 
     @Transactional(propagation = REQUIRED)
@@ -336,7 +334,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     @Transactional(propagation = REQUIRED)
     protected Promotion setPotentialPromoByPromoCode(User user, String code) {
         LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
-        Community community = user.getUserGroup().getCommunity();
         if (code != null) {
             Promotion potentialPromoCodePromotion = getActivePromotion(user.getUserGroup(), code);
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
@@ -399,12 +396,8 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     }
 
     public boolean isUserNotBanned(User user) {
-        UserBanned userBanned = getUserBanned(user.getId());
+        UserBanned userBanned = userBannedRepository.findOne(user.getId());
         return isNull(userBanned) || userBanned.isGiveAnyPromotion();
-    }
-
-    private UserBanned getUserBanned(Integer userId) {
-        return userBannedRepository.findOne(userId);
     }
 
     private boolean couldNotBeApplied(User user, Promotion promotion) {
@@ -470,10 +463,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
     }
 
     public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {

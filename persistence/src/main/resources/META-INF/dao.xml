@@ -39,10 +39,6 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
-	<bean id="persistence.PaymentDao" class="mobi.nowtechnologies.server.persistence.dao.PaymentDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
 	<bean id="persistence.EntityDao" class="mobi.nowtechnologies.server.persistence.dao.EntityDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
@@ -50,15 +46,6 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 	<bean id="persistence.AccountLogDao"
 		class="mobi.nowtechnologies.server.persistence.dao.AccountLogDao">
 		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
-	<bean id="persistence.DrmDao" class="mobi.nowtechnologies.server.persistence.dao.DrmDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
-	<bean id="persistence.PaymentPolicyDao"
-		class="mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
@@ -106,17 +93,6 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 	<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 		<property name="dataSource" ref="persistence.DataSource" />
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.CommunityDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
 	</bean>
 
 	<bean

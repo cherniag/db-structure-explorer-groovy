@@ -1,14 +1,10 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
@@ -18,11 +14,8 @@ import mobi.nowtechnologies.server.service.payment.response.PaymentSystemRespons
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
 
 import javax.servlet.http.HttpServletResponse;
-
-import java.math.BigDecimal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,30 +33,6 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
     private PayPalHttpService httpService;
 
     private String redirectURL;
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public PayPalPaymentDetails makePaymentWithPaymentDetails(PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy) throws ServiceException {
-        PayPalPaymentDetails newPaymentDetails = commitPaymentDetails(paymentDto.getToken(), user, paymentPolicy, false);
-
-        PendingPayment pendingPayment = new PendingPayment();
-        pendingPayment.setOfferId(paymentDto.getOfferId());
-        pendingPayment.setAmount(new BigDecimal(paymentDto.getAmount()));
-        pendingPayment.setCurrencyISO(paymentDto.getCurrency());
-        pendingPayment.setPaymentSystem(PaymentDetails.PAYPAL_TYPE);
-        pendingPayment.setUser(user);
-        pendingPayment.setExternalTxId("NONE");
-        pendingPayment.setTimestamp(Utils.getEpochMillis());
-        pendingPayment.setExpireTimeMillis(getExpireMillis());
-        pendingPayment.setType(PaymentDetailsType.PAYMENT);
-        pendingPayment.setPaymentDetails(newPaymentDetails);
-        pendingPayment.setPeriod(new Period().withDuration(0).withDurationUnit(DAYS));
-        entityService.saveEntity(pendingPayment);
-
-        startPayment(pendingPayment);
-
-        return newPaymentDetails;
-    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

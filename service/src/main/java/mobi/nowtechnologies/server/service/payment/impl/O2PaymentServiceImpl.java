@@ -13,12 +13,7 @@ import mobi.nowtechnologies.server.shared.Utils;
  * @author Titov Mykhaylo (titov)
  */
 public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaymentDetails> {
-
     private O2ProviderService o2ClientService;
-
-    protected O2PaymentServiceImpl() {
-        super(O2PSMSPaymentDetails.class);
-    }
 
     public void setO2ClientService(O2ProviderService o2ClientService) {
         this.o2ClientService = o2ClientService;
@@ -53,4 +48,5 @@ public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaym
 
         return response;
     }
+
 }
