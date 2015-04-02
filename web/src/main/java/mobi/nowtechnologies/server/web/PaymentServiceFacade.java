@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetai
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
@@ -23,6 +24,9 @@ public class PaymentServiceFacade {
 
     @Resource(name = "service.PaymentDetailsService")
     PaymentDetailsService paymentDetailsService;
+
+    @Resource
+    UserRepository userRepository;
 
     public void createPaymentDetails(User user, PaymentPolicy policy) {
         PaymentDetails paymentDetails = null;

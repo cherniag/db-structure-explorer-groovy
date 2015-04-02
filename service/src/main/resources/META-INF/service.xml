@@ -195,7 +195,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="messageParser" ref="vf_nz.service.SubsriberDataParser" />
     </bean>
 
-    <bean id="mtvnzPaymentSMSMessageProcessor" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSMSMessageProcessor">
+    <bean id="mtvnzPaymentSMSProcessor" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSMSProcessor">
         <property name="paymentShortCodes">
             <set>
                 <value>${mtv.nz.payment.short.code.1}</value>
