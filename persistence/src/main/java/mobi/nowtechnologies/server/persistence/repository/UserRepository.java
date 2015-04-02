@@ -216,6 +216,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "select u from User u " + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%' and u.deviceUID not like '%_wipe'")
     List<User> findByMobile(String phoneNumber);
 
+    @Query(value = "select user from User user where " +
+                   "user.mobile = :phoneNumber " +
+                   "and user.userGroup.community.rewriteUrlParameter = :communityRewriteUrl " +
+                   "and user.userName not like '%_wipe'")
+    List<User> findByMobileAndCommunity(@Param("phoneNumber") String phoneNumber, @Param("communityRewriteUrl") String communityRewriteUrl);
+
     @Query(value = "select user from User user join user.userGroup userGroup " +
                    "join userGroup.community community where " +
                    "user.userName like concat('%',:searchWord,'%') escape '^' and community.rewriteUrlParameter = :rewriteUrlParameter and user.activationStatus='ACTIVATED' order by user.userName ")
