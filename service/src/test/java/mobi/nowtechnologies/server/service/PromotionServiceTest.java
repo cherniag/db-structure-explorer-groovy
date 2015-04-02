@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;

@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 

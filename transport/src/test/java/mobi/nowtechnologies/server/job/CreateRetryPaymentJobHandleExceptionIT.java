@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;

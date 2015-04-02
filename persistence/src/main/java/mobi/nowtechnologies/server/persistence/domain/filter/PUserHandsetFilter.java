@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserHandset;
 
@@ -13,9 +13,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @DiscriminatorValue("PromotionUserHandsetFilter")

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 

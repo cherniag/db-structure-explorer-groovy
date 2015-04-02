@@ -1,0 +1,66 @@
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
+package mobi.nowtechnologies.server.device;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+
+@Entity
+@Table(name = "device")
+public class Device {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "type", nullable = false, updatable = false)
+    private String type;
+
+    protected Device() {
+    }
+
+    public Device(DeviceType deviceType) {
+        Preconditions.checkNotNull(type);
+        this.type = deviceType.getName();
+    }
+
+    public DeviceType getType() {
+        return DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(type);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Device device = (Device) o;
+
+        return id == device.id && getType().equals(device.getType());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + getType().hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("type", getType()).toString();
+    }
+}

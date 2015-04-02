@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.versioncheck;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;

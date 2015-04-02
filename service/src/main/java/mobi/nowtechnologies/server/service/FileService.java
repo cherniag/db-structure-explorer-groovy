@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.util.TrackIdGenerator;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;

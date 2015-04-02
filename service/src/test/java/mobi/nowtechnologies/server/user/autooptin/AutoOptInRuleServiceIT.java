@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.user.autooptin;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
 import mobi.nowtechnologies.server.persistence.domain.User;

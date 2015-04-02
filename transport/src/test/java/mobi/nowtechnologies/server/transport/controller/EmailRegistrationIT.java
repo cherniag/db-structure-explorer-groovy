@@ -13,7 +13,7 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
 import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.ANDROID;
+import static mobi.nowtechnologies.server.device.DeviceType.ANDROID;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.PENDING_ACTIVATION;
 import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
 import static mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED;

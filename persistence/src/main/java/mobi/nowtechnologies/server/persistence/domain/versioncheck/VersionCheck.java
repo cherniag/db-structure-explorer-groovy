@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.versioncheck;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

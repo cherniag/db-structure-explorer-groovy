@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Chart;

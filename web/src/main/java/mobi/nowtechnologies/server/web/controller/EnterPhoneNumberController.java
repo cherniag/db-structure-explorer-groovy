@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.common.util.PhoneData;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
