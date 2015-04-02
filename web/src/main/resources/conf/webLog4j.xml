@@ -40,7 +40,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
+                   value="%-24d{ISO8601}: [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
@@ -88,34 +88,6 @@
         </layout>
     </appender>
 
-    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
-        <param name="target" value="System.out"/>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <!--The " ut " will be replace on current "unix time" value-->
-            <param name="ConversionPattern"
-                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %C{1}.%M() %m%n"/>
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="LevelMin" value="TRACE"/>
-            <param name="LevelMax" value="INFO"/>
-            <param name="AcceptOnMatch" value="FALSE"/>
-        </filter>
-    </appender>
-
-    <appender name="stderr" class="org.apache.log4j.ConsoleAppender">
-        <param name="target" value="System.err"/>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <!--The " ut " will be replace on current "unix time" value-->
-            <param name="ConversionPattern"
-                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %C{1}.%M() %m%n"/>
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="LevelMin" value="WARN"/>
-            <param name="LevelMax" value="FATAL"/>
-            <param name="AcceptOnMatch" value="FALSE"/>
-        </filter>
-    </appender>
-
     <appender name="slow-requests" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/slow-requests.log"/>
         <param name="encoding" value="UTF-8"/>
@@ -124,18 +96,6 @@
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <param name="ConversionPattern" value="%-24d{ISO8601}: ut [%15.15t] %-5p %C{1}.%M() - %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="web-RollingFileAppender2" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/web-new.log"/>
-        <param name="encoding" value="UTF-8"/>
-        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/web-new_%d{yyyy-MM-dd}.gz"/>
-        </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %C{1}.%M() - %m%n"/>
         </layout>
     </appender>
 
@@ -179,7 +139,6 @@
     <logger name="mobi.nowtechnologies.server.web">
         <level value="DEBUG"></level>
         <appender-ref ref="web-RollingFileAppender"/>
-        <appender-ref ref="web-RollingFileAppender2"/>
     </logger>
 
     <logger name="org.apache.tiles">
