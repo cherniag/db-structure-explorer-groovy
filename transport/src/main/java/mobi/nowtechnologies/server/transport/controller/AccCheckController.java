@@ -147,9 +147,7 @@ public class AccCheckController extends CommonController {
 
             SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
 
-            if (idfa != null) {
-                userRepository.updateTokenDetails(user.getId(), idfa);
-            }
+            userService.updateIdfaToken(user, idfa);
 
             if (isNotBlank(xtifyToken)) {
                 try {
