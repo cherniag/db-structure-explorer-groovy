@@ -62,7 +62,6 @@
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.SmsPaymentController">
-        <property name="userService" ref="service.UserService"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PinController" />
