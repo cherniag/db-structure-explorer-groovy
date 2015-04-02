@@ -8,6 +8,9 @@ import mobi.nowtechnologies.server.web.model.EnterPhoneModelService;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,22 +20,30 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("phone")
 public class EnterPhoneNumberController extends CommonController {
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     CommunityServiceFactory communityServiceFactory;
     @Resource
     UserRepository userRepository;
 
     @RequestMapping(value = {"check"}, method = RequestMethod.GET)
     public ModelAndView check() {
+        logger.info("Open check phone page");
+
         return new ModelAndView("phone/check");
     }
 
     @RequestMapping(value = {"reassign"}, method = RequestMethod.GET)
-    public ModelAndView change() {
+    public ModelAndView reassign() {
+        logger.info("Open reassign phone page");
+
         return new ModelAndView("phone/reassign");
     }
 
     @RequestMapping(value = {"change"}, method = RequestMethod.GET)
-    public ModelAndView reassign(@RequestParam("phone") String phone) {
+    public ModelAndView change(@RequestParam("phone") String phone) {
+        logger.info("Change the phone number for {} with new one: {}", getUserId(), phone);
+
         ModelAndView modelAndView = process(phone);
         modelAndView.setViewName("phone/result");
         modelAndView.addObject("reassigned", true);
@@ -41,6 +52,8 @@ public class EnterPhoneNumberController extends CommonController {
 
     @RequestMapping(value = {"result"}, method = RequestMethod.GET)
     public ModelAndView result(@RequestParam("phone") String phone) {
+        logger.info("Open assign/reassign phone result page");
+
         ModelAndView modelAndView = process(phone);
         modelAndView.setViewName("phone/result");
         return modelAndView;
