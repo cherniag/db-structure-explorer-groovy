@@ -320,4 +320,44 @@ public class MTVNZMessageNotificationServiceImplTest {
 
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null));
     }
+
+    @Test
+    public void shouldReturnSuccessfilSubscriptionMessageForPayedMtvnzUserWithVFCurrentPaymentDetailsWhenUserFirsSubscribe() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+
+        PaymentPolicy newPaymentPolicy = new PaymentPolicy();
+        newPaymentPolicy.setId(1);
+
+        PaymentDetails newMtvVfPsmsPaymentDetails = new MTVNZPSMSPaymentDetails();
+        newMtvVfPsmsPaymentDetails.setCreationTimestampMillis(1L);
+        newMtvVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
+
+        user.setPaymentDetailsList(Arrays.asList(newMtvVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newMtvVfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.potential.text";
+
+        String expectedMsg = "You're now subscribed to MTV Trax for $2 per month. The hottest music in your pocket with overnight updates & no ads. To unsubscribe, text STOP to 3140";
+        final String expectedMsgCode = "sms.mtvnzPsms.successful.subscribtion";
+        String[] msgArgs = {"http://short.link", "$", "2", "per month", "3140"};
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = mtvnzMessageNotificationServiceImpl.getMessage(user, msgCodeBase, msgArgs);
+
+        //then
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null));
+    }
 }

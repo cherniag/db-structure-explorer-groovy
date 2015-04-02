@@ -199,7 +199,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     @Async
     @Override
-    public Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
+    public Future<Boolean> sendSubscriptionChangedSMS(User user) throws UnsupportedEncodingException {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
             if (user == null) {

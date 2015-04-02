@@ -179,14 +179,14 @@ public class PaymentDetailsService {
 
         LOGGER.info("Done commitment of psms payment details [{}] for user [{}]", new Object[] {details, user.getUserName()});
 
-        sendUnsubscribePotentialSMS(user);
+        sendSubscriptionChangedSMS(user);
 
         return details;
     }
 
-    private void sendUnsubscribePotentialSMS(User user) {
+    private void sendSubscriptionChangedSMS(User user) {
         try {
-            userNotificationService.sendUnsubscribePotentialSMS(user);
+            userNotificationService.sendSubscriptionChangedSMS(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

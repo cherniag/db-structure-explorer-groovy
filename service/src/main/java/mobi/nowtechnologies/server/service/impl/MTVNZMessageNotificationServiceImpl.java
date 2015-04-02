@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,44 +29,46 @@ public class MTVNZMessageNotificationServiceImpl implements MessageNotificationS
 
         LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
 
-        String msgCodeEnding = null;
+        String msgCode = null;
         if(msgCodeBase.equals("sms.unsubscribe.after.text")){
-            msgCodeEnding = getMsgCodeEndingForManualUnsubscriptionMTVFNZPaymentDetailsCase(user);
+            msgCode = getMsgCodeForManualUnsubscriptionMTVFNZPaymentDetailsCase(user, msgCodeBase);
         } else if(msgCodeBase.equals("sms.unsubscribe.potential.text")){
-            msgCodeEnding = getMsgCodeEndingForNewPaymentDetailsCommittingCase(user);
+            msgCode = getMsgCodeForNewPaymentDetailsCommittingCase(user, msgCodeBase);
         }
 
         String msg = null;
-        if(isNotNull(msgCodeEnding)){
-            msg = messageSource.getMessage(community.getRewriteUrlParameter(), msgCodeBase + msgCodeEnding, msgArgs, "", null);
+        if(isNotNull(msgCode)){
+            msg = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, "", null);
         }
 
         LOGGER.debug("Output parameter msg=[{}]", msg);
         return msg;
     }
 
-    private String getMsgCodeEndingForManualUnsubscriptionMTVFNZPaymentDetailsCase(User user) {
+    private String getMsgCodeForManualUnsubscriptionMTVFNZPaymentDetailsCase(User user, String msgCodeBase) {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if(currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE)) {
             if (user.isOnFreeTrial()) {
-                return ".for.mtvnzPsms.onFreeTrial.user";
+                return msgCodeBase.concat(".for.mtvnzPsms.onFreeTrial.user");
             } else {
-                return ".for.mtvnzPsms.onBoughtPeriod.user";
+                return msgCodeBase.concat(".for.mtvnzPsms.onBoughtPeriod.user");
             }
         }
         return null;
     }
 
-    private String getMsgCodeEndingForNewPaymentDetailsCommittingCase(User user) {
+    private String getMsgCodeForNewPaymentDetailsCommittingCase(User user, String msgCodeBase) {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         PaymentDetails previousPaymentDetails = user.getPreviousPaymentDetails();
         if(isNotNull(previousPaymentDetails) && (currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE) || previousPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE))) {
             PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
             if(previousPaymentDetails.getPaymentPolicy().getId().equals(paymentPolicy.getId())){
-                return ".for.mtvnzPsms.user.prevPaymentPolicyIsTheSame";
+                return msgCodeBase.concat(".for.mtvnzPsms.user.prevPaymentPolicyIsTheSame");
             }else {
-                return ".for.mtvnzPsms.user.prevPaymentPolicyIsDiffer";
+                return msgCodeBase.concat(".for.mtvnzPsms.user.prevPaymentPolicyIsDiffer");
             }
+        } else if (isNull(previousPaymentDetails) && currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE)) {
+            return "sms.mtvnzPsms.successful.subscribtion";
         }
         return null;
     }
