@@ -23,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PinController extends CommonController {
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource
     CommunityServiceFactory communityServiceFactory;
     @Resource
@@ -32,15 +34,17 @@ public class PinController extends CommonController {
     @Resource
     PinCodeService pinCodeService;
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     @RequestMapping(value = {"pin/check"}, method = RequestMethod.GET)
     public ModelAndView enter() {
+        logger.info("Open check pin page");
+
         return new ModelAndView("pin/check");
     }
 
     @RequestMapping(value = {"pin/resend"}, method = RequestMethod.GET)
     public ModelAndView resend(@RequestParam("phone") String phone) {
+        logger.info("Resend pin for user {} and phone {}", getUserId(), phone);
+
         User user = currentUser();
 
         ModelAndView modelAndView = new ModelAndView("pin/check");
@@ -61,6 +65,8 @@ public class PinController extends CommonController {
     public ModelAndView result(@RequestParam("pin") String pin,
                                @RequestParam("phone") String phone,
                                @RequestParam("key") String key) {
+        logger.info("Open pin result page");
+
         User user = currentUser();
 
         ModelAndView modelAndView = new ModelAndView("pin/result");

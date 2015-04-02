@@ -25,7 +25,7 @@ import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentReposi
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService;
+import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
@@ -60,7 +60,7 @@ public class MTVNZPaymentSystemServiceIT {
     private static final String COMMUNITY_REWRITE_URL = "mtv1";
 
     @Resource(name = "mtvnzPaymentSystemService")
-    private MTVNZPaymentSystemService mtvnzPaymentSystemService;
+    private PaymentSystemService mtvnzPaymentSystemService;
     @Resource
     private UserGroupRepository userGroupRepository;
     @Resource

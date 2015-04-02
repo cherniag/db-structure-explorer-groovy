@@ -108,15 +108,19 @@
         </property>
     </bean>
 
-    <bean id="mtvnzPaymentSystemService" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService" parent="service.AbstractPaymentSystemService">
-        <property name="retriesOnError" value="${mtvnz.retriesOnError}" />
-        <property name="expireMillis" value="${mtvnz.pendingExpireMillis}" />
+    <bean id="mtvnzPaymentSystemService" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService">
         <property name="nzSubscriberInfoProvider" ref="service.NZSubscriberInfoGateway" />
-        <property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>
-        <property name="smsGatewayService" ref="vf_nz.service.VFNZSMSGatewayService"/>
-        <property name="paymentEventNotifier" ref="mtvnzPaymentEventNotifier"/>
-        <property name="messageSource" ref="serviceMessageSource"/>
+		<property name="mtvnzPaymentHelper" ref="mtvnzPaymentSystemServiceHelper"/>
     </bean>
+
+	<bean id="mtvnzPaymentSystemServiceHelper" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentHelper" parent="service.AbstractPaymentSystemService">
+		<property name="retriesOnError" value="${mtvnz.retriesOnError}" />
+		<property name="expireMillis" value="${mtvnz.pendingExpireMillis}" />
+		<property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>
+		<property name="smsGatewayService" ref="vf_nz.service.VFNZSMSGatewayService"/>
+		<property name="paymentEventNotifier" ref="mtvnzPaymentEventNotifier"/>
+		<property name="messageSource" ref="serviceMessageSource"/>
+	</bean>
 
     <bean id="commonPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.CommonPaymentEventNotifier">
         <property name="userNotificationService" ref="service.UserNotificationService" />
