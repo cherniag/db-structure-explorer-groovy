@@ -4,22 +4,28 @@
 
 package mobi.nowtechnologies.server.service.payment.impl;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,7 +44,9 @@ import org.mockito.stubbing.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.*;
 
 
@@ -53,6 +61,10 @@ public class PayPalPaymentServiceImplTest{
     private static final String PAYERID = "RT67JJ";
     private static final String TRANSACTIONID = "TX12PF1112222";
     private static final User DEFAULT_USER = new User().withId(1);
+    private static final String CURRENCYISO = "GBP";
+    private static final BigDecimal AMOUNT = BigDecimal.ONE;
+    private static final String COMMUNITY = "mtv1";
+    private static final int RETRIES_ON_ERROR = 5;
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
@@ -75,9 +87,15 @@ public class PayPalPaymentServiceImplTest{
     @InjectMocks
     private PayPalPaymentServiceImpl payPalPaymentService;
 
+    @Captor
+    private ArgumentCaptor<Object> updateEntityServiceCaptor;
+    @Captor
+    private ArgumentCaptor<PaymentEvent> paymentEventsCaptor;
+
     @Before
     public void setUp(){
         payPalPaymentService.setRedirectURL(REDIRECT_URL);
+        payPalPaymentService.setRetriesOnError(RETRIES_ON_ERROR);
 
         when(paymentDetailsRepository.save(any(PaymentDetails.class))).thenAnswer(new Answer<PaymentDetails>() {
             @Override
@@ -100,168 +118,392 @@ public class PayPalPaymentServiceImplTest{
 
     @Test
     public void testCreatePaymentDetailsOneTimePayment() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.ONETIME);
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.ONETIME, CURRENCYISO, AMOUNT, COMMUNITY);
+        when(httpService.getTokenForOnetimeType(eq(SUCCESS_URL), eq(FAILURE_URL), eq(COMMUNITY), eq(CURRENCYISO), eq(AMOUNT))).thenReturn(getSuccessGetTokenResponse());
 
-        when(httpService.getTokenForOnetimeType(anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class))).thenReturn(getSuccessGetTokenResponse());
+        //
+        // When
+        //
         PayPalPaymentDetails paymentDetails = payPalPaymentService.createPaymentDetails(null, SUCCESS_URL, FAILURE_URL, DEFAULT_USER, paymentPolicy);
 
+        //
+        // Then
+        //
         assertEquals(REDIRECT_URL.concat("?cmd=_express-checkout&useraction=commit&token=").concat(TOKEN), paymentDetails.getBillingAgreementTxId());
-        verify(httpService, times(1)).getTokenForOnetimeType(SUCCESS_URL, FAILURE_URL, null, null, null);
+        assertEquals(NONE, paymentDetails.getLastPaymentStatus());
+        assertEquals(DEFAULT_USER, paymentDetails.getOwner());
+        assertEquals(RETRIES_ON_ERROR, paymentDetails.getRetriesOnError());
+        assertEquals(0, paymentDetails.getMadeAttempts());
+        assertEquals(0, paymentDetails.getMadeRetries());
+        assertEquals(paymentPolicy, paymentDetails.getPaymentPolicy());
+        assertFalse(paymentDetails.isActivated());
     }
 
 
     @Test
     public void testCreatePaymentDetailsRecurrentPayment() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.RECURRENT);
+        //
+        // Given
+        //
+        final String billingAgreementDescription = "Billing description";
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.RECURRENT, CURRENCYISO, null, COMMUNITY);
+        when(httpService.getTokenForRecurrentType(eq(SUCCESS_URL), eq(FAILURE_URL), eq(CURRENCYISO), eq(COMMUNITY), eq(billingAgreementDescription))).thenReturn(getSuccessGetTokenResponse());
 
-        when(httpService.getTokenForRecurrentType(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(getSuccessGetTokenResponse());
-        PayPalPaymentDetails paymentDetails = payPalPaymentService.createPaymentDetails(null, SUCCESS_URL, FAILURE_URL, DEFAULT_USER, paymentPolicy);
+        //
+        // When
+        //
+        PayPalPaymentDetails paymentDetails = payPalPaymentService.createPaymentDetails(billingAgreementDescription, SUCCESS_URL, FAILURE_URL, DEFAULT_USER, paymentPolicy);
 
+        //
+        // Then
+        //
         assertEquals(REDIRECT_URL.concat("?cmd=_express-checkout&useraction=commit&token=").concat(TOKEN), paymentDetails.getBillingAgreementTxId());
-        verify(httpService, times(1)).getTokenForRecurrentType(SUCCESS_URL, FAILURE_URL, null, null, null);
+        assertEquals(NONE, paymentDetails.getLastPaymentStatus());
+        assertEquals(DEFAULT_USER, paymentDetails.getOwner());
+        assertEquals(RETRIES_ON_ERROR, paymentDetails.getRetriesOnError());
+        assertEquals(0, paymentDetails.getMadeAttempts());
+        assertEquals(0, paymentDetails.getMadeRetries());
+        assertEquals(paymentPolicy, paymentDetails.getPaymentPolicy());
+        assertFalse(paymentDetails.isActivated());
     }
 
 
     @Test
     public void testCreatePaymentDetailsPayPalException() throws Exception {
+        //
+        // Given
+        //
         when(httpService.getTokenForRecurrentType(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(getFailureGetTokenResponse());
 
+        //
+        // Then
+        //
         thrown.expect(ServiceException.class);
+
+        //
+        // When
+        //
         payPalPaymentService.createPaymentDetails(null, SUCCESS_URL, FAILURE_URL, DEFAULT_USER, new PaymentPolicy());
     }
 
 
     @Test
     public void testCommitPaymentDetailsOneTimePayment() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.ONETIME);
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.ONETIME, COMMUNITY);
+        when(httpService.getPaymentDetailsInfoForOnetimeType(eq(TOKEN), eq(COMMUNITY))).thenReturn(getCheckoutDetailsResponse());
 
-        when(httpService.getPaymentDetailsInfoForOnetimeType(anyString(), anyString())).thenReturn(getCheckoutDetailsResponse());
+        //
+        // When
+        //
         PayPalPaymentDetails paymentDetails = payPalPaymentService.commitPaymentDetails(TOKEN, DEFAULT_USER, paymentPolicy, true);
 
+        //
+        // Then
+        //
         assertNull(paymentDetails.getBillingAgreementTxId());
         assertEquals(PAYERID, paymentDetails.getPayerId());
         assertEquals(TOKEN, paymentDetails.getToken());
-        verify(httpService, times(1)).getPaymentDetailsInfoForOnetimeType(TOKEN, null);
+        assertEquals(paymentPolicy, paymentDetails.getPaymentPolicy());
+        assertTrue(paymentDetails.isActivated());
+        assertEquals(NONE, paymentDetails.getLastPaymentStatus());
+        assertEquals(DEFAULT_USER, paymentDetails.getOwner());
+        assertEquals(RETRIES_ON_ERROR, paymentDetails.getRetriesOnError());
+        assertEquals(0, paymentDetails.getMadeAttempts());
+        assertEquals(0, paymentDetails.getMadeRetries());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetails);
     }
 
 
     @Test
     public void testCommitPaymentDetailsRecurrentPayment() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.RECURRENT);
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.RECURRENT, COMMUNITY);
+        when(httpService.getPaymentDetailsInfoForRecurrentType(eq(TOKEN), eq(COMMUNITY))).thenReturn(getBillingAgreementResponse());
 
-        when(httpService.getPaymentDetailsInfoForRecurrentType(anyString(), anyString())).thenReturn(getBillingAgreementResponse());
+        //
+        // When
+        //
         PayPalPaymentDetails paymentDetails = payPalPaymentService.commitPaymentDetails(TOKEN, DEFAULT_USER, paymentPolicy, true);
 
+        //
+        // Then
+        //
         assertEquals(BILLINGAGREEMENTID, paymentDetails.getBillingAgreementTxId());
         assertNull(paymentDetails.getPayerId());
         assertNull(paymentDetails.getToken());
-        verify(httpService, times(1)).getPaymentDetailsInfoForRecurrentType(TOKEN, null);
+        assertEquals(paymentPolicy, paymentDetails.getPaymentPolicy());
+        assertTrue(paymentDetails.isActivated());
+        assertEquals(NONE, paymentDetails.getLastPaymentStatus());
+        assertEquals(DEFAULT_USER, paymentDetails.getOwner());
+        assertEquals(RETRIES_ON_ERROR, paymentDetails.getRetriesOnError());
+        assertEquals(0, paymentDetails.getMadeAttempts());
+        assertEquals(0, paymentDetails.getMadeRetries());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetails);
     }
 
 
     @Test
     public void testCommitPaymentDetailsRecurrentPaymentPayPalException() throws Exception {
+        //
+        // Given
+        //
         when(httpService.getPaymentDetailsInfoForRecurrentType(anyString(), anyString())).thenReturn(getFailureGetTokenResponse());
 
+        //
+        // Then
+        //
         thrown.expect(ServiceException.class);
+
+        //
+        // When
+        //
         payPalPaymentService.commitPaymentDetails(TOKEN, DEFAULT_USER, new PaymentPolicy(), true);
     }
 
 
     @Test
     public void testStartOneTimePayment() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.ONETIME);
-        PendingPayment pendingPayment = new PendingPayment();
-        PayPalPaymentDetails paymentDetails = (PayPalPaymentDetails)new PayPalPaymentDetails().withPaymentPolicy(paymentPolicy);
-        paymentDetails.setPayerId(PAYERID);
-        paymentDetails.setToken(TOKEN);
-        pendingPayment.setI(1L);
-        pendingPayment.setUser(new User().withCurrentPaymentDetails(paymentDetails));
-        pendingPayment.setPaymentDetails(paymentDetails);
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.ONETIME);
+        PayPalPaymentDetails paymentDetails = PayPalPaymentDetailsFactory.createPayPalPaymentDetails(paymentPolicy, PAYERID, TOKEN, null);
+        User user = createUser(paymentPolicy, paymentDetails, COMMUNITY);
+        PendingPayment pendingPayment = PendingPaymentFactory.create(paymentDetails, user, AMOUNT, CURRENCYISO);
 
-        when(httpService.makePaymentForOnetimeType(anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class))).thenReturn(getDoPaymentResponse());
+        final String message = "PAYMENTINFO_0_TRANSACTIONID=".concat(TRANSACTIONID).concat("&ACK=Success");
+
+        when(httpService.makePaymentForOnetimeType(eq(TOKEN), eq(COMMUNITY), eq(PAYERID), eq(CURRENCYISO), eq(AMOUNT))).thenReturn(getDoPaymentResponse(message));
+
+        //
+        // When
+        //
         payPalPaymentService.startPayment(pendingPayment);
 
-        assertNull(paymentDetails.getErrorCode());
-        assertNull(paymentDetails.getDescriptionError());
-        assertEquals(SUCCESSFUL, paymentDetails.getLastPaymentStatus());
-        verify(httpService, times(1)).makePaymentForOnetimeType(TOKEN, null, PAYERID, null, null);
-    }
+        //
+        // Then
+        //
+        verify(pendingPayment, times(1)).setExternalTxId(TRANSACTIONID);
+        verify(paymentDetails, times(1)).setDescriptionError(null);
+        verify(paymentDetails, times(1)).setErrorCode(null);
+        verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
+        verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
+        verify(applicationEventPublisher).publishEvent(paymentEventsCaptor.capture());
+        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
+        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
 
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+
+        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
+        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+
+        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        assertEquals(PaymentDetailsStatus.SUCCESSFUL, spArgument.getStatus());
+        assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
+
+        assertSame(paymentEventsCaptor.getValue().getPayment(), spArgument);
+    }
 
     @Test
     public void testStartRecurrentPayment() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.RECURRENT);
-        PendingPayment pendingPayment = new PendingPayment();
-        PayPalPaymentDetails paymentDetails = (PayPalPaymentDetails)new PayPalPaymentDetails().withPaymentPolicy(paymentPolicy);
-        paymentDetails.setBillingAgreementTxId(BILLINGAGREEMENTID);
-        pendingPayment.setI(1L);
-        pendingPayment.setUser(new User().withCurrentPaymentDetails(paymentDetails));
-        pendingPayment.setPaymentDetails(paymentDetails);
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.RECURRENT);
+        PayPalPaymentDetails paymentDetails = PayPalPaymentDetailsFactory.createPayPalPaymentDetails(paymentPolicy, null, null, BILLINGAGREEMENTID);
+        User user = createUser(paymentPolicy, paymentDetails, COMMUNITY);
+        PendingPayment pendingPayment = PendingPaymentFactory.create(paymentDetails, user, AMOUNT, CURRENCYISO);
 
-        when(httpService.makePaymentForRecurrentType(anyString(), anyString(), any(BigDecimal.class), anyString())).thenReturn(getDoPaymentResponse());
+        final String message = "TRANSACTIONID=".concat(TRANSACTIONID).concat("&ACK=Success");
+        when(httpService.makePaymentForRecurrentType(eq(BILLINGAGREEMENTID), eq(CURRENCYISO), eq(AMOUNT), eq(COMMUNITY))).thenReturn(getDoPaymentResponse(message));
+
+        //
+        // When
+        //
         payPalPaymentService.startPayment(pendingPayment);
 
-        assertNull(paymentDetails.getErrorCode());
-        assertNull(paymentDetails.getDescriptionError());
-        assertEquals(SUCCESSFUL, paymentDetails.getLastPaymentStatus());
-        verify(httpService, times(1)).makePaymentForRecurrentType(BILLINGAGREEMENTID, null, null, null);
+        //
+        // Then
+        //
+        verify(pendingPayment, times(1)).setExternalTxId(TRANSACTIONID);
+        verify(paymentDetails, times(1)).setDescriptionError(null);
+        verify(paymentDetails, times(1)).setErrorCode(null);
+        verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
+        verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
+        verify(applicationEventPublisher).publishEvent(paymentEventsCaptor.capture());
+        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
+        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+
+        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
+        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+
+        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        assertEquals(PaymentDetailsStatus.SUCCESSFUL, spArgument.getStatus());
+        assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
+
+        assertSame(paymentEventsCaptor.getValue().getPayment(), spArgument);
     }
 
 
     @Test
-    public void testStartRecurrentPaymentFail() throws Exception {
-        PendingPayment pendingPayment = new PendingPayment();
-        PayPalPaymentDetails paymentDetails = (PayPalPaymentDetails)new PayPalPaymentDetails().withPaymentPolicy(new PaymentPolicy()).withOwner(DEFAULT_USER);
-        pendingPayment.setI(1L);
-        pendingPayment.setUser(new User().withCurrentPaymentDetails(paymentDetails));
-        pendingPayment.setPaymentDetails(paymentDetails);
+    public void testStartRecurrentPaymentFail500() throws Exception {
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.RECURRENT);
+        PayPalPaymentDetails paymentDetails = PayPalPaymentDetailsFactory.createPayPalPaymentDetails(paymentPolicy, null, null, BILLINGAGREEMENTID);
+        User user = createUser(paymentPolicy, paymentDetails, COMMUNITY);
+        PendingPayment pendingPayment = PendingPaymentFactory.create(paymentDetails, user, AMOUNT, CURRENCYISO);
 
-        when(httpService.makePaymentForRecurrentType(anyString(), anyString(), any(BigDecimal.class), anyString())).thenReturn(getFailedDoPaymentResponse());
+        final String message = "Internal server error";
+        when(httpService.makePaymentForRecurrentType(eq(BILLINGAGREEMENTID), eq(CURRENCYISO), eq(AMOUNT), eq(COMMUNITY))).thenReturn(getFailedDoPaymentResponse(message));
+
+        //
+        // When
+        //
         payPalPaymentService.startPayment(pendingPayment);
 
-        assertNotNull(paymentDetails.getDescriptionError());
-        assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
-        verify(httpService, times(1)).makePaymentForRecurrentType(null, null, null, null);
+        //
+        // Then
+        //
+        verify(pendingPayment, times(1)).setExternalTxId(null);
+        verify(paymentDetails, times(1)).setDescriptionError("Unexpected http status code [500] so the madeRetries won't be incremented");
+        verify(paymentDetails, times(1)).setErrorCode(null);
+        verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
+        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+
+        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
+        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+
+        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        assertEquals(PaymentDetailsStatus.ERROR, spArgument.getStatus());
+        assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
+    }
+
+
+    @Test
+    public void testStartRecurrentPaymentFail200() throws Exception {
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.RECURRENT);
+        PayPalPaymentDetails paymentDetails = PayPalPaymentDetailsFactory.createPayPalPaymentDetails(paymentPolicy, null, null, BILLINGAGREEMENTID);
+        User user = createUser(paymentPolicy, paymentDetails, COMMUNITY);
+        PendingPayment pendingPayment = PendingPaymentFactory.create(paymentDetails, user, AMOUNT, CURRENCYISO);
+
+        final String message = "TRANSACTIONID=".concat(TRANSACTIONID).concat("&L_ERRORCODE_PREFIX=SomeErrorCode").concat("&ACK=Fail");
+        when(httpService.makePaymentForRecurrentType(eq(BILLINGAGREEMENTID), eq(CURRENCYISO), eq(AMOUNT), eq(COMMUNITY))).thenReturn(getDoPaymentResponse(message));
+
+        //
+        // When
+        //
+        payPalPaymentService.startPayment(pendingPayment);
+
+        //
+        // Then
+        //
+        verify(pendingPayment, times(1)).setExternalTxId(TRANSACTIONID);
+        verify(paymentDetails, times(1)).setDescriptionError("[SomeErrorCode]");
+        verify(paymentDetails, times(1)).setErrorCode(null);
+        verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+        verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
+        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
+        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+
+        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
+        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+
+        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        assertEquals(PaymentDetailsStatus.ERROR, spArgument.getStatus());
+        assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
     }
 
 
     //todo: remove this test after several weeks from release SRV-648 (It is for backward compatibility)
     @Test
     public void testStartOneTimePaymentForPaymentDetailsCreatedBeforeSRV648() throws Exception {
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setPaymentPolicyType(PaymentPolicyType.ONETIME);
-        PendingPayment pendingPayment = new PendingPayment();
-        PayPalPaymentDetails paymentDetails = (PayPalPaymentDetails)new PayPalPaymentDetails().withPaymentPolicy(paymentPolicy);
-        paymentDetails.setBillingAgreementTxId(BILLINGAGREEMENTID);
-        pendingPayment.setI(1L);
-        pendingPayment.setUser(new User().withCurrentPaymentDetails(paymentDetails));
-        pendingPayment.setPaymentDetails(paymentDetails);
+        //
+        // Given
+        //
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(PaymentPolicyType.ONETIME);
+        PayPalPaymentDetails paymentDetails = PayPalPaymentDetailsFactory.createPayPalPaymentDetails(paymentPolicy, null, null, BILLINGAGREEMENTID);
+        User user = createUser(paymentPolicy, paymentDetails, COMMUNITY);
+        PendingPayment pendingPayment = PendingPaymentFactory.create(paymentDetails, user, AMOUNT, CURRENCYISO);
 
-        when(httpService.makePaymentForRecurrentType(anyString(), anyString(), any(BigDecimal.class), anyString())).thenReturn(getDoPaymentResponse());
+        final String message = "TRANSACTIONID=".concat(TRANSACTIONID).concat("&ACK=Success");
+        when(httpService.makePaymentForRecurrentType(eq(BILLINGAGREEMENTID), eq(CURRENCYISO), eq(AMOUNT), eq(COMMUNITY))).thenReturn(getDoPaymentResponse(message));
+
+        //
+        // When
+        //
         payPalPaymentService.startPayment(pendingPayment);
 
-        assertNull(paymentDetails.getErrorCode());
-        assertNull(paymentDetails.getDescriptionError());
-        assertEquals(SUCCESSFUL, paymentDetails.getLastPaymentStatus());
-        verify(httpService, times(1)).makePaymentForRecurrentType(BILLINGAGREEMENTID, null, null, null);
+        //
+        // Then
+        //
+        verify(pendingPayment, times(1)).setExternalTxId(TRANSACTIONID);
+        verify(paymentDetails, times(1)).setDescriptionError(null);
+        verify(paymentDetails, times(1)).setErrorCode(null);
+        verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
+        verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
+        verify(applicationEventPublisher).publishEvent(paymentEventsCaptor.capture());
+        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
+        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
+        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+
+        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
+        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+
+        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        assertEquals(PaymentDetailsStatus.SUCCESSFUL, spArgument.getStatus());
+        assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
+
+        assertSame(paymentEventsCaptor.getValue().getPayment(), spArgument);
     }
 
 
+    private User createUser(PaymentPolicy paymentPolicy, PayPalPaymentDetails paymentDetails, String communityUrl) {
+        User user = mock(User.class);
+        Community community = mock(Community.class);
+        when(user.getCurrentPaymentDetails()).thenReturn(paymentDetails);
+        when(paymentPolicy.getCommunity()).thenReturn(community);
+        when(community.getRewriteUrlParameter()).thenReturn(communityUrl);
+        return user;
+    }
 
-    private PayPalResponse getFailedDoPaymentResponse() {
-        BasicResponse basicResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "PAYMENTINFO_0_TRANSACTIONID=".concat(TRANSACTIONID).concat("&ACK=Fail"));
+    private PayPalResponse getFailedDoPaymentResponse(String message) {
+        BasicResponse basicResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
         return new PayPalResponse(basicResponse);
     }
 
-    private PayPalResponse getDoPaymentResponse() {
-        BasicResponse basicResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK, "PAYMENTINFO_0_TRANSACTIONID=".concat(TRANSACTIONID).concat("&ACK=Success"));
+    private PayPalResponse getDoPaymentResponse(String message) {
+        BasicResponse basicResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK, message);
         return new PayPalResponse(basicResponse);
     }
 
