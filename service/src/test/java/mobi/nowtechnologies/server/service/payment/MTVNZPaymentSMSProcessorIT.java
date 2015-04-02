@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.payment;
 
+import mobi.nowtechnologies.common.util.PhoneData;
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
@@ -20,7 +20,6 @@ import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
@@ -34,6 +33,8 @@ import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 
 import javax.annotation.Resource;
 
@@ -55,9 +56,9 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
-public class MTVNZPaymentSMSMessageProcessorIT {
+public class MTVNZPaymentSMSProcessorIT {
     @Resource
-    private MTVNZPaymentSMSMessageProcessor mtvnzPaymentSMSMessageProcessor;
+    private MTVNZPaymentSMSProcessor mtvnzPaymentSMSProcessor;
     @Resource
     private UserGroupRepository userGroupRepository;
     @Resource
@@ -75,68 +76,46 @@ public class MTVNZPaymentSMSMessageProcessorIT {
     @Resource
     private TimeService timeService;
     @Resource
-    private NZSubscriberInfoRepository nzSubscriberInfoRepository;
-    @Resource
     private TaskRepository<Task> taskRepository;
     @Resource
     private AccountLogRepository accountLogRepository;
 
-    private String communityRewriteUrl = "mtv1";
+    private String communityRewriteUrl = "mtvnz";
     private BigDecimal subcost = BigDecimal.valueOf(1.29);
-    private PaymentPolicy paymentPolicy = new PaymentPolicy();
-    private MTVNZPSMSPaymentDetails paymentDetails = new MTVNZPSMSPaymentDetails();
+    private PaymentPolicy paymentPolicy;
+    private MTVNZPSMSPaymentDetails paymentDetails;
     private User user;
 
     @Test
     public void processSuccessPaymentResponse() throws Exception {
-        final String msisdn = "6410000000";
-        user = createUser(Utils.getRandomUUID(), Utils.getRandomUUID(), communityRewriteUrl);
-        preparePendingPayment(user, "+" + msisdn);
-        prepareNZSubscriberInfo(user, "+" + msisdn);
-        DeliverSm deliverSm = getSuccessDeliverSm(msisdn);
+        final String mobile = "+6410000000";
+        final DeliverSm deliverSm = getSuccessDeliverSm(mobile);
+        createUser(mobile);
+        preparePendingPayment(mobile);
 
-        mtvnzPaymentSMSMessageProcessor.parserAndProcess(deliverSm);
+        mtvnzPaymentSMSProcessor.parserAndProcess(deliverSm);
 
-        User found = userRepository.findOne(user.getId());
-        assertUserWasSubscribed(found);
-
-        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
-        assertPaymentDetailsAreStillActive(foundPaymentDetails);
-
-        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.SUCCESSFUL));
-        assertSubmittedPaymentHasSuccessStatus(submittedPayments);
-
-        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
-        assertEquals(0, pendingPayments.size());
+        pendingPaymentIsAbsent();
+        userGotSubscription();
+        paymentDetailsAreStillActive();
+        submittedPaymentHasStatus(SUCCESSFUL);
     }
 
     @Test
     public void processErrorPaymentResponse() throws Exception {
-        final String msisdn = "6420000000";
-        user = createUser(Utils.getRandomUUID(), Utils.getRandomUUID(), communityRewriteUrl);
-        preparePendingPayment(user, "+" + msisdn);
-        prepareNZSubscriberInfo(user, "+" + msisdn);
-        DeliverSm deliverSm = getErrorDeliverSm(msisdn);
+        final String mobile = "+6420000000";
+        final DeliverSm deliverSm = getErrorDeliverSm(mobile);
+        createUser(mobile);
+        preparePendingPayment(mobile);
 
-        mtvnzPaymentSMSMessageProcessor.parserAndProcess(deliverSm);
+        mtvnzPaymentSMSProcessor.parserAndProcess(deliverSm);
 
-        User found = userRepository.findOne(user.getId());
-        assertUserWasNotSubscribed(found);
-
-        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
-        assertPaymentDetailsWereDeactivated(foundPaymentDetails);
-
-        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.ERROR));
-        assertSubmittedPaymentHasErrorStatus(submittedPayments);
-
-        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
-        assertEquals(0, pendingPayments.size());
-
-        List<UserTask> unsubscribeUserTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendUnsubscribeNotificationTask.TASK_TYPE);
-        assertUserNotificationTaskIsCheduled(user, unsubscribeUserTasks);
-
-        List<UserTask> errorUserTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendPaymentErrorNotificationTask.TASK_TYPE);
-        assertUserNotificationTaskIsCheduled(user, errorUserTasks);
+        pendingPaymentIsAbsent();
+        userHasNotGotSubscription();
+        paymentDetailsWereDeactivated();
+        submittedPaymentHasStatus(ERROR);
+        notificationTaskIsScheduled(SendUnsubscribeNotificationTask.TASK_TYPE);
+        notificationTaskIsScheduled(SendPaymentErrorNotificationTask.TASK_TYPE);
     }
 
     @After
@@ -154,73 +133,63 @@ public class MTVNZPaymentSMSMessageProcessorIT {
         userRepository.delete(user);
     }
 
-    private void assertUserWasSubscribed(User found) {
+    private void pendingPaymentIsAbsent() {
+        List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
+        assertEquals(0, pendingPayments.size());
+    }
+
+    private void userGotSubscription() {
+        User found = userRepository.findOne(user.getId());
         assertTrue(found.isSubscribedStatus());
         assertTrue(found.getNextSubPayment() > timeService.nowSeconds());
         assertEquals(PaymentDetails.MTVNZ_PSMS_TYPE, found.getLastSubscribedPaymentSystem());
     }
 
-    private void assertPaymentDetailsAreStillActive(PaymentDetails foundPaymentDetails) {
+    private void paymentDetailsAreStillActive() {
+        User found = userRepository.findOne(user.getId());
+        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
         assertTrue(foundPaymentDetails.isActivated());
         assertTrue(foundPaymentDetails instanceof MTVNZPSMSPaymentDetails);
         assertNull(foundPaymentDetails.getDescriptionError());
-        assertEquals(PaymentDetailsStatus.SUCCESSFUL, foundPaymentDetails.getLastPaymentStatus());
+        assertEquals(SUCCESSFUL, foundPaymentDetails.getLastPaymentStatus());
         assertTrue(foundPaymentDetails.getDisableTimestampMillis() == 0);
     }
 
-    private void assertSubmittedPaymentHasSuccessStatus(List<SubmittedPayment> submittedPayments) {
-        assertEquals(1, submittedPayments.size());
-        assertEquals(PaymentDetails.MTVNZ_PSMS_TYPE, submittedPayments.get(0).getPaymentSystem());
-        assertEquals(PaymentDetailsStatus.SUCCESSFUL, submittedPayments.get(0).getStatus());
-        assertEquals(subcost, submittedPayments.get(0).getAmount());
-    }
-
-    private void assertUserWasNotSubscribed(User found) {
+    private void userHasNotGotSubscription() {
+        User found = userRepository.findOne(user.getId());
         assertFalse(found.isSubscribedStatus());
         assertTrue(found.getNextSubPayment() < timeService.nowSeconds());
         assertNull(found.getLastSubscribedPaymentSystem());
     }
 
-    private void assertUserNotificationTaskIsCheduled(User user, List<UserTask> unsubscribeUserTasks) {
-        assertEquals(user.getId(), unsubscribeUserTasks.get(0).getUser().getId());
-        assertTrue(unsubscribeUserTasks.get(0).getExecutionTimestamp() < timeService.now().getTime());
-        assertTrue(unsubscribeUserTasks.get(0).getCreationTimestamp() < timeService.now().getTime());
+    private void notificationTaskIsScheduled(String taskType) {
+        List<UserTask> tasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), taskType);
+        assertEquals(user.getId(), tasks.get(0).getUser().getId());
+        assertTrue(tasks.get(0).getExecutionTimestamp() < timeService.now().getTime());
+        assertTrue(tasks.get(0).getCreationTimestamp() < timeService.now().getTime());
     }
 
-    private void assertSubmittedPaymentHasErrorStatus(List<SubmittedPayment> submittedPayments) {
+    private void submittedPaymentHasStatus(PaymentDetailsStatus error) {
+        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.values()));
         assertEquals(1, submittedPayments.size());
         assertEquals(PaymentDetails.MTVNZ_PSMS_TYPE, submittedPayments.get(0).getPaymentSystem());
-        assertEquals(PaymentDetailsStatus.ERROR, submittedPayments.get(0).getStatus());
+        assertEquals(error, submittedPayments.get(0).getStatus());
         assertEquals(subcost, submittedPayments.get(0).getAmount());
     }
 
-    private void assertPaymentDetailsWereDeactivated(PaymentDetails foundPaymentDetails) {
+    private void paymentDetailsWereDeactivated() {
+        User found = userRepository.findOne(user.getId());
+        PaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
         assertFalse(foundPaymentDetails.isActivated());
         assertTrue(foundPaymentDetails instanceof MTVNZPSMSPaymentDetails);
         assertEquals("UNDELIV", foundPaymentDetails.getDescriptionError());
-        assertEquals(PaymentDetailsStatus.ERROR, foundPaymentDetails.getLastPaymentStatus());
+        assertEquals(ERROR, foundPaymentDetails.getLastPaymentStatus());
         assertTrue(foundPaymentDetails.getDisableTimestampMillis() > 0);
-    }
-
-    private void prepareNZSubscriberInfo(User user, String msisdn) {
-        NZSubscriberInfo nzSubscriberInfo = new NZSubscriberInfo(msisdn);
-        nzSubscriberInfo.setPayIndicator("Prepay");
-        nzSubscriberInfo.setProviderName("Unknown Operator");
-        nzSubscriberInfo.setBillingAccountNumber("300001121");
-        nzSubscriberInfo.setBillingAccountName("Simplepostpay_CCRoam");
-        nzSubscriberInfo.setUserId(user.getId());
-        nzSubscriberInfoRepository.saveAndFlush(nzSubscriberInfo);
-    }
-
-    private void preparePendingPayment(User user, String phoneNumber) {
-        PaymentPolicy paymentPolicy = createPaymentPolicy(communityRewriteUrl, PaymentPolicyType.RECURRENT);
-        PaymentDetails paymentDetails = createPaymentDetails(user, paymentPolicy, phoneNumber);
-        createPendingPayment(user, paymentDetails);
     }
 
     private DeliverSm getSuccessDeliverSm(String msisdn) throws InvalidDeliveryReceiptException {
         DeliverSm deliverSm = mock(DeliverSm.class);
-        when(deliverSm.getSourceAddr()).thenReturn(msisdn);
+        when(deliverSm.getSourceAddr()).thenReturn(new PhoneData(msisdn).getData());
         DeliveryReceipt deliveryReceipt = mock(DeliveryReceipt.class);
         when(deliveryReceipt.getFinalStatus()).thenReturn(DeliveryReceiptState.ACCEPTD);
         when(deliverSm.getShortMessageAsDeliveryReceipt()).thenReturn(deliveryReceipt);
@@ -229,11 +198,17 @@ public class MTVNZPaymentSMSMessageProcessorIT {
 
     private DeliverSm getErrorDeliverSm(String msisdn) throws InvalidDeliveryReceiptException {
         DeliverSm deliverSm = mock(DeliverSm.class);
-        when(deliverSm.getSourceAddr()).thenReturn(msisdn);
+        when(deliverSm.getSourceAddr()).thenReturn(new PhoneData(msisdn).getData());
         DeliveryReceipt deliveryReceipt = mock(DeliveryReceipt.class);
         when(deliveryReceipt.getFinalStatus()).thenReturn(DeliveryReceiptState.UNDELIV);
         when(deliverSm.getShortMessageAsDeliveryReceipt()).thenReturn(deliveryReceipt);
         return deliverSm;
+    }
+
+    private void preparePendingPayment(String phoneNumber) {
+        PaymentPolicy paymentPolicy = createPaymentPolicy(communityRewriteUrl, PaymentPolicyType.RECURRENT);
+        PaymentDetails paymentDetails = createPaymentDetails(user, paymentPolicy, phoneNumber);
+        createPendingPayment(user, paymentDetails);
     }
 
     private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails){
@@ -248,21 +223,22 @@ public class MTVNZPaymentSMSMessageProcessorIT {
         return pendingPaymentRepository.saveAndFlush(pendingPayment);
     }
 
-    private User createUser(String userName, String deviceUID, String communityRewriteUrl) {
-        User user = new User();
-        user.setDeviceUID(deviceUID);
-        user.setUserName(userName);
+    private User createUser(String mobile) {
+        user = new User();
+        user.setDeviceUID(Utils.getRandomUUID());
+        user.setUserName(Utils.getRandomUUID());
+        user.setMobile(mobile);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
         user.setNextSubPayment(timeService.nowSeconds() - 10);
         user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
         user.setStatus(UserStatusDao.getLimitedUserStatus());
         user.setActivationStatus(ActivationStatus.ACTIVATED);
-        user = userRepository.saveAndFlush(user);
-        return user;
+        return userRepository.saveAndFlush(user);
     }
 
     private PaymentDetails createPaymentDetails(User user, PaymentPolicy paymentPolicy, String phoneNumber){
+        paymentDetails = new MTVNZPSMSPaymentDetails();
         paymentDetails.setActivated(true);
         paymentDetails.setOwner(user);
         paymentDetails.setPaymentPolicy(paymentPolicy);
@@ -276,6 +252,7 @@ public class MTVNZPaymentSMSMessageProcessorIT {
     }
 
     private PaymentPolicy createPaymentPolicy(String communityRewriteUrl, PaymentPolicyType paymentPolicyType){
+        paymentPolicy = new PaymentPolicy();
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(PaymentDetails.MTVNZ_PSMS_TYPE);
         paymentPolicy.setSubcost(subcost);
