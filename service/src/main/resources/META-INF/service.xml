@@ -231,22 +231,12 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	</bean>
 
 	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
-		<property name="entityService" ref="service.EntityService" />
-		<property name="mediaService" ref="service.MediaService" />
 		<property name="drmRepository" ref="drmRepository" />
 	</bean>
 
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService">
 		<property name="accountLogDao" ref="persistence.AccountLogDao" />
 		<property name="accountLogRepository" ref="accountLogRepository" />
-	</bean>
-
-	<bean id="service.MediaLogService" class="mobi.nowtechnologies.server.service.MediaLogService">
-		<property name="mediaLogDao" ref="persistence.MediaLogDao" />
-	</bean>
-
-	<bean id="service.MediaLogTypeService" class="mobi.nowtechnologies.server.service.MediaLogTypeService">
-		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
 	</bean>
 
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" >
@@ -314,14 +304,14 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.MediaService" class="mobi.nowtechnologies.server.service.MediaService">
 		<property name="mediaDao" ref="persistence.MediaDao" />
-		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
-		<property name="mediaLogService" ref="service.MediaLogService" />
 		<property name="mediaRepository" ref="mediaRepository" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 	</bean>
 
 	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
+        <property name="mediaLogTypeRepository" ref="mediaLogTypeRepository" />
+        <property name="mediaLogRepository" ref="mediaLogRepository" />
 		<property name="mediaService" ref="service.MediaService" />
         <property name="mediaRepository" ref="mediaRepository" />
         <property name="userRepository" ref="userRepository" />

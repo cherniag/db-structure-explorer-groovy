@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity
 @Table(name = "tb_mediaLogTypes")
 public class MediaLogType implements Serializable {
+    public static final String DOWNLOAD_ORIGINAL = "DOWNLOAD_ORIGINAL";
 
     private static final long serialVersionUID = 1L;
     private int i;

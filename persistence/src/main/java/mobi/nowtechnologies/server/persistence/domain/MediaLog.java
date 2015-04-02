@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.shared.dto.web.PurchasedTrackDto;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,35 +8,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
 @Entity
 @Table(name = "tb_mediaLog")
-@NamedQueries({@NamedQuery(name = MediaLog.NQ_GET_PURCHASED_TRACKS_BY_USER_ID,
-                           query = "select mediaLog from MediaLog mediaLog join FETCH mediaLog.media media where mediaLog.logType=? and mediaLog.userUID=?"), @NamedQuery(
-    name = MediaLog.NQ_IS_DOWNLOADED_ORIGINAL, query = "select count(mediaLog) from MediaLog mediaLog where mediaLog.logType=? and mediaLog.userUID=? and mediaLog.mediaUID=?")})
 public class MediaLog implements Serializable {
 
-    public static final String NQ_GET_PURCHASED_TRACKS_BY_USER_ID = "getPurchasedTracksByUserId";
-    public static final String NQ_IS_DOWNLOADED_ORIGINAL = "isDowloadedOriginal";
-    private static final Logger LOGGER = LoggerFactory.getLogger(MediaLog.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int i;
@@ -55,16 +40,6 @@ public class MediaLog implements Serializable {
     private boolean alreadyDownloadedOriginal;
 
     public MediaLog() {
-    }
-
-    public static List<PurchasedTrackDto> toPurchasedTrackDtoList(List<MediaLog> mediaLogs) {
-        LOGGER.debug("input parameters mediaLogShallows: [{}]", mediaLogs);
-        List<PurchasedTrackDto> purchasedTrackDtos = new ArrayList<PurchasedTrackDto>(mediaLogs.size());
-        for (MediaLog mediaLog : mediaLogs) {
-            purchasedTrackDtos.add(mediaLog.toPurchasedTrackDto());
-        }
-        LOGGER.debug("Output parameter purchasedTrackDtos=[{}]", purchasedTrackDtos);
-        return purchasedTrackDtos;
     }
 
     public int getI() {
@@ -111,19 +86,6 @@ public class MediaLog implements Serializable {
         this.alreadyDownloadedOriginal = alreadyDownloadedOriginal;
     }
 
-    public PurchasedTrackDto toPurchasedTrackDto() {
-        PurchasedTrackDto purchasedTrackDto = new PurchasedTrackDto();
-
-        purchasedTrackDto.setMediaIsrc(media.getIsrc());
-        purchasedTrackDto.setMediaId(mediaUID);
-        purchasedTrackDto.setPurchasedDate(new Date(logTimestamp * 1000L));
-        purchasedTrackDto.setTrackName(media.getTitle());
-        purchasedTrackDto.setArtistName(media.getArtistName());
-
-        LOGGER.debug("Output parameter purchasedTrackDto=[{}]", purchasedTrackDto);
-        return purchasedTrackDto;
-    }
-
     public Media getMedia() {
         return media;
     }
@@ -137,10 +99,6 @@ public class MediaLog implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("i", i).append("logTimestamp", logTimestamp).append("logType", logType).append("mediaUID", mediaUID).append("userUID", userUID)
                                         .append("alreadyDownloadedOriginal", alreadyDownloadedOriginal).toString();
-    }
-
-    public static enum Fields {
-        i();
     }
 
 

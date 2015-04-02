@@ -53,13 +53,6 @@
 	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/change_account/content.jsp"/>
   </definition>
   
-
-   <definition name="purchased_tracks" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/purchased_tracks/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/purchased_tracks/content.jsp"/>
-  </definition>
-
   <definition name="videotrial" extends="mainTemplate" preparer="web.CommunityViewPreparer">
   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/videotrial/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
