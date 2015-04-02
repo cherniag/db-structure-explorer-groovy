@@ -44,6 +44,8 @@ public class PinPinModelServiceImpl implements PinModelService {
 
         nzSubscriberInfoService.confirm(user, phone);
 
+        logger.info("Found policies: {}", policies);
+
         return Collections.singletonMap("paymentPolicyDtos", policies);
     }
 

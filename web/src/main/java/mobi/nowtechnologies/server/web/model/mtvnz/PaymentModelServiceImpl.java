@@ -25,8 +25,6 @@ import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.transaction.annotation.Transactional;
-
 class PaymentModelServiceImpl implements PaymentModelService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -40,7 +38,6 @@ class PaymentModelServiceImpl implements PaymentModelService {
     NZSubscriberInfoService nzSubscriberInfoService;
 
     @Override
-    @Transactional(readOnly = true)
     public Map<String, Object> getModel(User user) {
         Map<String, Object> model = new HashMap<>();
         List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
@@ -64,6 +61,8 @@ class PaymentModelServiceImpl implements PaymentModelService {
         model.put("payPalPaymentPolicy", Iterables.getLast(payPalDtos));
         model.put("iTunesPaymentPolicy", Iterables.getLast(iTunesDtos));
         model.put("smsPaymentPolicy", Iterables.getFirst(sorted, null));
+
+        logger.info("Found model: {}", model);
 
         if(user.isPremium(timeService.now())) {
             boolean vfPaymentType = user.getCurrentPaymentDetails() != null && PaymentDetails.MTVNZ_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());

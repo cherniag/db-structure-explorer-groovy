@@ -7,12 +7,14 @@ import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
 import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException;
 import mobi.nowtechnologies.server.web.model.EnterPhoneModelService;
 import mobi.nowtechnologies.server.web.service.impl.PinService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -40,6 +42,8 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
             } catch (MaxGenerationReachedException maxGenerationReached) {
                 model.put("result", CheckResult.LIMIT_REACHED);
                 model.put("check", false);
+
+                logger.warn("max pin generation reached for user {}", user.getId());
             }
         }
 

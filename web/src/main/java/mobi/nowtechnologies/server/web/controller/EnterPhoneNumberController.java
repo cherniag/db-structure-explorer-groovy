@@ -1,15 +1,15 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.common.util.PhoneData;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.web.PaymentServiceFacade;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import mobi.nowtechnologies.server.web.model.EnterPhoneModelService;
 
 import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,25 +20,31 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("phone")
 public class EnterPhoneNumberController extends CommonController {
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     CommunityServiceFactory communityServiceFactory;
     @Resource
     UserRepository userRepository;
-    @Resource
-    PaymentServiceFacade paymentServiceFacade;
 
     @RequestMapping(value = {"check"}, method = RequestMethod.GET)
     public ModelAndView check() {
+        logger.info("Open check phone page");
+
         return new ModelAndView("phone/check");
     }
 
     @RequestMapping(value = {"reassign"}, method = RequestMethod.GET)
-    public ModelAndView change() {
+    public ModelAndView reassign() {
+        logger.info("Open reassign phone page");
+
         return new ModelAndView("phone/reassign");
     }
 
     @RequestMapping(value = {"change"}, method = RequestMethod.GET)
-    public ModelAndView reassign(@RequestParam("phone") String phone) {
-        ModelAndView modelAndView = process(phone, true);
+    public ModelAndView change(@RequestParam("phone") String phone) {
+        logger.info("Change the phone number for {} with new one: {}", getUserId(), phone);
+
+        ModelAndView modelAndView = process(phone);
         modelAndView.setViewName("phone/result");
         modelAndView.addObject("reassigned", true);
         return modelAndView;
@@ -46,23 +52,15 @@ public class EnterPhoneNumberController extends CommonController {
 
     @RequestMapping(value = {"result"}, method = RequestMethod.GET)
     public ModelAndView result(@RequestParam("phone") String phone) {
-        ModelAndView modelAndView = process(phone, false);
+        logger.info("Open assign/reassign phone result page");
+
+        ModelAndView modelAndView = process(phone);
         modelAndView.setViewName("phone/result");
         return modelAndView;
     }
 
-    private ModelAndView process(String phone, boolean reassign) {
-        User user = userRepository.findOne(getUserId());
-
-        if(reassign) {
-            PhoneData phoneData = new PhoneData(phone);
-            user.setMobile(phoneData.getMobile());
-            if(user.hasActivePaymentDetails()) {
-                PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
-                paymentServiceFacade.createPaymentDetails(user, paymentPolicy);
-            }
-            userRepository.save(user);
-        }
+    private ModelAndView process(String phone) {
+        User user = currentUser();
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("phone", phone);
@@ -70,6 +68,8 @@ public class EnterPhoneNumberController extends CommonController {
         modelAndView.addAllObjects(findModelService(user).getModel(user, phone));
         return modelAndView;
     }
+
+    private User currentUser() {return userRepository.findOne(getUserId());}
 
     private boolean doesUserPayByITunes(User user) {
         return DeviceType.IOS.equals(user.getDeviceType().getName());
