@@ -293,13 +293,6 @@ insert into tb_drm(user,media,drmType,drmValue,timestamp) values (1, 49, 1, 100,
 
 insert into promoted_devices (deviceUID, community_id) values ('zzz@z.com', 5);
 
-insert into offers (title, price, currency, community_id, coverFileName, description) values ('offer first', 12.6, 'pd', 6, 'NEWS_1','bla-bla'), ('offer second', 10.5, 'pd', 6, 'NEWS_2', 'bla-bla' );
-
-insert into offer_items ( offer_id, item_id) values (1, 49);
-insert into offer_items ( offer_id, item_id) values (1, 50);
-insert into offer_items ( offer_id, item_id) values (2, 49);
-insert into offer_items ( offer_id, item_id) values (2, 50);
-
 insert into auto_opt_in_exempt_ph_number values('+447111111111');
 
 

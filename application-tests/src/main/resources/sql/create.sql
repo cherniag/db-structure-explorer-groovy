@@ -316,25 +316,6 @@ CREATE TABLE `tb_userStatus` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `offers`
---
-
-DROP TABLE IF EXISTS `offers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `offers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `community_id` int(11) DEFAULT NULL,
-  `currency` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `price` decimal(19,2) DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `coverFileName` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `tb_users`
 --
 
@@ -490,11 +471,9 @@ CREATE TABLE `backup_tb_accountLog_140106` (
   `amountUnused` int(10) DEFAULT NULL,
   `relatedTopup` int(10) DEFAULT NULL,
   `promoCode` varchar(255) DEFAULT NULL,
-  `offerId` int(11) DEFAULT NULL,
   `description` varchar(10000) DEFAULT NULL,
   PRIMARY KEY (`i`),
-  KEY `user` (`userUID`),
-  KEY `tb_accountLog_PK_offerId` (`offerId`)
+  KEY `user` (`userUID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12931574 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -519,7 +498,6 @@ CREATE TABLE `tb_submittedPayments` (
   `type` varchar(255) DEFAULT NULL,
   `externalTxId` varchar(255) NOT NULL,
   `paymentDetailsId` bigint(20) DEFAULT NULL,
-  `offerId` int(11) DEFAULT NULL,
   `next_sub_payment` int(11) NOT NULL,
   `base64_encoded_app_store_receipt` longtext,
   `app_store_original_transaction_id` varchar(255) DEFAULT NULL,
@@ -720,7 +698,6 @@ CREATE TABLE `for_refund_tb_submittedPayments` (
   `type` varchar(255) DEFAULT NULL,
   `externalTxId` varchar(255) NOT NULL,
   `paymentDetailsId` bigint(20) DEFAULT NULL,
-  `offerId` int(11) DEFAULT NULL,
   `next_sub_payment` int(11) NOT NULL,
   `base64_encoded_app_store_receipt` longtext,
   `app_store_original_transaction_id` varchar(255) DEFAULT NULL,
@@ -955,7 +932,6 @@ CREATE TABLE `backup_tb_submittedPayments_140106` (
   `type` varchar(255) DEFAULT NULL,
   `externalTxId` varchar(255) NOT NULL,
   `paymentDetailsId` bigint(20) DEFAULT NULL,
-  `offerId` int(11) DEFAULT NULL,
   `next_sub_payment` int(11) NOT NULL,
   `base64_encoded_app_store_receipt` longtext,
   `app_store_original_transaction_id` varchar(255) DEFAULT NULL,
@@ -963,21 +939,6 @@ CREATE TABLE `backup_tb_submittedPayments_140106` (
   KEY `userid` (`userId`),
   KEY `FKF1EF29B7197A82E5` (`paymentDetailsId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=739495 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `offer_items`
---
-
-DROP TABLE IF EXISTS `offer_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `offer_items` (
-  `offer_id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  KEY `FK2A28301DCB572DB7` (`offer_id`),
-  CONSTRAINT `FK2A28301DCB572DB7` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1771,7 +1732,6 @@ CREATE TABLE `tb_pendingPayments` (
   `expireTimeMillis` bigint(20) DEFAULT '0',
   `externalTxId` varchar(255) NOT NULL,
   `paymentDetailsId` bigint(20) DEFAULT NULL,
-  `offerId` int(11) DEFAULT NULL,
   PRIMARY KEY (`i`),
   KEY `FK999C3E13197A82E5` (`paymentDetailsId`),
   CONSTRAINT `FK999C3E13197A82E5` FOREIGN KEY (`paymentDetailsId`) REFERENCES `tb_paymentDetails` (`i`)
@@ -1946,12 +1906,9 @@ CREATE TABLE `tb_accountLog` (
   `amountUnused` int(10) DEFAULT NULL,
   `relatedTopup` int(10) DEFAULT NULL,
   `promoCode` varchar(255) DEFAULT NULL,
-  `offerId` int(11) DEFAULT NULL,
   `description` varchar(10000) DEFAULT NULL,
   PRIMARY KEY (`i`),
-  KEY `user` (`userUID`),
-  KEY `tb_accountLog_PK_offerId` (`offerId`),
-  CONSTRAINT `tb_accountLog_U_offerId` FOREIGN KEY (`offerId`) REFERENCES `offers` (`id`)
+  KEY `user` (`userUID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15105248 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2141,24 +2098,6 @@ CREATE TABLE `backup_device_user_data` (
   UNIQUE KEY `xtify_token` (`xtify_token`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2443165 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `offers_filters`
---
-
-DROP TABLE IF EXISTS `offers_filters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `offers_filters` (
-  `offers_id` int(11) NOT NULL,
-  `filterWithCtiteria_id` int(11) NOT NULL,
-  PRIMARY KEY (`offers_id`,`filterWithCtiteria_id`),
-  KEY `FK8373F5536D1B889C` (`offers_id`),
-  KEY `FK8373F553FC727FFF` (`filterWithCtiteria_id`),
-  CONSTRAINT `FK8373F5536D1B889C` FOREIGN KEY (`offers_id`) REFERENCES `offers` (`id`),
-  CONSTRAINT `FK8373F553FC727FFF` FOREIGN KEY (`filterWithCtiteria_id`) REFERENCES `filters` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

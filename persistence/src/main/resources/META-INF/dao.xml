@@ -21,18 +21,6 @@
 		<property name="entityDao" ref="persistence.EntityDao" />
 	</bean>
 
-	<bean id="persistence.MediaLogDao" class="mobi.nowtechnologies.server.persistence.dao.MediaLogDao">
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
-	<bean id="persistence.MediaLogTypeDao"
-		class="mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao">
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
 	<bean id="persistence.PromotionDao"
 		class="mobi.nowtechnologies.server.persistence.dao.PromotionDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
@@ -142,17 +130,6 @@
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="staticMethod"
 			value="mobi.nowtechnologies.server.persistence.dao.UserGroupDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.DrmTypeDao.setEntityDao" />
 		<property name="arguments">
 			<list>
 				<ref bean="persistence.EntityDao" />

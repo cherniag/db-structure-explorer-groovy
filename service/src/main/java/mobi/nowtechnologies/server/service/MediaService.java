@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.dao.MediaDao;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
@@ -12,7 +11,6 @@ import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
@@ -21,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -29,24 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Titov Mykhaylo (titov)
  */
 public class MediaService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaService.class);
     private static final PageRequest PAGE_REQUEST_50 = new PageRequest(0, 50);
 
-    private MediaLogService mediaLogService;
-    private MediaLogTypeService mediaLogTypeService;
     private MediaDao mediaDao;
     private MediaRepository mediaRepository;
     private ChartRepository chartRepository;
     private ChartDetailRepository chartDetailRepository;
-
-    public void setMediaLogService(MediaLogService mediaLogService) {
-        this.mediaLogService = mediaLogService;
-    }
-
-    public void setMediaLogTypeService(MediaLogTypeService aMediaLogTypeService) {
-        this.mediaLogTypeService = aMediaLogTypeService;
-    }
 
     public void setMediaDao(MediaDao aMediaDao) {
         this.mediaDao = aMediaDao;
@@ -62,12 +48,6 @@ public class MediaService {
 
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void logMediaEvent(int userId, Media media, String mediaLogType) {
-        final Map<String, MediaLogType> MEDIA_LOG_TYPES = mediaLogTypeService.getMediaLogTypes();
-        mediaLogService.logMediaEvent(userId, media, (byte) MEDIA_LOG_TYPES.get(mediaLogType).getI());
     }
 
     public Media findByIsrc(String mediaIsrc) {

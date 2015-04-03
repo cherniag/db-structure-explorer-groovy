@@ -550,7 +550,7 @@ public class UserNotificationServiceImplTest {
 
         doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.unsubscribe.potential.text"), argThat(matcher));
 
-        Future<Boolean> result = userNotificationImplSpy.sendUnsubscribePotentialSMS(user);
+        Future<Boolean> result = userNotificationImplSpy.sendSubscriptionChangedSMS(user);
 
         assertNotNull(result);
         assertEquals(true, result.get());
@@ -608,7 +608,7 @@ public class UserNotificationServiceImplTest {
 
         doReturn(false).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.unsubscribe.potential.text"), argThat(matcher));
 
-        Future<Boolean> result = userNotificationImplSpy.sendUnsubscribePotentialSMS(user);
+        Future<Boolean> result = userNotificationImplSpy.sendSubscriptionChangedSMS(user);
 
         assertNotNull(result);
         assertEquals(false, result.get());
@@ -653,7 +653,7 @@ public class UserNotificationServiceImplTest {
 
         doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.unsubscribe.potential.text"), argThat(matcher));
 
-        Future<Boolean> result = userNotificationImplSpy.sendUnsubscribePotentialSMS(user);
+        Future<Boolean> result = userNotificationImplSpy.sendSubscriptionChangedSMS(user);
 
         assertNotNull(result);
         assertEquals(false, result.get());
@@ -696,7 +696,7 @@ public class UserNotificationServiceImplTest {
 
         doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.unsubscribe.potential.text"), argThat(matcher));
 
-        Future<Boolean> result = userNotificationImplSpy.sendUnsubscribePotentialSMS(user);
+        Future<Boolean> result = userNotificationImplSpy.sendSubscriptionChangedSMS(user);
 
         assertNotNull(result);
         assertEquals(false, result.get());
@@ -732,7 +732,7 @@ public class UserNotificationServiceImplTest {
 
         doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.unsubscribe.potential.text"), argThat(matcher));
 
-        Future<Boolean> result = userNotificationImplSpy.sendUnsubscribePotentialSMS(user);
+        Future<Boolean> result = userNotificationImplSpy.sendSubscriptionChangedSMS(user);
 
         assertNotNull(result);
         assertEquals(false, result.get());
@@ -777,7 +777,7 @@ public class UserNotificationServiceImplTest {
 
         doThrow(new Exception()).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.unsubscribe.potential.text"), argThat(matcher));
 
-        Future<Boolean> result = userNotificationImplSpy.sendUnsubscribePotentialSMS(user);
+        Future<Boolean> result = userNotificationImplSpy.sendSubscriptionChangedSMS(user);
 
         assertNotNull(result);
         assertEquals(true, result.get());

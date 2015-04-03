@@ -41,7 +41,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActionReason;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -126,7 +125,6 @@ public class UserService {
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
     private CommunityService communityService;
-    private MailService mailService;
 
     private DevicePromotionsService deviceService;
     private AccountLogService accountLogService;
@@ -461,17 +459,6 @@ public class UserService {
         return countryAppVersionService.isAppVersionLinkedWithCountry("CNBETA", countryCode);
     }
 
-    public boolean checkPromotionCode(String code, String communityUrl) {
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        Promotion promotion = promotionService.getActivePromotion(community, code);
-        return promotion != null;
-    }
-
-    public void contactWithUser(String from, String name, String subject) throws ServiceException {
-        String message = messageSource.getMessage(null, "support.email", null, null);
-        mailService.sendMessage(from, new String[] {message}, "From User " + name, subject, null);
-    }
-
     @Transactional(propagation = REQUIRED)
     public User updateUser(User user) {
         return userRepository.save(user);
@@ -581,59 +568,6 @@ public class UserService {
         }
 
         LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Deprecated
-    @Transactional(propagation = REQUIRED)
-    public User registerUser(UserRegDetailsDto userRegDetailsDto) {
-        LOGGER.debug("input parameters userRegDetailsDto: [{}]", userRegDetailsDto);
-
-        final String userName = userRegDetailsDto.getEmail().toLowerCase();
-
-        DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userRegDetailsDto.getDeviceType());
-        if (deviceType == null) {
-            deviceType = DeviceTypeDao.getNoneDeviceType();
-        }
-
-        final String deviceString = userRegDetailsDto.getDeviceString();
-
-        Community community = communityService.getCommunityByName(userRegDetailsDto.getCommunityName());
-
-        User user = newUser(userRegDetailsDto, userName, deviceType, deviceString, community);
-        entityService.saveEntity(user);
-
-        String promotionCode = userRegDetailsDto.getPromotionCode();
-        if (isNull(promotionCode)) {
-            promotionCode = messageSource.getMessage(community.getRewriteUrlParameter(), "defaultPromotionCode", null, null);
-        }
-
-        promotionService.applyPromotionByPromoCode(user, promotionCode);
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        promotionService.assignPotentialPromotion(user);
-        return user;
-    }
-
-    private User newUser(UserRegDetailsDto userRegDetailsDto, String userName, DeviceType deviceType, String deviceString, Community community) {
-        User user = new User();
-        user.setUserName(userName);
-        user.setUuid(Utils.getRandomUUID());
-        user.setToken(Utils.createStoredToken(userName, userRegDetailsDto.getPassword()));
-
-        user.setDeviceType(deviceType);
-        if (deviceString != null) {
-            user.setDeviceString(deviceString);
-        }
-
-        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
-        user.setCountry(countryService.findIdByFullName("Great Britain"));
-        user.setIpAddress(userRegDetailsDto.getIpAddress());
-        user.setCanContact(userRegDetailsDto.isNewsDeliveringConfirmed());
-        Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
-        user.setOperator(entry.getKey());
-        user.setStatus(UserStatusDao.getEulaUserStatus());
-        user.setFacebookId(userRegDetailsDto.getFacebookId());
         return user;
     }
 
@@ -788,15 +722,15 @@ public class UserService {
 
         if (userDto.getNextSubPayment().after(originalNextSubPayment)) {
             if (user.isOnFreeTrial()) {
-                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TRIAL_TOPUP, null);
+                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TRIAL_TOPUP);
             } else {
-                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
             }
         }
 
         final int balanceAfter = userDto.getSubBalance();
         if (originalSubBalance != balanceAfter) {
-            accountLogService.logAccountEvent(userId, balanceAfter, null, null, SUPPORT_TOPUP, null);
+            accountLogService.logAccountEvent(userId, balanceAfter, null, null, SUPPORT_TOPUP);
         }
 
         user = UserAsm.fromUserDto(userDto, user);
@@ -1117,7 +1051,7 @@ public class UserService {
 
         userWithOldTariffOnOldBoughtPeriod.setNextSubPayment(epochSeconds);
 
-        accountLogService.logAccountEvent(userWithOldTariffOnOldBoughtPeriod.getId(), userWithOldTariffOnOldBoughtPeriod.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        accountLogService.logAccountEvent(userWithOldTariffOnOldBoughtPeriod.getId(), userWithOldTariffOnOldBoughtPeriod.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
         return userWithOldTariffOnOldBoughtPeriod;
     }
 
@@ -1131,7 +1065,7 @@ public class UserService {
         user.setNextSubPayment(currentTimeSeconds);
         user.setFreeTrialExpiredMillis(currentTimeMillis);
 
-        accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
 
         return user;
     }
@@ -1301,10 +1235,6 @@ public class UserService {
 
     public void setCountryByIpService(CountryByIpService countryByIpService) {
         this.countryByIpService = countryByIpService;
-    }
-
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
     }
 
     public void setAccountLogService(AccountLogService accountLogService) {
