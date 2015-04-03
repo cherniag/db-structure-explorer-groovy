@@ -123,7 +123,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
 		<property name="communityService" ref="service.communityService" />
-		<property name="mailService" ref="service.MailService" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />

@@ -64,8 +64,6 @@ public class PaymentDetailsService {
     private PromotionService promotionService;
     private UserService userService;
     private CommunityService communityService;
-    private PaymentPolicyRepository paymentPolicyRepository;
-    private PaymentPolicyDao paymentPolicyDao;
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
     private UserNotificationService userNotificationService;
@@ -113,18 +111,6 @@ public class PaymentDetailsService {
 
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
-    }
-
-    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
-        this.paymentPolicyRepository = paymentPolicyRepository;
-    }
-
-    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
-        this.paymentPolicyDao = paymentPolicyDao;
-    }
-
-    public void setO2PaymentService(PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService) {
-        this.o2PaymentService = o2PaymentService;
     }
 
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
