@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
@@ -72,8 +73,16 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
         String communityRewriteUrlParameter = currentPaymentPolicy.getCommunity() != null ?
                                               currentPaymentPolicy.getCommunity().getRewriteUrlParameter() :
                                               null;
-        PayPalResponse response =
-            httpService.makeReferenceTransactionRequest(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(), communityRewriteUrlParameter);
+
+        PayPalResponse response;
+        if (PaymentPolicyType.ONETIME.equals(currentPaymentPolicy.getPaymentPolicyType()) && !isPaymentDetailsForOnetimePaymentAndCreatedBeforeSRV648(currentPaymentDetails)) {
+            response = httpService.makePaymentForOnetimeType(currentPaymentDetails.getToken(), communityRewriteUrlParameter, currentPaymentDetails.getPayerId(), pendingPayment.getCurrencyISO(),
+                                                             pendingPayment.getAmount());
+        } else {
+            response = httpService.makePaymentForRecurrentType(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(),
+                                                               communityRewriteUrlParameter);
+        }
+
         pendingPayment.setExternalTxId(response.getTransactionId());
         entityService.updateEntity(pendingPayment);
         LOGGER.info("PayPal responded {} for pending payment id: {}", response, pendingPayment.getI());
@@ -86,13 +95,19 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
         String communityRewriteUrlParameter = paymentPolicy.getCommunity() != null ?
                                               paymentPolicy.getCommunity().getRewriteUrlParameter() :
                                               null;
-        PayPalResponse response = httpService.makeTokenRequest(billingDescription, successUrl, failUrl, paymentPolicy.getCurrencyISO(), communityRewriteUrlParameter);
+        PayPalResponse response;
+        if (PaymentPolicyType.ONETIME.equals(paymentPolicy.getPaymentPolicyType())) {
+            response = httpService.getTokenForOnetimeType(successUrl, failUrl, communityRewriteUrlParameter, paymentPolicy.getCurrencyISO(), paymentPolicy.getSubcost());
+        } else {
+            response = httpService.getTokenForRecurrentType(successUrl, failUrl, paymentPolicy.getCurrencyISO(), communityRewriteUrlParameter, billingDescription);
+        }
+
         if (!response.isSuccessful()) {
             throw new ServiceException("Can't connect to PayPal. Please try again later.");
         }
 
         PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails();
-        paymentDetails.setBillingAgreementTxId(redirectURL.concat("?cmd=_express-checkout&token=").concat(response.getToken())); // Temporary setting token to billingAgreement
+        paymentDetails.setBillingAgreementTxId(redirectURL.concat("?cmd=_express-checkout&useraction=commit&token=").concat(response.getToken())); // Temporary setting token to billingAgreement
         paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
         paymentDetails.setPaymentPolicy(paymentPolicy);
         paymentDetails.resetMadeAttempts();
@@ -112,12 +127,20 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
         String communityRewriteUrlParameter = paymentPolicy.getCommunity() != null ?
                                               paymentPolicy.getCommunity().getRewriteUrlParameter() :
                                               null;
-        PayPalResponse response = httpService.makeBillingAgreementRequest(token, communityRewriteUrlParameter);
+        PayPalResponse response;
+        if (PaymentPolicyType.ONETIME.equals(paymentPolicy.getPaymentPolicyType())) {
+            response = httpService.getPaymentDetailsInfoForOnetimeType(token, communityRewriteUrlParameter);
+        } else {
+            response = httpService.getPaymentDetailsInfoForRecurrentType(token, communityRewriteUrlParameter);
+        }
+
         if (response.isSuccessful()) {
             LOGGER.debug("Got billing agreement {} from PayPal for user {}", response.getBillingAgreement(), user.getUserName());
 
             PayPalPaymentDetails newPaymentDetails = new PayPalPaymentDetails();
             newPaymentDetails.setBillingAgreementTxId(response.getBillingAgreement());
+            newPaymentDetails.setToken(response.getToken());
+            newPaymentDetails.setPayerId(response.getPayerId());
             newPaymentDetails.setPaymentPolicy(paymentPolicy);
             newPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
 
@@ -145,6 +168,13 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
             }
         });
         return response;
+    }
+
+    //todo: remove this method after several weeks from release SRV-648 (It is for backward compatibility)
+    private boolean isPaymentDetailsForOnetimePaymentAndCreatedBeforeSRV648(PayPalPaymentDetails paymentDetails) {
+        return PaymentPolicyType.ONETIME.equals(paymentDetails.getPaymentPolicy().getPaymentPolicyType()) &&
+               paymentDetails.getToken() == null &&
+               paymentDetails.getPayerId() == null;
     }
 
     public void setHttpService(PayPalHttpService httpService) {

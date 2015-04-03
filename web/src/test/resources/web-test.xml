@@ -14,7 +14,4 @@
         <property name="ignoreUnresolvablePlaceholders" value="true" />
         <property name="ignoreResourceNotFound" value="false" />
     </bean>
-    
-     <bean id="web.VersionController" class="java.lang.Object"/>
-
 </beans>

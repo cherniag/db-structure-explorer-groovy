@@ -20,9 +20,6 @@ import org.slf4j.LoggerFactory;
 @Entity
 @DiscriminatorValue("PromotionUserHandsetFilter")
 public class PUserHandsetFilter extends AbstractFilter {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PUserHandsetFilter.class);
-
     @ElementCollection(targetClass = UserHandset.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "tb_filter_params")

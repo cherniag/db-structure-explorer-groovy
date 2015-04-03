@@ -134,7 +134,7 @@
         </layout>
     </appender>
 
-    <logger name="mobi.nowtechnologies.server.shared.web.filter.SlowRequestFilter">
+    <logger name="mobi.nowtechnologies.server.web.view.SlowRequestFilter">
         <level value="WARN"></level>
         <appender-ref ref="slow-requests"/>
     </logger>

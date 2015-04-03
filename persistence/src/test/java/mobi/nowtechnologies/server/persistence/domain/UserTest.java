@@ -43,7 +43,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class UserTest {
 
     User user = new User().withTariff(_4G).withSegment(CONSUMER);
-    PaymentPolicy detachedPaymentPolicy;
     private PaymentPolicy paymentPolicy;
     private Tariff paymentPolicyTariff;
     private MediaType mediaType;

@@ -22,7 +22,7 @@ public class CommonControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setActivationStatus(ActivationStatus.REGISTERED);
         userService.updateUser(user);
 

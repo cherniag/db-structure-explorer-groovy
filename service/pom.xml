@@ -2,7 +2,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.16</version>
+        <version>5.17.2</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -13,6 +13,38 @@
     <artifactId>service</artifactId>
     <packaging>jar</packaging>
     <name>Now Technologies Java Server Services</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>${project.basedir}/src/main/resources/META-INF</directory>
+                                    <includes>
+                                        <include>*.MF</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <outputDirectory>
+                                ${project.basedir}/target/classes/version
+                            </outputDirectory>
+                        </configuration>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

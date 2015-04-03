@@ -33,8 +33,6 @@ import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "tb_paymentPolicy")
@@ -47,7 +45,7 @@ public class PaymentPolicy {
 
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
+
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     @Column(name = "i")
@@ -107,6 +105,16 @@ public class PaymentPolicy {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_policy_type")
     private PaymentPolicyType paymentPolicyType;
+    @Column(name = "payment_order", nullable = false, columnDefinition = "int default 0")
+    private int order;
+
+    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
+        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
+        for (PaymentPolicy paymentPolicy : paymentPolicies) {
+            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
+        }
+        return offerPaymentPolicyDtos;
+    }
 
     public Integer getId() {
         return id;
@@ -202,6 +210,18 @@ public class PaymentPolicy {
 
     public void setPaymentPolicyType(PaymentPolicyType paymentPolicyType) {
         this.paymentPolicyType = paymentPolicyType;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
+        OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
+
+        offerPaymentPolicyDto.setPaymentType(paymentType);
+
+        return offerPaymentPolicyDto;
     }
 
     public SegmentType getSegment() {
@@ -452,7 +472,7 @@ public class PaymentPolicy {
                                         .append("segment", segment).append("contract", contract).append("contentCategory", contentCategory).append("contentType", contentType)
                                         .append("subMerchantId", subMerchantId).append("contentDescription", contentDescription).append("tariff", tariff).append("mediaType", mediaType)
                                         .append("advancedPaymentSeconds", advancedPaymentSeconds).append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds).append("isDefault", isDefault)
-                                        .append("online", online).toString();
+                                        .append("online", online).append("order", order).toString();
     }
 
     public static enum Fields {

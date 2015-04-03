@@ -1,23 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@taglib uri="http://www.springframework.org/tags" prefix="s" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="subscribe_root_container">
     <div class="subscribe_content_container subscribe_content_container_device">
-        <div class="subscribe_header_block subscribe_header_block_device">
-            <div class="subscribe_header_mtv_logo subscribe_header_mtv_logo_device"></div>
+        <div class="subscribe_header_block">
+            <div class="subscribe_header_mtv_logo"></div>
             <div class="subscribe_header_ad_title">
-                <div class="mtv_tracks_styled_title mtv_tracks_styled_title_device mtv_tracks_styled_title_small_device">
-                    <s:message code='subscribe.header.title.1'/>
-                </div>
-                <br>
-                <div class="mtv_tracks_styled_title mtv_tracks_styled_title_device mtv_tracks_styled_title_big_device">
-                    <s:message code='subscribe.header.title.2'/>
-                </div>
+                <div class="subscribe_header_premium_banner"></div>
             </div>
-            <%-- try without logo, remove classes from css if not needed --%>
-            <%--<div class="subscribe_header_premium_banner subscribe_header_premium_banner_device"></div>--%>
         </div>
         <div class="subscribe_description_block subscribe_description_block_device">
             <div class="subscribe_description_item subscribe_description_item_device">
@@ -61,4 +53,3 @@
         </div>
     </div>
 </div>
-

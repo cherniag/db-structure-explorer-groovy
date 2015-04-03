@@ -15,8 +15,6 @@
 
     <bean class="mobi.nowtechnologies.server.admin.settings.SettingsController"/>
 
-    <bean class="mobi.nowtechnologies.server.controller.VersionController"/>
-
     <bean class="mobi.nowtechnologies.server.admin.controller.HomeController">
         <property name="adminUserService" ref="adminUserService"/>
     </bean>
@@ -60,6 +58,7 @@
 
     <bean class="mobi.nowtechnologies.server.admin.controller.UserController">
         <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.TrackRepoController">
@@ -73,7 +72,7 @@
         <property name="accountLogService" ref="service.AccountLogService"/>
         <property name="pendingPaymentService" ref="service.PendingPaymentService"/>
         <property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
-        <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.AdController">

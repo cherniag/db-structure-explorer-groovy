@@ -5,35 +5,17 @@ import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @generated
- */
-@javax.persistence.Entity
-@javax.persistence.DiscriminatorValue(value = "IOS")
-public class IOSFilter extends AbstractFilterWithCtiteria implements java.io.Serializable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(IOSFilter.class);
-    /**
-     * @generated
-     */
-    private static final long serialVersionUID = 1336940189L;
-
+@Entity
+@DiscriminatorValue(value = "IOS")
+public class IOSFilter extends AbstractFilterWithCtiteria {
     @Override
     public boolean doFilter(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
-
-        final DeviceType deviceType = user.getDeviceType();
-
-        boolean filtrate = false;
-
-        if (deviceType.equals(DeviceTypeDao.getIOSDeviceType())) {
-            filtrate = true;
-        }
-
-        LOGGER.debug("Output parameter [{}]", filtrate);
-        return filtrate;
+        return DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType());
     }
 }

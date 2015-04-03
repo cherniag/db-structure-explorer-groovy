@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <sec:http pattern="/version" security="none" />
+    <sec:http pattern="/MANIFEST.MF" security="none" />
 
     <sec:http create-session="stateless" use-expressions="true">
 
@@ -14,7 +14,6 @@
         <sec:intercept-url pattern="/signup**" access="permitAll" />
         <sec:intercept-url pattern="/signin**" access="permitAll" />
         <sec:intercept-url pattern="/signout" access="permitAll" />
-        <sec:intercept-url pattern="/restore_password**" access="permitAll" />
         <sec:intercept-url pattern="/faq**" access="permitAll" />
         <sec:intercept-url pattern="/terms**" access="permitAll" />
         <sec:intercept-url pattern="/privacy_policy**" access="permitAll" />
@@ -25,7 +24,6 @@
 
         <sec:custom-filter after="FIRST" ref="filter.slowRequestFilter"/>
         <sec:custom-filter before="FIRST" ref="communityResolverFilter" />
-        <sec:custom-filter before="FORM_LOGIN_FILTER" ref="facebookAuthenticationFilter" />
 
 
         <sec:form-login default-target-url="/account.html"
@@ -47,9 +45,6 @@
                 <sec:salt-source user-property="username" />
             </sec:password-encoder>
         </sec:authentication-provider>
-
-        <sec:authentication-provider ref="facebookUserDetailsAuthenticationProvider">
-        </sec:authentication-provider>
     </sec:authentication-manager>
 
     <bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
@@ -63,53 +58,17 @@
         <property name="tokenValiditySeconds" value="${rememberMe.tokenValiditySeconds}"/>
         <property name="alwaysRemember" value="true"/>
         <property name="successfulHander">
-            <bean class="mobi.nowtechnologies.server.security.authentication.NowTechBasedRememberMeSuccessfulHandler">
+            <bean class="mobi.nowtechnologies.server.web.service.impl.NowTechBasedRememberMeSuccessfulHandler">
                 <property name="userService" ref="service.UserService" />
                 <property name="promotionService" ref="service.PromotionService" />
             </bean>
         </property>
     </bean>
 
-    <bean id="facebookUserDetailsAuthenticationProvider" class="mobi.nowtechnologies.server.web.provider.FacebookUserDetailsAuthenticationProvider">
-        <property name="facebookUserDetailsServiceImpl" ref="facebookUserDetailsServiceImpl" />
-    </bean>
+    <bean id="chartsNowPasswordEncoder" class="mobi.nowtechnologies.server.web.security.ChartsNowPasswordEncoder" />
 
-    <bean id="chartsNowPasswordEncoder" class="mobi.nowtechnologies.server.shared.web.security.utils.ChartsNowPasswordEncoder" />
-
-    <bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.shared.web.security.service.impl.UserDetailsServiceImpl">
-        <property name="userService" ref="service.UserService" />
-    </bean>
-
-    <bean id="facebookUserDetailsServiceImpl"
-          class="mobi.nowtechnologies.server.web.service.impl.FacebookUserDetailsServiceImpl">
-        <property name="communityService" ref="service.communityService" />
-        <property name="userService" ref="service.UserService" />
-    </bean>
-
-    <bean id="facebookAuthenticationFilter"
-          class="mobi.nowtechnologies.server.web.security.facebook.FacebookAuthenticationFilter">
-        <constructor-arg name="defaultFilterProcessesUrl"
-                         value="/facebook_signin" />
-        <property name="rememberMeServices" ref="nowTechBasedRememberMeServices" />
-        <property name="loginRequestParameterName" value="email" />
-        <property name="passwordRequestParameterName" value="token" />
-        <property name="authenticationManager" ref="authenticationManager" />
-        <property name="defaultTargetUrlForOldUser" value="/account.html" />
-        <property name="defaultTargetUrlForNewUser" value="/getapp.html" />
-        <property name="authenticationSuccessHandler">
-            <bean
-                    class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
-                <property name="defaultTargetUrl" value="/account.html" />
-                <property name="alwaysUseDefaultTargetUrl" value="true" />
-            </bean>
-        </property>
-        <property name="authenticationFailureHandler">
-            <bean
-                    class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
-                <property name="defaultFailureUrl" value="/signin.html?facebook_error=true" />
-            </bean>
-        </property>
-        <property name="messageSource" ref="serviceMessageSource" />
+    <bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.web.service.impl.UserDetailsServiceImpl">
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean id="communityResolverFilter" class="mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter" />
@@ -117,5 +76,5 @@
     <bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
         <property name="nowTechTokenBasedRememberMeServices"  ref="nowTechBasedRememberMeServices"/>
     </bean>
-    <bean id="filter.slowRequestFilter" class="mobi.nowtechnologies.server.shared.web.filter.SlowRequestFilter"/>
+    <bean id="filter.slowRequestFilter" class="mobi.nowtechnologies.server.web.view.SlowRequestFilter"/>
 </beans>

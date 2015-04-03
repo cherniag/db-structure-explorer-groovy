@@ -4,6 +4,7 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UrbanAirshipTokenService;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
@@ -36,6 +37,9 @@ public class AccCheckController extends CommonController {
 
     @Resource
     private ITunesService iTunesService;
+
+    @Resource
+    private UserRepository userRepository;
 
     @Resource(name = "service.UrbanAirshipTokenService")
     private UrbanAirshipTokenService urbanAirshipTokenService;
@@ -105,7 +109,7 @@ public class AccCheckController extends CommonController {
                                                      @RequestParam(required = false, value = "IDFA") String idfa, @PathVariable("community") String community) throws Exception {
 
         // hack for IOS7 users that needs to remove it soon
-        User user = userService.findByNameAndCommunity(userName, community);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, community);
         if (user != null && DeviceType.IOS.equals(user.getDeviceType().getName())) {
             user.setDeviceUID(deviceUID);
             userService.updateUser(user);
@@ -143,9 +147,7 @@ public class AccCheckController extends CommonController {
 
             SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
 
-            if (idfa != null) {
-                user = userService.updateTokenDetails(user, idfa);
-            }
+            userService.updateIdfaToken(user, idfa);
 
             if (isNotBlank(xtifyToken)) {
                 try {

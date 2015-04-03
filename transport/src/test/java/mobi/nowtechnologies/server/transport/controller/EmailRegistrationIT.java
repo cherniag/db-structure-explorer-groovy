@@ -92,7 +92,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         applyInitPromoError(activationEmail, timestamp, userToken);
 
-        user = userRepository.findOne(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
+        user = userRepository.findByUserNameAndCommunityUrl(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
         assertNull(user);
     }
 
@@ -120,13 +120,13 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
         ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
-        user = userRepository.findOne(DEVICE_UID_1, user.getCommunityRewriteUrl());
+        user = userRepository.findByUserNameAndCommunityUrl(DEVICE_UID_1, user.getCommunityRewriteUrl());
 
         assertEquals(PENDING_ACTIVATION, user.getActivationStatus());
 
         signUpDevice(DEVICE_UID_1);
 
-        user = userRepository.findOne(DEVICE_UID_1, user.getCommunityRewriteUrl());
+        user = userRepository.findByUserNameAndCommunityUrl(DEVICE_UID_1, user.getCommunityRewriteUrl());
 
         assertEquals(ActivationStatus.REGISTERED, user.getActivationStatus());
 
@@ -142,19 +142,19 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         MvcResult mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0]), time, EMAIL_1, user.getDeviceType().getName());
 
-        userOnAnotherDevice = userService.findByName(userOnAnotherDevice.getUserName());
+        userOnAnotherDevice = userRepository.findOne(userOnAnotherDevice.getId());
         assertEquals(PENDING_ACTIVATION, userOnAnotherDevice.getActivationStatus());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         applyInitPromo(activationEmail, timestamp, userToken);
-        User secondUser = userRepository.findOne(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
+        User secondUser = userRepository.findByUserNameAndCommunityUrl(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
         checkActivatedUser(secondUser, EMAIL_1);
         user = userRepository.findOne(user.getId());
         assertEquals(DEVICE_UID_2, user.getDeviceUID());
 
-        assertNull(userRepository.findOne(DEVICE_UID_1, HL_COMMUNITY_REWRITE_URL));
+        assertNull(userRepository.findByUserNameAndCommunityUrl(DEVICE_UID_1, HL_COMMUNITY_REWRITE_URL));
 
         userToken = Utils.createTimestampToken(user.getToken(), timestamp);
 
@@ -167,14 +167,14 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         User registeredUser = checkUserAfterSignupDevice(DEVICE_UID_1);
 
-        User activatedUser = userRepository.findOne(user.getUserName(), HL_COMMUNITY_REWRITE_URL);
+        User activatedUser = userRepository.findByUserNameAndCommunityUrl(user.getUserName(), HL_COMMUNITY_REWRITE_URL);
         assertTrue(activatedUser.getDeviceUID().contains(DISABLED));
 
         long time = System.currentTimeMillis();
 
         MvcResult mvcResult = emailGenerate(registeredUser, EMAIL_2);
 
-        registeredUser = userService.findByName(registeredUser.getUserName());
+        registeredUser = userRepository.findOne(registeredUser.getId());
         assertEquals(PENDING_ACTIVATION, registeredUser.getActivationStatus());
 
         ActivationEmail activationEmail =
@@ -185,10 +185,10 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         applyInitPromo(activationEmail, timestamp, userToken);
 
-        registeredUser = userRepository.findOne(EMAIL_2, HL_COMMUNITY_REWRITE_URL);
+        registeredUser = userRepository.findByUserNameAndCommunityUrl(EMAIL_2, HL_COMMUNITY_REWRITE_URL);
         checkActivatedUser(registeredUser, EMAIL_2);
-        assertNull(userRepository.findOne(DEVICE_UID_1, HL_COMMUNITY_REWRITE_URL));
-        User oldUser = userRepository.findOne(user.getUserName(), HL_COMMUNITY_REWRITE_URL);
+        assertNull(userRepository.findByUserNameAndCommunityUrl(DEVICE_UID_1, HL_COMMUNITY_REWRITE_URL));
+        User oldUser = userRepository.findByUserNameAndCommunityUrl(user.getUserName(), HL_COMMUNITY_REWRITE_URL);
         assertEquals(SUBSCRIBED.name(), oldUser.getStatus().getName());
         assertTrue(oldUser.getDeviceUID().contains(DISABLED));
 
@@ -208,7 +208,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
         ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response")).getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
-        user = userService.findByName(user.getUserName());
+        user = userRepository.findOne(user.getId());
         assertEquals(PENDING_ACTIVATION, user.getActivationStatus());
 
         String timestamp = "2011_12_26_07_04_23";
@@ -216,7 +216,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         applyInitPromo(activationEmail, timestamp, userToken);
 
-        user = userRepository.findOne(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
+        user = userRepository.findByUserNameAndCommunityUrl(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
         checkActivatedUser(user, EMAIL_1);
 
         userToken = Utils.createTimestampToken(user.getToken(), timestamp);
@@ -274,7 +274,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private User checkUserAfterSignupDevice(String deviceUID) {
-        User user = userRepository.findOne(deviceUID, HL_COMMUNITY_REWRITE_URL);
+        User user = userRepository.findByUserNameAndCommunityUrl(deviceUID, HL_COMMUNITY_REWRITE_URL);
         assertEquals(LIMITED.name(), user.getStatus().getName());
         assertEquals(deviceUID, user.getUserName());
         assertEquals(HL_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());

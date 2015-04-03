@@ -117,7 +117,7 @@ public class StreamzineUpdateAdminAsm {
         }
 
         for (String userName : dto.getUserNames()) {
-            User user = userRepository.findOne(userName, community);
+            User user = userRepository.findByUserNameAndCommunityUrl(userName, community);
             u.addUser(user);
         }
 

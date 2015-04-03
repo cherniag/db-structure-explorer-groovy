@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
@@ -20,11 +21,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT {
 
-    @Resource(name = "promotionRepository")
-    protected PromotionRepository promotionRepository;
+    @Resource
+    PromotionRepository promotionRepository;
 
-    @Resource(name = "promoCodeRepository")
-    protected PromoCodeRepository promoCodeRepository;
+    @Resource
+    PromoCodeRepository promoCodeRepository;
+
+    @Resource
+    UserRepository userRepository;
 
     private Promotion promotion;
     private PromoCode promoCode;
@@ -39,7 +43,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         user.setTariff(Tariff._4G);
         user.setSegment(SegmentType.CONSUMER);
         user.setVideoFreeTrialHasBeenActivated(false);

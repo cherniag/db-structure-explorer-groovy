@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.16</version>
+        <version>5.17.2</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <name>Now Technologies Java Server Admin UI Webapp</name>
 
     <build>
-        <finalName>jadmin-${project.version}</finalName>
+        <finalName>jadmin</finalName>
         <testResources>
             <testResource>
                 <directory>src/main/webapp</directory>
@@ -40,6 +40,10 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

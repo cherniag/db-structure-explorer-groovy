@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.16</version>
+        <version>5.17.2</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -20,35 +20,20 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*ApplicationTestsEntryPoint.java</exclude>
-                    </excludes>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <configuration>
-                    <providerSelection>${gmavenProviderSelection}</providerSelection>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>${groovyVersion}</version>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.9.1-01</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.3.7-01</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -56,7 +41,7 @@
     </build>
 
     <properties>
-        <gmavenProviderSelection>2.0</gmavenProviderSelection>
+        <groovyVersion>2.4.0</groovyVersion>
     </properties>
 
     <profiles>
@@ -68,12 +53,12 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <includes>
-                                <include>**/*ApplicationTestsEntryPoint.java</include>
-                            </includes>
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
                             </excludes>
+                            <includes>
+                                <include>**/*ApplicationEntryPoint.java</include>
+                            </includes>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
@@ -86,6 +71,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
+            <version>${groovyVersion}</version>
         </dependency>
         <!-- Internal dependencies -->
         <dependency>
@@ -146,10 +132,12 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
+            <version>1.1.6</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
+            <version>1.1.6</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -164,10 +152,12 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
+            <version>2.43.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.detro.ghostdriver</groupId>
             <artifactId>phantomjsdriver</artifactId>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>

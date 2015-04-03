@@ -82,7 +82,7 @@ public class StreamzineUpdateAdminAsmTest {
 
         User user = mock(User.class);
         when(user.getUserName()).thenReturn(userName);
-        when(userRepository.findOne(eq(userName), eq(COMMUNITY))).thenReturn(user);
+        when(userRepository.findByUserNameAndCommunityUrl(eq(userName), eq(COMMUNITY))).thenReturn(user);
 
         UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
         when(updateIncomingDto.getUserNames()).thenReturn(Arrays.asList(userName));

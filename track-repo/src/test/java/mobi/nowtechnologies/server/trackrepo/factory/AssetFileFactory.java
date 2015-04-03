@@ -26,18 +26,6 @@ public class AssetFileFactory {
         return assetFile;
     }
 
-
-    public AssetFile anyMp3DownloadFile() {
-        AssetFile assetFile = new AssetFile();
-
-        assetFile.setMd5("8102e0132161803a43fb5f18901b48d4");
-        assetFile.setPath(fileDir.getAbsolutePath() + File.separator + "purchased" + File.separator + "knocking-window.mp3");
-        assetFile.setType(FileType.DOWNLOAD);
-
-        return assetFile;
-    }
-
-
     public void setFileDir(File fileDir) {
         this.fileDir = fileDir;
     }

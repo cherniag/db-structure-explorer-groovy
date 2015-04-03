@@ -45,9 +45,10 @@ public class ChartDetailsConverter {
         final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
 
         ArrayList<String> pathSegments = new ArrayList<>(original.build().getPathSegments());
-        pathSegments.set(index, newValue);
-
-        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+        if (!pathSegments.isEmpty()) {
+            pathSegments.set(index, newValue);
+            original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+        }
 
         return original.build().toString();
     }

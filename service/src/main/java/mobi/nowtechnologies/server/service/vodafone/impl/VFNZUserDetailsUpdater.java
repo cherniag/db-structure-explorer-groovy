@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
@@ -27,6 +28,10 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
 
     public void setUserService(UserService userService) {
         userDetailsUpdater.setUserService(userService);
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        userDetailsUpdater.setUserRepository(userRepository);
     }
 
     public void setProviderNumber(String providerNumber) {

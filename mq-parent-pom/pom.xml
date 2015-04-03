@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>5.16</version>
+    <version>5.17.2</version>
     <packaging>pom</packaging>
     <name>Now Technologies Parent Pom for all application</name>
 
@@ -13,7 +13,6 @@
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
         <spring-social.version>1.1.0.RELEASE</spring-social.version>
-        <groovyVersion>2.0.0</groovyVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -47,6 +46,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>application-tests</id>
             <properties>
@@ -58,10 +58,12 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m -XX:-UseSplitVerifier</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -81,20 +83,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <Implementation-Build>${buildNumber}-${bambooBuildNumber}</Implementation-Build>
-                            <Branch>${bambooBranchName}</Branch>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
@@ -105,126 +93,66 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <scmCommentPrefix>[MAVEN COMMIT]</scmCommentPrefix>
-                    <branchBase>http://svn.dev.now-technologies.mobi/now-technologies/branches/</branchBase>
-                    <tagBase>http://svn.dev.now-technologies.mobi/now-technologies/tags/</tagBase>
-                    <updateBranchVersions>true</updateBranchVersions>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>server-dist</id>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <phase>clean</phase>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>../distribution.xml</descriptor>
-                            </descriptors>
-                            <finalName>server</finalName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
-
-        <!-- This plugin ONLY for developer who use m2eclipse plugin for eclipse -->
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-jar-plugin</artifactId>
-                                        <versionRange>[1.0.0,)</versionRange>
-                                        <goals>
-                                            <goal>test-jar</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.16</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
-                    <version>1.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jvnet.jaxb2.maven2</groupId>
-                    <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>0.8.3</version>
+                    <version>2.18.1</version>
+                    <configuration>
+                        <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m -XX:-UseSplitVerifier</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.6</version>
+                    <configuration>
+                        <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>3.2</version>
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.2</version>
+                    <version>1.3</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <doCheck>false</doCheck>
+                        <doUpdate>false</doUpdate>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -268,8 +196,8 @@
             <artifactId>hamcrest-all</artifactId>
         </dependency>
     </dependencies>
-    <dependencyManagement>
 
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>uk.co.o2</groupId>
@@ -295,32 +223,6 @@
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt-spring31</artifactId>
                 <version>1.9.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
-                <version>2.43.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.detro.ghostdriver</groupId>
-                <artifactId>phantomjsdriver</artifactId>
-                <version>1.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${groovyVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>1.1.6</version>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-junit</artifactId>
-                <version>1.1.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.wink</groupId>
@@ -415,11 +317,6 @@
                 <groupId>org.jdom</groupId>
                 <artifactId>jdom</artifactId>
                 <version>1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.saxon</groupId>
-                <artifactId>Saxon-HE</artifactId>
-                <version>9.5.1-3</version>
             </dependency>
             <dependency>
                 <groupId>com.hazelcast</groupId>
@@ -1116,34 +1013,12 @@
                 <version>2.1.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>net.ddex.xml</groupId>
+                <artifactId>ddex-ern-parser</artifactId>
+                <version>3.7</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>http://nexus.musicqubed.com/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>central</id>
-            <url>http://nexus.musicqubed.com/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
 </project>

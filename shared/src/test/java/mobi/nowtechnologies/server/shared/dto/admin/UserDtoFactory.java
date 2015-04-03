@@ -83,10 +83,4 @@ public class UserDtoFactory {
         return userDto;
     }
 
-    /**
-     * Create an instance of the class <code>{@link UserDto}</code>.
-     */
-    public static UserDto createUserDto2() {
-        return new UserDto();
-    }
 }

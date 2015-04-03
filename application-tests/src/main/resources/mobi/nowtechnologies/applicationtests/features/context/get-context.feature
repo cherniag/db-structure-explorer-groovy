@@ -88,6 +88,7 @@ Feature: get context
     And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:<NULL>
     When user invokes get context command
     Then response has 200 http response code
+    And header Expires contains value
     Then chart chart_ID contains [{now};PREVIEW;null]
 
   Scenario: get context for user with pending ERROR payment details
@@ -96,4 +97,5 @@ Feature: get context
     And chart chart_ID configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:<NULL>
     When user invokes get context command
     Then response has 200 http response code
+    And header Expires contains value
     Then chart chart_ID contains [{now};PREVIEW;null]
