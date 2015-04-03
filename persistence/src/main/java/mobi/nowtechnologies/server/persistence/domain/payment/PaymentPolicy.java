@@ -108,14 +108,6 @@ public class PaymentPolicy {
     @Column(name = "payment_order", nullable = false, columnDefinition = "int default 0")
     private int order;
 
-    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
-        for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
-        }
-        return offerPaymentPolicyDtos;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -214,14 +206,6 @@ public class PaymentPolicy {
 
     public int getOrder() {
         return order;
-    }
-
-    public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
-        OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
-
-        offerPaymentPolicyDto.setPaymentType(paymentType);
-
-        return offerPaymentPolicyDto;
     }
 
     public SegmentType getSegment() {
