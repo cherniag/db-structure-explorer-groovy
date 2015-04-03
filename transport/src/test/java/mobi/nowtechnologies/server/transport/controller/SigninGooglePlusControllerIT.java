@@ -13,14 +13,13 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.social.GenderType;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
-import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService;
 import mobi.nowtechnologies.server.shared.Utils;
-import static mobi.nowtechnologies.server.persistence.social.GenderType.MALE;
+import mobi.nowtechnologies.server.social.domain.GenderType;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService;
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService;
 
 import javax.annotation.Resource;
 
@@ -123,7 +122,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         assertEquals(googlePlusUserInfo.getSocialNetworkId(), googlePlusUserId);
         assertEquals(googlePlusUserInfo.getFirstName(), firstName);
         assertEquals(googlePlusUserInfo.getLastName(), lastName);
-        assertEquals(googlePlusUserInfo.getGenderType(), MALE);
+        assertEquals(googlePlusUserInfo.getGenderType(), GenderType.MALE);
 
         assertEquals(DateTimeUtils.getDateInUTC(googlePlusUserInfo.getBirthday()), DateTimeUtils.getDateInUTC(birthday));
         assertEquals(googlePlusUserInfo.getCity(), location);

@@ -1,15 +1,15 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.social.GenderType;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
-import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.social.SocialInfoType;
-import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.social.domain.GenderType;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
+import mobi.nowtechnologies.server.social.dto.SocialInfoType;
+import mobi.nowtechnologies.server.social.dto.UserDetailsDto;
+import mobi.nowtechnologies.server.social.dto.facebook.FacebookUserDetailsDto;
+import mobi.nowtechnologies.server.social.dto.googleplus.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 
 import java.text.SimpleDateFormat;

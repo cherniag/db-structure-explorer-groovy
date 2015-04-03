@@ -4,8 +4,8 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
 
 import javax.annotation.Resource;

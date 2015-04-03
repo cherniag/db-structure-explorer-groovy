@@ -7,13 +7,13 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import java.util.Arrays;
 import java.util.Date;

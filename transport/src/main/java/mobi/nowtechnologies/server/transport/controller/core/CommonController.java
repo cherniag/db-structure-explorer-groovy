@@ -16,10 +16,10 @@ import mobi.nowtechnologies.server.service.exception.ReactivateUserException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
-import mobi.nowtechnologies.server.service.social.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.social.service.OAuth2ForbiddenException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

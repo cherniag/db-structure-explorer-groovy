@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.applicationtests.services.http.googleplus;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.persistence.social.GenderType;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
-import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService;
+import mobi.nowtechnologies.server.social.domain.GenderType;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService;
 
 import javax.annotation.Resource;
 

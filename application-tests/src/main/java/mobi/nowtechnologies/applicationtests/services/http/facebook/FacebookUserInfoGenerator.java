@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.applicationtests.services.http.facebook;
 
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
-import mobi.nowtechnologies.server.persistence.social.GenderType;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType;
+import mobi.nowtechnologies.server.social.domain.GenderType;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService;
 
 import javax.annotation.Resource;
 

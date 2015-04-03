@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.applicationtests.features.activation.facebook
+
 import cucumber.api.DataTable
 import cucumber.api.Transform
 import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.features.activation.common.UserState
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
+import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
@@ -18,14 +19,14 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookOperationsAdaptor
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 

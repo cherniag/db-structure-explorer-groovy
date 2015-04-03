@@ -1,4 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.activation.facebook
+
 import cucumber.api.Transform
 import cucumber.api.java.Before
 import cucumber.api.java.en.And
@@ -15,11 +16,12 @@ import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataServi
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
 import java.util.concurrent.ConcurrentHashMap
+
 /**
  * Created by kots on 9/23/2014.
  */

@@ -8,6 +8,7 @@
 
     <bean id="mtvnz.PaymentPolicyModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentPolicyModelServiceImpl">
         <property name="userService" ref="service.UserService"/>
+        <property name="socialNetworkInfoRepository" ref="socialNetworkInfoRepository"/>
     </bean>
 
     <bean name="communityServiceFactory" class="mobi.nowtechnologies.server.web.model.CommunityServiceFactory" />

@@ -6,11 +6,11 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="service.xml" />
 
-	<bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService" />
-	<bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
+	<bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService" />
+	<bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
 
-	<bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService" />
-	<bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusOperationsAdaptor"/>
+	<bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService" />
+	<bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusOperationsAdaptor"/>
 
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">

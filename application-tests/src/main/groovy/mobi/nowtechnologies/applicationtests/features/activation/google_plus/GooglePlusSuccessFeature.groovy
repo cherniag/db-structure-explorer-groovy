@@ -6,28 +6,29 @@ import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
-import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
 import mobi.nowtechnologies.applicationtests.features.activation.common.UserState
+import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
+import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
 import java.text.SimpleDateFormat
 
 import static org.junit.Assert.assertEquals
+
 /**
  * Created by kots on 8/29/2014.
  */
@@ -75,7 +76,7 @@ class GooglePlusSuccessFeature {
 
     @When('^Registered user enters Google Plus credentials$')
     def "Registered user enters Google Plus credentials"() {
-        runner.parallel {deviceSet.loginUsingGooglePlus(it)}
+        runner.parallel { deviceSet.loginUsingGooglePlus(it) }
     }
 
     @Then('^Default promo set in services properties is applied$')

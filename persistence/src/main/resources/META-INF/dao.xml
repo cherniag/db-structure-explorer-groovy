@@ -81,7 +81,7 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 	</bean>
 
     <utils:list id="listOfPackagesToScan">
-        <value>mobi.nowtechnologies.server.persistence.social</value>
+        <value>mobi.nowtechnologies.server.social.domain</value>
         <value>mobi.nowtechnologies.server.persistence.domain</value>
     </utils:list>
 
@@ -163,7 +163,7 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
     <jpa:repositories base-package="mobi.nowtechnologies.server" entity-manager-factory-ref="persistence.EntityManagerFactory" transaction-manager-ref="persistence.TransactionManager">
-        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.persistence.social.*Repository"/>
+        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.social.domain.*Repository"/>
         <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.persistence.repository.*Repository"/>
     </jpa:repositories>
 

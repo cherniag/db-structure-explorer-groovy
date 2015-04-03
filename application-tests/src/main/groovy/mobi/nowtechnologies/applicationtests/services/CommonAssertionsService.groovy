@@ -7,17 +7,17 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfoRepository
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
-import mobi.nowtechnologies.server.service.social.googleplus.impl.mock.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkType
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService
 import org.springframework.stereotype.Service
 import org.springframework.util.Assert
 
@@ -25,6 +25,7 @@ import javax.annotation.Resource
 import java.text.SimpleDateFormat
 
 import static org.junit.Assert.*
+
 /**
  * Created by kots on 9/5/2014.
  */

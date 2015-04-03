@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.social.SocialNetworkInfo;
 import mobi.nowtechnologies.server.service.MergeResult;
-import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.UserPromoService;
-import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
+import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.service.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
@@ -30,8 +30,8 @@ public class SigninGooglePlusController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.10}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.9}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\" +
-                                                                                                                                                ".8}/SIGN_IN_GOOGLE_PLUS"})
+                    value = {"**/{community}/{apiVersion:6\\.10}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.9}/SIGN_IN_GOOGLE_PLUS",
+                        "**/{community}/{apiVersion:6\\" + ".8}/SIGN_IN_GOOGLE_PLUS"})
     public ModelAndView applyPromotionBySignInGooglePlusWithOneTimeSubscription(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                                 @RequestParam("ACCESS_TOKEN") String accessToken, @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
                                                                                 @RequestParam("USER_NAME") String userName, @RequestParam("DEVICE_UID") String deviceUID) {
