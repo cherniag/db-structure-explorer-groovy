@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.transport.serviceconfig.editor;
 import mobi.nowtechnologies.server.device.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.device.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 

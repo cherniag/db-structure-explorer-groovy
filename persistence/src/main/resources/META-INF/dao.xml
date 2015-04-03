@@ -81,6 +81,7 @@
 
     <utils:list id="listOfPackagesToScan">
         <value>mobi.nowtechnologies.server.device</value>
+        <value>mobi.nowtechnologies.server.versioncheck</value>
         <value>mobi.nowtechnologies.server.persistence.domain</value>
     </utils:list>
 
@@ -162,6 +163,7 @@
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
     <jpa:repositories base-package="mobi.nowtechnologies.server" entity-manager-factory-ref="persistence.EntityManagerFactory" transaction-manager-ref="persistence.TransactionManager">
         <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.device.*Repository"/>
+        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.versioncheck.*Repository"/>
         <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.persistence.repository.*Repository"/>
     </jpa:repositories>
 

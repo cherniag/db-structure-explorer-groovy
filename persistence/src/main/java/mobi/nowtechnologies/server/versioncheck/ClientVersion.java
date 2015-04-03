@@ -1,4 +1,8 @@
-package mobi.nowtechnologies.server.persistence.domain.versioncheck;
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
+package mobi.nowtechnologies.server.versioncheck;
 
 public class ClientVersion {
 
@@ -7,7 +11,7 @@ public class ClientVersion {
     private int revision;
     private String qualifier;
 
-    private ClientVersion() {
+    ClientVersion() {
     }
 
     public static ClientVersion from(String versionString) {

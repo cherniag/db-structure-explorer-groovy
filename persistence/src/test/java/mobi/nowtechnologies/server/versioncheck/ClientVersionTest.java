@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.domain.versioncheck;
+package mobi.nowtechnologies.server.versioncheck;
 
 import org.junit.*;
 import static org.junit.Assert.*;

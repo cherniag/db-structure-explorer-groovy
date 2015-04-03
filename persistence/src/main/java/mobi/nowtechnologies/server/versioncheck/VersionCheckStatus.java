@@ -1,4 +1,8 @@
-package mobi.nowtechnologies.server.persistence.domain.versioncheck;
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
+package mobi.nowtechnologies.server.versioncheck;
 
 import java.util.Set;
 

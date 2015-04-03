@@ -10,6 +10,7 @@ http://www.springframework.org/schema/data/jpa http://www.springframework.org/sc
 
     <utils:list id="listOfPackagesToScan">
         <value>mobi.nowtechnologies.server.device</value>
+        <value>mobi.nowtechnologies.server.versioncheck</value>
         <value>mobi.nowtechnologies.server.persistence.domain</value>
         <value>mobi.nowtechnologies.server.persistence.apptests.domain</value>
     </utils:list>

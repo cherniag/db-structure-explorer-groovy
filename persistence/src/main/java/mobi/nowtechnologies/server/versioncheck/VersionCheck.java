@@ -1,6 +1,9 @@
-package mobi.nowtechnologies.server.persistence.domain.versioncheck;
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
+package mobi.nowtechnologies.server.versioncheck;
+
 import mobi.nowtechnologies.server.device.DeviceType;
 
 import javax.persistence.Column;
@@ -15,18 +18,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Created by Oleg Artomov on 9/11/2014.
  */
 @Entity
-@Table(name = "client_version_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"device_type_id", "community_id", "application_name", "status", "message_id"})})
+@Table(name = "client_version_info",
+       uniqueConstraints = {@UniqueConstraint(columnNames = {"device_type_id", "community_id", "application_name", "status", "message_id"})})
 public class VersionCheck {
 
     public static final String MAJOR_NUMBER_PROPERTY_NAME = "majorNumber";
     public static final String MINOR_NUMBER_PROPERTY_NAME = "minorNumber";
     public static final String REVISION_NUMBER_PROPERTY_NAME = "revisionNumber";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -34,9 +39,8 @@ public class VersionCheck {
     @JoinColumn(name = "device_type_id", nullable = false)
     @ManyToOne
     private DeviceType deviceType;
-    @JoinColumn(name = "community_id", nullable = false)
-    @ManyToOne
-    private Community community;
+    @Column(name = "community_id", nullable = false)
+    private int communityId;
     @Column(name = "major_number", nullable = false)
     private int majorNumber;
     @Column(name = "minor_number", nullable = false)
@@ -59,9 +63,9 @@ public class VersionCheck {
     protected VersionCheck() {
     }
 
-    public VersionCheck(DeviceType deviceType, Community community, VersionMessage message, VersionCheckStatus status, String applicationName, ClientVersion clientVersion, String imageFileName) {
+    public VersionCheck(DeviceType deviceType, int communityId, VersionMessage message, VersionCheckStatus status, String applicationName, ClientVersion clientVersion, String imageFileName) {
         this.deviceType = deviceType;
-        this.community = community;
+        this.communityId = communityId;
         this.message = message;
         this.status = status;
         this.applicationName = applicationName;

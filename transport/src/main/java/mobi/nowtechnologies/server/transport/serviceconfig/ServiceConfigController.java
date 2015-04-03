@@ -4,11 +4,11 @@ import mobi.nowtechnologies.server.transport.serviceconfig.dto.ServiceConfigDto;
 import mobi.nowtechnologies.server.transport.serviceconfig.editor.UserAgentRequestEditor;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
+import mobi.nowtechnologies.server.versioncheck.VersionCheckStatus;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
-import mobi.nowtechnologies.server.service.versioncheck.VersionCheckResponse;
-import mobi.nowtechnologies.server.service.versioncheck.VersionCheckService;
+import mobi.nowtechnologies.server.versioncheck.VersionCheckResponse;
+import mobi.nowtechnologies.server.versioncheck.VersionCheckService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 

@@ -1,6 +1,8 @@
-package mobi.nowtechnologies.server.service.versioncheck;
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
 
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
+package mobi.nowtechnologies.server.versioncheck;
 
 public class VersionCheckResponse {
 
