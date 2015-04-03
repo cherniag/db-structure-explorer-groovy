@@ -16,8 +16,6 @@ import static org.hamcrest.core.Is.is;
 public class CommunityRepositoryIT extends AbstractRepositoryIT {
 
     @Resource
-    OfferRepository offerRepository;
-    @Resource
     PaymentPolicyRepository paymentPolicyRepository;
     @Resource
     MessageRepository messageRepository;
@@ -61,7 +59,6 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
         messageRepository.deleteAll();
         chartDetailRepository.deleteAll();
         drmRepository.deleteAll();
-        offerRepository.deleteAll();
         paymentDetailsRepository.deleteAll();
         userRepository.deleteAll();
         promoCodeRepository.deleteAll();
@@ -95,7 +92,6 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
         messageRepository.deleteAll();
         chartDetailRepository.deleteAll();
         drmRepository.deleteAll();
-        offerRepository.deleteAll();
         paymentDetailsRepository.deleteAll();
         userRepository.deleteAll();
         promoCodeRepository.deleteAll();

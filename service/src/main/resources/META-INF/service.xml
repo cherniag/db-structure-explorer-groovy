@@ -390,15 +390,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="communityRepository" ref="communityRepository" />
 	</bean>
 
-	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
-		<property name="filterService" ref="service.FilterService" />
-		<property name="offerRepository" ref="offerRepository" />
-		<property name="communityRepository" ref="communityRepository" />
-		<property name="itemRepository" ref="itemRepository" />
-		<property name="userRepository" ref="userRepository" />
-		<property name="accountLogService" ref="service.AccountLogService" />
-		<property name="cloudFileService" ref="service.CloudFileService" />
-	</bean>
 
 	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.trackrepo.TrackRepositoryHttpClientImpl">
 		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />

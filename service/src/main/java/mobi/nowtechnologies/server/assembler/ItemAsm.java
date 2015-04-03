@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.Item;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ItemDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContentOfferItemDto;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,32 +47,4 @@ public class ItemAsm {
         return itemDto;
     }
 
-    public static List<ContentOfferItemDto> toContentOfferItemDto(List<Item> items) {
-        LOGGER.debug("input parameters items: [{}]", items);
-
-        List<ContentOfferItemDto> contentOfferItemDtos = new LinkedList<ContentOfferItemDto>();
-        for (Item item : items) {
-            contentOfferItemDtos.add(toContentOfferItemDto(item));
-        }
-
-        LOGGER.debug("Output parameter [{}]", contentOfferItemDtos);
-        return contentOfferItemDtos;
-    }
-
-    public static ContentOfferItemDto toContentOfferItemDto(Item item) {
-        LOGGER.debug("input parameters item: [{}]", item);
-
-        ContentOfferItemDto contentOfferItemDto = new ContentOfferItemDto();
-        contentOfferItemDto.setTitle(item.getTitle());
-        if (item instanceof Media) {
-            final Media media = (Media) item;
-            contentOfferItemDto.setCoverFileName(media.getImageFileSmall().getFilename());
-            contentOfferItemDto.setAuthorName(media.getArtist().getName());
-        } else {
-            throw new ServiceException("Unknown type [" + item.getClass() + "] of item [" + item + "]");
-        }
-
-        LOGGER.debug("Output parameter [{}]", contentOfferItemDto);
-        return contentOfferItemDto;
-    }
 }

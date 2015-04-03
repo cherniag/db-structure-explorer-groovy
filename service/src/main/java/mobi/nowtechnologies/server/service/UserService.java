@@ -783,15 +783,15 @@ public class UserService {
 
         if (userDto.getNextSubPayment().after(originalNextSubPayment)) {
             if (user.isOnFreeTrial()) {
-                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TRIAL_TOPUP, null);
+                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TRIAL_TOPUP);
             } else {
-                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+                accountLogService.logAccountEvent(userId, originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
             }
         }
 
         final int balanceAfter = userDto.getSubBalance();
         if (originalSubBalance != balanceAfter) {
-            accountLogService.logAccountEvent(userId, balanceAfter, null, null, SUPPORT_TOPUP, null);
+            accountLogService.logAccountEvent(userId, balanceAfter, null, null, SUPPORT_TOPUP);
         }
 
         user = UserAsm.fromUserDto(userDto, user);
@@ -1112,7 +1112,7 @@ public class UserService {
 
         userWithOldTariffOnOldBoughtPeriod.setNextSubPayment(epochSeconds);
 
-        accountLogService.logAccountEvent(userWithOldTariffOnOldBoughtPeriod.getId(), userWithOldTariffOnOldBoughtPeriod.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        accountLogService.logAccountEvent(userWithOldTariffOnOldBoughtPeriod.getId(), userWithOldTariffOnOldBoughtPeriod.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING);
         return userWithOldTariffOnOldBoughtPeriod;
     }
 
@@ -1126,7 +1126,7 @@ public class UserService {
         user.setNextSubPayment(currentTimeSeconds);
         user.setFreeTrialExpiredMillis(currentTimeMillis);
 
-        accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
+        accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING);
 
         return user;
     }

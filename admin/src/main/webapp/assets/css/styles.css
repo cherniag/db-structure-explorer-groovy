@@ -333,7 +333,7 @@ ul.table li.title div {
 }
 
 
-form#deleteMessageForm, form#deleteNewsForm, form#addNew, form#cloneNewsForm, form#updateNewsPositionsForm, form#deleteOfferForm  {
+form#deleteMessageForm, form#deleteNewsForm, form#addNew, form#cloneNewsForm, form#updateNewsPositionsForm {
   display: inline-table;
   vertical-align: bottom;
 }

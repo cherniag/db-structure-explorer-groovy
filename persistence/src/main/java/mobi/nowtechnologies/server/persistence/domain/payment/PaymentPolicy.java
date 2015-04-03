@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
-import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -32,8 +31,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
