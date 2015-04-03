@@ -379,37 +379,6 @@ public class ChartDetailServiceTest {
         assertEquals(allChannels, actualAllChannels);
     }
 
-    /**
-     * Run the List<Long> getAllPublishTimeMillis(Byte) method test.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testGetAllPublishTimeMillis_Success() throws Exception {
-        Integer chartId = new Integer(1);
-
-        List<Long> allPublishTimeMillis = Arrays.asList(1L, 666L, 999L);
-
-        Mockito.when(mockChartDetailRepository.getAllPublishTimeMillis(Mockito.eq(chartId))).thenReturn(allPublishTimeMillis);
-
-        List<Long> actualAllPublishTimeMillis = fixtureChartDetailService.getAllPublishTimeMillis(chartId);
-
-        assertNotNull(actualAllPublishTimeMillis);
-        assertEquals(allPublishTimeMillis, actualAllPublishTimeMillis);
-    }
-
-    /**
-     * Run the List<Long> getAllPublishTimeMillis(Byte) method test.
-     *
-     * @throws Exception
-     */
-    @Test(expected = ServiceException.class)
-    public void testGetAllPublishTimeMillis_ChartIdIsNull_Failure() throws Exception {
-        Integer chartId = null;
-
-        fixtureChartDetailService.getAllPublishTimeMillis(chartId);
-    }
-
     private void assertChartDetailEquals(ChartDetail originalChartDetail, ChartDetail actualChartDetail) {
         assertEquals(originalChartDetail.getChannel(), actualChartDetail.getChannel());
         assertEquals(originalChartDetail.getChartId(), actualChartDetail.getChartId());
