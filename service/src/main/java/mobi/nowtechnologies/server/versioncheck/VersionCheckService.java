@@ -5,10 +5,6 @@
 package mobi.nowtechnologies.server.versioncheck;
 
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
-import static mobi.nowtechnologies.server.versioncheck.VersionCheck.MAJOR_NUMBER_PROPERTY_NAME;
-import static mobi.nowtechnologies.server.versioncheck.VersionCheck.MINOR_NUMBER_PROPERTY_NAME;
-import static mobi.nowtechnologies.server.versioncheck.VersionCheck.REVISION_NUMBER_PROPERTY_NAME;
-import static mobi.nowtechnologies.server.versioncheck.VersionCheckStatus.CURRENT;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -71,10 +67,10 @@ public class VersionCheckService {
 
     @PostConstruct
     private void init() {
-        currentVersionResponse = new VersionCheckResponse(null, CURRENT, null, null);
-        Sort sorting = new Sort(new Sort.Order(Sort.Direction.ASC, MAJOR_NUMBER_PROPERTY_NAME),
-                                new Sort.Order(Sort.Direction.ASC, MINOR_NUMBER_PROPERTY_NAME),
-                                new Sort.Order(Sort.Direction.ASC, REVISION_NUMBER_PROPERTY_NAME));
+        currentVersionResponse = new VersionCheckResponse(null, VersionCheckStatus.CURRENT, null, null);
+        Sort sorting = new Sort(new Sort.Order(Sort.Direction.ASC, VersionCheck.MAJOR_NUMBER_PROPERTY_NAME),
+                                new Sort.Order(Sort.Direction.ASC, VersionCheck.MINOR_NUMBER_PROPERTY_NAME),
+                                new Sort.Order(Sort.Direction.ASC, VersionCheck.REVISION_NUMBER_PROPERTY_NAME));
         pagingAndSortingData = new PageRequest(0, 1, sorting);
     }
 
