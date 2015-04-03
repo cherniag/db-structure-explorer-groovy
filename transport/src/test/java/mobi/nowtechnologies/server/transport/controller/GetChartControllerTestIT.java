@@ -246,6 +246,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
 
     @Test
+    @Ignore
     public void testGetChart_O2_v4d0_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
