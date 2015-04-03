@@ -32,7 +32,8 @@ public class ContextController extends CommonController {
     PaymentTimeService paymentTimeService;
 
     @RequestMapping(method = GET,
-                    value = {"**/{community}/{apiVersion:6\\.10}/CONTEXT", "**/{community}/{apiVersion:6\\.9}/CONTEXT", "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/CONTEXT", "**/{community}/{apiVersion:6\\.10}/CONTEXT", "**/{community}/{apiVersion:6\\.9}/CONTEXT",
+                        "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
     public ModelAndView getContext(@AuthenticatedUser User user, HttpServletResponse response) throws Exception {
         return getContext(user, true, response);
     }
