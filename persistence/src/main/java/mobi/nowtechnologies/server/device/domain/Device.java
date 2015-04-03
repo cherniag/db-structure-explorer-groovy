@@ -2,7 +2,7 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.device;
+package mobi.nowtechnologies.server.device.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

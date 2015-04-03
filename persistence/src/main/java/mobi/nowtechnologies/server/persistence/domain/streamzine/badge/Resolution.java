@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
-import mobi.nowtechnologies.server.device.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 
 import javax.persistence.Column;

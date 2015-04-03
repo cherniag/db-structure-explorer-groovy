@@ -2,9 +2,13 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.versioncheck;
+package mobi.nowtechnologies.server.versioncheck.service;
 
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheck;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

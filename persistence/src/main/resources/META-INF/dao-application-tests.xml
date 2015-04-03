@@ -9,8 +9,8 @@ http://www.springframework.org/schema/data/jpa http://www.springframework.org/sc
  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <utils:list id="listOfPackagesToScan">
-        <value>mobi.nowtechnologies.server.device</value>
-        <value>mobi.nowtechnologies.server.versioncheck</value>
+        <value>mobi.nowtechnologies.server.device.domain</value>
+        <value>mobi.nowtechnologies.server.versioncheck.domain</value>
         <value>mobi.nowtechnologies.server.persistence.domain</value>
         <value>mobi.nowtechnologies.server.persistence.apptests.domain</value>
     </utils:list>

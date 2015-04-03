@@ -2,7 +2,7 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.versioncheck;
+package mobi.nowtechnologies.server.versioncheck.domain;
 
 import java.util.Set;
 

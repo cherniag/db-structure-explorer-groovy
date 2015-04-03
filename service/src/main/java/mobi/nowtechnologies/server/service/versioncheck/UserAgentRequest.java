@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.versioncheck;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.device.DeviceType;
-import mobi.nowtechnologies.server.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
 
 public interface UserAgentRequest {
 

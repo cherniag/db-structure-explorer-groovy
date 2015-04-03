@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.device.DeviceType;
-import mobi.nowtechnologies.server.device.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
@@ -69,6 +69,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {Utils.class, UserNotificationServiceImpl.class})
 public class UserNotificationServiceImplTest {
+
     private UserService userServiceMock;
     private UserNotificationServiceImpl userNotificationImplSpy;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
@@ -520,7 +521,8 @@ public class UserNotificationServiceImplTest {
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
 
         forNWeeks = "for.n.weeks";
-        Mockito.doReturn(forNWeeks).when(communityResourceBundleMessageSourceMock)
+        Mockito.doReturn(forNWeeks)
+               .when(communityResourceBundleMessageSourceMock)
                .getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("for.n.weeks"), (String[]) any(), any(Locale.class));
 
         final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
@@ -578,7 +580,8 @@ public class UserNotificationServiceImplTest {
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
 
         forNWeeks = "for.n.weeks";
-        Mockito.doReturn(forNWeeks).when(communityResourceBundleMessageSourceMock)
+        Mockito.doReturn(forNWeeks)
+               .when(communityResourceBundleMessageSourceMock)
                .getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("for.n.weeks"), (String[]) any(), any(Locale.class));
 
         final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {

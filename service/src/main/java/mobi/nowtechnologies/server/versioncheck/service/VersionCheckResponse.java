@@ -2,7 +2,10 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.versioncheck;
+package mobi.nowtechnologies.server.versioncheck.service;
+
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
+
 
 public class VersionCheckResponse {
 

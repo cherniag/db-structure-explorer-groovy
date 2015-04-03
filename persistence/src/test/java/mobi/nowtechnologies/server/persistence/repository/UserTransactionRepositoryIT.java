@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.device.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -17,7 +17,8 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 
-public class UserTransactionRepositoryIT extends AbstractRepositoryIT{
+public class UserTransactionRepositoryIT extends AbstractRepositoryIT {
+
     @Resource
     UserGroupRepository userGroupRepository;
     @Resource

@@ -1,16 +1,16 @@
 package mobi.nowtechnologies.server.transport.serviceconfig;
 
-import mobi.nowtechnologies.server.transport.serviceconfig.dto.ServiceConfigDto;
-import mobi.nowtechnologies.server.transport.serviceconfig.editor.UserAgentRequestEditor;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
-import mobi.nowtechnologies.server.versioncheck.VersionCheckStatus;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
-import mobi.nowtechnologies.server.versioncheck.VersionCheckResponse;
-import mobi.nowtechnologies.server.versioncheck.VersionCheckService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
+import mobi.nowtechnologies.server.transport.serviceconfig.dto.ServiceConfigDto;
+import mobi.nowtechnologies.server.transport.serviceconfig.editor.UserAgentRequestEditor;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
+import mobi.nowtechnologies.server.versioncheck.service.VersionCheckResponse;
+import mobi.nowtechnologies.server.versioncheck.service.VersionCheckService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -51,8 +51,11 @@ public class ServiceConfigController extends CommonController {
     }
 
     @RequestMapping(method = GET,
-                    value = {"**/{community}/{apiVersion:6\\.7}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.6}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.5}/SERVICE_CONFIG",
-                        "**/{community}/{apiVersion:6\\.4}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.3}/SERVICE_CONFIG"})
+                    value = {"**/{community}/{apiVersion:6\\.7}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.6}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.5}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.4}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.3}/SERVICE_CONFIG"})
     public Response getServiceConfigWithMigratedAndImage(@RequestHeader("User-Agent") UserAgentRequest userAgent, @PathVariable("community") String community) throws Exception {
         ServiceConfigDto dto = getServiceConfigInternal(userAgent, community, VersionCheckStatus.getAllStatuses());
         return new Response(new Object[] {dto});

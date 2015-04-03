@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.versioncheck;
 
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 

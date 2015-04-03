@@ -5,7 +5,7 @@
 package mobi.nowtechnologies.server.test;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
 
 import javax.servlet.http.HttpServletRequest;
 /**

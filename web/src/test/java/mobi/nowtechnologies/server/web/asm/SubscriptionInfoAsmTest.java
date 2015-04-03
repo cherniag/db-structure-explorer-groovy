@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.web.asm;
 
 import mobi.nowtechnologies.server.TimeService;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
-import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -46,14 +46,13 @@ public class SubscriptionInfoAsmTest {
     ITunesPaymentService iTunesPaymentService;
     @InjectMocks
     SubscriptionInfoAsm subscriptionInfoAsm;
-    @Mock
-    private PaymentPolicy policy;
-
     //
     // Variables
     //
     Locale locale = Locale.CANADA;
     Period period = new Period(WEEKS, 3);
+    @Mock
+    private PaymentPolicy policy;
 
     @Before
     public void setUp() throws Exception {

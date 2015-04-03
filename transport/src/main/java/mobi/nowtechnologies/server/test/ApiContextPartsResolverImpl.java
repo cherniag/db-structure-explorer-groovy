@@ -4,11 +4,11 @@
 
 package mobi.nowtechnologies.server.test;
 
-import mobi.nowtechnologies.server.device.Device;
+import mobi.nowtechnologies.server.device.domain.Device;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.device;
+package mobi.nowtechnologies.server.device.domain;
 
 public class DeviceTypeFactory {
 

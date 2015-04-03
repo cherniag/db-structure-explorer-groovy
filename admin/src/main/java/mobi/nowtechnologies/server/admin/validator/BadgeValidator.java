@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.streamzine.badge.ResolutionDto;
-import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 
 import java.util.List;

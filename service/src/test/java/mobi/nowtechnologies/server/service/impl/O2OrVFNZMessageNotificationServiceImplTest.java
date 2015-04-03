@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.device.DeviceType;
-import mobi.nowtechnologies.server.device.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
@@ -44,8 +44,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     O2OAndVFNZMessageNotificationServiceImpl o2OrVFNZMessageNotificationServiceImpl;
 
     @Test
-    public void testGetMessageCode_ProviderIsNotNullSegmentContractDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProviderIsNotNullSegmentContractDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -78,8 +77,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ContractIsNotNullProvicerSegmentDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ContractIsNotNullProvicerSegmentDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -97,7 +95,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase  + ".for." + user.getContract();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getContract();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -112,8 +110,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_SegmentIsNotNullContractProvicerDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_SegmentIsNotNullContractProvicerDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -131,7 +128,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase  + ".for." + user.getSegment();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getSegment();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -146,8 +143,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_DeviceTypeIsNotNullSegmentContractProvicerAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_DeviceTypeIsNotNullSegmentContractProvicerAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -167,7 +163,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for."+ deviceType.getName();
+        final String expectedMsgCode = msgCodeBase + ".for." + deviceType.getName();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -182,8 +178,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_DeviceTypeSegmentContractProviderAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_DeviceTypeSegmentContractProviderAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -218,8 +213,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ProviderIsNullDeviceTypeSegmentContractAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProviderIsNullDeviceTypeSegmentContractAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -254,8 +248,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ProvicerContractAreNullDeviceTypeSegmentAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProvicerContractAreNullDeviceTypeSegmentAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -290,8 +283,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_SegmentContractAreNullDeviceTypeProviderPaymentTypeAreNotNull_Success()
-            throws Exception {
+    public void testGetMessageCode_SegmentContractAreNullDeviceTypeProviderPaymentTypeAreNotNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -335,8 +327,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ChangedProvider_Success()
-            throws Exception {
+    public void testGetMessageCode_ChangedProvider_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -366,7 +357,8 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." +
+                                       paymentPolicy.getProvider().getKey();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -381,8 +373,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ChangedSegment_Success()
-            throws Exception {
+    public void testGetMessageCode_ChangedSegment_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -413,7 +404,9 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment();
+        final String expectedMsgCode =
+            msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." +
+            paymentPolicy.getProvider().getKey() + "." + paymentPolicy.getSegment();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -428,8 +421,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ChangedContract_Success()
-            throws Exception {
+    public void testGetMessageCode_ChangedContract_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();
@@ -461,7 +453,9 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment()+"."+ paymentPolicy.getContract();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName() + "." +
+                                       user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() + "." + paymentPolicy.getSegment() + "." +
+                                       paymentPolicy.getContract();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -476,8 +470,7 @@ public class O2OrVFNZMessageNotificationServiceImplTest {
     }
 
     @Test
-    public void testGetMessageCode_ProviderSegmentContractDeviceTypeAreNull_Success()
-            throws Exception {
+    public void testGetMessageCode_ProviderSegmentContractDeviceTypeAreNull_Success() throws Exception {
         final String rewriteUrlParameter = "o2";
 
         Community o2Community = CommunityFactory.createCommunity();

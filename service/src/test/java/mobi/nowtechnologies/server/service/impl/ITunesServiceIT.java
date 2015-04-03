@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.device.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;

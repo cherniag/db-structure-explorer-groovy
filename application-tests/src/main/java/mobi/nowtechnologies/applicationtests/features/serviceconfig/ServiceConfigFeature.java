@@ -15,17 +15,17 @@ import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
 import mobi.nowtechnologies.applicationtests.services.runner.Runner;
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
-import mobi.nowtechnologies.server.device.DeviceType;
-import mobi.nowtechnologies.server.device.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.versioncheck.ClientVersion;
-import mobi.nowtechnologies.server.versioncheck.VersionCheck;
-import mobi.nowtechnologies.server.versioncheck.VersionCheckRepository;
-import mobi.nowtechnologies.server.versioncheck.VersionCheckStatus;
-import mobi.nowtechnologies.server.versioncheck.VersionMessage;
-import mobi.nowtechnologies.server.versioncheck.VersionMessageRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheck;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionMessage;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionMessageRepository;
 
 import javax.annotation.Resource;
 

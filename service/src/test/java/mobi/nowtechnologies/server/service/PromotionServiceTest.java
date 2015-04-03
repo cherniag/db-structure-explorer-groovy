@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.device.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -79,9 +79,16 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
  * @author Titov Mykhaylo (titov)
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(
-    {UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class, PromoParams.class, PromotionService
-        .class})
+@PrepareForTest({UserService.class,
+                 UserStatusDao.class,
+                 Utils.class,
+                 DeviceTypeDao.class,
+                 UserGroupDao.class,
+                 OperatorDao.class,
+                 AccountLog.class,
+                 EmailValidator.class,
+                 PromoParams.class,
+                 PromotionService.class})
 public class PromotionServiceTest {
 
     public static final String PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT = "promocode.for.o2.consumer.4g.payg.direct";
@@ -244,7 +251,8 @@ public class PromotionServiceTest {
     public void shouldApplyPromotionForO2Payg4GDirectConsumerWithActivePaymentDetailsAndNextSubPaymentInThePast() {
 
         given().userWithCommunity("o2").withTariff(_4G).withProvider(O2).withContract(PAYG).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
-        user.withNextSubPayment(Integer.MIN_VALUE).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withActivated(true))
+        user.withNextSubPayment(Integer.MIN_VALUE)
+            .withCurrentPaymentDetails(new O2PSMSPaymentDetails().withActivated(true))
             .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
 
         promotion = new Promotion();
@@ -431,8 +439,14 @@ public class PromotionServiceTest {
         String communityUri = "o2";
         String deviceUID = "deviceUid";
 
-        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(O2)
-                         .withContract(PAYG).withSegment(CONSUMER).withNextSubPayment(Integer.MAX_VALUE)
+        user = new User().withUserName(userName)
+                         .withDeviceUID(deviceUID)
+                         .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri)))
+                         .withTariff(_4G)
+                         .withProvider(O2)
+                         .withContract(PAYG)
+                         .withSegment(CONSUMER)
+                         .withNextSubPayment(Integer.MAX_VALUE)
                          .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
         promotion = new Promotion();
 
@@ -470,8 +484,14 @@ public class PromotionServiceTest {
         String communityUri = "o2";
         String deviceUID = "deviceUid";
 
-        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(O2)
-                         .withContract(PAYG).withSegment(CONSUMER).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withUserName(userName)
+                         .withDeviceUID(deviceUID)
+                         .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri)))
+                         .withTariff(_4G)
+                         .withProvider(O2)
+                         .withContract(PAYG)
+                         .withSegment(CONSUMER)
+                         .withFreeTrialExpiredMillis(Long.MAX_VALUE);
         promotion = new Promotion();
 
         promoCode = "promoCode";
@@ -507,8 +527,15 @@ public class PromotionServiceTest {
         String timestamp = "";
         String deviceUID = "deviceUid";
 
-        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_REWRITE_URL_PARAMETER))).withTariff(_4G)
-                         .withProvider(O2).withContract(PAYG).withSegment(CONSUMER).withNextSubPayment(Integer.MAX_VALUE).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withActivated(true));
+        user = new User().withUserName(userName)
+                         .withDeviceUID(deviceUID)
+                         .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_REWRITE_URL_PARAMETER)))
+                         .withTariff(_4G)
+                         .withProvider(O2)
+                         .withContract(PAYG)
+                         .withSegment(CONSUMER)
+                         .withNextSubPayment(Integer.MAX_VALUE)
+                         .withCurrentPaymentDetails(new O2PSMSPaymentDetails().withActivated(true));
         promotion = new Promotion();
 
         promoCode = "promoCode";
@@ -545,8 +572,13 @@ public class PromotionServiceTest {
         String communityUri = "o2";
         String deviceUID = "deviceUid";
 
-        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(O2)
-                         .withContract(PAYG).withSegment(CONSUMER);
+        user = new User().withUserName(userName)
+                         .withDeviceUID(deviceUID)
+                         .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri)))
+                         .withTariff(_4G)
+                         .withProvider(O2)
+                         .withContract(PAYG)
+                         .withSegment(CONSUMER);
         promotion = new Promotion();
 
         promoCode = "promoCode";
@@ -571,8 +603,13 @@ public class PromotionServiceTest {
         String communityUri = "o2";
         String deviceUID = "deviceUid";
 
-        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(O2)
-                         .withContract(PAYG).withSegment(CONSUMER);
+        user = new User().withUserName(userName)
+                         .withDeviceUID(deviceUID)
+                         .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri)))
+                         .withTariff(_4G)
+                         .withProvider(O2)
+                         .withContract(PAYG)
+                         .withSegment(CONSUMER);
         promotion = new Promotion();
 
         promoCode = "promoCode";
@@ -663,8 +700,10 @@ public class PromotionServiceTest {
         }).when(promotionServiceSpy).updatePromotionNumUsers(promotion);
 
         //when
-        User actualUser = promotionServiceSpy
-            .applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(freeTrialStartedTimestampSeconds).createPromoParams());
+        User actualUser = promotionServiceSpy.applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user)
+                                                                                                .setPromotion(promotion)
+                                                                                                .setFreeTrialStartedTimestampSeconds(freeTrialStartedTimestampSeconds)
+                                                                                                .createPromoParams());
         boolean isPromotionApplied = actualUser.isPromotionApplied();
 
         //than

@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
-import mobi.nowtechnologies.server.device.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserHandset;
 
@@ -17,6 +17,7 @@ import java.util.List;
 @Entity
 @DiscriminatorValue("PromotionUserHandsetFilter")
 public class PUserHandsetFilter extends AbstractFilter {
+
     @ElementCollection(targetClass = UserHandset.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "tb_filter_params")

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.device.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.service.UserNotificationService;
@@ -34,6 +34,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
 /**

@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 import mobi.nowtechnologies.server.admin.validator.BadgeValidator;
-import mobi.nowtechnologies.server.device.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm;

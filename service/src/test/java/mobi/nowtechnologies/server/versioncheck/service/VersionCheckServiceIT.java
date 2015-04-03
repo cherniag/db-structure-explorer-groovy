@@ -1,10 +1,16 @@
-package mobi.nowtechnologies.server.versioncheck;
+package mobi.nowtechnologies.server.versioncheck.service;
 
-import mobi.nowtechnologies.server.device.DeviceType;
-import mobi.nowtechnologies.server.device.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheck;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionMessage;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionMessageRepository;
 
 import javax.annotation.Resource;
 
