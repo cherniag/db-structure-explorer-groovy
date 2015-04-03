@@ -313,10 +313,14 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         User user = promoParams.user;
         LOGGER.info("Attempt to apply promotion [{}] for user [{}] using [{}] as freeTrialStartedTimestampSeconds", promoParams.promotion, user, promoParams.freeTrialStartedTimestampSeconds);
 
-        if (isUserNotBanned(user)) {
+        UserBanned userBanned = userBannedRepository.findOne(user.getId());
+
+        if (isNull(userBanned) || userBanned.isGiveAnyPromotion()) {
             user = applyPromoForNotBannedUser(promoParams);
         } else {
-            skipPotentialPromoCodePromotionApplyingForBannedUser(user);
+            LOGGER.warn("The promotion wouldn't be applied because user is banned");
+            user.setPotentialPromoCodePromotion(null);
+            entityService.updateEntity(user);
         }
 
         return user;
@@ -350,12 +354,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         userTransaction.setEndTimestamp(end);
         userTransaction.setTransactionType(UserTransactionType.PROMOTION_BY_PROMO_CODE);
         userTransactionRepository.save(userTransaction);
-    }
-
-    private User skipPotentialPromoCodePromotionApplyingForBannedUser(User user) {
-        LOGGER.warn("The promotion wouldn't be applied because user is banned");
-        user.setPotentialPromoCodePromotion(null);
-        return entityService.updateEntity(user);
     }
 
     private User applyPromoForNotBannedUser(PromoParams promoParams) {
@@ -392,11 +390,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         logAboutPromoApplying(user, promoCode, freeTrialStartSeconds * 1000L, freeTrialEndSeconds * 1000L);
         return user.withIsPromotionApplied(true);
-    }
-
-    public boolean isUserNotBanned(User user) {
-        UserBanned userBanned = userBannedRepository.findOne(user.getId());
-        return isNull(userBanned) || userBanned.isGiveAnyPromotion();
     }
 
     private boolean couldNotBeApplied(User user, Promotion promotion) {

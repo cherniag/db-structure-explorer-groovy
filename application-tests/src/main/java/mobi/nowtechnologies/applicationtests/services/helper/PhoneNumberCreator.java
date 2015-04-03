@@ -1,16 +1,19 @@
 package mobi.nowtechnologies.applicationtests.services.helper;
 
-import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.CurrentPhone;
-import mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock;
 import mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService;
-import mobi.nowtechnologies.server.shared.enums.*;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Author: Gennadii Cherniaiev Date: 7/3/2014
@@ -28,29 +31,6 @@ public class PhoneNumberCreator {
         final int phoneTypePrefix = o2PhoneExtensionsService.getPhoneNumberSuffix(providerType, segmentType, contract, tariff, contractChannel);
 
         return doCreatePhone("+447%02d%07d", phoneTypePrefix);
-    }
-
-    @Transactional("applicationTestsTransactionManager")
-    public String createNZValidPhoneNumber() {
-        final int validPhoneTypePrefix = 1;
-
-        Preconditions.checkState(validPhoneTypePrefix != NZSubscriberInfoGatewayMock.notAvailablePrefix);
-        Preconditions.checkState(validPhoneTypePrefix != NZSubscriberInfoGatewayMock.doesNotBelong);
-
-        return doCreatePhone("+64%01d%07d", validPhoneTypePrefix);
-    }
-
-    @Transactional("applicationTestsTransactionManager")
-    public String createNZNotFoundPhoneNumber() {
-        return doCreatePhone("+00%01d%07d", 0);
-    }
-    @Transactional("applicationTestsTransactionManager")
-    public String createNZDoesNotBelong() {
-        return doCreatePhone("+00%01d%07d", NZSubscriberInfoGatewayMock.doesNotBelong);
-    }
-    @Transactional("applicationTestsTransactionManager")
-    public String createNZNotAvailablePhoneNumber() {
-        return doCreatePhone("+64%01d%07d", NZSubscriberInfoGatewayMock.notAvailablePrefix);
     }
 
     private String doCreatePhone(String pattern, int phonePrefix) {

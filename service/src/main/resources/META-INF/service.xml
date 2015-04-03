@@ -356,7 +356,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="communityRepository" ref="communityRepository" />
 	</bean>
 
-	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"></bean>
+	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"/>
 
 	<bean id="service.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
 		<property name="userName" value="${cloudFile.userName}" />
@@ -558,8 +558,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl"/>
 
-    <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl">
-    </bean>
+    <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl"/>
 
 	   <bean id="imageService" class="mobi.nowtechnologies.server.service.file.image.ImageService" />
 
@@ -586,45 +585,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
         <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
-
-	<bean id="jaxb.NZUserMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-		<property name="contextPaths">
-			<list>
-				<value>nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1</value>
-				<value>nz.co.vodafone.ws.fault</value>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="service.NZSubscriberInfoGateway" class="mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoGateway">
-		<property name="defaultUri" value="${vf.nz.subscriber.service.url}"/>
-		<property name="marshaller" ref="jaxb.NZUserMarshaller"/>
-		<property name="unmarshaller" ref="jaxb.NZUserMarshaller"/>
-		<property name="nzUserId" value="${vf.nz.subscriber.service.user.id}"/>
-		<property name="interceptors">
-			<list>
-				<bean class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
-					<property name="securementActions" value="UsernameToken"/>
-					<property name="securementUsername" value="${vf.nz.subscriber.service.username}"/>
-					<property name="securementPassword" value="${vf.nz.subscriber.service.password}"/>
-				</bean>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="service.NZSubscriberInfoService" class="mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService">
-		<property name="subscriberInfoProvider" ref="service.NZSubscriberInfoGateway"/>
-		<property name="subscriberInfoRepository" ref="NZSubscriberInfoRepository"/>
-		<property name="userRepository" ref="userRepository"/>
-	</bean>
-
-	<bean id="service.PinCodeService" class="mobi.nowtechnologies.server.service.pincode.impl.PinCodeServiceImpl" depends-on="pinCodeRepository">
-		<property name="pinCodeRepository" ref="pinCodeRepository"/>
-		<property name="expirationSeconds" value="${pin.code.expiration.seconds}"/>
-		<property name="maxAttempts" value="${pin.code.max.attempts}"/>
-		<property name="limitSeconds" value="${pin.code.limit.seconds}"/>
-		<property name="limitCount" value="${pin.code.limit.count}"/>
-	</bean>
 
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
 
