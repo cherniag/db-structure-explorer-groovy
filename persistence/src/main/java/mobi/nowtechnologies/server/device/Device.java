@@ -23,19 +23,35 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "type", columnDefinition = "varchar(25)", nullable = false, updatable = false)
+    @Column(columnDefinition = "varchar(25)", nullable = false, updatable = false)
     private String type;
+
+    @Column(columnDefinition = "varchar(255)", nullable = false, updatable = false)
+    private String uid;
+
+    @Column(columnDefinition = "varchar(255)")
+    private String deviceModel;
 
     protected Device() {
     }
 
-    public Device(DeviceType deviceType) {
+    public Device(DeviceType deviceType, String uid, String deviceModel) {
         Preconditions.checkNotNull(type);
         this.type = deviceType.getName();
+        this.uid = uid;
+        this.deviceModel = deviceModel;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public DeviceType getType() {
         return DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(type);
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     @Override
@@ -49,18 +65,20 @@ public class Device {
 
         Device device = (Device) o;
 
-        return id == device.id && getType().equals(device.getType());
+        return id == device.id && getType().equals(device.getType()) && uid.equals(device.uid);
+
     }
 
     @Override
     public int hashCode() {
         int result = id;
+        result = 31 * result + uid.hashCode();
         result = 31 * result + getType().hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("type", getType()).toString();
+        return new ToStringBuilder(this).append("id", id).append("type", getType()).append("uid", uid).append("deviceModel", deviceModel).toString();
     }
 }
