@@ -96,7 +96,7 @@
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="mobi.nowtechnologies.server.device.domain.DeviceTypeDao"/>
-		<property name="targetMethod" value="load"/>
+		<property name="targetMethod" value="setDeviceTypeRepository"/>
 		<property name="arguments">
 			<list>
 				<ref bean="deviceTypeRepository" />
