@@ -1,13 +1,10 @@
-package mobi.nowtechnologies.server.transport.serviceconfig.editor;
+package mobi.nowtechnologies.server.support.editor;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
-
-import org.springframework.beans.ConversionNotSupportedException;
+import mobi.nowtechnologies.server.support.UserAgent;
 
 import org.junit.*;
 import org.junit.rules.*;
@@ -15,14 +12,14 @@ import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class UserAgentRequestEditorTest {
+public class UserAgentPropertyEditorTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     CommunityRepository communityRepository = mock(CommunityRepository.class);
-    UserAgentRequestEditor editor = new UserAgentRequestEditor(communityRepository) {
+    UserAgentPropertyEditor editor = new UserAgentPropertyEditor(communityRepository) {
         @Override
-        DeviceType restoreDeviceType(String deviceTypeString) {
+        DeviceType toDeviceType(String deviceTypeString) {
             if ("android".equalsIgnoreCase(deviceTypeString) || "ios".equalsIgnoreCase(deviceTypeString)) {
                 DeviceType deviceType = new DeviceType();
                 deviceType.setName(deviceTypeString);
@@ -68,7 +65,7 @@ public class UserAgentRequestEditorTest {
         final String userAgentHeaderValue = "Some not valid user agent value";
 
         // when
-        thrown.expect(ConversionNotSupportedException.class);
+        thrown.expect(IllegalArgumentException.class);
         editor.setAsText(userAgentHeaderValue);
 
         // then
@@ -96,13 +93,13 @@ public class UserAgentRequestEditorTest {
         editor.setAsText(userAgentHeaderValue);
 
         // then
-        UserAgentRequest value = (UserAgentRequest) editor.getValue();
+        UserAgent value = (UserAgent) editor.getValue();
 
         assertEquals("musicqubed", value.getApplicationName());
         assertEquals(3, value.getVersion().major());
         assertEquals(1, value.getVersion().minor());
         assertEquals(1, value.getVersion().revision());
-        assertEquals(UserRegInfo.DeviceType.ANDROID, value.getPlatform().getName());
+        assertEquals(DeviceType.ANDROID, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
         verify(communityRepository).findByName("MTV");
@@ -120,13 +117,13 @@ public class UserAgentRequestEditorTest {
         editor.setAsText(userAgentHeaderValue);
 
         // then
-        UserAgentRequest value = (UserAgentRequest) editor.getValue();
+        UserAgent value = (UserAgent) editor.getValue();
 
         assertEquals("musicqubed", value.getApplicationName());
         assertEquals(3, value.getVersion().major());
         assertEquals(1, value.getVersion().minor());
         assertEquals(0, value.getVersion().revision());
-        assertEquals(UserRegInfo.DeviceType.IOS, value.getPlatform().getName());
+        assertEquals(DeviceType.IOS, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
         verify(communityRepository).findByName("MTV");
@@ -144,13 +141,13 @@ public class UserAgentRequestEditorTest {
         editor.setAsText(userAgentHeaderValue);
 
         // then
-        UserAgentRequest value = (UserAgentRequest) editor.getValue();
+        UserAgent value = (UserAgent) editor.getValue();
 
         assertEquals("musicqubed", value.getApplicationName());
         assertEquals(3, value.getVersion().major());
         assertEquals(1, value.getVersion().minor());
         assertEquals(0, value.getVersion().revision());
-        assertEquals(UserRegInfo.DeviceType.IOS, value.getPlatform().getName());
+        assertEquals(DeviceType.IOS, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
         verify(communityRepository).findByName("MTV");

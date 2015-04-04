@@ -14,20 +14,31 @@ public class ClientVersion {
     ClientVersion() {
     }
 
-    public static ClientVersion from(String versionString) {
+    public static ClientVersion from(String versionString) throws IllegalArgumentException {
         ClientVersion ver = new ClientVersion();
 
         String[] parts = versionString.split("-");
-        if (parts.length == 2) {
-            ver.qualifier = parts[1];
-        }
-
-        String[] digits = parts[0].split("\\.");
-
-        ver.major = Integer.parseInt(digits[0]);
-        ver.minor = Integer.parseInt(digits[1]);
-        if (digits.length == 3) {
-            ver.revision = Integer.parseInt(digits[2]);
+        switch (parts.length) {
+            case 2:
+                ver.qualifier = parts[1];
+            case 1:
+                String[] digits = parts[0].split("\\.");
+                try {
+                    switch (digits.length) {
+                        case 3:
+                            ver.revision = Integer.parseInt(digits[2]);
+                        case 2:
+                            ver.minor = Integer.parseInt(digits[1]);
+                        case 1:
+                            ver.major = Integer.parseInt(digits[0]);
+                        default:
+                            break;
+                    }
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(parts[0], e);
+                }
+            default:
+                break;
         }
         return ver;
     }
