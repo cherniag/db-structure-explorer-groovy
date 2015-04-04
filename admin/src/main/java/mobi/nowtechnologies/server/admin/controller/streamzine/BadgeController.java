@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 import mobi.nowtechnologies.server.admin.validator.BadgeValidator;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm;
@@ -8,7 +9,6 @@ import mobi.nowtechnologies.server.dto.streamzine.badge.ResolutionDto;
 import mobi.nowtechnologies.server.dto.streamzine.error.ErrorDto;
 import mobi.nowtechnologies.server.dto.streamzine.error.ErrorDtoAsm;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
@@ -143,14 +143,13 @@ public class BadgeController {
         modelAndView.addObject("allDefaultBadges", badgesDtoAsm.toBadgeMappingListDtos(badgeMappingRepository.findAllDefault(community)));
         modelAndView.addObject("badges", badgesDtoAsm.convert(badgesService.getMatrix(community)));
         modelAndView.addObject("imageURL", imageURL);
-        modelAndView.addObject("deviceTypes", new TreeSet<String>(DeviceType.all()));
+        modelAndView.addObject("deviceTypes", new TreeSet<>(DeviceType.ALL_DEVICE_TYPES));
         return modelAndView;
     }
 
     @RequestMapping(value = "/badges/resolution/add", method = RequestMethod.POST)
-    public
     @ResponseBody
-    void resolution(@RequestBody @Valid ResolutionDto dto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
+    public void resolution(@RequestBody @Valid ResolutionDto dto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
         throws MethodArgumentNotValidException {
         Community community = communityRepository.findByName(communityRewriteUrl);
 
@@ -161,10 +160,9 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/badges/assign", method = RequestMethod.POST)
-    public
     @ResponseBody
-    void assignBadgeResolution(@RequestBody @Valid BadgeResolutionDto dto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
-        throws IOException {
+    public void assignBadgeResolution(@RequestBody @Valid BadgeResolutionDto dto,
+                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
         logger().info("Assign resolution: {} and community {}", dto, communityRewriteUrl);
 
         Community community = communityRepository.findByName(communityRewriteUrl);
@@ -195,9 +193,8 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/image/add", method = RequestMethod.POST)
-    public
     @ResponseBody
-    void uploadImage(@RequestBody @Valid BadgeInfoDto badgeInfoDto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
+    public void uploadImage(@RequestBody @Valid BadgeInfoDto badgeInfoDto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
         throws IOException {
         logger().info("Adding placeholder, info: {} for community: {}", badgeInfoDto, communityRewriteUrl);
 

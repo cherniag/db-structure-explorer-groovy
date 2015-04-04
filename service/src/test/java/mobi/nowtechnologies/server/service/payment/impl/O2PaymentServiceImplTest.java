@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -150,9 +150,16 @@ public class O2PaymentServiceImplTest {
         O2Response o2Response = O2Response.successfulO2Response();
         o2Response.setExternalTxId(externalTxId);
 
-        when(mockO2ClientService
-                 .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
-                                        paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue())).thenReturn(o2Response);
+        when(mockO2ClientService.makePremiumSMSRequest(user.getId(),
+                                                       String.valueOf(internalTxId),
+                                                       pendingPayment.getAmount(),
+                                                       o2psmsPaymentDetails.getPhoneNumber(),
+                                                       message,
+                                                       paymentPolicy.getContentCategory(),
+                                                       paymentPolicy.getContentType(),
+                                                       paymentPolicy.getContentDescription(),
+                                                       paymentPolicy.getSubMerchantId(),
+                                                       smsNotify.booleanValue())).thenReturn(o2Response);
 
         when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
@@ -221,9 +228,16 @@ public class O2PaymentServiceImplTest {
 
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2Psms.send", null, null);
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull());
-        verify(mockO2ClientService, times(1))
-            .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
-                                   paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
+        verify(mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(),
+                                                                    String.valueOf(internalTxId),
+                                                                    pendingPayment.getAmount(),
+                                                                    o2psmsPaymentDetails.getPhoneNumber(),
+                                                                    message,
+                                                                    paymentPolicy.getContentCategory(),
+                                                                    paymentPolicy.getContentType(),
+                                                                    paymentPolicy.getContentDescription(),
+                                                                    paymentPolicy.getSubMerchantId(),
+                                                                    smsNotify.booleanValue());
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(argThat(matcher));
@@ -280,9 +294,16 @@ public class O2PaymentServiceImplTest {
         final O2Response o2Response = O2Response.failO2Response("");
         o2Response.setExternalTxId(externalTxId);
 
-        when(mockO2ClientService
-                 .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
-                                        paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue())).thenReturn(o2Response);
+        when(mockO2ClientService.makePremiumSMSRequest(user.getId(),
+                                                       String.valueOf(internalTxId),
+                                                       pendingPayment.getAmount(),
+                                                       o2psmsPaymentDetails.getPhoneNumber(),
+                                                       message,
+                                                       paymentPolicy.getContentCategory(),
+                                                       paymentPolicy.getContentType(),
+                                                       paymentPolicy.getContentDescription(),
+                                                       paymentPolicy.getSubMerchantId(),
+                                                       smsNotify.booleanValue())).thenReturn(o2Response);
 
         when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
@@ -353,9 +374,16 @@ public class O2PaymentServiceImplTest {
 
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2Psms.send", null, null);
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull());
-        verify(mockO2ClientService, times(1))
-            .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
-                                   paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
+        verify(mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(),
+                                                                    String.valueOf(internalTxId),
+                                                                    pendingPayment.getAmount(),
+                                                                    o2psmsPaymentDetails.getPhoneNumber(),
+                                                                    message,
+                                                                    paymentPolicy.getContentCategory(),
+                                                                    paymentPolicy.getContentType(),
+                                                                    paymentPolicy.getContentDescription(),
+                                                                    paymentPolicy.getSubMerchantId(),
+                                                                    smsNotify.booleanValue());
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
@@ -409,9 +437,16 @@ public class O2PaymentServiceImplTest {
         final O2Response o2Response = O2Response.failO2Response("");
         o2Response.setExternalTxId(externalTxId);
 
-        when(mockO2ClientService
-                 .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
-                                        paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue())).thenReturn(o2Response);
+        when(mockO2ClientService.makePremiumSMSRequest(user.getId(),
+                                                       String.valueOf(internalTxId),
+                                                       pendingPayment.getAmount(),
+                                                       o2psmsPaymentDetails.getPhoneNumber(),
+                                                       message,
+                                                       paymentPolicy.getContentCategory(),
+                                                       paymentPolicy.getContentType(),
+                                                       paymentPolicy.getContentDescription(),
+                                                       paymentPolicy.getSubMerchantId(),
+                                                       smsNotify.booleanValue())).thenReturn(o2Response);
 
         when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
@@ -481,9 +516,16 @@ public class O2PaymentServiceImplTest {
 
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2Psms.send", null, null);
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull());
-        verify(mockO2ClientService, times(1))
-            .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
-                                   paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
+        verify(mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(),
+                                                                    String.valueOf(internalTxId),
+                                                                    pendingPayment.getAmount(),
+                                                                    o2psmsPaymentDetails.getPhoneNumber(),
+                                                                    message,
+                                                                    paymentPolicy.getContentCategory(),
+                                                                    paymentPolicy.getContentType(),
+                                                                    paymentPolicy.getContentDescription(),
+                                                                    paymentPolicy.getSubMerchantId(),
+                                                                    smsNotify.booleanValue());
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));

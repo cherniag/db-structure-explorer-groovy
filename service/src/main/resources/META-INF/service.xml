@@ -123,7 +123,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
 		<property name="communityService" ref="service.communityService" />
-		<property name="deviceService" ref="service.DeviceService" />
+        <property name="deviceService" ref="service.DevicePromotionsService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
         <property name="refundService" ref="service.RefundService" />
@@ -157,7 +157,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <bean id="vf_nz.service.MobileProviderService" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZProviderServiceImpl">
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
-        <property name="deviceService" ref="service.DeviceService" />
+        <property name="deviceService" ref="service.DevicePromotionsService" />
     </bean>
 
     <bean id="vf_nz.service.VFNZUnsubscribeProccessor" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor">
@@ -196,7 +196,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="userRepository" ref="userRepository" />
 	</bean>
 
-	<bean id="service.DeviceService" class="mobi.nowtechnologies.server.service.DeviceService">
+	<bean id="service.DevicePromotionsService" class="mobi.nowtechnologies.server.service.DevicePromotionsService">
 		<property name="notPromotedDeviceRepository" ref="notPromotedDeviceRepository" />
 		<property name="promotedDeviceRepository" ref="promotedDeviceRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -218,7 +218,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="userBannedRepository" ref="userBannedRepository" />
-        <property name="deviceService" ref="service.DeviceService" />
+        <property name="deviceService" ref="service.DevicePromotionsService" />
         <property name="userTransactionRepository" ref="userTransactionRepository"/>
         <property name="userGroupRepository" ref="userGroupRepository"/>
         <property name="userRepository" ref="userRepository"/>
@@ -423,7 +423,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="availableCommunities" value="${sms.available.communities}" />
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
-		<property name="deviceService" ref="service.DeviceService"/>
+		<property name="deviceService" ref="service.DevicePromotionsService"/>
         <property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
 	</bean>
 
@@ -440,7 +440,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="limitValidatePhoneNumber" value="${o2.server.validation.phonenumber.limit}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
-		<property name="deviceService" ref="service.DeviceService" />
+		<property name="deviceService" ref="service.DevicePromotionsService" />
 		<property name="userLogRepository" ref="userLogRepository" />
 		<property name="communityService" ref="service.communityService" />		
 		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
@@ -586,7 +586,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
 
-    <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
+    <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.versioncheck.service.VersionCheckService"/>
 
     <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService"/>
 

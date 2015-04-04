@@ -28,7 +28,7 @@ public class AccCheckService {
     @Resource
     private AccountCheckDTOAsm accountCheckDTOAsm;
     @Resource
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     @Resource
     private ChartService chartService;
     @Resource

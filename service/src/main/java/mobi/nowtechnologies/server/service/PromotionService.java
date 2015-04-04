@@ -61,7 +61,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private CommunityResourceBundleMessageSource messageSource;
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     private UserTransactionRepository userTransactionRepository;
     private UserGroupRepository userGroupRepository;
     private UserRepository userRepository;
@@ -90,7 +90,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         this.userBannedRepository = userBannedRepository;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 

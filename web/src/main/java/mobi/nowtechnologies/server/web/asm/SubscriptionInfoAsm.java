@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.web.asm;
 
 import mobi.nowtechnologies.server.TimeService;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;

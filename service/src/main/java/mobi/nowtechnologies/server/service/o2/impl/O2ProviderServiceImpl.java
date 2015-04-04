@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
@@ -56,7 +56,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     private CommunityService communityService;
 
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
 
     private WebServiceGateway webServiceGateway;
 
@@ -138,7 +138,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         this.communityService = communityService;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 

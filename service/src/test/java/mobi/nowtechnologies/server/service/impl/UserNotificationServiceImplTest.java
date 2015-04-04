@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
@@ -18,7 +18,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -69,13 +69,14 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {Utils.class, UserNotificationServiceImpl.class})
 public class UserNotificationServiceImplTest {
+
     private UserService userServiceMock;
     private UserNotificationServiceImpl userNotificationImplSpy;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
     private RestTemplate restTemplateMock;
     private MigHttpService migHttpServiceMock;
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
-    private DeviceService deviceServiceMock;
+    private DevicePromotionsService deviceServiceMock;
     private PaymentDetailsRepository paymentDetailsRepository;
     private String forNWeeks;
     private SmsServiceFacade smsServiceFacadeMock;
@@ -520,7 +521,8 @@ public class UserNotificationServiceImplTest {
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
 
         forNWeeks = "for.n.weeks";
-        Mockito.doReturn(forNWeeks).when(communityResourceBundleMessageSourceMock)
+        Mockito.doReturn(forNWeeks)
+               .when(communityResourceBundleMessageSourceMock)
                .getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("for.n.weeks"), (String[]) any(), any(Locale.class));
 
         final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
@@ -578,7 +580,8 @@ public class UserNotificationServiceImplTest {
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
 
         forNWeeks = "for.n.weeks";
-        Mockito.doReturn(forNWeeks).when(communityResourceBundleMessageSourceMock)
+        Mockito.doReturn(forNWeeks)
+               .when(communityResourceBundleMessageSourceMock)
                .getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("for.n.weeks"), (String[]) any(), any(Locale.class));
 
         final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
@@ -2898,7 +2901,7 @@ public class UserNotificationServiceImplTest {
         nowTechTokenBasedRememberMeServicesMock = mock(NowTechTokenBasedRememberMeServices.class);
         restTemplateMock = mock(RestTemplate.class);
         migHttpServiceMock = mock(MigHttpService.class);
-        deviceServiceMock = mock(DeviceService.class);
+        deviceServiceMock = mock(DevicePromotionsService.class);
         paymentDetailsRepository = mock(PaymentDetailsRepository.class);
         smsServiceFacadeMock = mock(SmsServiceFacade.class);
 

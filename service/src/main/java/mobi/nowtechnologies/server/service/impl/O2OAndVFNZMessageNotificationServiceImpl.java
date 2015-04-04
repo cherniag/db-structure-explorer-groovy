@@ -1,16 +1,16 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import javax.annotation.Resource;
 
@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // @author Titov Mykhaylo (titov) on 02.03.2015.
-public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotificationService{
+public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotificationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(O2OAndVFNZMessageNotificationServiceImpl.class);
 
@@ -32,14 +32,15 @@ public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotifica
 
         LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
 
-        if (msgCodeBase == null)
+        if (msgCodeBase == null) {
             throw new NullPointerException("The parameter msgCodeBase is null");
+        }
 
         String msg = null;
 
         String[] codes = new String[25];
 
-        final String providerKey = isNull(user.getProvider()) ? null : user.getProvider().getKey();
+        final String providerKey = ObjectUtils.isNull(user.getProvider()) ? null : user.getProvider().getKey();
         final SegmentType segment = user.getSegment();
         final Contract contract = user.getContract();
         final DeviceType deviceType = user.getDeviceType();
@@ -58,30 +59,34 @@ public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotifica
         codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null, true);
         codes[6] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null, true);
 
-        if(paymentDetails != null){
+        if (paymentDetails != null) {
             PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
             String prefix = "before";
-            final String preProviderKey = isNull(paymentPolicy.getProvider()) ? null : paymentPolicy.getProvider().getKey();
+            final String preProviderKey = ObjectUtils.isNull(paymentPolicy.getProvider()) ? null : paymentPolicy.getProvider().getKey();
             final SegmentType preSegment = paymentPolicy.getSegment();
             final Contract preContract = paymentPolicy.getContract();
-            final String providerSuffix = prefix+"."+preProviderKey;
-            final String segmentSuffix = providerSuffix+"."+preSegment;
-            final String contractSuffix = segmentSuffix+"."+preContract;
-            for(int i = 1; i <= 6; i++){
-                if(!StringUtils.equals(preProviderKey, providerKey))
-                    codes[1*6+i] = getCode(codes, i, providerSuffix, false);
-                if(segment != preSegment)
-                    codes[2*6+i] = getCode(codes, i, segmentSuffix, false);
-                if(contract != preContract)
-                    codes[3*6+i] = getCode(codes, i, contractSuffix, false);
+            final String providerSuffix = prefix + "." + preProviderKey;
+            final String segmentSuffix = providerSuffix + "." + preSegment;
+            final String contractSuffix = segmentSuffix + "." + preContract;
+            for (int i = 1; i <= 6; i++) {
+                if (!StringUtils.equals(preProviderKey, providerKey)) {
+                    codes[1 * 6 + i] = getCode(codes, i, providerSuffix, false);
+                }
+                if (segment != preSegment) {
+                    codes[2 * 6 + i] = getCode(codes, i, segmentSuffix, false);
+                }
+                if (contract != preContract) {
+                    codes[3 * 6 + i] = getCode(codes, i, contractSuffix, false);
+                }
             }
         }
 
         for (int i = codes.length - 1; i >= 0; i--) {
             if (codes[i] != null) {
                 msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
-                if (StringUtils.isNotEmpty(msg))
+                if (StringUtils.isNotEmpty(msg)) {
                     break;
+                }
             }
         }
 
@@ -92,17 +97,21 @@ public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotifica
     private String getCode(String[] codes, int i, Object value, boolean recursive) {
         LOGGER.debug("input parameters codes, i, value: [{}], [{}], [{}]", codes, i, value);
 
-        if (codes == null)
+        if (codes == null) {
             throw new NullPointerException("The parameter codes is null");
-        if (codes.length == 0)
+        }
+        if (codes.length == 0) {
             throw new IllegalArgumentException("The parameter codes of array type has 0 size");
+        }
         if (codes[0] == null) {
             throw new IllegalArgumentException("The parameter codes of array type has null value as first element");
         }
-        if (i >= codes.length)
+        if (i >= codes.length) {
             throw new IllegalArgumentException("The parameter i>=codes.length. i=" + i);
-        if (i < 0)
+        }
+        if (i < 0) {
             throw new IllegalArgumentException("The parameter i less than 0. i=" + i);
+        }
 
         String code = null;
 
@@ -114,7 +123,7 @@ public class O2OAndVFNZMessageNotificationServiceImpl implements MessageNotifica
                 } else {
                     code = prefix + "." + value;
                 }
-            } else if(recursive){
+            } else if (recursive) {
                 code = getCode(codes, i - 1, value, recursive);
             }
         }

@@ -11,7 +11,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.EntityService" class="java.lang.Object" />
     <bean id="service.UserService" class="java.lang.Object" />
     <bean id="service.PaymentDetailsService" class="java.lang.Object" />
-    <bean id="service.DeviceService" class="java.lang.Object" />
+    <bean id="service.DevicePromotionsService" class="java.lang.Object" />
     <bean id="service.DrmService" class="java.lang.Object" />
     <bean id="service.AccountLogService" class="java.lang.Object" />
     <bean id="service.NewsDetailService" class="java.lang.Object" />

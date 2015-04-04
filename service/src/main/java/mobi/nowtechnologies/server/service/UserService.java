@@ -3,15 +3,15 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -126,7 +126,7 @@ public class UserService {
     private CountryByIpService countryByIpService;
     private CommunityService communityService;
 
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     private AccountLogService accountLogService;
     private UserRepository userRepository;
     private OtacValidationService otacValidationService;
@@ -189,8 +189,13 @@ public class UserService {
         User user = promoRequest.user;
         boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
         ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(),
-                    user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]",
+                    providerUserDetails,
+                    user.getContract(),
+                    user.getMobile(),
+                    user.getOperator(),
+                    user.getActivationStatus(),
+                    updateWithProviderUserDetails);
 
         MergeResult mergeResult = checkAndMerge(user, promoRequest.mobileUser);
         user = mergeResult.getResultOfOperation();
@@ -346,7 +351,8 @@ public class UserService {
     public User mergeUser(User oldUser, User tempUser) {
         LOGGER.info(
             "Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user",
-            oldUser, tempUser);
+            oldUser,
+            tempUser);
 
         urbanAirshipTokenService.mergeToken(tempUser, oldUser);
 
@@ -646,9 +652,7 @@ public class UserService {
         user.setOperator(getOperator());
         user.setStatus(UserStatusDao.getLimitedUserStatus());
         user.setDeviceUID(deviceUID);
-        user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ?
-                            userDeviceRegDetailsDto.getDeviceModel() :
-                            deviceType.getName());
+        user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ? userDeviceRegDetailsDto.getDeviceModel() : deviceType.getName());
 
         user.setFirstDeviceLoginMillis(System.currentTimeMillis());
         user.setActivationStatus(REGISTERED);
@@ -806,9 +810,14 @@ public class UserService {
                 smsMessage = new StringBuilder().append(smsMessage).append(".video").toString();
             }
             Period period = paymentPolicy.getPeriod();
-            final String message = messageSource.getMessage(upperCaseCommunityName, smsMessage,
-                                                            new Object[] {community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(), paymentPolicy
-                                                                .getShortCode()}, null);
+            final String message = messageSource.getMessage(upperCaseCommunityName,
+                                                            smsMessage,
+                                                            new Object[] {community.getDisplayName(),
+                                                                          paymentPolicy.getSubcost(),
+                                                                          period.getDuration(),
+                                                                          period.getDurationUnit(),
+                                                                          paymentPolicy.getShortCode()},
+                                                            null);
 
             if (message == null || message.isEmpty()) {
                 LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", smsMessage, user.getId());
@@ -863,9 +872,7 @@ public class UserService {
     public User activatePhoneNumber(User user, String phone) {
         LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}]", phone, user.getId(), user.getActivationStatus());
 
-        String phoneNumber = phone != null ?
-                             phone :
-                             user.getMobile();
+        String phoneNumber = phone != null ? phone : user.getMobile();
         PhoneNumberValidationData result = mobileProviderService.validatePhoneNumber(phoneNumber);
 
         LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", result.getPhoneNumber(), phone, user.getMobile());
@@ -919,7 +926,10 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public MergeResult applyInitPromo(User user, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
-        LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], isMajorApiVersionNumberLessThan4=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(),
+        LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], isMajorApiVersionNumberLessThan4=[{}]",
+                    user.getId(),
+                    user.getMobile(),
+                    user.getActivationStatus(),
                     isMajorApiVersionNumberLessThan4);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
@@ -929,9 +939,15 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public MergeResult applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
-        PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4)
-                                                             .setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).
-                setIsSubjectToAutoOptIn(false).setDisableReactivationForUser(disableReactivationForUser).createPromoRequest();
+        PromoRequest promoRequest = new PromoRequestBuilder().setUser(user)
+                                                             .setMobileUser(mobileUser)
+                                                             .setOtac(otac)
+                                                             .setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4)
+                                                             .setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone)
+                                                             .
+                                                                 setIsSubjectToAutoOptIn(false)
+                                                             .setDisableReactivationForUser(disableReactivationForUser)
+                                                             .createPromoRequest();
         MergeResult mergeResult = applyInitPromoInternal(promoRequest);
         user = mergeResult.getResultOfOperation();
         user.setHasPromo(user.isPromotionApplied());
@@ -997,7 +1013,9 @@ public class UserService {
         if (_4G.equals(oldTariff) && _3G.equals(newTariff)) {
             if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()) {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ",
-                            userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
+                            userWithOldTariff.getNextSubPayment(),
+                            oldTariff,
+                            newTariff);
                 userWithOldTariff = skipBoughtPeriodAndUnsubscribe(userWithOldTariff, USER_DOWNGRADED_TARIFF);
 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed(userWithOldTariff);
@@ -1007,8 +1025,10 @@ public class UserService {
 
                 userServiceNotification.sendSmsFor4GDowngradeForFreeTrial(userWithOldTariff);
             } else if (userWithOldTariff.has4GVideoAudioSubscription()) {
-                LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff,
-                            userWithOldTariff.getNextSubPayment(), newTariff);
+                LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]",
+                            oldTariff,
+                            userWithOldTariff.getNextSubPayment(),
+                            newTariff);
                 userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF.getDescription());
 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed(userWithOldTariff);
@@ -1059,8 +1079,11 @@ public class UserService {
         int currentTimeSeconds = getEpochSeconds();
         long currentTimeMillis = currentTimeSeconds * 1000L;
 
-        LOGGER.info("Attempt of skipping free trial. The nextSubPayment [{}] and freeTrialExpiredMillis [{}] will be changed to [{}] and [{}] corresponding", user.getNextSubPayment(),
-                    user.getFreeTrialExpiredMillis(), currentTimeSeconds, currentTimeMillis);
+        LOGGER.info("Attempt of skipping free trial. The nextSubPayment [{}] and freeTrialExpiredMillis [{}] will be changed to [{}] and [{}] corresponding",
+                    user.getNextSubPayment(),
+                    user.getFreeTrialExpiredMillis(),
+                    currentTimeSeconds,
+                    currentTimeMillis);
 
         user.setNextSubPayment(currentTimeSeconds);
         user.setFreeTrialExpiredMillis(currentTimeMillis);
@@ -1072,9 +1095,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
-        Tariff newTariff = o2SubscriberData.isTariff4G() ?
-                           _4G :
-                           _3G;
+        Tariff newTariff = o2SubscriberData.isTariff4G() ? _4G : _3G;
         if (!newTariff.equals(user.getTariff())) {
             if (user.isOnWhiteListedVideoAudioFreeTrial()) {
                 LOGGER.info("User will not be downgraded because of he on white listed Video Audio Free Trial");
@@ -1105,9 +1126,14 @@ public class UserService {
         }
 
         if (isNotBlank(otac)) {
-            resultObject = applyInitPromoInternal(
-                new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false)
-                                         .setIsSubjectToAutoOptIn(true).setDisableReactivationForUser(checkReactivation).createPromoRequest());
+            resultObject = applyInitPromoInternal(new PromoRequestBuilder().setUser(user)
+                                                                           .setMobileUser(mobileUser)
+                                                                           .setOtac(otac)
+                                                                           .setIsMajorApiVersionNumberLessThan4(false)
+                                                                           .setIsApplyingWithoutEnterPhone(false)
+                                                                           .setIsSubjectToAutoOptIn(true)
+                                                                           .setDisableReactivationForUser(checkReactivation)
+                                                                           .createPromoRequest());
             user = resultObject.getResultOfOperation();
         } else {
             User result = promotionService.applyPotentialPromo(user);
@@ -1159,9 +1185,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User authenticate(String community, String userName, String userToken, String timestamp, String deviceUID) {
-        return isValidDeviceUID(deviceUID) ?
-               checkCredentials(userName, userToken, timestamp, community, deviceUID) :
-               checkCredentials(userName, userToken, timestamp, community);
+        return isValidDeviceUID(deviceUID) ? checkCredentials(userName, userToken, timestamp, community, deviceUID) : checkCredentials(userName, userToken, timestamp, community);
     }
 
     @Transactional
@@ -1189,7 +1213,7 @@ public class UserService {
         this.otacValidationService = otacValidationService;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 

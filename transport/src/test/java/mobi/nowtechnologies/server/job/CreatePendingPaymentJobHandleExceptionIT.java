@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.job;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
@@ -36,11 +36,11 @@ import java.io.UnsupportedEncodingException;
 
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.TaskRejectedException;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
