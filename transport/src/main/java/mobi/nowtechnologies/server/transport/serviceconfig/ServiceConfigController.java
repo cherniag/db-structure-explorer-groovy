@@ -2,8 +2,10 @@ package mobi.nowtechnologies.server.transport.serviceconfig;
 
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.support.UserAgent;
+import mobi.nowtechnologies.server.support.editor.UserAgentPropertyEditor;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import mobi.nowtechnologies.server.transport.serviceconfig.dto.ServiceConfigDto;
 import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
@@ -13,7 +15,6 @@ import mobi.nowtechnologies.server.versioncheck.service.VersionCheckService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import java.beans.PropertyEditor;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
@@ -31,20 +32,22 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServiceConfigController extends CommonController {
 
     @Resource
-    private VersionCheckService versionCheckService;
-    @Resource(name = "userAgentPropertyEditor")
-    private PropertyEditor userAgentPropertyEditor;
+    VersionCheckService versionCheckService;
     @Resource
-    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    CommunityRepository communityRepository;
+    @Resource
+    CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(UserAgent.class, userAgentPropertyEditor);
+        binder.registerCustomEditor(UserAgent.class, new UserAgentPropertyEditor(communityRepository));
     }
 
     @RequestMapping(method = RequestMethod.GET,
-                    value = {"**/{community}/{apiVersion:6\\.11}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.10}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.9}/SERVICE_CONFIG",
-                        "**/{community}/{apiVersion:6\\.8}/SERVICE_CONFIG"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.10}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.9}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.8}/SERVICE_CONFIG"})
     public Response getServiceConfigWithNewHeader(@RequestHeader("X-User-Agent") UserAgent userAgent, @PathVariable("community") String community) throws Exception {
         return getServiceConfigWithMigratedAndImage(userAgent, community);
     }
