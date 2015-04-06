@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="mobi.nowtechnologies.server.web.PaymentServiceFacade" />
+
+    <bean id="mtvnz.PaymentPolicyModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentPolicyModelServiceImpl">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean name="communityServiceFactory" class="mobi.nowtechnologies.server.web.model.CommunityServiceFactory" />
+
+    <bean id="mtvnz.PinModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PinPinModelServiceImpl"/>
+
+    <bean id="mtvnz.EnterPhoneModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.EnterPhoneModelServiceImpl" />
+
+    <bean id="mtvnz.PaymentModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentModelServiceImpl"/>
+
+    <alias name="mtvnzPaymentSystemService" alias="mtvnz.PSMSPaymentService" />
+
+</beans>
