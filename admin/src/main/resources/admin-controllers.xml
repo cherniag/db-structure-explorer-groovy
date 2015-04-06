@@ -34,12 +34,6 @@
 
     <bean class="mobi.nowtechnologies.server.admin.controller.ErrorController"/>
 
-    <bean class="mobi.nowtechnologies.server.admin.controller.OfferController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="filterService" ref="service.FilterService"/>
-        <property name="cloudFileService" ref="service.CloudFileService"/>
-    </bean>
-
     <bean id="admin.CommonChartController" abstract="true">
         <property name="chartService" ref="service.ChartService"/>
         <property name="filesURL" value="${cloudFile.mediaCoverFileURL}"/>
@@ -49,8 +43,10 @@
     <bean class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
         <property name="chartItemController" ref="admin.ChartItemController"/>
         <property name="viewByChartType" ref="chartViewByChartType"/>
-        <property name="communityRepository" ref="communityRepository"/>
         <property name="chartAsm" ref="admin.ChartAsm"/>
+        <property name="chartDetailRepository" ref="chartDetailRepository"/>
+        <property name="chartDetailService" ref="service.ChartDetailService"/>
+        <property name="chartRepository" ref="chartRepository"/>
     </bean>
 
     <bean id="admin.ChartItemController" class="mobi.nowtechnologies.server.admin.controller.ChartItemController"
@@ -60,6 +56,7 @@
         <property name="viewByChartType" ref="chartItemsViewByChartType"/>
         <property name="trackRepoService" ref="service.TrackRepoService"/>
         <property name="chartAsm" ref="admin.ChartAsm"/>
+        <property name="chartRepository" ref="chartRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.UserController">

@@ -124,6 +124,4 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="payPalPostService" class="mobi.nowtechnologies.server.apptests.paypal.PayPalPostService"/>
 
-	<bean id="service.NZSubscriberInfoGateway" class="mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock"/>
-
 </beans>

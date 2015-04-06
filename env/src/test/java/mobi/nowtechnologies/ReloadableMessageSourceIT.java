@@ -1,26 +1,26 @@
 package mobi.nowtechnologies;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.junit.Ignore;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
-
 import static java.util.Locale.ENGLISH;
+
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
+
+import org.junit.*;
+import org.junit.experimental.theories.*;
+import org.junit.runner.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 // @author Titov Mykhaylo (titov) on 06.01.2015.
 //To run this test in idea IDE please run following command: maven -Dtest=ReloadableMessageSourceIT test -DfailIfNoTests=false
@@ -64,7 +64,7 @@ public class ReloadableMessageSourceIT {
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_db1/conf/i18n/web/messages", "classpath:env/prod_db1/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_db2/conf/i18n/web/messages", "classpath:env/prod_db2/conf/i18n/web/messages"},};
     @DataPoints
-    public static String[] communities = {"o2", "vf_nz", "demo", "mtvnz", "hl_uk", "mtv1", "demo", "demo2", "demo3", "demo4", "demo5", "demo6"};
+    public static String[] communities = {"o2", "vf_nz", "demo", "hl_uk", "mtv1", "demo", "demo2", "demo3", "demo4", "demo5", "demo6"};
     @DataPoints
     public static Locale[] locales = {null, ENGLISH};
     private static Logger logger = LoggerFactory.getLogger(ReloadableMessageSourceIT.class);

@@ -54,7 +54,7 @@ insert into community_charts (chart_id, community_id) values (16,9);
 insert into community_charts (chart_id, community_id) values (17,9);
 insert into community_charts (chart_id, community_id) values (18,10);
 
-insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 10000);
 insert into tb_files (i, filename, size, fileType, version, duration) values (1893,'US-UM7-11-00061.hdr',162676,1,666, 0);
 insert into tb_files (i, filename, size, fileType, version, duration) values (1891,'US-UM7-11-00061S.jpg',6125,3,3, 0);
 insert into tb_files (i, filename, size, fileType, version, duration) values (1892,'US-UM7-11-00061L.jpg',41581,3,2, 0);
@@ -292,13 +292,6 @@ insert into tb_users (i, userName, userGroup, provider, contract, facebookId, su
 insert into tb_drm(user,media,drmType,drmValue,timestamp) values (1, 49, 1, 100, 1344850546);
 
 insert into promoted_devices (deviceUID, community_id) values ('zzz@z.com', 5);
-
-insert into offers (title, price, currency, community_id, coverFileName, description) values ('offer first', 12.6, 'pd', 6, 'NEWS_1','bla-bla'), ('offer second', 10.5, 'pd', 6, 'NEWS_2', 'bla-bla' );
-
-insert into offer_items ( offer_id, item_id) values (1, 49);
-insert into offer_items ( offer_id, item_id) values (1, 50);
-insert into offer_items ( offer_id, item_id) values (2, 49);
-insert into offer_items ( offer_id, item_id) values (2, 50);
 
 insert into auto_opt_in_exempt_ph_number values('+447111111111');
 

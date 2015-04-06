@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers;
 
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
 
 import cucumber.api.Transformer;
 

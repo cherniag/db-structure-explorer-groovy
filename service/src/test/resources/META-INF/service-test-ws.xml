@@ -11,7 +11,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.EntityService" class="java.lang.Object" />
     <bean id="service.UserService" class="java.lang.Object" />
     <bean id="service.PaymentDetailsService" class="java.lang.Object" />
-    <bean id="service.DeviceService" class="java.lang.Object" />
+    <bean id="service.DevicePromotionsService" class="java.lang.Object" />
     <bean id="service.DrmService" class="java.lang.Object" />
     <bean id="service.AccountLogService" class="java.lang.Object" />
     <bean id="service.NewsDetailService" class="java.lang.Object" />
@@ -33,7 +33,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="smsNotificationAspect" class="java.lang.Object" />
     <bean id="service.communityService" class="java.lang.Object" />
     <bean id="service.MessageService" class="java.lang.Object" />
-    <bean id="service.OfferService" class="java.lang.Object" />
     <bean id="service.TrackRepoService" class="java.lang.Object" />
     <bean id="service.FilterService" class="java.lang.Object" />
     <bean id="service.UserNotificationService" class="java.lang.Object" />
@@ -49,7 +48,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.o2PaymentService" class="java.lang.Object" />
     <bean id="service.subBalancePaymentService" class="java.lang.Object" />
     <bean id="subBalancePaymentListener" class="java.lang.Object" />
-    <bean id="offerPaymentListener" class="java.lang.Object" />
     <bean id="service.RefundService" class="java.lang.Object"/>
   
     <!--<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>-->

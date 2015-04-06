@@ -9,6 +9,10 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <bean id="userAgentPropertyEditor" class="mobi.nowtechnologies.server.support.editor.UserAgentPropertyEditor">
+        <constructor-arg ref="communityRepository"/>
+    </bean>
+
     <bean id="referralAsm" class="mobi.nowtechnologies.server.transport.referrals.ReferralAsm"/>
     <bean id="contextDtoAsm" class="mobi.nowtechnologies.server.transport.context.ContextDtoAsm"/>
 </beans>

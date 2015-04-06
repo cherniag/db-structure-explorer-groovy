@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.assembler;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.AutoOptInExemptPhoneNumber;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
 import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
@@ -154,6 +155,77 @@ public class AccountCheckDTOAsmTest {
 
         assertNull(accountCheckDTO.oneTimePayment);
         verify(user, times(0)).hasOneTimeSubscription();
+    }
+
+    @Test
+     public void toAccCheckDTOPaymentEnabledForO2AndDeactivatedDetails() throws Exception {
+        userIsNotEligibleForPromo();
+
+        when(user.hasActivePaymentDetails()).thenReturn(false);
+        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.isO2CommunityUser()).thenReturn(true);
+
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
+
+        assertFalse(accountCheckDTO.paymentEnabled);
+    }
+
+    @Test
+    public void toAccCheckDTOPaymentEnabledForO2AndActivatedDetailsWithSuccessStatus() throws Exception {
+        userIsNotEligibleForPromo();
+
+        when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.SUCCESSFUL);
+        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.isO2CommunityUser()).thenReturn(true);
+
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
+
+        assertTrue(accountCheckDTO.paymentEnabled);
+    }
+
+    @Test
+    public void toAccCheckDTOPaymentEnabledForO2AndActivatedDetailsWithErrorStatus() throws Exception {
+        userIsNotEligibleForPromo();
+
+        when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.ERROR);
+        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.isO2CommunityUser()).thenReturn(true);
+
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
+
+        assertFalse(accountCheckDTO.paymentEnabled);
+    }
+
+    @Test
+    public void toAccCheckDTOPaymentEnabledForNewCommunityAndActivatedDetailsWithSuccessStatus() throws Exception {
+        userIsNotEligibleForPromo();
+
+        when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.SUCCESSFUL);
+        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.isO2CommunityUser()).thenReturn(false);
+        when(user.isVFNZCommunityUser()).thenReturn(false);
+
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
+
+        assertTrue(accountCheckDTO.paymentEnabled);
+    }
+
+    @Test
+    public void toAccCheckDTOPaymentEnabledForNewCommunityAndActivatedDetailsWithErrorStatus() throws Exception {
+        userIsNotEligibleForPromo();
+
+        when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.ERROR);
+        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.isO2CommunityUser()).thenReturn(false);
+        when(user.isVFNZCommunityUser()).thenReturn(false);
+
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
+
+        assertTrue(accountCheckDTO.paymentEnabled);
     }
 
     private void userIsNotEligibleForPromo() {

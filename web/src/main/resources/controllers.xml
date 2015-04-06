@@ -7,43 +7,20 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <import resource="model-service.xml" />
-
-    <bean class="mobi.nowtechnologies.server.web.service.impl.PinService" />
-
     <bean id="subscriptionInfoAsm" class="mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm">
         <property name="timeService" ref="timeService"/>
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
-    </bean>
-
-    <bean id="userRegDetailsDtoValidator" class="mobi.nowtechnologies.server.web.asm.UserRegDetailsDtoValidator">
-        <property name="userService" ref="service.UserService"/>
-        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
 
     <bean name="web.LoginController" class="mobi.nowtechnologies.server.web.controller.LoginLogoutController"/>
 
-    <bean name="web.SignUpController" class="mobi.nowtechnologies.server.web.controller.SignUpController">
-        <property name="userService" ref="service.UserService"/>
-        <property name="communityService" ref="service.communityService"/>
-        <property name="userRegDetailsDtoValidator" ref="userRegDetailsDtoValidator"/>
-        <property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
-        <property name="authenticationManager" ref="authenticationManager"/>
-    </bean>
-
     <bean name="web.AccountController" class="mobi.nowtechnologies.server.web.controller.AccountController">
         <property name="userRepository" ref="userRepository"/>
         <property name="userService" ref="service.UserService"/>
         <property name="messageSource" ref="messageSource"/>
         <property name="specificCommunityResourcesFolderPath" value="${specificCommunityResourcesFolderPath}"/>
-    </bean>
-
-    <bean name="web.TracksController" class="mobi.nowtechnologies.server.web.controller.TracksController">
-        <property name="mediaLogService" ref="service.MediaLogService"/>
-        <property name="fileService" ref="service.FileService"/>
-        <property name="messageSource" ref="messageSource"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsController">
@@ -54,17 +31,7 @@
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
         <property name="subscriptionInfoAsm" ref="subscriptionInfoAsm"/>
-        <property name="communityServiceFactory" ref="communityServiceFactory"/>
     </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">
-        <property name="communityServiceFactory" ref="communityServiceFactory"/>
-    </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.SmsPaymentController">
-    </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.PinController" />
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
         <property name="countryService" ref="service.CountryService"/>
@@ -114,25 +81,6 @@
     <bean class="mobi.nowtechnologies.server.web.controller.TermsController"/>
 
     <bean name="web.ErrorController" class="mobi.nowtechnologies.server.web.controller.ErrorController"/>
-
-    <bean name="web.OffersController" class="mobi.nowtechnologies.server.web.controller.OffersController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="filesURL" value="${cloudFile.filesURL}"/>
-        <property name="coverStorePath" value="${web.coverStorePath}"/>
-    </bean>
-
-    <bean name="web.OfferPaymentsPayPalController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentsPayPalController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-    </bean>
-
-    <bean name="web.OfferPaymentsCreditCardController"
-          class="mobi.nowtechnologies.server.web.controller.OfferPaymentsCreditCardController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="countryService" ref="service.CountryService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-    </bean>
     
     <bean class="mobi.nowtechnologies.server.web.controller.VideoTrialController">
         <property name="userService" ref="service.UserService"/>

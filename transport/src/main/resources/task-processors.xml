@@ -11,27 +11,9 @@
         </property>
     </bean>
 
-    <bean id="sendPaymentErrorNotificationProcessorContainer" class="mobi.nowtechnologies.server.job.task.ProcessorContainer">
-        <property name="processors">
-            <list>
-                <ref bean="sendPaymentErrorNotificationTaskProcessor"/>
-                <ref bean="sendUnsubscribeNotificationTaskProcessor"/>
-            </list>
-        </property>
-    </bean>
-
     <!-- Task processors config -->
     <bean id="sendChargeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SendChargeNotificationTaskProcessor" />
 
-    <bean id="sendPaymentErrorNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SimpleUserNotificationTaskProcessor">
-        <property name="messageKey" value="sms.notification.on.payment.error.text"/>
-        <property name="supportedTaskType" value="#{T(mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask).TASK_TYPE}"/>
-    </bean>
-
-    <bean id="sendUnsubscribeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SimpleUserNotificationTaskProcessor">
-        <property name="messageKey" value="sms.notification.on.user.was.unsubscribed.text"/>
-        <property name="supportedTaskType" value="#{T(mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask).TASK_TYPE}"/>
-    </bean>
     <!-- End task processors config -->
 
 </beans>

@@ -46,7 +46,6 @@ public class PaymentTestUtils {
         PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
         paymentDetailsDto.setAmount("2.50");
         paymentDetailsDto.setCurrency("EUR");
-        paymentDetailsDto.setOfferId(1);
         paymentDetailsDto.setToken("78955453JH2KY00DTV1ZC8H");
         return paymentDetailsDto;
     }

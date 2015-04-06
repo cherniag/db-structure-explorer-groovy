@@ -25,6 +25,8 @@ import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDeta
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.SAGEPAY_CREDITCARD_TYPE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 
 import java.util.List;
@@ -86,9 +88,9 @@ public class AccountCheckDTOAsm {
                 case EXTERNAL_ERROR:
                     return PaymentStatus.PSMS_ERROR;
             }
-            if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
+            if (paymentDetails.getLastPaymentStatus().equals(NONE) && !paymentDetails.isActivated()) {
                 return PaymentStatus.PIN_PENDING;
-            } else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
+            } else if (paymentDetails.getLastPaymentStatus().equals(NONE) && paymentDetails.isActivated()) {
                 return PaymentStatus.NULL;
             }
         }
@@ -111,9 +113,6 @@ public class AccountCheckDTOAsm {
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
-
-        boolean hasOtherPaymentDetails = currentPaymentDetails != null && currentPaymentDetails.isActivated() &&
-                                         (currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE || currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.SUCCESSFUL);
         boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && user.isSubscribedStatus();
         boolean hasPaidByPaymentDetails = !user.isOnFreeTrial() && user.isSubscribedStatus() && user.getCurrentPaymentDetails() != null && user.isNextSubPaymentInTheFuture();
 
@@ -137,7 +136,7 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.deviceType = user.getDeviceType().getName();
         accountCheckDTO.deviceUID = user.getDeviceUID();
         accountCheckDTO.paymentType = oldPaymentType;
-        accountCheckDTO.paymentEnabled = hasOtherPaymentDetails || hasITunesSubscription;
+        accountCheckDTO.paymentEnabled = isPaymentEnabled(user);
         accountCheckDTO.phoneNumber = user.getMobile();
         accountCheckDTO.operator = user.getOperator();
         accountCheckDTO.paymentStatus = oldPaymentStatus;
@@ -212,6 +211,18 @@ public class AccountCheckDTOAsm {
         LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
         return autoOptInRuleService.isSubjectToAutoOptIn(ALL, user);
 
+    }
+
+    private boolean isPaymentEnabled(User user) {
+        boolean hasActiveNewOrSuccessfulPaymentDetails = user.hasActivePaymentDetails() && (user.getLastPaymentStatus() == NONE || user.getLastPaymentStatus() == SUCCESSFUL);
+        boolean hasITunesSubscription = user.isSubscribedByITunes() && user.isSubscribedStatus();
+
+        boolean forLegacyCommunities = user.isO2CommunityUser() || user.isVFNZCommunityUser();
+        if(forLegacyCommunities) {
+            return hasActiveNewOrSuccessfulPaymentDetails || hasITunesSubscription;
+        } else {
+            return user.hasActivePaymentDetails() || hasITunesSubscription;
+        }
     }
 
     public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {

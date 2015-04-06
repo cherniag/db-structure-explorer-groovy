@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:utils="http://www.springframework.org/schema/util"
        xmlns:repository="http://www.springframework.org/schema/data/repository"
-
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-http://www.springframework.org/schema/data/jpa
-http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-http://www.springframework.org/schema/tx
-http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
 
 	<bean id="persistence.UserDao" class="mobi.nowtechnologies.server.persistence.dao.UserDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
@@ -20,18 +19,6 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 	<bean id="persistence.MediaDao" class="mobi.nowtechnologies.server.persistence.dao.MediaDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 		<property name="entityDao" ref="persistence.EntityDao" />
-	</bean>
-
-	<bean id="persistence.MediaLogDao" class="mobi.nowtechnologies.server.persistence.dao.MediaLogDao">
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
-	<bean id="persistence.MediaLogTypeDao"
-		class="mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao">
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
 	<bean id="persistence.PromotionDao"
@@ -82,6 +69,8 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 
     <utils:list id="listOfPackagesToScan">
         <value>mobi.nowtechnologies.server.social.domain</value>
+        <value>mobi.nowtechnologies.server.device.domain</value>
+        <value>mobi.nowtechnologies.server.versioncheck.domain</value>
         <value>mobi.nowtechnologies.server.persistence.domain</value>
     </utils:list>
 
@@ -106,13 +95,12 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 		</property>
 	</bean>
 
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.setEntityDao" />
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="mobi.nowtechnologies.server.device.domain.DeviceTypeDao"/>
+		<property name="targetMethod" value="setDeviceTypeRepository"/>
 		<property name="arguments">
 			<list>
-				<ref bean="persistence.EntityDao" />
+				<ref bean="deviceTypeRepository" />
 			</list>
 		</property>
 	</bean>
@@ -150,20 +138,11 @@ http://www.springframework.org/schema/data/repository http://www.springframework
 		</property>
 	</bean>
 
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.DrmTypeDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
-	</bean>
-
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
     <jpa:repositories base-package="mobi.nowtechnologies.server" entity-manager-factory-ref="persistence.EntityManagerFactory" transaction-manager-ref="persistence.TransactionManager">
-        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.social.domain.*Repository"/>
+		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.social.domain.*Repository"/>
+		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.device.domain.*Repository"/>
+        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.versioncheck.domain.*Repository"/>
         <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.persistence.repository.*Repository"/>
     </jpa:repositories>
 

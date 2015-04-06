@@ -57,11 +57,23 @@ public class GetChartController extends CommonController {
         binder.registerCustomEditor(Resolution.class, new ResolutionParameterEditor());
     }
 
+
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.11}/GET_CHART"})
+    public ModelAndView getChartV611(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
+        throws Exception {
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, true, ActivationStatus.ACTIVATED);
+
+        setMandatoryLastModifiedHeader(response);
+
+        return modelAndView;
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.10}/GET_CHART", "**/{community}/{apiVersion:6\\.9}/GET_CHART", "**/{community}/{apiVersion:6\\.8}/GET_CHART"})
     public ModelAndView getChartV68(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -72,7 +84,7 @@ public class GetChartController extends CommonController {
     public ModelAndView getChartV67(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, false, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -83,7 +95,7 @@ public class GetChartController extends CommonController {
     public ModelAndView getChartV6(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, false, false, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, false, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -94,7 +106,7 @@ public class GetChartController extends CommonController {
     @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.3}/GET_CHART"})
     public ModelAndView getChartV63(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -107,14 +119,14 @@ public class GetChartController extends CommonController {
                         "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART", "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART"})
     public ModelAndView getChart_O2_v4d0(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
                                          @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, false, ActivationStatus.ACTIVATED);
     }
 
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/5.5/GET_CHART", "**/{community}/5.5.0/GET_CHART"})
     public ModelAndView getChart_v5(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART"})
@@ -130,7 +142,7 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ChartDto chartDto = chartService.processGetChartCommand(user, false, true, null, false);
+            ChartDto chartDto = chartService.processGetChartCommand(user, false, true, null, false, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
@@ -159,7 +171,7 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ChartDto chartDto = chartService.processGetChartCommand(user, false, false, null, false);
+            ChartDto chartDto = chartService.processGetChartCommand(user, false, false, null, false, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
@@ -188,7 +200,7 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ChartDto chartDto = chartService.processGetChartCommand(user, true, false, null, false);
+            ChartDto chartDto = chartService.processGetChartCommand(user, true, false, null, false, false);
 
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
@@ -206,7 +218,7 @@ public class GetChartController extends CommonController {
 
 
     private ModelAndView getChart(HttpServletRequest request, String userName, String userToken, String timestamp, String deviceUID, Resolution resolution, boolean isPlayListLockedSupported,
-                                  boolean withOneTimePayment, ActivationStatus... activationStatuses) throws Exception {
+                                  boolean withOneTimePayment, boolean withChartUpdateId, ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -218,7 +230,7 @@ public class GetChartController extends CommonController {
             if (resolution != null) {
                 resolution.withDeviceType(user.getDeviceType().getName());
             }
-            ChartDto chartDto = chartService.processGetChartCommand(user, false, true, resolution, isPlayListLockedSupported);
+            ChartDto chartDto = chartService.processGetChartCommand(user, false, true, resolution, isPlayListLockedSupported, withChartUpdateId);
 
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
 

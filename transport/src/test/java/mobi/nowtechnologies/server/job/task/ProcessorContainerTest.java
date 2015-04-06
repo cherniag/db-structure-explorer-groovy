@@ -24,41 +24,32 @@ public class ProcessorContainerTest {
     private ProcessorContainer processorContainer;
     @Mock
     private SendChargeNotificationTaskProcessor sendChargeNotificationProcessor;
-    @Mock
-    private SimpleUserNotificationTaskProcessor simpleUserNotificationTaskProcessor;
-
 
     @Before
     public void setUp() throws Exception {
         List<TaskProcessor> processors = new ArrayList<>();
         processors.add(sendChargeNotificationProcessor);
-        processors.add(simpleUserNotificationTaskProcessor);
         processorContainer.setProcessors(processors);
     }
 
     @Test
     public void checkSendChargeNotificationTaskProcessing(){
         when(sendChargeNotificationProcessor.supports(any(SendChargeNotificationTask.class))).thenReturn(true);
-        when(simpleUserNotificationTaskProcessor.supports(any(SendPaymentErrorNotificationTask.class))).thenReturn(false);
         SendChargeNotificationTask task = mock(SendChargeNotificationTask.class);
 
         processorContainer.process(task);
 
         Mockito.verify(sendChargeNotificationProcessor).process(task);
-        Mockito.verify(simpleUserNotificationTaskProcessor, never()).process(task);
     }
 
     @Test
     public void checkSendPaymentErrorNotificationTaskProcessing(){
         when(sendChargeNotificationProcessor.supports(any(SendChargeNotificationTask.class))).thenReturn(false);
-        when(simpleUserNotificationTaskProcessor.supports(any(SendPaymentErrorNotificationTask.class))).thenReturn(true);
         UserTask task = mock(SendPaymentErrorNotificationTask.class);
 
         processorContainer.process(task);
 
         Mockito.verify(sendChargeNotificationProcessor, never()).process(task);
-        Mockito.verify(simpleUserNotificationTaskProcessor).process(task);
     }
-
 
 }

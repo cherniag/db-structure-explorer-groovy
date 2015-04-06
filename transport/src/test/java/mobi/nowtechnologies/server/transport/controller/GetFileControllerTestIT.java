@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.FileService;
@@ -37,17 +37,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
-    @Value("${store.path}\\image\\US-UM7-11-00061S.jpg")
-    private File file;
-
-    @Resource
-    private CloudFileService cloudFileService;
-
     ReadApi brightcoveReadServiceMock;
-
     @Resource(name = "service.FileService")
     FileService fileService;
-
+    @Value("${store.path}\\image\\US-UM7-11-00061S.jpg")
+    private File file;
+    @Resource
+    private CloudFileService cloudFileService;
     @Value("${cloudFile.audioContentContainerName}")
     private String audioContentContainerName;
 
@@ -64,7 +60,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         String mediaId = "VIDEO160822";//generateVideoMedia();
 
-        brightcoveReadServiceMock = new ReadApi(){
+        brightcoveReadServiceMock = new ReadApi() {
             @Override
             public Video FindVideoByReferenceId(String readToken, String referenceId, EnumSet<VideoFieldEnum> videoFields, Set<String> customFields, MediaDeliveryEnum mediaDelivery)
                 throws BrightcoveException {
@@ -76,9 +72,14 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         fileService.setBrightcoveReadService(brightcoveReadServiceMock);
 
-        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
-                                                                                 .param("TYPE", fileType).header("Content-Type", "text/xml").
-                header("Content-Length", "0")).andExpect(status().isOk()).
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName)
+                                                                                 .param("USER_TOKEN", userToken)
+                                                                                 .param("TIMESTAMP", timestamp)
+                                                                                 .param("ID", mediaId)
+                                                                                 .param("TYPE", fileType)
+                                                                                 .header("Content-Type", "text/xml")
+                                                                                 .
+                                                                                     header("Content-Length", "0")).andExpect(status().isOk()).
                    andExpect(content().contentType(MediaType.TEXT_PLAIN)).
                    andExpect(content().string("http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001"));
     }
@@ -96,9 +97,14 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         String mediaId = "VIDEO160822";//generateVideoMedia();
 
-        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
-                                                                                 .param("TYPE", fileType).header("Content-Type", "text/xml").
-                header("Content-Length", "0")).andExpect(status().isOk()).
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName)
+                                                                                 .param("USER_TOKEN", userToken)
+                                                                                 .param("TIMESTAMP", timestamp)
+                                                                                 .param("ID", mediaId)
+                                                                                 .param("TYPE", fileType)
+                                                                                 .header("Content-Type", "text/xml")
+                                                                                 .
+                                                                                     header("Content-Length", "0")).andExpect(status().isOk()).
                    andExpect(content().contentType(MediaType.TEXT_PLAIN)).
                    andExpect(content().string("http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001"));
     }
@@ -123,7 +129,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         user.setDeviceType(deviceType);
         userService.updateUser(user);
 
-        brightcoveReadServiceMock = new ReadApi(){
+        brightcoveReadServiceMock = new ReadApi() {
             @Override
             public Video FindVideoByReferenceId(String readToken, String referenceId, EnumSet<VideoFieldEnum> videoFields, Set<String> customFields, MediaDeliveryEnum mediaDelivery)
                 throws BrightcoveException {
@@ -135,9 +141,14 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         fileService.setBrightcoveReadService(brightcoveReadServiceMock);
 
-        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
-                                                                                 .param("TYPE", fileType).header("Content-Type", "text/xml").
-                header("Content-Length", "0")).andExpect(status().isOk()).
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName)
+                                                                                 .param("USER_TOKEN", userToken)
+                                                                                 .param("TIMESTAMP", timestamp)
+                                                                                 .param("ID", mediaId)
+                                                                                 .param("TYPE", fileType)
+                                                                                 .header("Content-Type", "text/xml")
+                                                                                 .
+                                                                                     header("Content-Length", "0")).andExpect(status().isOk()).
                    andExpect(content().string("http://brightcove.vo.llnwd.net/e1/uds/pd/2368678501001/2368678501001_2599463153001_Signs.mp4"));
     }
 
@@ -155,7 +166,10 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         String mediaId = "VIDEO160822";//generateVideoMedia();
 
-        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName)
+                                                                                 .param("USER_TOKEN", userToken)
+                                                                                 .param("TIMESTAMP", timestamp)
+                                                                                 .param("ID", mediaId)
                                                                                  .param("TYPE", fileType)).andExpect(statusToCheck);
     }
 
@@ -195,7 +209,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         String mediaId = "US-UM7-11-00061";
 
-        CloudFileService cloudFileServiceMock = new CloudFileServiceImpl(){
+        CloudFileService cloudFileServiceMock = new CloudFileServiceImpl() {
             @Override
             public InputStream getInputStream(String destinationContainer, String fileName) throws FilesNotFoundException {
                 try {
@@ -208,7 +222,10 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         fileService.setCloudFileService(cloudFileServiceMock);
 
         byte[] fileContent = Files.toByteArray(file);
-        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName)
+                                                                                 .param("USER_TOKEN", userToken)
+                                                                                 .param("TIMESTAMP", timestamp)
+                                                                                 .param("ID", mediaId)
                                                                                  .param("TYPE", fileType)).andExpect(status().isOk()).
                    andExpect(content().contentType(MediaType.IMAGE_JPEG)).
                    andExpect(content().bytes(fileContent));

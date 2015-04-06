@@ -27,7 +27,8 @@ public class GetNewsController extends CommonController {
     @Resource
     private MessageService messageService;
 
-    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.10}/GET_NEWS", "**/{community}/{apiVersion:6\\.9}/GET_NEWS", "**/{community}/{apiVersion:6\\.8}/GET_NEWS"})
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.11}/GET_NEWS", "**/{community}/{apiVersion:6\\.10}/GET_NEWS", "**/{community}/{apiVersion:6\\.9}/GET_NEWS",
+        "**/{community}/{apiVersion:6\\.8}/GET_NEWS"})
     public ModelAndView getNewsWithBannersWithOneTimeSubscription(@RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                   @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
                                                                   @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {

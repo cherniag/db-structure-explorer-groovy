@@ -108,26 +108,8 @@
         </property>
     </bean>
 
-    <bean id="mtvnzPaymentSystemService" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSystemService">
-        <property name="nzSubscriberInfoProvider" ref="service.NZSubscriberInfoGateway" />
-		<property name="mtvnzPaymentHelper" ref="mtvnzPaymentSystemServiceHelper"/>
-    </bean>
-
-	<bean id="mtvnzPaymentSystemServiceHelper" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentHelper" parent="service.AbstractPaymentSystemService">
-		<property name="retriesOnError" value="${mtvnz.retriesOnError}" />
-		<property name="expireMillis" value="${mtvnz.pendingExpireMillis}" />
-		<property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>
-		<property name="smsGatewayService" ref="vf_nz.service.VFNZSMSGatewayService"/>
-		<property name="paymentEventNotifier" ref="mtvnzPaymentEventNotifier"/>
-		<property name="messageSource" ref="serviceMessageSource"/>
-	</bean>
-
     <bean id="commonPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.CommonPaymentEventNotifier">
         <property name="userNotificationService" ref="service.UserNotificationService" />
-    </bean>
-
-    <bean id="mtvnzPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentEventNotifier">
-        <property name="taskService" ref="task.TaskService"/>
     </bean>
 
     <bean id="vfPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.VFPaymentEventNotifier"/>
@@ -139,7 +121,6 @@
 		<entry key="migSms" value-ref="service.migPaymentService" />
 		<entry key="o2Psms" value-ref="service.o2PaymentService" />	
 		<entry key="vfPsms" value-ref="service.vfPaymentService" />
-		<entry key="mtvnzPsms" value-ref="mtvnzPaymentSystemService" />
 	</util:map>
 	
 	<!-- Listeners -->
@@ -148,12 +129,6 @@
 		<property name="userService" ref="service.UserService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
-	</bean>
-	
-	<bean id="offerPaymentListener" class="mobi.nowtechnologies.server.service.listener.OfferPaymentListener">
-		<property name="offerService" ref="service.OfferService" />
-		<property name="drmService" ref="service.DrmService" />
-		<property name="accountLogService" ref="service.AccountLogService" />
 	</bean>
 	
 	<!-- O2 SOA -->

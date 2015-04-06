@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PeriodMessageKeyBuilder;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -55,9 +55,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     private String unsubscribeUrl;
     private String tinyUrlService;
     private String rememberMeTokenCookieName;
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     private SmsServiceFacade smsServiceFacade;
-    private String unsubscribeMtvNzShortCode;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -71,7 +70,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         this.messageSource = messageSource;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 
@@ -117,10 +116,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     public void setSmsServiceFacade(SmsServiceFacade smsServiceFacade) {
         this.smsServiceFacade = smsServiceFacade;
-    }
-
-    public void setUnsubscribeMtvNzShortCode(String unsubscribeMtvNzShortCode) {
-        this.unsubscribeMtvNzShortCode = unsubscribeMtvNzShortCode;
     }
 
     @Async
@@ -226,10 +221,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                 String durationUnitPart = getDurationUnitPart(community, period);
                 String currencyISO = paymentPolicy.getCurrencyISO();
                 String shortCode = paymentPolicy.getShortCode();
-
-                if(currentPaymentDetails.getPaymentType().equals(PaymentDetails.MTVNZ_PSMS_TYPE)){
-                    shortCode = unsubscribeMtvNzShortCode;
-                }
 
                 boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] {unsubscribeUrl, currencyISO, subCost, durationUnitPart, shortCode});
 
