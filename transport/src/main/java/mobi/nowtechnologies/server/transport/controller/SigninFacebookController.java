@@ -2,13 +2,13 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.service.MergeResult;
+import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.social.core.UserPromoService;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
-import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.dto.facebook.FacebookUserDetailsDto;
+import mobi.nowtechnologies.server.social.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
@@ -70,7 +70,7 @@ public class SigninFacebookController extends CommonController {
         try {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
-            FacebookUserInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
+            SocialNetworkInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             AccountCheckDto accountCheckDto = accCheckService.processAccCheck(mergeResult, true, withOneTimeSubscriptionFlag);
 

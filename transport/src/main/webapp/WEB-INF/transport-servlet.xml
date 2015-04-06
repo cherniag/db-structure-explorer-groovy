@@ -81,9 +81,9 @@
 				<value>mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.LockedTrackDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
-                <value>mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto</value>
-                <value>mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto</value>
-                <value>mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.social.dto.facebook.FacebookUserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.social.dto.UserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.social.dto.googleplus.GooglePlusUserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.AccessPolicyDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.DeeplinkValueItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>

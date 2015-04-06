@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
-import mobi.nowtechnologies.server.service.social.core.UserPromoService;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
 import org.junit.*;
