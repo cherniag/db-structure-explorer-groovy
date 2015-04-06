@@ -19,8 +19,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
 
-    <bean id="serviceReloadableResourceBundleMessageSource"
-          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <bean id="serviceMessageSource"
+          class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
         <property name="basenames">
             <list>
                 <value>classpath:services_test</value>

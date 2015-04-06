@@ -45,7 +45,7 @@
 			</sec:password-encoder>
 		</sec:authentication-provider>
 	</sec:authentication-manager>
-	
+
 	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
 		<constructor-arg>
 			<value>admin</value>

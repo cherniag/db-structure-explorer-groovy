@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.admin.security.userdetail;
+package mobi.nowtechnologies.server.security.admin.userdetail;
 
 import java.util.Collection;
 import java.util.List;

@@ -1,6 +1,6 @@
-package mobi.nowtechnologies.server.admin.security.service.impl;
+package mobi.nowtechnologies.server.security.admin.service;
 
-import mobi.nowtechnologies.server.admin.security.userdetail.AdminUserDetails;
+import mobi.nowtechnologies.server.security.admin.userdetail.AdminUserDetails;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

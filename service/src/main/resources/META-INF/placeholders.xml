@@ -17,6 +17,12 @@
           p:ignoreUnresolvablePlaceholders="true"
           p:ignoreResourceNotFound="true"/>
 
+    <bean id="appPropResourceConfigurer"
+          class="mobi.nowtechnologies.server.utils.AppPropResourceConfigurer"
+          p:locations-ref="appPropertiesLocations"
+          p:ignoreUnresolvablePlaceholders="true"
+          p:ignoreResourceNotFound="true"/>
+
     <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>

@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Properties;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 
@@ -21,19 +22,13 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.util.Assert;
 
 
-public class CommunityResourceBundleMessageSourceImpl implements CommunityResourceBundleMessageSource {
+public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
     private static final String DEFAULT_COMMUNITY_DELIMITER = "_";
-    private final Locale DEFAULT_LOCALE = new Locale("");
 
-    private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
     private StringEncryptor stringEncryptor;
-
-    public void setReloadableResourceBundleMessageSource(ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource) {
-        this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
-    }
 
     public void setStringEncryptor(StringEncryptor stringEncryptor) {
         this.stringEncryptor = stringEncryptor;
@@ -95,7 +90,14 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
         Locale communityLocale = getCommunityLocale(community, locale);
 
-        return reloadableResourceBundleMessageSource.getMessage(code, args, defaultMessage, communityLocale);
+        return getMessage(code, args, defaultMessage, communityLocale);
+    }
+
+    @Override
+    public Properties getProperties(String community, Locale locale) {
+        Locale communityLocale = getCommunityLocale(community, locale);
+
+        return getMergedProperties(communityLocale).getProperties();
     }
 
     @Override
