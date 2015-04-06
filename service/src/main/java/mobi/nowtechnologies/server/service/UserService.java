@@ -481,13 +481,6 @@ public class UserService {
         return mobile;
     }
 
-    @Transactional(readOnly = true)
-    public User getWithSocial(int id) {
-        User byId = userRepository.findOne(id);
-        byId.getSocialInfo().size();
-        return byId;
-    }
-
     @Transactional(propagation = REQUIRED)
     public User changePassword(Integer userId, String newPassword) {
         LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[] {userId, newPassword});

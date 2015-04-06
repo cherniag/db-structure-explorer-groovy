@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service.exception;
 
-import mobi.nowtechnologies.common.util.ServerMessage;
-
 /**
  * @author Titov Mykhaylo (titov)
  */

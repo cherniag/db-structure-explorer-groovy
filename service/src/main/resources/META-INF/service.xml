@@ -314,7 +314,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
-                <value>file:#{systemProperties['catalina.base']}/conf/services</value>
+                <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/services</value>
                 <value>classpath:services</value>
             </list>
         </property>
@@ -575,7 +575,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="userService" ref="service.UserService"/>
     </bean>
 
-    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.social.core.UserPromoService"/>
+    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoService"/>
 
     <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService">
         <property name="configuration" ref="configuration.AutoOptIn"/>

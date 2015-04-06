@@ -25,6 +25,8 @@
         <value>classpath:trackrepo-application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/trackrepo-application.properties</value>
     </util:list>
 
     <bean id="trackRepo.configurationEncryptor"

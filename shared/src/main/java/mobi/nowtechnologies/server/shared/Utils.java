@@ -56,6 +56,13 @@ public class Utils {
         return (int) (date.getTime() / 1000);
     }
 
+    public static String truncateToLengthWithEnding(String str, int maxLength, String ending) {
+        if (str.length() > maxLength) {
+            str = str.substring(0, maxLength) + ending;
+        }
+        return str;
+    }
+
     public static String getRandomString(int length) {
         Random rand = new Random(System.currentTimeMillis());
         StringBuffer sb = new StringBuffer();
