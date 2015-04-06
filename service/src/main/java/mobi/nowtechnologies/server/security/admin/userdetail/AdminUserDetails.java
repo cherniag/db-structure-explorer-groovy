@@ -3,6 +3,8 @@ package mobi.nowtechnologies.server.security.admin.userdetail;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -86,7 +88,7 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public String toString() {
-        return "AdminUserDetails [grantedAuthorities=" + grantedAuthorities + ", isAccountNonExpired=" + isAccountNonExpired + ", isAccountNonLocked=" + isAccountNonLocked +
-               ", isCredentialsNonExpired=" + isCredentialsNonExpired + ", isEnabled=" + isEnabled + ", password=" + password + ", userName=" + userName + "]";
+        return new ToStringBuilder(this).append("password", password).append("userName", userName).append("isAccountNonExpired", isAccountNonExpired).append("isAccountNonLocked", isAccountNonLocked)
+                                        .append("isCredentialsNonExpired", isCredentialsNonExpired).append("isEnabled", isEnabled).append("grantedAuthorities", grantedAuthorities).toString();
     }
 }
