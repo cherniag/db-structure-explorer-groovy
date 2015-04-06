@@ -105,7 +105,6 @@ public class AdminDetailsServiceImpl extends JdbcDaoImpl {
             }
 
         };
-
     }
 
     @Override
