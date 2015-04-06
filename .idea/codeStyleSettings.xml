@@ -15,7 +15,6 @@
             <option name="USE_RELATIVE_INDENTS" value="false" />
           </value>
         </option>
-        <option name="USE_FQ_CLASS_NAMES_IN_JAVADOC" value="false" />
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999999" />
         <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999999" />
         <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
@@ -70,6 +69,7 @@
         <JavaCodeStyleSettings>
           <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
           <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
+          <option name="CLASS_NAMES_IN_JAVADOC" value="3" />
         </JavaCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />

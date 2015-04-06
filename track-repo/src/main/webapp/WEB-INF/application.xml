@@ -10,6 +10,17 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean id="log4jInitialization" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="org.springframework.util.Log4jConfigurer" />
+        <property name="targetMethod" value="initLogging" />
+        <property name="arguments">
+            <list>
+                <value>${trackrepo.log.configLocation}</value>
+                <value>${trackrepo.log.refreshInterval}</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="propertyPlaceholderConfigurer"
           class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
           c:stringEncryptor-ref="trackRepo.configurationEncryptor"
@@ -22,6 +33,8 @@
         <value>classpath:trackrepo-application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/trackrepo-application.properties</value>
     </util:list>
 
     <bean id="trackRepo.configurationEncryptor"
