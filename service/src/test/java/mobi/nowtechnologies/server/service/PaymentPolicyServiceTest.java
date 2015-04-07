@@ -20,7 +20,6 @@ import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.*;
@@ -133,22 +132,6 @@ public class PaymentPolicyServiceTest {
         Community community = new Community();
         paymentPolicy.setCommunity(community);
         return paymentPolicy;
-    }
-
-    @Test
-    public void testFindAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull_Success() {
-        Community community = CommunityFactory.createCommunity();
-
-        List<String> appStoreProductIds = Collections.<String>emptyList();
-
-        Mockito.when(paymentPolicyRepositoryMock.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community)).thenReturn(appStoreProductIds);
-
-        List<String> actualAppStoreProductIds = paymentPolicyServiceFixture.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-
-        assertNotNull(actualAppStoreProductIds);
-        assertEquals(appStoreProductIds, actualAppStoreProductIds);
-
-        Mockito.verify(paymentPolicyRepositoryMock, times(1)).findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
     }
 
     @Test

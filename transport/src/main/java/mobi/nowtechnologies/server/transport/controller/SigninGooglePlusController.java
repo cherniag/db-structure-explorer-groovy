@@ -30,8 +30,8 @@ public class SigninGooglePlusController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.10}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.9}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\" +
-                                                                                                                                                ".8}/SIGN_IN_GOOGLE_PLUS"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.10}/SIGN_IN_GOOGLE_PLUS",
+                        "**/{community}/{apiVersion:6\\.9}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.8}/SIGN_IN_GOOGLE_PLUS"})
     public ModelAndView applyPromotionBySignInGooglePlusWithOneTimeSubscription(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                                 @RequestParam("ACCESS_TOKEN") String accessToken, @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
                                                                                 @RequestParam("USER_NAME") String userName, @RequestParam("DEVICE_UID") String deviceUID) {
@@ -40,8 +40,7 @@ public class SigninGooglePlusController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.7}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.6}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\" +
-                                                                                                                                               ".5}/SIGN_IN_GOOGLE_PLUS",
+                    value = {"**/{community}/{apiVersion:6\\.7}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.6}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.5}/SIGN_IN_GOOGLE_PLUS",
                         "**/{community}/{apiVersion:6\\.4}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.3}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.2}/SIGN_IN_GOOGLE_PLUS",
                         "**/{community}/{apiVersion:6\\.1}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.0}/SIGN_IN_GOOGLE_PLUS"})
     public ModelAndView applyPromotionBySignInGooglePlusWithCheckReactivation(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,

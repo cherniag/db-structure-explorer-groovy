@@ -44,7 +44,7 @@ public class AccCheckController extends CommonController {
     @Resource(name = "service.UrbanAirshipTokenService")
     private UrbanAirshipTokenService urbanAirshipTokenService;
 
-    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.10}/ACC_CHECK", "**/{community}/{apiVersion:6\\.9}/ACC_CHECK"
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.11}/ACC_CHECK", "**/{community}/{apiVersion:6\\.10}/ACC_CHECK", "**/{community}/{apiVersion:6\\.9}/ACC_CHECK"
 
     })
     public ModelAndView accountCheckWithUUIDNewApi(@RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
@@ -147,9 +147,7 @@ public class AccCheckController extends CommonController {
 
             SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
 
-            if (idfa != null) {
-                userRepository.updateTokenDetails(user.getId(), idfa);
-            }
+            userService.updateIdfaToken(user, idfa);
 
             if (isNotBlank(xtifyToken)) {
                 try {

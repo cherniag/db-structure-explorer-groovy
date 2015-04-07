@@ -64,7 +64,7 @@ public class ChartService implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDto processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution, boolean isPlayListLockSupported) {
+    public ChartDto processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution, boolean isPlayListLockSupported, boolean withChartUpdateId) {
         LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], isPlayListLockSupported=[{}]", user, createDrmIfNotExists, fetchLocked, resolution,
                      isPlayListLockSupported);
 
@@ -91,20 +91,19 @@ public class ChartService implements ApplicationContextAware {
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
         List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
         GetChartContentManager supporter = resolveChartSupporter(rewriteUrlParameter);
-        for (ChartDetail chart : charts) {
-            ChartSupportResult result = supporter.support(user, chartGroups, chart);
+        for (ChartDetail chartUpdateMarker : charts) {
+            ChartSupportResult result = supporter.support(user, chartGroups, chartUpdateMarker);
             if (result.isSupport()) {
-                List<ChartDetail> chartDetailTree = chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked);
+                List<ChartDetail> chartDetailTree = chartDetailService.findChartDetailTree(chartUpdateMarker.getChart().getI(), new Date(), fetchLocked);
                 chartDetails.addAll(chartDetailTree);
 
                 boolean areAllTracksLocked = areAllTracksLocked(chartDetailTree);
-                PlaylistDto playlistDto = chartDetailsConverter.toPlaylistDto(chart, resolution, community, result.isSwitchable(), isPlayListLockSupported, areAllTracksLocked);
+                PlaylistDto playlistDto = chartDetailsConverter.toPlaylistDto(chartUpdateMarker, resolution, community, result.isSwitchable(), isPlayListLockSupported, areAllTracksLocked,
+                                                                              withChartUpdateId);
 
                 playlistDtos.add(playlistDto);
             }
         }
-
-        String defaultAmazonUrl = messageSource.getMessage(rewriteUrlParameter, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
         for (ChartDetail chartDetail : chartDetails) {
             Media media = chartDetail.getMedia();
@@ -114,7 +113,7 @@ public class ChartService implements ApplicationContextAware {
             media.setDrms(Collections.singletonList(drmForCurrentUser));
         }
 
-        List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, community, defaultAmazonUrl);
+        List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, community);
 
         ChartDto chartDto = new ChartDto();
         chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
@@ -141,16 +140,6 @@ public class ChartService implements ApplicationContextAware {
         return applicationContext.getBean(beanName, GetChartContentManager.class);
     }
 
-    @Transactional(readOnly = true)
-    public List<Long> getAllPublishTimeMillis(Integer chartId) {
-        LOGGER.debug("input parameters chartId: [{}]", chartId);
-
-        List<Long> allPublishTimeMillis = chartDetailService.getAllPublishTimeMillis(chartId);
-
-        LOGGER.info("Output parameter allPublishTimeMillis=[{}]", allPublishTimeMillis);
-        return allPublishTimeMillis;
-    }
-
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<ChartDetail> getLockedChartItems(User user) {
@@ -172,16 +161,6 @@ public class ChartService implements ApplicationContextAware {
                 chartDetails.add(chartDetail);
             }
         }
-
-        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-        return chartDetails;
-    }
-
-    @Transactional(readOnly = true)
-    public List<ChartDetail> getActualChartItems(Integer chartId, Date selectedPublishDate) {
-        LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
-
-        List<ChartDetail> chartDetails = chartDetailService.getActualChartItems(chartId, selectedPublishDate);
 
         LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
         return chartDetails;
@@ -268,33 +247,6 @@ public class ChartService implements ApplicationContextAware {
 
         LOGGER.info("Output parameter charts=[{}]", chartDetails);
         return chartDetails;
-    }
-
-    @Transactional(readOnly = true)
-    public Chart getChartById(Integer chartId) {
-        LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] {chartId});
-
-        Chart chart = chartRepository.findOne(chartId);
-
-        LOGGER.info("Output parameter chart=[{}]", chart);
-        return chart;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
-        LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
-
-        if (chartId == null) {
-            throw new NullPointerException("The parameter chartId is null");
-        }
-        if (selectedPublishDateTime == null) {
-            throw new NullPointerException("The parameter selectedPublishDateTime is null");
-        }
-
-        boolean success = chartDetailService.deleteChartItems(chartId, selectedPublishDateTime.getTime());
-
-        LOGGER.debug("Output parameter success=[{}]", success);
-        return success;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

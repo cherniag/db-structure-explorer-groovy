@@ -168,7 +168,7 @@ public class ChartDetailsConverterTest {
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         Chart chart = chartDetail.getChart();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, true, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, true, false, false, false);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -188,7 +188,7 @@ public class ChartDetailsConverterTest {
         chartDetail.setTitle(null);
         Chart chart = chartDetail.getChart();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false, false);
 
         assertNotNull(result);
         assertEquals(chart.getName(), result.getPlaylistTitle());
@@ -204,7 +204,7 @@ public class ChartDetailsConverterTest {
 
         when(badgesService.getBadgeFileName(123L, community, resolution)).thenReturn("badgeIconFileName");
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, resolution, community, true, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, resolution, community, true, false, false, false);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -223,7 +223,7 @@ public class ChartDetailsConverterTest {
     public void testToPlaylistDtoWithLockNotSupported() throws Exception {
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false, false);
 
         assertNull(result.getLocked());
     }
@@ -232,7 +232,7 @@ public class ChartDetailsConverterTest {
     public void testToPlaylistDtoWithLockSupportedAndAllTracksAreNotLocked() throws Exception {
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, false, false);
 
         assertFalse(result.getLocked());
     }
@@ -241,9 +241,23 @@ public class ChartDetailsConverterTest {
     public void testToPlaylistDtoWithLockSupportedAndAllTracksAreLocked() throws Exception {
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, true);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, true, false);
 
         assertTrue(result.getLocked());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithChartUpdateId() throws Exception {
+        final Integer updateId = 15;
+        final boolean withUpdateId = true;
+
+        ChartDetail chartDetail = mock(ChartDetail.class);
+        when(chartDetail.getChart()).thenReturn(mock(Chart.class));
+        when(chartDetail.getI()).thenReturn(updateId);
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false, withUpdateId);
+
+        assertEquals(updateId, result.getChartUpdateId());
     }
 
     private void shouldConvertToChartDetailDtoSuccessfully() {
