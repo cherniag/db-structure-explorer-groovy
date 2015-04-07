@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <sec:authentication-manager id="adminAuthenticationManager" alias="adminAuthenticationManager">
+        <sec:authentication-provider user-service-ref="adminDetailsService">
+            <sec:password-encoder hash="md5">
+                <sec:salt-source ref="saltSource" />
+            </sec:password-encoder>
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+    <bean id="saltSource"
+          class="org.springframework.security.authentication.dao.ReflectionSaltSource"
+          p:userPropertyToUse="username" />
+
+    <bean id="adminDetailsService"
+          class="mobi.nowtechnologies.server.security.admin.service.AdminDetailsServiceImpl"
+          p:dataSource-ref="securityDataSource"/>
+
+    <bean id="adminCustomRememberMeServices"
+          class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices"
+          p:cookieName="${admin.rememberMe.cookieName}"
+          p:tokenValiditySeconds="${admin.rememberMe.tokenValiditySeconds}"
+          p:alwaysRemember="true"
+          c:key="${admin.rememberMe.key}"
+          c:userDetailsService-ref="adminDetailsService"/>
+
+    <bean id="afterRememberMeFilter"
+          class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter"
+          p:nowTechTokenBasedRememberMeServices-ref="nowTechBasedRememberMeServices"/>
+
+    <bean id="securityDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${admin.db.driverClassName}"
+          p:url="${admin.db.url}"
+          p:username="${admin.db.username}"
+          p:password="${admin.db.password}"/>
+
+</beans>

@@ -2,7 +2,7 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.transport.admin.prop;
+package mobi.nowtechnologies.server.admin.prop;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.utils.AppPropResourceConfigurer;

@@ -57,7 +57,7 @@
 		<property name="alwaysRemember" value="true"/>
 	</bean>
 
-	<bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.admin.security.service.impl.AdminDetailsServiceImpl">
+	<bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.security.admin.service.AdminDetailsServiceImpl">
 		<property name="dataSource" ref="securityDataSource" />
 	</bean>
 

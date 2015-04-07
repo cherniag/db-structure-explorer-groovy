@@ -269,4 +269,7 @@
       <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_coming_soon/content.jsp"/>
   </definition>
 
+	<definition name="admin_signin" template="/WEB-INF/views/www/default/admin/signin/admin_signin.jsp"/>
+	<definition name="prop" template="/WEB-INF/views/www/default/admin/prop/prop.jsp"/>
+
 </tiles-definitions>

@@ -36,6 +36,8 @@
     </mvc:annotation-driven>
 
     <mvc:resources mapping="/assets/**" location="/assets/**" />
+    <mvc:view-controller path="admin/signin.html" view-name="admin_signin" />
+
 
     <utils:list id="tilesLocation">
         <value>/WEB-INF/tiles-defs/template-defs.xml</value>

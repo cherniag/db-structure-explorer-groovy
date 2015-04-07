@@ -5,6 +5,31 @@
 
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
+    <import resource="admin-security.xml"/>
+
+    <sec:http name="admin.security.section" create-session="stateless" pattern="/admin/.*" authentication-manager-ref="adminAuthenticationManager" use-expressions="true" request-matcher="regex">
+        <sec:anonymous/>
+
+        <sec:intercept-url pattern="/admin/signin.*" access="permitAll" />
+        <sec:intercept-url pattern="/admin/serviceProps.*" access="hasRole('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/admin/appProps.*" access="hasRole('ROLE_ADMIN')" />
+
+        <sec:form-login default-target-url="/admin/appProps.html"
+                        authentication-failure-url="/admin/signin.html?error"
+                        login-page="/admin/signin.html"
+                        password-parameter="token"
+                        username-parameter="email"
+                        login-processing-url="/admin/signin"/>
+
+        <sec:logout logout-success-url="/admin/signin.html"
+                    logout-url="/admin/signout"
+                    delete-cookies="JSESSIONID" />
+
+        <sec:remember-me key="${admin.rememberMe.key}" services-ref="adminCustomRememberMeServices" />
+
+        <sec:custom-filter after="REMEMBER_ME_FILTER" ref="afterRememberMeFilter" />
+    </sec:http>
+
     <sec:http pattern="/MANIFEST.MF" security="none" />
 
     <sec:http create-session="stateless" use-expressions="true">
