@@ -48,7 +48,7 @@ public class PropController {
     }
 
     @RequestMapping(value = "/serviceProps", method = RequestMethod.GET)
-    public ModelAndView getServiceProps(@RequestParam String communityUrl, @RequestParam(required = false) String language, @RequestParam(required = false) String country){
+    public ModelAndView getServiceProps(@RequestParam String community, @RequestParam(required = false) String language, @RequestParam(required = false) String country){
 
         Locale locale = CommunityResourceBundleMessageSource.DEFAULT_LOCALE;
         if(language != null){
@@ -59,7 +59,7 @@ public class PropController {
             }
         }
 
-        final Properties properties = communityResourceBundleMessageSource.getProperties(communityUrl, locale);
+        final Properties properties = communityResourceBundleMessageSource.getProperties(community, locale);
 
         return new ModelAndView("prop", "properties", properties);
     }

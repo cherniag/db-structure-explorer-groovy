@@ -62,6 +62,8 @@
 		    </bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
+
+    <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
 	
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 	  <property name="order" value="1" />
