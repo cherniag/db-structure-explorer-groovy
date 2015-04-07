@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Set;
 
+import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -92,7 +93,7 @@ public class ServiceConfigController extends CommonController {
         }
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(ConversionNotSupportedException.class)
     public ModelAndView badParameters(HttpServletResponse response) {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         ErrorMessage errorMessage = new ErrorMessage();
