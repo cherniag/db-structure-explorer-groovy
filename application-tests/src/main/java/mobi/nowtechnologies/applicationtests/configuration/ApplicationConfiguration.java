@@ -97,6 +97,9 @@ public class ApplicationConfiguration {
             // two mno tables
             "mobi.nowtechnologies.server.mno.api.impl.domain",
             // all the tables form persistence artifact
+            "mobi.nowtechnologies.server.social.domain",
+            "mobi.nowtechnologies.server.device.domain",
+            "mobi.nowtechnologies.server.versioncheck.domain",
             "mobi.nowtechnologies.server.persistence.domain");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(additionalProperties());
