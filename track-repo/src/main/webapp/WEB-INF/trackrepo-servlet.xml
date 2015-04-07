@@ -20,6 +20,12 @@
           p:ignoreUnresolvablePlaceholders="true"
           p:ignoreResourceNotFound="true"/>
 
+    <bean id="trackrepoAppPropertyPlaceholderConfigurer"
+          class="mobi.nowtechnologies.server.utils.AppPropResourceConfigurer"
+          p:locations-ref="trackRepo.appPropertiesLocations"
+          p:ignoreUnresolvablePlaceholders="true"
+          p:ignoreResourceNotFound="true"/>
+
     <util:list id="trackRepo.appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>classpath:trackrepo-application.properties</value>
@@ -49,6 +55,24 @@
         <property name="corePoolSize" value="${trackRepo.executor.corePoolSize}" />
         <property name="maxPoolSize" value="${trackRepo.executor.maxPoolSize}" />
         <property name="queueCapacity" value="${trackRepo.executor.queueCapacity}" />
+    </bean>
+
+    <bean id="templateResolver"
+          class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="order" value="2" />
+        <property name="cacheable" value="false" />
+    </bean>
+
+    <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver" />
+    </bean>
+
+    <bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine" />
+        <property name="contentType" value="text/html; charset=UTF-8"/>
     </bean>
 		
 	<mvc:interceptors>		

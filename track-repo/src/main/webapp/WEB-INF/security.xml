@@ -12,6 +12,9 @@
 		
 		<sec:intercept-url pattern="/**" access="authenticated" />
 
+		<sec:intercept-url pattern="/admin/messageProps.*" access="denyAll" />
+		<sec:intercept-url pattern="/admin/serviceProps.*" access="denyAll" />
+
 		<sec:http-basic />
 
 		<sec:logout logout-url="/signout" delete-cookies="AuthToken"  />

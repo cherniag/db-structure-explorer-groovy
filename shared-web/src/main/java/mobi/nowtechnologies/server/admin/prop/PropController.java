@@ -36,6 +36,10 @@ public class PropController {
     @Resource(name = "serviceMessageSource")
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
+    public void setAppPropResourceConfigurer(AppPropResourceConfigurer appPropResourceConfigurer) {
+        this.appPropResourceConfigurer = appPropResourceConfigurer;
+    }
+
     @RequestMapping(value = "/messageProps", method = RequestMethod.GET)
     public ModelAndView getMessageProps(HttpServletRequest request){
 
