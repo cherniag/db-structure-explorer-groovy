@@ -17,6 +17,7 @@
         <sec:intercept-url pattern="/service/admin/signin.*" access="permitAll" />
         <sec:intercept-url pattern="/service/admin/serviceProps.*" access="hasRole('ROLE_ADMIN')" />
         <sec:intercept-url pattern="/service/admin/appProps.*" access="hasRole('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/admin/messageProps.*" access="denyAll" />
 
         <sec:form-login default-target-url="/service/admin/appProps.html"
                         authentication-failure-url="/service/admin/signin.html?error"

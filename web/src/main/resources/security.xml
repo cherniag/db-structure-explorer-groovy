@@ -11,6 +11,7 @@
         <sec:anonymous/>
 
         <sec:intercept-url pattern="/admin/signin.*" access="permitAll" />
+        <sec:intercept-url pattern="/admin/messageProps.*" access="hasRole('ROLE_ADMIN')" />
         <sec:intercept-url pattern="/admin/serviceProps.*" access="hasRole('ROLE_ADMIN')" />
         <sec:intercept-url pattern="/admin/appProps.*" access="hasRole('ROLE_ADMIN')" />
 

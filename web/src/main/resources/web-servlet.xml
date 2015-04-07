@@ -86,6 +86,8 @@
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
 
+    <bean id="messageProps" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl" parent="messageSource"/>
+
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
         <property name="defaultLocale" value="en" />
