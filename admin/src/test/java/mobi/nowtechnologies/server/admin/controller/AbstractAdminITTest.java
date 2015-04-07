@@ -7,14 +7,10 @@ import javax.servlet.http.Cookie;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.http.entity.FileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,16 +75,15 @@ public abstract class AbstractAdminITTest {
         return headers;
     }
 
-    private MockHttpServletRequest writePartsAndReturnRequest(MockHttpServletRequest request, Part[] parts) {
-        MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(parts, new PostMethod().getParams());
+    private MockHttpServletRequest writePartsAndReturnRequest(MockHttpServletRequest request, FileEntity fileEntity) {
         ByteArrayOutputStream requestContent = new ByteArrayOutputStream();
         try {
-            multipartRequestEntity.writeRequest(requestContent);
+            fileEntity.writeTo(requestContent);
         } catch (IOException e) {
             logger.error("Exception", e);
         }
         request.setContent(requestContent.toByteArray());
-        request.setContentType(multipartRequestEntity.getContentType());
+        request.setContentType(fileEntity.getContentType().getValue());
         return request;
     }
 
@@ -96,13 +91,8 @@ public abstract class AbstractAdminITTest {
         return new RequestPostProcessor() {
             @Override
             public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                Part[] parts = new Part[0];
-                try {
-                    parts = new Part[] {new FilePart(fileAttributeName, fileName, file)};
-                } catch (FileNotFoundException e) {
-                    logger.error("Exception", e);
-                }
-                return writePartsAndReturnRequest(request, parts);
+                FileEntity fileEntity = new FileEntity(file);
+                return writePartsAndReturnRequest(request, fileEntity);
             }
         };
     }
