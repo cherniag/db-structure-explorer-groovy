@@ -6,6 +6,8 @@ import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.support.UserAgent;
 
+import org.springframework.beans.ConversionNotSupportedException;
+
 import org.junit.*;
 import org.junit.rules.*;
 import org.mockito.*;
@@ -65,7 +67,7 @@ public class UserAgentPropertyEditorTest {
         final String userAgentHeaderValue = "Some not valid user agent value";
 
         // when
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ConversionNotSupportedException.class);
         editor.setAsText(userAgentHeaderValue);
 
         // then

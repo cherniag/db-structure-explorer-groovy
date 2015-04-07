@@ -15,6 +15,7 @@ import java.beans.PropertyEditorSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.util.Assert;
 
 public class UserAgentPropertyEditor extends PropertyEditorSupport {
@@ -34,13 +35,15 @@ public class UserAgentPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
-        Matcher hrefMatcher = PATTERN.matcher(text);
-        Assert.isTrue(hrefMatcher.find(), text);
+        Matcher matcher = PATTERN.matcher(text);
+        if (!matcher.find()) {
+            throw new ConversionNotSupportedException(text, UserAgent.class, null);
+        }
 
-        final String strApplicationName = hrefMatcher.group(1);
-        final String strApplicationVersion = hrefMatcher.group(2);
-        final String strPlatform = hrefMatcher.group(3);
-        final String strCommunity = hrefMatcher.group(4);
+        final String strApplicationName = matcher.group(1);
+        final String strApplicationVersion = matcher.group(2);
+        final String strPlatform = matcher.group(3);
+        final String strCommunity = matcher.group(4);
 
         final DeviceType platform = toDeviceType(strPlatform.toUpperCase());
         Assert.notNull(platform, "Can not find device type by value: " + strPlatform);
