@@ -17,7 +17,7 @@ public class WSTestIT {
     @Test
     public void pingO2() throws Exception {
         ClassLoader loader = SubscriberService.class.getClassLoader();
-        URL resource = loader.getResource("META-INF/keystore.jks");
+        URL resource = loader.getResource("META-INF/o2_soa_keystore.jks");
 
         File cert = new File(resource.toURI());
         Assert.assertTrue("No certification.", cert.exists());
