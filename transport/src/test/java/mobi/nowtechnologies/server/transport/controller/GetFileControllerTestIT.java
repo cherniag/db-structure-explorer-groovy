@@ -23,14 +23,12 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.google.common.io.Files;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
 import org.junit.*;
 import org.springframework.test.web.servlet.ResultMatcher;
-import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -229,13 +227,6 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                                                                                  .param("TYPE", fileType)).andExpect(status().isOk()).
                    andExpect(content().contentType(MediaType.IMAGE_JPEG)).
                    andExpect(content().bytes(fileContent));
-    }
-
-
-    @Test
-    public void testPoolingConnectionManager() throws Exception {
-        CloudFileServiceImpl impl = (CloudFileServiceImpl) cloudFileService;
-        assertTrue(impl.getHttpClient().getConnectionManager() instanceof PoolingClientConnectionManager);
     }
 
     private void assertGetFileStatusForApiVersion(String apiVersion, ResultMatcher statusToCheck) throws Exception {

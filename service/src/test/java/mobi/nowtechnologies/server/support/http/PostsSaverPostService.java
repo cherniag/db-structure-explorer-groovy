@@ -1,7 +1,4 @@
-package mobi.nowtechnologies.server.transport.service;
-
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+package mobi.nowtechnologies.server.support.http;
 
 import javax.annotation.PostConstruct;
 

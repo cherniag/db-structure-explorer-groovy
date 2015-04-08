@@ -13,8 +13,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.pool.ConnPoolControl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,8 +49,7 @@ public class ApplicationConfiguration {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         // just let the developer to debug
         requestFactory.setReadTimeout(120 * 1000);
-        DefaultHttpClient client = (DefaultHttpClient) requestFactory.getHttpClient();
-        PoolingClientConnectionManager conManager = (PoolingClientConnectionManager) client.getConnectionManager();
+        ConnPoolControl conManager = (ConnPoolControl) requestFactory.getHttpClient().getConnectionManager();
         conManager.setDefaultMaxPerRoute(20);
 
         // requestFactory.setOutputStreaming(false);

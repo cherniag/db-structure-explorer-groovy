@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
 import org.apache.commons.lang3.StringUtils;
 

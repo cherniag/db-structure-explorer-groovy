@@ -6,7 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;

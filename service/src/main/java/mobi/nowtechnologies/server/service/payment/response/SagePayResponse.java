@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
 import java.io.IOException;
 import java.io.StringReader;

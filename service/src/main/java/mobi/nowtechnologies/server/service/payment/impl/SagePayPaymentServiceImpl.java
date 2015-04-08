@@ -14,7 +14,7 @@ import mobi.nowtechnologies.server.service.payment.response.PaymentSystemRespons
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,12 +47,22 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
         SagePayCreditCardPaymentDetails paymentDetails = (SagePayCreditCardPaymentDetails) pendingPayment.getPaymentDetails();
         SagePayResponse response = null;
         if (!paymentDetails.getReleased()) {
-            response = httpService
-                .makeReleaseRequest(pendingPayment.getCurrencyISO(), "Making first payment", paymentDetails.getVPSTxId(), paymentDetails.getVendorTxCode(), paymentDetails.getSecurityKey(),
-                                    paymentDetails.getTxAuthNo(), pendingPayment.getAmount());
+            response = httpService.makeReleaseRequest(pendingPayment.getCurrencyISO(),
+                                                      "Making first payment",
+                                                      paymentDetails.getVPSTxId(),
+                                                      paymentDetails.getVendorTxCode(),
+                                                      paymentDetails.getSecurityKey(),
+                                                      paymentDetails.getTxAuthNo(),
+                                                      pendingPayment.getAmount());
         } else {
-            response = httpService.makeRepeatRequest(pendingPayment.getCurrencyISO(), "Making payment", paymentDetails.getVPSTxId(), paymentDetails.getVendorTxCode(), paymentDetails.getSecurityKey(),
-                                                     paymentDetails.getTxAuthNo(), pendingPayment.getInternalTxId(), pendingPayment.getAmount());
+            response = httpService.makeRepeatRequest(pendingPayment.getCurrencyISO(),
+                                                     "Making payment",
+                                                     paymentDetails.getVPSTxId(),
+                                                     paymentDetails.getVendorTxCode(),
+                                                     paymentDetails.getSecurityKey(),
+                                                     paymentDetails.getTxAuthNo(),
+                                                     pendingPayment.getInternalTxId(),
+                                                     pendingPayment.getAmount());
         }
 
         pendingPayment.setExternalTxId(response.getVPSTxId());

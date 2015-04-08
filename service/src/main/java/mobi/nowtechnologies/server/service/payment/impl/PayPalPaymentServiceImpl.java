@@ -13,7 +13,7 @@ import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,17 +40,18 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
         LOGGER.info("Start PayPal payment with internal transaction id: {}", pendingPayment.getInternalTxId());
         PayPalPaymentDetails currentPaymentDetails = (PayPalPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
         PaymentPolicy currentPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        String communityRewriteUrlParameter = currentPaymentPolicy.getCommunity() != null ?
-                                              currentPaymentPolicy.getCommunity().getRewriteUrlParameter() :
-                                              null;
+        String communityRewriteUrlParameter = currentPaymentPolicy.getCommunity() != null ? currentPaymentPolicy.getCommunity().getRewriteUrlParameter() : null;
 
         PayPalResponse response;
         if (PaymentPolicyType.ONETIME.equals(currentPaymentPolicy.getPaymentPolicyType()) && !isPaymentDetailsForOnetimePaymentAndCreatedBeforeSRV648(currentPaymentDetails)) {
-            response = httpService.makePaymentForOnetimeType(currentPaymentDetails.getToken(), communityRewriteUrlParameter, currentPaymentDetails.getPayerId(), pendingPayment.getCurrencyISO(),
+            response = httpService.makePaymentForOnetimeType(currentPaymentDetails.getToken(),
+                                                             communityRewriteUrlParameter,
+                                                             currentPaymentDetails.getPayerId(),
+                                                             pendingPayment.getCurrencyISO(),
                                                              pendingPayment.getAmount());
         } else {
-            response = httpService.makePaymentForRecurrentType(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(),
-                                                               communityRewriteUrlParameter);
+            response =
+                httpService.makePaymentForRecurrentType(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(), communityRewriteUrlParameter);
         }
 
         pendingPayment.setExternalTxId(response.getTransactionId());
@@ -62,9 +63,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
     @Override
     public PayPalPaymentDetails createPaymentDetails(String billingDescription, String successUrl, String failUrl, User user, PaymentPolicy paymentPolicy) throws ServiceException {
         LOGGER.info("Starting creation PayPal payment details");
-        String communityRewriteUrlParameter = paymentPolicy.getCommunity() != null ?
-                                              paymentPolicy.getCommunity().getRewriteUrlParameter() :
-                                              null;
+        String communityRewriteUrlParameter = paymentPolicy.getCommunity() != null ? paymentPolicy.getCommunity().getRewriteUrlParameter() : null;
         PayPalResponse response;
         if (PaymentPolicyType.ONETIME.equals(paymentPolicy.getPaymentPolicyType())) {
             response = httpService.getTokenForOnetimeType(successUrl, failUrl, communityRewriteUrlParameter, paymentPolicy.getCurrencyISO(), paymentPolicy.getSubcost());
@@ -94,9 +93,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
     @Override
     public PayPalPaymentDetails commitPaymentDetails(String token, User user, PaymentPolicy paymentPolicy, boolean activated) throws ServiceException {
         LOGGER.info("Committing PayPal payment details for user {} ...", user.getUserName());
-        String communityRewriteUrlParameter = paymentPolicy.getCommunity() != null ?
-                                              paymentPolicy.getCommunity().getRewriteUrlParameter() :
-                                              null;
+        String communityRewriteUrlParameter = paymentPolicy.getCommunity() != null ? paymentPolicy.getCommunity().getRewriteUrlParameter() : null;
         PayPalResponse response;
         if (PaymentPolicyType.ONETIME.equals(paymentPolicy.getPaymentPolicyType())) {
             response = httpService.getPaymentDetailsInfoForOnetimeType(token, communityRewriteUrlParameter);
