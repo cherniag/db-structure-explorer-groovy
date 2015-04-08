@@ -5,8 +5,6 @@ import java.util.Locale;
 
 public interface CommunityResourceBundleMessageSource {
 
-    Locale DEFAULT_LOCALE = new Locale("");
-
     String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale);
 
     String getMessage(String community, String code, Object[] args, Locale locale);

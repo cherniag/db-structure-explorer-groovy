@@ -4,7 +4,6 @@
 
 package mobi.nowtechnologies.server.admin.prop;
 
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.message.MergedProps;
 import mobi.nowtechnologies.server.shared.message.PropLocale;
 import mobi.nowtechnologies.server.utils.AppPropResourceConfigurer;
@@ -59,9 +58,9 @@ public class PropController {
     }
 
     @RequestMapping(value = "/serviceProps", method = RequestMethod.GET)
-    public ModelAndView getServiceProps(@RequestParam String community, @RequestParam(required = false) String language, @RequestParam(required = false) String country){
+    public ModelAndView getServiceProps(@RequestParam(required = false) String community, @RequestParam(required = false) String language, @RequestParam(required = false) String country){
 
-        Locale locale = CommunityResourceBundleMessageSource.DEFAULT_LOCALE;
+        Locale locale = PropLocale.DEFAULT_LOCALE;
         if(language != null){
             if(country != null){
                 locale = new Locale(language, country);
