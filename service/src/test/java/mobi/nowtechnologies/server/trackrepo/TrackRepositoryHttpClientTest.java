@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -26,7 +27,6 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -37,7 +37,6 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.protocol.HTTP;
 import org.bouncycastle.util.encoders.Base64;
-import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpVersion.HTTP_1_1;
 
 import org.springframework.data.domain.PageRequest;
@@ -1004,7 +1003,7 @@ public class TrackRepositoryHttpClientTest {
                     Assert.assertEquals(actualHeaderValue, expectedHeader.getValue());
                 }
 
-                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, SC_OK, "OK")) {
+                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpURLConnection.HTTP_OK, "OK")) {
                     @Override
                     public HttpEntity getEntity() {
                         return httpEntity;
@@ -1069,7 +1068,7 @@ public class TrackRepositoryHttpClientTest {
                     Assert.assertEquals(actualHeaderValue, expectedHeader.getValue());
                 }
 
-                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpStatus.SC_CREATED, "OK")) {
+                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpURLConnection.HTTP_CREATED, "OK")) {
                     @Override
                     public HttpEntity getEntity() {
                         return httpEntity;
@@ -1117,7 +1116,7 @@ public class TrackRepositoryHttpClientTest {
                     Assert.assertEquals(actualHeaderValue, expectedHeader.getValue());
                 }
 
-                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpStatus.SC_NO_CONTENT, "OK")) {
+                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpURLConnection.HTTP_NO_CONTENT, "OK")) {
                     @Override
                     public HttpEntity getEntity() {
                         return null;
@@ -1174,7 +1173,7 @@ public class TrackRepositoryHttpClientTest {
                     Assert.assertEquals(actualHeaderValue, expectedHeader.getValue());
                 }
 
-                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, SC_OK, "OK")) {
+                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpURLConnection.HTTP_OK, "OK")) {
                     @Override
                     public HttpEntity getEntity() {
                         return httpEntity;
@@ -1237,7 +1236,7 @@ public class TrackRepositoryHttpClientTest {
                     Assert.assertEquals(actualHeaderValue, expectedHeader.getValue());
                 }
 
-                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "OK")) {
+                HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(HTTP_1_1, HttpURLConnection.HTTP_INTERNAL_ERROR, "OK")) {
                     @Override
                     public HttpEntity getEntity() {
                         return httpEntity;
@@ -1253,9 +1252,7 @@ public class TrackRepositoryHttpClientTest {
 
     private HttpEntity getHttpEntity(final DateFormat dateInstance, ResourceFileDto resourceFileDto1, ResourceFileDto resourceFileDto2, TrackDto expectedTrackDto) throws UnsupportedEncodingException {
         final Date publishDate = expectedTrackDto.getPublishDate();
-        final String publishDateString = publishDate == null ?
-                                         "null" :
-                                         dateInstance.format(publishDate);
+        final String publishDateString = publishDate == null ? "null" : dateInstance.format(publishDate);
 
         final HttpEntity httpEntity = new StringEntity(
             "{\"id\":" + expectedTrackDto.getId() + ",\"ingestor\":" + expectedTrackDto.getIngestor() + ",\"isrc\":\"" + expectedTrackDto.getIsrc() + "\",\"title\":\"" + expectedTrackDto.getTitle() +
@@ -1289,9 +1286,7 @@ public class TrackRepositoryHttpClientTest {
         String ingestionUpdateDateString = "2011-11-14";
         Date ingestionUpdateDate = dateInstance.parse(ingestionUpdateDateString);
         String publishDateString = null;
-        Date publishDate = publishDateString == null ?
-                           null :
-                           dateInstance.parse(publishDateString);
+        Date publishDate = publishDateString == null ? null : dateInstance.parse(publishDateString);
 
         TrackDto expectedTrackDto = new TrackDto();
         expectedTrackDto.setId(id);
