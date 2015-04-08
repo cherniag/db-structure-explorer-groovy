@@ -15,8 +15,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.FacebookClient" class="mobi.nowtechnologies.server.social.service.facebook.impl.FacebookClientImpl"/>
 
     <bean id="service.FacebookService" class="mobi.nowtechnologies.server.social.service.facebook.FacebookService">
-        <property name="userId" value="${mobi.nowtechnologies.server.service.social.facebook.FacebookService.userId}"/>
-        <property name="userProfileImageUrlId" value="${mobi.nowtechnologies.server.service.social.facebook.FacebookService.userProfileImageUrlId}"/>
+        <property name="userId" value="${FacebookService.userId}"/>
+        <property name="userProfileImageUrlId" value="${FacebookService.userProfileImageUrlId}"/>
     </bean>
 
     <!-- Email -->
