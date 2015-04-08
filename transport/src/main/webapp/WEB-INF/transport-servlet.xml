@@ -51,8 +51,6 @@
 
     <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
 
-	<mvc:view-controller path="admin/signin.html" view-name="admin_signin" />
-
     <context:annotation-config/>
 
 	<bean id="pathVariableResolver" class="mobi.nowtechnologies.server.interceptor.PathVariableResolver"/>

@@ -17,31 +17,13 @@
         </sec:authentication-provider>
     </sec:authentication-manager>
 
+    <sec:user-service id="adminDetailsService">
+        <sec:user name="admin" password="ceb4f32325eda6142bd65215f4c0f371" authorities="ROLE_USER, ROLE_ADMIN" />
+        <sec:user name="album" password="dd0d117d91ac00d7f6e83852ac454669" authorities="ROLE_USER" />
+    </sec:user-service>
+
     <bean id="saltSource"
           class="org.springframework.security.authentication.dao.ReflectionSaltSource"
           p:userPropertyToUse="username" />
-
-    <bean id="adminDetailsService"
-          class="mobi.nowtechnologies.server.security.admin.service.AdminDetailsServiceImpl"
-          p:dataSource-ref="securityDataSource"/>
-
-    <bean id="adminCustomRememberMeServices"
-          class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices"
-          p:cookieName="${admin.rememberMe.cookieName}"
-          p:tokenValiditySeconds="${admin.rememberMe.tokenValiditySeconds}"
-          p:alwaysRemember="true"
-          c:key="${admin.rememberMe.key}"
-          c:userDetailsService-ref="adminDetailsService"/>
-
-    <bean id="afterRememberMeFilter"
-          class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter"
-          p:nowTechTokenBasedRememberMeServices-ref="nowTechBasedRememberMeServices"/>
-
-    <bean id="securityDataSource"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-          p:driverClassName="${admin.db.driverClassName}"
-          p:url="${admin.db.url}"
-          p:username="${admin.db.username}"
-          p:password="${admin.db.password}"/>
 
 </beans>
