@@ -5,6 +5,8 @@
 package mobi.nowtechnologies.server.admin.prop;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.message.MergedProps;
+import mobi.nowtechnologies.server.shared.message.PropLocale;
 import mobi.nowtechnologies.server.utils.AppPropResourceConfigurer;
 
 import javax.annotation.Resource;
@@ -28,13 +30,16 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class PropController {
 
     @Resource
-    private CommunityResourceBundleMessageSource messageProps;
+    private MergedProps messageProps;
 
     @Resource
     private AppPropResourceConfigurer appPropResourceConfigurer;
 
-    @Resource(name = "serviceMessageSource")
-    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    @Resource
+    private PropLocale propLocale;
+
+    @Resource
+    private MergedProps serviceProps;
 
     public void setAppPropResourceConfigurer(AppPropResourceConfigurer appPropResourceConfigurer) {
         this.appPropResourceConfigurer = appPropResourceConfigurer;
@@ -46,9 +51,11 @@ public class PropController {
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
         final Locale locale = localeResolver.resolveLocale(request);
 
-        final Properties properties = messageProps.getProperties(null, locale);
+        final Properties properties = messageProps.getProperties(locale);
 
-        return new ModelAndView("prop", "properties", properties);
+        final ModelAndView modelAndView = new ModelAndView("prop", "properties", properties);
+        modelAndView.addObject("locale", locale);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/serviceProps", method = RequestMethod.GET)
@@ -63,9 +70,12 @@ public class PropController {
             }
         }
 
-        final Properties properties = communityResourceBundleMessageSource.getProperties(community, locale);
+        final Locale communityLocale = propLocale.getCommunityLocale(community, locale);
+        final Properties properties = serviceProps.getProperties(communityLocale);
 
-        return new ModelAndView("prop", "properties", properties);
+        final ModelAndView modelAndView = new ModelAndView("prop", "properties", properties);
+        modelAndView.addObject("locale", communityLocale);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/appProps", method = RequestMethod.GET)

@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.shared.message;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Properties;
 
 public interface CommunityResourceBundleMessageSource {
 
@@ -21,8 +20,6 @@ public interface CommunityResourceBundleMessageSource {
     Date readDate(String community, String code);
 
     boolean readBoolean(String community, String code, boolean defaults);
-
-    Properties getProperties(String community, Locale locale);
 
     String getDecryptedMessage(String community, String code, Object[] args, Locale locale);
 }

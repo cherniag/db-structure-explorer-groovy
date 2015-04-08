@@ -333,9 +333,8 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="restTemplate" ref="service.RestTemplate" />
     </bean>
 
-    <bean id="serviceMessageSource"
-          class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
-        <property name="stringEncryptor" ref="configurationEncryptor"/>
+    <bean id="serviceReloadableResourceBundleMessageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
 				<value>file:#{systemProperties['catalina.base']}/conf/services</value>
@@ -346,6 +345,17 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="fileEncodings" value="utf-8" />
 		<property name="cacheSeconds" value="10" />
 		<property name="useCodeAsDefaultMessage" value="true" />
+    </bean>
+
+	<bean id="serviceProps" class="mobi.nowtechnologies.server.shared.message.Prop" parent="serviceReloadableResourceBundleMessageSource"/>
+
+	<bean id="propLocale" class="mobi.nowtechnologies.server.shared.message.PropLocale"/>
+
+    <bean id="serviceMessageSource"
+          class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+        <property name="reloadableResourceBundleMessageSource" ref="serviceReloadableResourceBundleMessageSource"/>
+        <property name="stringEncryptor" ref="configurationEncryptor"/>
+		<property name="propLocale" ref="propLocale"/>
     </bean>
 
 	<import resource="social.xml" />

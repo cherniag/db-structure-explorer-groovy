@@ -7,6 +7,11 @@
 <body>
 <div>
     <a href="signout">Sign Out</a>
+    <h1>Actual properties:</h1>
+    <c:if test="${not empty locale}">
+        <strong>Locale: </strong><label>${locale}</label>
+    </c:if>
+    <br/>
     <c:if test="${not empty properties}">
     <table class="table">
         <thead>

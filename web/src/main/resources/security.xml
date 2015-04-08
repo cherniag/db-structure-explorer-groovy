@@ -15,6 +15,8 @@
         <sec:intercept-url pattern="/admin/serviceProps.*" access="hasRole('ROLE_ADMIN')" />
         <sec:intercept-url pattern="/admin/appProps.*" access="hasRole('ROLE_ADMIN')" />
 
+        <sec:custom-filter before="FIRST" ref="communityResolverFilter" />
+
         <sec:form-login default-target-url="/admin/appProps.html"
                         authentication-failure-url="/admin/signin.html?error"
                         login-page="/admin/signin.html"

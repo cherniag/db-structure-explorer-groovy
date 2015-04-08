@@ -7,6 +7,11 @@
 <body>
 <div>
     <a href="#" th:href="@{signout}">Sign Out</a>
+    <h1>Actual properties:</h1>
+    <div th:if="${locale}">
+        <strong>Locale: </strong><label th:text="${locale}">mtv</label>
+    </div>
+    <br/>
     <table class="table" th:if="${properties}">
         <thead>
         <tr>

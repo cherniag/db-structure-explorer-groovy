@@ -1,13 +1,9 @@
 package mobi.nowtechnologies.server.shared.message;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Properties;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 
@@ -22,16 +18,25 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.util.Assert;
 
 
-public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
+public class CommunityResourceBundleMessageSourceImpl implements CommunityResourceBundleMessageSource {
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
-    private static final String DEFAULT_COMMUNITY_DELIMITER = "_";
 
+    private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
     private StringEncryptor stringEncryptor;
+    private PropLocale propLocale;
+
+    public void setReloadableResourceBundleMessageSource(ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource) {
+        this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
+    }
 
     public void setStringEncryptor(StringEncryptor stringEncryptor) {
         this.stringEncryptor = stringEncryptor;
+    }
+
+    public void setPropLocale(PropLocale propLocale) {
+        this.propLocale = propLocale;
     }
 
     @Override
@@ -88,32 +93,15 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
 
     @Override
     public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
-        Locale communityLocale = getCommunityLocale(community, locale);
+        Locale communityLocale = propLocale.getCommunityLocale(community, locale);
 
-        return getMessage(code, args, defaultMessage, communityLocale);
-    }
-
-    @Override
-    public Properties getProperties(String community, Locale locale) {
-        Locale communityLocale = getCommunityLocale(community, locale);
-
-        return getMergedProperties(communityLocale).getProperties();
+        return reloadableResourceBundleMessageSource.getMessage(code, args, defaultMessage, communityLocale);
     }
 
     @Override
     public String getDecryptedMessage(String community, String code, Object[] args, Locale locale) {
         String message = getMessage(community, code, args, locale);
         return convertPropertyValue(message);
-    }
-
-    private Locale getCommunityLocale(String community, Locale locale) {
-        Locale communityLocale = isNull(community) ?
-                                 DEFAULT_LOCALE :
-                                 new Locale(community);
-        if (isNotNull(locale)) {
-            communityLocale = new Locale(community + DEFAULT_COMMUNITY_DELIMITER + locale.getLanguage(), locale.getCountry(), locale.getVariant());
-        }
-        return communityLocale;
     }
 
     private Date doConvertToDate(String message) throws ParseException {
