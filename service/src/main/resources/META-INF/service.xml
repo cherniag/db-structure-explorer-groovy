@@ -19,6 +19,8 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="classpath:META-INF\service-chart-supporter.xml"/>
 
+	<import resource="classpath:event-logger.xml"/>
+
 	<!-- Application properties -->
     <import resource="placeholders.xml"/>
     <import resource="streamzine-service.xml"/>
@@ -142,7 +144,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="reactivationUserInfoRepository" ref="reactivationUserInfoRepository"/>
         <property name="deviceUserDataService" ref="service.DeviceUserDataService"/>
         <property name="appsFlyerDataService" ref="service.AppsFlyerDataService"/>
-        <property name="userTransactionRepository" ref="userTransactionRepository"/>
         <property name="userActivationStatusService" ref="userActivationStatusService"/>
 	</bean>
 
@@ -219,7 +220,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="userBannedRepository" ref="userBannedRepository" />
         <property name="deviceService" ref="service.DevicePromotionsService" />
-        <property name="userTransactionRepository" ref="userTransactionRepository"/>
+		<property name="eventLoggerService" ref="eventLoggerService"/>
         <property name="userGroupRepository" ref="userGroupRepository"/>
         <property name="userRepository" ref="userRepository"/>
         <property name="configuration" ref="configuration.PromotionService"/>

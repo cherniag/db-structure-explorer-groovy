@@ -49,7 +49,7 @@ public class UserDetailsDtoAsm {
         result.setGooglePlusId(googlePlusUserInfo.getSocialNetworkId());
         result.setFirstName(googlePlusUserInfo.getFirstName());
         result.setSurname(googlePlusUserInfo.getLastName());
-        result.setGender(googlePlusUserInfo.getGenderType().name());
+        result.setGender(getGenderType(googlePlusUserInfo));
         result.setLocation(googlePlusUserInfo.getCity());
         result.setBirthDay(convertBirthday(googlePlusUserInfo.getBirthday()));
         return result;
@@ -64,9 +64,13 @@ public class UserDetailsDtoAsm {
         result.setProfileUrl(String.format("%s%s/picture?type=large", GraphApi.GRAPH_API_URL, details.getSocialNetworkId()));
         result.setFacebookId(details.getSocialNetworkId());
         result.setLocation(details.getCity());
-        result.setGender(details.getGenderType().name());
+        result.setGender(getGenderType(details));
         result.setBirthDay(convertBirthday(details.getBirthday()));
         return result;
+    }
+
+    private String getGenderType(SocialNetworkInfo socialNetworkInfo) {
+        return socialNetworkInfo.getGenderType() != null ? socialNetworkInfo.getGenderType().name() : null;
     }
 
     private String convertBirthday(Date birthday) {
