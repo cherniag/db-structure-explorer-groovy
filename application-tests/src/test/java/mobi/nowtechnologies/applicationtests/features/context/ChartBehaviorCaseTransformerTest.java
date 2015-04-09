@@ -12,7 +12,6 @@ public class ChartBehaviorCaseTransformerTest {
     ChartBehaviorCaseTransformer transformer = new ChartBehaviorCaseTransformer();
 
     @Test
-    @Ignore("Test is ignored at the moment because of the summer time issue.")
     public void testTransform() throws Exception {
         Date now = new Date();
         Date freeTrialDate = DateUtils.addDays(now, 3);
