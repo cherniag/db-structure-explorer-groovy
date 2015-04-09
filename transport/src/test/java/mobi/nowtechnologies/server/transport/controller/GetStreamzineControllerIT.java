@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.streamzine.DeeplinkType;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
@@ -375,9 +374,9 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String appVersion = "1.0";
         String communityUrl = "hl_uk";
         String timestamp = System.currentTimeMillis() + "";
-        User user1 = userRepository.findOne(userName1, communityUrl);
-        User user2 = userRepository.findOne(userName2, communityUrl);
-        User user3 = userRepository.findOne(userName3, communityUrl);
+        User user1 = userRepository.findByUserNameAndCommunityUrl(userName1, communityUrl);
+        User user2 = userRepository.findByUserNameAndCommunityUrl(userName2, communityUrl);
+        User user3 = userRepository.findByUserNameAndCommunityUrl(userName3, communityUrl);
         //
         // Expected JSON data
         //
@@ -426,9 +425,9 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String appVersion = "1.0";
         String communityUrl = "hl_uk";
         String timestamp = System.currentTimeMillis() + "";
-        User user1 = userRepository.findOne(userName1, communityUrl);
-        User user2 = userRepository.findOne(userName2, communityUrl);
-        User user3 = userRepository.findOne(userName3, communityUrl);
+        User user1 = userRepository.findByUserNameAndCommunityUrl(userName1, communityUrl);
+        User user2 = userRepository.findByUserNameAndCommunityUrl(userName2, communityUrl);
+        User user3 = userRepository.findByUserNameAndCommunityUrl(userName3, communityUrl);
         //
         // Expected JSON data
         //
@@ -610,7 +609,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         newsStory.setPosition(1);
         newsStory.setPublishTimeMillis(new Date().getTime());
         newsStory.setMessageType(MessageType.NEWS);
-        newsStory.setCommunity(CommunityDao.getCommunity("hl_uk"));
+        newsStory.setCommunity(communityRepository.findByRewriteUrlParameter("hl_uk"));
         return messageRepository.saveAndFlush(newsStory);
     }
 

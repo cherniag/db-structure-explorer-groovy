@@ -2,15 +2,12 @@ package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Genre;
-import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import javax.annotation.Resource;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,50 +88,7 @@ public class EntityDaoIT {
         assertNotNull(genres);
     }
 
-    @Test
-    public void testFindByProperty_SuccessOrConditions() {
-        Class<Media> entityClass = Media.class;
-        String fieldName = Media.Fields.isrc.toString();
-        String fieldValue = "US-UM7-11-00061";
-        Media media = entityDao.findByProperty(entityClass, fieldName, fieldValue);
-        assertNotNull(media);
-    }
 
-    // OR condtions
-    @Test
-    public void testFindListByProperty() {
-        Class<Media> entityClass = Media.class;
-        String fieldName = Media.Fields.isrc.toString();
-        String[] fieldValue = new String[] {"USJAY1100032", "USAT21001886"};
-        List<Media> medias = entityDao.findListByProperty(entityClass, fieldName, fieldValue);
-        assertNotNull(medias);
-    }
 
-    /**
-     * and conditions
-     */
-    @Test
-    public void testFindListByProperties() {
-        Class<Media> entityClass = Media.class;
-        Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-        fieldNameValueMap.put(Media.Fields.i.toString(), 48);
-        fieldNameValueMap.put(Media.Fields.isrc.toString(), "USAT21001886");
 
-        List<Media> medias = entityDao.findListByProperties(entityClass, fieldNameValueMap);
-        assertNotNull(medias);
-    }
-
-    /**
-     * and conditions
-     */
-    @Test
-    public void testFindByProperties() {
-        Class<Media> entityClass = Media.class;
-        Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-        fieldNameValueMap.put(Media.Fields.i.toString(), 50);
-        fieldNameValueMap.put(Media.Fields.isrc.toString(), "US-UM7-11-00061");
-
-        Media media = entityDao.findByProperties(entityClass, fieldNameValueMap);
-        assertNotNull(media);
-    }
 }

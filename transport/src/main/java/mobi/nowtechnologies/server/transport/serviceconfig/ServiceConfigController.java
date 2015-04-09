@@ -45,7 +45,8 @@ public class ServiceConfigController extends CommonController {
     }
 
     @RequestMapping(method = GET,
-                    value = {"**/{community}/{apiVersion:6\\.10}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.9}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.8}/SERVICE_CONFIG"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.10}/SERVICE_CONFIG", "**/{community}/{apiVersion:6\\.9}/SERVICE_CONFIG",
+                        "**/{community}/{apiVersion:6\\.8}/SERVICE_CONFIG"})
     public Response getServiceConfigWithNewHeader(@RequestHeader("X-User-Agent") UserAgentRequest userAgent, @PathVariable("community") String community) throws Exception {
         return getServiceConfigWithMigratedAndImage(userAgent, community);
     }

@@ -29,7 +29,8 @@ public class SignInEmailController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.10}/SIGN_IN_EMAIL", "**/{community}/{apiVersion:6\\.9}/SIGN_IN_EMAIL", "**/{community}/{apiVersion:6\\" + ".8}/SIGN_IN_EMAIL"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/SIGN_IN_EMAIL", "**/{community}/{apiVersion:6\\.10}/SIGN_IN_EMAIL", "**/{community}/{apiVersion:6\\.9}/SIGN_IN_EMAIL",
+                        "**/{community}/{apiVersion:6\\.8}/SIGN_IN_EMAIL"})
     public ModelAndView applyPromotionByEmailWithOneTimePayment(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                 @RequestParam("EMAIL_ID") Long activationEmailId, @RequestParam("EMAIL") String email, @RequestParam("TOKEN") String token,
                                                                 @RequestParam("DEVICE_UID") String deviceUID, @PathVariable String community) {

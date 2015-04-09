@@ -49,7 +49,7 @@ public class ReferralControllerIT extends AbstractControllerTestIT {
                                                                                                                                                                                         "}]"))
                .andExpect(status().isOk());
 
-        User user = userRepository.findOne(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
 
         Referral referral1 = referralRepository.findByContactAndCommunityId("facebook-12345", community.getId());

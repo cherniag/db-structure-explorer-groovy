@@ -112,22 +112,6 @@ public class CloudFileServiceImpl implements CloudFileService {
 
     }
 
-    @Override
-    public boolean fileExists(String destinationContainer, String fileName) {
-        LOGGER.info("get InputStream for file file in container [] by fileName", destinationContainer, fileName);
-        Assert.hasText(fileName);
-        login();
-        try {
-            filesClient.getObjectMetaData(destinationContainer, fileName);
-            return true;
-        } catch (FilesNotFoundException e) {
-            return false;
-        } catch (Exception e) {
-            LOGGER.error("Exception while fileExists on cloud {}: {}", fileName, e.getMessage(), e);
-            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
-        }
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public synchronized boolean uploadFile(MultipartFile file, String fileName, Map metadata) {

@@ -82,7 +82,14 @@ public class PayPalResponse extends PaymentSystemResponse {
     }
 
     public String getTransactionId() {
-        return properties.get(PayPalResponseParam.TRANSACTIONID);
+        String legacyTransactionIdCouldBeNullForNewTypePayments = properties.get(PayPalResponseParam.TRANSACTIONID);
+        String newPaymentTypeTransactionId = properties.get(PayPalResponseParam.PAYMENTINFO_0_TRANSACTIONID);
+
+        return legacyTransactionIdCouldBeNullForNewTypePayments != null ? legacyTransactionIdCouldBeNullForNewTypePayments : newPaymentTypeTransactionId;
+    }
+
+    public String getPayerId() {
+        return properties.get(PayPalResponseParam.PAYERID);
     }
 
     public static enum PayPalResponseParam {
@@ -93,7 +100,9 @@ public class PayPalResponse extends PaymentSystemResponse {
         VERSION,
         BUILD,
         BILLINGAGREEMENTID,
-        TRANSACTIONID
+        TRANSACTIONID,
+        PAYERID,
+        PAYMENTINFO_0_TRANSACTIONID
     }
 
 }

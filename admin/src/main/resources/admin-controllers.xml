@@ -49,8 +49,10 @@
     <bean class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
         <property name="chartItemController" ref="admin.ChartItemController"/>
         <property name="viewByChartType" ref="chartViewByChartType"/>
-        <property name="communityRepository" ref="communityRepository"/>
         <property name="chartAsm" ref="admin.ChartAsm"/>
+        <property name="chartDetailRepository" ref="chartDetailRepository"/>
+        <property name="chartDetailService" ref="service.ChartDetailService"/>
+        <property name="chartRepository" ref="chartRepository"/>
     </bean>
 
     <bean id="admin.ChartItemController" class="mobi.nowtechnologies.server.admin.controller.ChartItemController"
@@ -60,10 +62,12 @@
         <property name="viewByChartType" ref="chartItemsViewByChartType"/>
         <property name="trackRepoService" ref="service.TrackRepoService"/>
         <property name="chartAsm" ref="admin.ChartAsm"/>
+        <property name="chartRepository" ref="chartRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.UserController">
         <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.TrackRepoController">
@@ -77,7 +81,7 @@
         <property name="accountLogService" ref="service.AccountLogService"/>
         <property name="pendingPaymentService" ref="service.PendingPaymentService"/>
         <property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
-        <property name="userService" ref="service.UserService"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.AdController">

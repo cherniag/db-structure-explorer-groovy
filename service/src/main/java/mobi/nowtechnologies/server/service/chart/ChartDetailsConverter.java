@@ -45,27 +45,22 @@ public class ChartDetailsConverter {
         final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
 
         ArrayList<String> pathSegments = new ArrayList<>(original.build().getPathSegments());
-        pathSegments.set(index, newValue);
-
-        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+        if (!pathSegments.isEmpty()) {
+            pathSegments.set(index, newValue);
+            original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+        }
 
         return original.build().toString();
     }
 
-    public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
-        if (chartDetails == null) {
-            throw new PersistenceException("The parameter chartDetails is null");
-        }
-        if (defaultAmazonUrl == null) {
-            throw new NullPointerException("The parameter defaultAmazonUrl is null");
-        }
+    public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community) {
+        String defaultAmazonUrl = messageSource.getMessage(community.getRewriteUrlParameter(), "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
-        LOGGER.debug("input parameters chartDetails: [{}]", new Object[] {chartDetails});
         List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
         for (ChartDetail chartDetail : chartDetails) {
             chartDetailDtos.add(toChartDetailDto(chartDetail, community, defaultAmazonUrl));
         }
-        LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
+
         return chartDetailDtos;
     }
 
@@ -119,26 +114,27 @@ public class ChartDetailsConverter {
         return chartDetailDto;
     }
 
-    public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked) {
-        LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
+    public PlaylistDto toPlaylistDto(ChartDetail chartUpdateMarker, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked,
+                                     boolean withChartUpdateId) {
+        LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartUpdateMarker, switchable);
 
         PlaylistDto playlistDto = new PlaylistDto();
-        playlistDto.setId(chartDetail.getChart().getI() != null ?
-                          chartDetail.getChart().getI() :
+        playlistDto.setId(chartUpdateMarker.getChart().getI() != null ?
+                          chartUpdateMarker.getChart().getI() :
                           null);
-        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ?
-                                     chartDetail.getTitle() :
-                                     chartDetail.getChart().getName());
-        playlistDto.setSubtitle(chartDetail.getSubtitle());
-        playlistDto.setImage(chartDetail.getImageFileName());
-        playlistDto.setImageTitle(chartDetail.getImageTitle());
-        playlistDto.setDescription(chartDetail.getChartDescription());
-        playlistDto.setPosition(chartDetail.getPosition());
+        playlistDto.setPlaylistTitle(chartUpdateMarker.getTitle() != null ?
+                                     chartUpdateMarker.getTitle() :
+                                     chartUpdateMarker.getChart().getName());
+        playlistDto.setSubtitle(chartUpdateMarker.getSubtitle());
+        playlistDto.setImage(chartUpdateMarker.getImageFileName());
+        playlistDto.setImageTitle(chartUpdateMarker.getImageTitle());
+        playlistDto.setDescription(chartUpdateMarker.getChartDescription());
+        playlistDto.setPosition(chartUpdateMarker.getPosition());
         playlistDto.setSwitchable(switchable);
-        playlistDto.setType(chartDetail.getChartType());
+        playlistDto.setType(chartUpdateMarker.getChartType());
 
-        if (chartDetail.getBadgeId() != null && resolution != null) {
-            String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
+        if (chartUpdateMarker.getBadgeId() != null && resolution != null) {
+            String badgeFileName = badgesService.getBadgeFileName(chartUpdateMarker.getBadgeId(), community, resolution);
             playlistDto.setBadgeIcon(badgeFileName);
         }
 
@@ -146,7 +142,11 @@ public class ChartDetailsConverter {
             playlistDto.setLocked(areAllTracksLocked);
         }
 
-        LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
+        if (withChartUpdateId) {
+            playlistDto.setChartUpdateId(chartUpdateMarker.getI());
+        }
+
+        LOGGER.debug("Output parameter playlistDto=[{}]", playlistDto);
         return playlistDto;
     }
 

@@ -15,10 +15,7 @@ import java.util.Map;
 public class OperatorDao {
 
     private static final String NOT_SPECIFIED = "Not Specified";
-    private static Map<String, Operator> OPERATOR_MAP_MIGNAME_AS_KEY;
     private static Map<Integer, Operator> OPERATOR_MAP_ID_AS_KEY;
-    private static Map<Integer, String> MAP_NAME_ID_AS_KEY;
-    private static Map<Integer, String> MAP_NAME_ID_AS_KEY_MIG_ONLY;
 
     private static void setEntityDao(EntityDao entityDao) {
         List<Operator> list = entityDao.findAll(Operator.class);
@@ -37,25 +34,11 @@ public class OperatorDao {
             }
             mapNameIdAsKey.put(operator.getId(), name);
         }
-        OPERATOR_MAP_MIGNAME_AS_KEY = Collections.unmodifiableMap(mapMigName);
         OPERATOR_MAP_ID_AS_KEY = Collections.unmodifiableMap(mapId);
-        MAP_NAME_ID_AS_KEY_MIG_ONLY = Collections.unmodifiableMap(mapNameIdAsKeyMigOnly);
-        MAP_NAME_ID_AS_KEY = Collections.unmodifiableMap(mapNameIdAsKey);
-    }
-
-    public static Map<String, Operator> getMapAsMigNames() {
-        return OPERATOR_MAP_MIGNAME_AS_KEY;
     }
 
     public static Map<Integer, Operator> getMapAsIds() {
         return OPERATOR_MAP_ID_AS_KEY;
     }
 
-    public static Map<Integer, String> getMAP_NAME_ID_AS_KEY_MIG_ONLY() {
-        return MAP_NAME_ID_AS_KEY_MIG_ONLY;
-    }
-
-    public static Map<Integer, String> getMAP_NAME_ID_AS_KEY() {
-        return MAP_NAME_ID_AS_KEY;
-    }
 }

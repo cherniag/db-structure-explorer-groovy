@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 
 import org.junit.*;
@@ -12,36 +14,13 @@ import static org.hamcrest.Matchers.is;
  */
 public class PromotionTest {
 
-    @Test
-    public void shouldReturn1WhenFreeWeeksIs1() throws Exception {
-        //given
-        Promotion promotion = new Promotion().withFreeWeeks((byte) 1);
-        int freeTrialStartedTimestampSeconds = Integer.MAX_VALUE;
-
-        //when
-        int freeWeeks = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
-
-        //then
-        assertThat(freeWeeks, is(1));
-    }
-
-    @Test
-    public void shouldReturn6WhenPromoEndDateIs7WeeksAndPromoFreeWeeksIs0AndFreeTrialStartedTimestampSecondsIsWeekSeconds() throws Exception {
-        //given
-        Promotion promotion = new Promotion().withFreeWeeks((byte) 0).withEndDate(7 * WEEK_SECONDS);
-        int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
-
-        //when
-        int freeWeeks = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
-
-        //then
-        assertThat(freeWeeks, is(6));
-    }
 
     @Test
     public void shouldReturn4WeeksFreeWeeksEndDateWhenPromoEndDateIs7WeeksAndAndPromoFreeWeeksIs5AndFreeTrialStartedTimestampSecondsIsWeekSeconds() throws Exception {
         //given
-        Promotion promotion = new Promotion().withFreeWeeks((byte) 5).withEndDate(7 * WEEK_SECONDS);
+        Promotion promotion = new Promotion();
+        promotion.setPeriod(new Period(DurationUnit.WEEKS, 5));
+        promotion.setEndDate(7 * WEEK_SECONDS);
         int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
 
         //when
@@ -54,7 +33,24 @@ public class PromotionTest {
     @Test
     public void shouldReturn7WeeksFreeWeeksEndDateWhenPromoEndDateIs7WeeksAndPromoFreeWeeksIs0AndFreeTrialStartedTimestampSecondsIsWeekSeconds() throws Exception {
         //given
-        Promotion promotion = new Promotion().withFreeWeeks((byte) 0).withEndDate(7 * WEEK_SECONDS);
+        Promotion promotion = new Promotion();
+        promotion.setPeriod(new Period(DurationUnit.WEEKS, 0));
+        promotion.setEndDate(7 * WEEK_SECONDS);
+        int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
+
+        //when
+        int freeWeeksEndDate = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
+
+        //then
+        assertThat(freeWeeksEndDate, is(7 * WEEK_SECONDS));
+    }
+
+    @Test
+    public void shouldReturn7WeeksFreeWeeksEndDateWhenPromoEndDateIs7WeeksAndPeriodIsNullAndFreeTrialStartedTimestampSecondsIsWeekSeconds() throws Exception {
+        //given
+        Promotion promotion = new Promotion();
+        promotion.setPeriod(null);
+        promotion.setEndDate(7 * WEEK_SECONDS);
         int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
 
         //when

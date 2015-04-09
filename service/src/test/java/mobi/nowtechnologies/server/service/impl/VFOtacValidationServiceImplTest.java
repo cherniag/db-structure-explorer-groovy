@@ -2,36 +2,35 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.service.DeviceService;
 import static mobi.nowtechnologies.server.service.VFOtacValidationService.TEST_OTAC_NON_VF;
 import static mobi.nowtechnologies.server.service.VFOtacValidationService.TEST_OTAC_VF;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
-import org.powermock.modules.junit4.PowerMockRunner;
-
 /**
  * User: Titov Mykhaylo (titov) 30.09.13 17:41
  */
-@RunWith(PowerMockRunner.class)
 public class VFOtacValidationServiceImplTest {
 
     @Mock
-    public UserService userServiceMock;
+    public DeviceService deviceService;
+    @Mock
+    public UserRepository userRepository;
+    @InjectMocks
     private VFOtacValidationServiceImpl vfOtacValidationServiceImplFixture;
 
     @Before
     public void setUp() {
-        vfOtacValidationServiceImplFixture = new VFOtacValidationServiceImpl();
-        vfOtacValidationServiceImplFixture.setUserService(userServiceMock);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -41,8 +40,8 @@ public class VFOtacValidationServiceImplTest {
         String phoneNumber = "phoneNumber";
         Community community = new Community().withRewriteUrl("vf_nz");
 
-        doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber, community);
+        doReturn(1L).when(userRepository).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        doReturn(true).when(deviceService).isPromotedDevicePhone(eq(community), eq(phoneNumber), anyString());
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -50,8 +49,8 @@ public class VFOtacValidationServiceImplTest {
         //then
         assertThat(providerUserDetails.operator, is(NON_VF.getKey()));
 
-        verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
+        verify(userRepository, times(0)).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        verify(deviceService, times(1)).isPromotedDevicePhone(community, phoneNumber, null);
     }
 
     @Test
@@ -61,8 +60,8 @@ public class VFOtacValidationServiceImplTest {
         String phoneNumber = "phoneNumber";
         Community community = new Community().withRewriteUrl("vf_nz");
 
-        doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber, community);
+        doReturn(1L).when(userRepository).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        doReturn(true).when(deviceService).isPromotedDevicePhone(eq(community), eq(phoneNumber), anyString());
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -70,8 +69,8 @@ public class VFOtacValidationServiceImplTest {
         //then
         assertThat(providerUserDetails.operator, is(VF.getKey()));
 
-        verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
+        verify(userRepository, times(0)).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        verify(deviceService, times(1)).isPromotedDevicePhone(community, phoneNumber, null);
     }
 
     @Test
@@ -81,8 +80,8 @@ public class VFOtacValidationServiceImplTest {
         String phoneNumber = "phoneNumber";
         Community community = new Community().withRewriteUrl("vf_nz");
 
-        doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber, community);
+        doReturn(1L).when(userRepository).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        doReturn(true).when(deviceService).isPromotedDevicePhone(eq(community), eq(phoneNumber), anyString());
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -90,8 +89,8 @@ public class VFOtacValidationServiceImplTest {
         //then
         assertNull(providerUserDetails.operator);
 
-        verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
+        verify(userRepository, times(1)).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        verify(deviceService, times(1)).isPromotedDevicePhone(community, phoneNumber, null);
     }
 
     @Test
@@ -101,8 +100,8 @@ public class VFOtacValidationServiceImplTest {
         String phoneNumber = "phoneNumber";
         Community community = new Community().withRewriteUrl("vf_nz");
 
-        doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
+        doReturn(1L).when(userRepository).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        doReturn(false).when(deviceService).isPromotedDevicePhone(eq(community), eq(phoneNumber), anyString());
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -110,7 +109,7 @@ public class VFOtacValidationServiceImplTest {
         //then
         assertNull(providerUserDetails.operator);
 
-        verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
+        verify(userRepository, times(1)).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+        verify(deviceService, times(1)).isPromotedDevicePhone(community, phoneNumber, null);
     }
 }

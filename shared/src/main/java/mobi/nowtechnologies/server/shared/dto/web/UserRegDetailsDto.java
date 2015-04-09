@@ -11,9 +11,8 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Titov Mykhaylo (titov)
  */
 public class UserRegDetailsDto implements Serializable {
-
     public static final String USER_REG_DETAILS_DTO = "UserRegDetailsDto";
-    private static final long serialVersionUID = 8241491538199898452L;
+
     @Email
     @NotEmpty
     private String email;

@@ -4,6 +4,7 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -26,6 +27,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
     private ActivationEmailRepository activationEmailRepository;
     private UserService userService;
     private MailService mailService;
+    private UserRepository userRepository;
     private CommunityResourceBundleMessageSource messageSource;
 
     @Override
@@ -49,7 +51,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
             throw new ValidationException("Email " + email + " is not valid!");
         }
 
-        User user = userService.findByNameAndCommunity(userName, community);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, community);
         String token = ActivationEmail.generateToken(email, deviceUID);
 
         ActivationEmail activationEmail = new ActivationEmail(email, deviceUID, token);
@@ -80,6 +82,10 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
 
     public void setMailService(MailService mailService) {
         this.mailService = mailService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {

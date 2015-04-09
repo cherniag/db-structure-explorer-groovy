@@ -1,22 +1,24 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
+import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.configuration.ConfigurationAwareService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -33,8 +35,6 @@ import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
-import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED;
-import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +65,9 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private UserBannedRepository userBannedRepository;
     private DeviceService deviceService;
     private CommunityService communityService;
+    private UserTransactionRepository userTransactionRepository;
+    private UserGroupRepository userGroupRepository;
+    private UserRepository userRepository;
 
     public void setEntityService(EntityService entityService) {
         this.entityService = entityService;
@@ -94,27 +97,25 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         this.deviceService = deviceService;
     }
 
-    public Promotion getActivePromotion(String promotionCode, String communityName) {
-        notNull(promotionCode, "The parameter promotionCode is null");
-        notNull(communityName, "The parameter communityName is null");
-        LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, communityName);
+    @Transactional(readOnly = true)
+    public Promotion getActivePromotion(Community community, String promotionCode) {
+        UserGroup userGroup = userGroupRepository.findByCommunity(community);
 
-        Community community = communityService.getCommunityByName(communityName);
-
-        UserGroup userGroup = entityService.findByProperty(UserGroup.class, UserGroup.Fields.communityId.toString(), community.getId());
-
-        Promotion promotion = promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
-        return promotion;
+        return getActivePromotion(userGroup, promotionCode);
     }
 
-    @Transactional(propagation = REQUIRED)
-    public Promotion getPromotionForUser(final String communityName, User user) {
-        LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
+    public Promotion getActivePromotion(UserGroup userGroup, String promotionCode) {
+        notNull(promotionCode, "The parameter promotionCode is null");
 
-        Community community = CommunityDao.getMapAsNames().get(communityName);
-        int userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId();
+        LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, userGroup.getCommunity().getRewriteUrlParameter());
 
-        List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(userGroupId);
+        return promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
+    }
+
+    private Promotion getPromotionForUser(User user) {
+        LOGGER.debug("input parameters communityName, user: [{}], [{}]", user.getCommunity().getRewriteUrlParameter(), user.getId());
+
+        List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(user.getUserGroup().getId());
         List<Promotion> promotions = new LinkedList<Promotion>();
         for (Promotion currentPromotion : promotionWithFilters) {
             List<AbstractFilter> filters = currentPromotion.getFilters();
@@ -337,7 +338,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
         Community community = user.getUserGroup().getCommunity();
         if (code != null) {
-            Promotion potentialPromoCodePromotion = getActivePromotion(code, community.getName());
+            Promotion potentialPromoCodePromotion = getActivePromotion(user.getUserGroup(), code);
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
             entityService.updateEntity(user);
             return potentialPromoCodePromotion;
@@ -345,14 +346,14 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return null;
     }
 
-    private void logAboutPromoApplying(User user, PromoCode promoCode, int freeWeeks) {
-        byte balanceAfter = (byte) (user.getSubBalance() + freeWeeks);
-        AccountLog accountLog = new AccountLog(user.getId(), null, balanceAfter, PROMOTION_BY_PROMO_CODE_APPLIED);
-        accountLog.setPromoCode(promoCode.getCode());
-        entityService.saveEntity(accountLog);
-        for (byte i = 1; i <= freeWeeks; i++) {
-            entityService.saveEntity(new AccountLog(user.getId(), null, balanceAfter - i, SUBSCRIPTION_CHARGE));
-        }
+    private void logAboutPromoApplying(User user, PromoCode promoCode, long start, long end) {
+        UserTransaction userTransaction = new UserTransaction();
+        userTransaction.setUser(user);
+        userTransaction.setPromoCode(promoCode.getCode());
+        userTransaction.setStartTimestamp(start);
+        userTransaction.setEndTimestamp(end);
+        userTransaction.setTransactionType(UserTransactionType.PROMOTION_BY_PROMO_CODE);
+        userTransactionRepository.save(userTransaction);
     }
 
     private User skipPotentialPromoCodePromotionApplyingForBannedUser(User user) {
@@ -364,7 +365,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private User applyPromoForNotBannedUser(PromoParams promoParams) {
         Promotion promotion = promoParams.promotion;
         User user = promoParams.user;
-        int freeTrialStartedTimestampSeconds = promoParams.freeTrialStartedTimestampSeconds;
+        int freeTrialStartSeconds = promoParams.freeTrialStartedTimestampSeconds;
 
         if (isNull(promotion)) {
             throw new IllegalArgumentException("No promotion found");
@@ -376,12 +377,11 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         }
 
         final PromoCode promoCode = promotion.getPromoCode();
-        int freeWeeks = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
-        int nextSubPayment = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
+        int freeTrialEndSeconds = promotion.getFreeWeeksEndDate(freeTrialStartSeconds);
 
         user.setLastPromo(promoCode);
-        user.setNextSubPayment(nextSubPayment);
-        user.setFreeTrialExpiredMillis(secondsToMillis(nextSubPayment));
+        user.setNextSubPayment(freeTrialEndSeconds);
+        user.setFreeTrialExpiredMillis(secondsToMillis(freeTrialEndSeconds));
         user.setPotentialPromoCodePromotion(null);
 
         if (isVideoAndMusicPromoCode(promoCode)) {
@@ -389,12 +389,12 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         }
 
         user.setStatus(UserStatusDao.getSubscribedUserStatus());
-        user.setFreeTrialStartedTimestampMillis(secondsToMillis(freeTrialStartedTimestampSeconds));
+        user.setFreeTrialStartedTimestampMillis(secondsToMillis(freeTrialStartSeconds));
         user = entityService.updateEntity(user);
 
         updatePromotionNumUsers(promotion);
 
-        logAboutPromoApplying(user, promoCode, freeWeeks);
+        logAboutPromoApplying(user, promoCode, freeTrialStartSeconds * 1000L, freeTrialEndSeconds * 1000L);
         return user.withIsPromotionApplied(true);
     }
 
@@ -421,7 +421,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     @Transactional(propagation = REQUIRED)
     public User assignPotentialPromotion(int userId) {
         LOGGER.debug("input parameters userId: [{}]", userId);
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
 
         user = assignPotentialPromotion(user);
 
@@ -433,8 +433,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public User assignPotentialPromotion(User existingUser) {
         LOGGER.debug("input parameters communityName: [{}]", existingUser);
         if (existingUser.getLastSuccessfulPaymentTimeMillis() == 0) {
-            String communityName = communityName(existingUser);
-            Promotion promotion = getPromotionForUser(communityName, existingUser);
+            Promotion promotion = getPromotionForUser(existingUser);
             existingUser.setPotentialPromotion(promotion);
             existingUser = entityService.updateEntity(existingUser);
             LOGGER.info("Promotion [{}] was attached to user with id [{}]", promotion, existingUser.getId());
@@ -450,7 +449,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         LOGGER.debug("input parameters user, promotionCode, communityName: [{}], [{}]", user, promotionCode);
 
-        Promotion userPromotion = getActivePromotion(promotionCode, communityName(user));
+        Promotion userPromotion = getActivePromotion(user.getUserGroup(), promotionCode);
         if (userPromotion == null) {
             LOGGER.info("Promotion code [{}] does not exist", promotionCode);
             throw new ServiceException("Invalid promotion code. Please re-enter the code or leave the field blank");
@@ -469,18 +468,24 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return ruleResult.getResult().getPromotion();
     }
 
-    private String communityName(User user) {
-        UserGroup userGroup = user.getUserGroup();
-        Community community = userGroup.getCommunity();
-        return community.getName();
-    }
-
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
     }
 
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
+    }
+
+    public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {
+        this.userTransactionRepository = userTransactionRepository;
+    }
+
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public static enum PromotionTriggerType implements TriggerType {

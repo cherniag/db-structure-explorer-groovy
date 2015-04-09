@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.web.service.impl;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 
 import org.slf4j.Logger;
@@ -19,10 +19,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    protected UserService userService;
+    private UserRepository userRepository;
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         LOGGER.debug("input parameters userName: [{}]", userName);
 
         String communityUrl = RequestUtils.getCommunityURL();
-        User user = userService.getUser(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
 
         if (user == null) {
             throw new UsernameNotFoundException("Couldn't find user with username [" + userName + "] and communityUrl [" + communityUrl + "] in the DB");

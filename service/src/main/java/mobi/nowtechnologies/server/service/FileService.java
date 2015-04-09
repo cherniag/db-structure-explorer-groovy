@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
@@ -51,7 +52,6 @@ public class FileService {
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER = java.util.logging.Logger.getLogger("BrightcoveLog");
     private static final String POINT = ".";
     private static final String UNDERSCORE = "_";
-    private UserService userService;
     private Resource storePath;
     private MediaService mediaService;
 
@@ -59,6 +59,7 @@ public class FileService {
     private String brightcoveReadToken;
 
     private MediaRepository mediaRepository;
+    private UserRepository userRepository;
 
     private CloudFileService cloudFileService;
 
@@ -78,6 +79,10 @@ public class FileService {
 
     public void setMediaRepository(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void init() {
@@ -105,10 +110,6 @@ public class FileService {
 
     public void setMediaService(MediaService mediaService) {
         this.mediaService = mediaService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -220,7 +221,7 @@ public class FileService {
         notNull(fileType, "The parameter fileType is null");
 
         LOGGER.debug("input parameters mediaIsrc, fileType, resolution, userId, outputStream: [{}], [{}]", new Object[] {mediaIsrc, fileType, resolution, userId});
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         File file = getFile(mediaIsrc, fileType, resolution, user);
         LOGGER.debug("Output parameter file=[{}]", file);
         return file;

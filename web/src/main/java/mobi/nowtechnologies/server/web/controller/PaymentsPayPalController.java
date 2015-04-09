@@ -1,12 +1,11 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -54,13 +53,14 @@ public class PaymentsPayPalController extends CommonController {
 
     public static final String REQUEST_PARAM_PAYPAL = "result";
     public static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPolicyId";
+    public static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
     public static final String SUCCESSFUL_RESULT = "successful";
     public static final String FAIL_RESULT = "fail";
-    private static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
     private UserService userService;
+    private UserRepository userRepository;
 
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
     public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
@@ -70,8 +70,8 @@ public class PaymentsPayPalController extends CommonController {
         ModelAndView modelAndModel = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PAYPAL);
 
         if (StringUtils.hasText(result)) {
-            if (StringUtils.hasText(token)) {
-                paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+            if (SUCCESSFUL_RESULT.equals(result) && StringUtils.hasText(token)) {
+                paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
             PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
@@ -118,13 +118,12 @@ public class PaymentsPayPalController extends CommonController {
     }
 
     @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)
-    public String startPaypal(@CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-        User user = userService.findById(getSecurityContextDetails().getUserId());
+    public String startPaypal() {
+        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         if (user.isSubscribedUserByPaymentType(PAYPAL_TYPE)) {
             return REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
         }
-        Community community = CommunityDao.getCommunity(communityUrl.getValue());
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(community, user.getProvider(), PAY_PAL);
+        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getCommunity(), user.getProvider(), PAY_PAL);
         notNull(paymentPolicy);
         return "redirect:/payments_inapp/paypal.html?" + REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId();
     }
@@ -136,8 +135,7 @@ public class PaymentsPayPalController extends CommonController {
         dto.setBillingAgreementDescription(messageSource.getMessage("pay.paypal.billing.agreement.description",
                                                                     new Object[] {paymentPolicyDto.getDuration(), paymentPolicyDto.getDurationUnit(), paymentPolicyDto.getSubcost()}, locale));
         StringBuilder callbackUrl = new StringBuilder(getServerURL(request)).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT).append(START_PARAM_DELIM)
-                                                                                  .append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&")
-                                                                                  .append(REQUEST_PARAM_PAYPAL).append("=");
+                                                                                  .append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&").append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);
         dto.setSuccessUrl(callbackUrl + SUCCESSFUL_RESULT);
         PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
@@ -174,6 +172,10 @@ public class PaymentsPayPalController extends CommonController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setCommunityResourceBundleMessageSource(CommunityResourceBundleMessageSource communityResourceBundleMessageSource) {

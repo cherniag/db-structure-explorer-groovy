@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -40,6 +41,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
 
     @Resource
     private UserStatusRepository userStatusRepository;
+    @Resource
+    private UserRepository userRepository;
 
     @Resource
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
@@ -48,9 +51,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void checkApplyInitPromo_LatestVersion() throws Exception {
         //given
         String userName = "imei_351722057812748";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = LATEST_SERVER_API_VERSION;
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -67,7 +70,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
-        user = userService.findByName(user.getMobile());
+        user = userRepository.findOne(user.getId());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         Assert.assertEquals(O2, user.getProvider());
@@ -84,9 +87,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void givenValidO2Token_whenAPPLY_PROMO_v3d6_PromoPhoneNumber() throws Exception {
         //given
         String userName = "imei_351722057812750";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.6";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.6";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -111,7 +114,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
-        user = userService.findByName(user.getMobile());
+        user = userRepository.findOne(user.getId());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         Assert.assertEquals(O2, user.getProvider());
@@ -132,9 +135,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSetAndAccCheckInfo() throws Exception {
         //given
         String userName = "imei_351722057812748";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -159,7 +162,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
-        user = userService.findByName(user.getMobile());
+        user = userRepository.findOne(user.getId());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         Assert.assertEquals(O2, user.getProvider());
@@ -179,9 +182,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void givenValidO2Token_whenUserWithPhoneExistsAndRegistrationFromNewDevice_thenReturnOldUserWithNewDeviceAndRemoveSecondUser() throws Exception {
         //given
         String userName = "imei_351722057812749";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "11111111-c768-4fe7-bb56-a5e0c722cd44";
@@ -198,14 +201,14 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                .andExpect(status().isOk());
 
         //when
-        User mobileUser = userService.findByName("+447111111111");
+        User mobileUser = userRepository.findByUserNameAndCommunityUrl("+447111111111", communityUrl);
 
         Assert.assertEquals(user.getDevice(), mobileUser.getDevice());
         Assert.assertEquals(user.getDeviceUID(), mobileUser.getDeviceUID());
         Assert.assertEquals(user.getDeviceModel(), mobileUser.getDeviceModel());
         Assert.assertEquals(user.getDeviceType(), mobileUser.getDeviceType());
 
-        user = userService.findByName(userName);
+        user = userRepository.findOne(user.getId());
         Assert.assertNull(user);
 
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(mobileUser.getMobile()), any(Community.class));
@@ -217,9 +220,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
         //given
         String userName = "+447111111111";
         String oldUserName = "b88106713409e92622461a876abcd74c";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -239,7 +242,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                                                                                               .param("OTAC_TOKEN", otac)).andExpect(status().isOk());
 
         //when
-        User mobileUser = userService.findByName(userName);
+        User mobileUser = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
 
         Assert.assertEquals(user.getDevice(), mobileUser.getDevice());
         Assert.assertEquals(user.getDeviceUID(), mobileUser.getDeviceUID());
@@ -256,9 +259,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void applyInitPromo_whenUserCallMethodTwice_then_ReturnActivationError() throws Exception {
         //given
         String userName = "+447733333333";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -278,7 +281,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                .andExpect(status().isForbidden());
 
         //when
-        user = userService.findByName(userName);
+        user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         Assert.assertEquals(user.getUserName(), "+447733333333");
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
     }
@@ -287,9 +290,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void applyInitPromo_whenUserReInstallAppWithNewPhoneNumber_then_ReturnAUserWithNewPhoneNumber() throws Exception {
         //given
         String userName = "999a72f8864fd5c23957beef9d99656568";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -305,7 +308,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
             post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
                .andExpect(status().isOk());
 
-        user = userService.findByName(user.getMobile());
+        user = userRepository.findOne(user.getId());
 
         //when
         Assert.assertNotNull(user);
@@ -317,8 +320,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
         //given
         String userName = "+447766666666";
         String apiVersion = "3.9";
-        User user = prepareUserForApplyInitPromo(userName);
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -383,9 +386,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void applyInitPromoWithReactivation() throws Exception {
         //given
         String userName = "999a72f8864fd5c23957beef9d99656568";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "6.0";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "6.0";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -404,7 +407,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
             post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("OTAC_TOKEN", otac))
                .andExpect(status().isOk());
 
-        user = userService.findByName(user.getMobile());
+        user = userRepository.findOne(user.getId());
 
         //when
         Assert.assertNotNull(user);
@@ -417,9 +420,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void testApplyInitPromoWithMergeAccountsForXML() throws Exception {
         //given
         String userName = "999a72f8864fd5c23957beef9d99656568";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -440,9 +443,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
     public void testApplyInitPromoWithMergeAccountsForJSON() throws Exception {
         //given
         String userName = "999a72f8864fd5c23957beef9d99656568";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "3.9";
         String communityUrl = "o2";
+        User user = prepareUserForApplyInitPromo(userName, communityUrl);
+        String apiVersion = "3.9";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -458,8 +461,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT {
                .andExpect(status().isOk()).andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").value(true));
     }
 
-    private User prepareUserForApplyInitPromo(String userName) {
-        User user = userService.findByName(userName);
+    private User prepareUserForApplyInitPromo(String userName, String communityUrl) {
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
 
         user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
         user.setProvider(ProviderType.O2);

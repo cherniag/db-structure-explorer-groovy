@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -35,6 +36,8 @@ public class ReferralServiceTest {
     @Mock
     private UserService userService;
     @Mock
+    private UserRepository userRepository;
+    @Mock
     private CommunityResourceBundleMessageSource messageSource;
     @Mock
     private UserReferralsSnapshotRepository userReferralsSnapshotRepository;
@@ -54,6 +57,7 @@ public class ReferralServiceTest {
 
         User user = createUser("user_name@dot.com", 33, 17);
 
+        when(communityRepository.findOne(17)).thenReturn(mock(Community.class));
         when(userService.getWithSocial(user.getId())).thenReturn(user);
 
         referralService.refer(Arrays.asList(r1, r2));
@@ -69,7 +73,7 @@ public class ReferralServiceTest {
 
         User user = createUser("user_name@dot.com", 34, 17);
 
-        when(userService.findByName(user.getUserName())).thenReturn(user);
+        when(userRepository.findByUserNameAndCommunityUrl(eq(user.getUserName()), anyString())).thenReturn(user);
         Community someCommunity = CommunityFactory.createCommunityMock(17, "some_community");
         when(communityRepository.findOne(17)).thenReturn(someCommunity);
 
@@ -85,6 +89,7 @@ public class ReferralServiceTest {
 
         User user = createUser("user_name@dot.com", 34, 17);
 
+        when(communityRepository.findOne(17)).thenReturn(mock(Community.class));
         when(userService.getWithSocial(user.getId())).thenReturn(user);
         when(referralRepository.save(r1)).thenThrow(new DataIntegrityViolationException(""));
 

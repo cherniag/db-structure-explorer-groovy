@@ -85,19 +85,17 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Entity
 @Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})})
 @NamedQueries(
-    {@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"), @NamedQuery(
+    {
+        @NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"), @NamedQuery(
         name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL,
         query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.id from UserGroup userGroup where userGroup.communityId=(select community.id from Community community" +
-                " where community.rewriteUrlParameter=?2))"), @NamedQuery(
-        name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")})
+                " where community.rewriteUrlParameter=?2))")})
 public class User implements Serializable {
 
-    public static final String NQ_GET_USERS_FOR_RETRY_PAYMENT = "getUsersForRetryPayment";
     public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";
     public static final String NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN = "getUserCountByDeviceUID_UserGroup_StoredToken";
-    public static final String NQ_FIND_USER_BY_ID = "findUserById";
     public static final String NONE = "NONE";
-    private static final long serialVersionUID = 4414398062970887453L;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -289,6 +287,10 @@ public class User implements Serializable {
         setTariff(_3G);
     }
 
+    public boolean isUnsubscribedUser() {
+        return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isDeactivated();
+    }
+
     public boolean isSubscribedUserByPaymentType(String paymentType) {
         return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated() && getCurrentPaymentDetails().getPaymentType().equals(paymentType);
     }
@@ -327,14 +329,6 @@ public class User implements Serializable {
 
     private boolean isLastPromoForVideoAndAudio() {
         return isNotNull(lastPromo) && lastPromo.forVideoAndAudio();
-    }
-
-    public String getIdfa() {
-        return idfa;
-    }
-
-    public void setIdfa(String idfa) {
-        this.idfa = idfa;
     }
 
     public boolean isIOsNonO2ITunesSubscribedUser() {
@@ -1535,9 +1529,5 @@ public class User implements Serializable {
 
     public boolean isPaymentInProgress() {
         return getCurrentPaymentDetails() != null && (getCurrentPaymentDetails().isAwaiting() || getCurrentPaymentDetails().isErrorAndCanRetry());
-    }
-
-    public static enum Fields {
-        userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
     }
 }

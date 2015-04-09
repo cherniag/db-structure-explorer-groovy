@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ItemRepository;
 import mobi.nowtechnologies.server.persistence.repository.OfferRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.ItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.OfferDto;
@@ -40,7 +41,7 @@ public class OfferService {
     private OfferRepository offerRepository;
     private ItemRepository itemRepository;
     private FilterService filterService;
-    private UserService userService;
+    private UserRepository userRepository;
     private CloudFileService cloudFileService;
     private AccountLogService accountLogService;
 
@@ -221,7 +222,7 @@ public class OfferService {
     public List<ContentOfferDto> getContentOfferDtos(Integer userId) {
         LOGGER.debug("input parameters userId: [{}]", userId);
 
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         LOGGER.info("performance measure: getting offers");
         List<Offer> offers = offerRepository.findWithItemsAndFiltersByCommunity(user.getUserGroup().getCommunity());
         LOGGER.info("performance measure: getting bought offers ids");
@@ -270,8 +271,8 @@ public class OfferService {
         this.filterService = filterService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setCloudFileService(CloudFileService cloudFileService) {

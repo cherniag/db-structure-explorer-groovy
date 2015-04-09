@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
@@ -30,6 +31,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
     protected VFNZSMSGatewayServiceImpl gatewayService;
     private Set<String> paymentCodes;
     private PendingPaymentService pendingPaymentService;
+    private UserRepository userRepository;
     private VFResponse futureResponse = VFResponse.futureResponse();
     private BasicSMSMessageProcessor<VFResponse> smsMessageProcessor = (BasicSMSMessageProcessor<VFResponse>) new BasicSMSMessageProcessor<VFResponse>() {
         @Override
@@ -57,6 +59,10 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
     public void setPendingPaymentService(PendingPaymentService pendingPaymentService) {
         this.pendingPaymentService = pendingPaymentService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -89,7 +95,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
     public void process(VFResponse data) {
         String phoneNumber = data.getPhoneNumber();
 
-        List<User> users = userService.findByMobile(phoneNumber);
+        List<User> users = userRepository.findByMobile(phoneNumber);
 
         for (User user : users) {
 

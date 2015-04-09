@@ -15,9 +15,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity
 @Table(name = "tb_drmTypes")
 public class DrmType implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private byte i;

@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
@@ -16,6 +17,7 @@ import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.AWAITING;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 
@@ -28,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +47,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
     private Map<String, PaymentSystemService> paymentSystems;
 
     private UserService userService;
+    private UserRepository userRepository;
     private PaymentPolicyService paymentPolicyService;
     private PendingPaymentRepository pendingPaymentRepository;
     private int maxCount;
@@ -88,7 +93,10 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
     @Override
     public List<PendingPayment> createRetryPayments() {
         LOGGER.info("Start creating retry payments...");
-        final Page<User> usersPage = userService.getUsersForRetryPayment(maxCount);
+
+        int epochSeconds = getEpochSeconds();
+        PageRequest nextSubPayment = new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment");
+        final Page<User> usersPage = userRepository.getUsersForRetryPayment(epochSeconds, nextSubPayment);
 
         LOGGER.info("{} users were selected for retry payment", usersPage.getNumberOfElements());
         if (usersPage.hasNextPage()) {
@@ -131,6 +139,10 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setPaymentSystems(Map<String, PaymentSystemService> paymentSystems) {

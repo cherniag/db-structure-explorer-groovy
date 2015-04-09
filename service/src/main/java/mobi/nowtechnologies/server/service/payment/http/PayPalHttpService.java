@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PayPalHttpService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PayPalHttpService.class);
 
     private String apiUrl;
@@ -21,12 +20,52 @@ public class PayPalHttpService {
     private PayPalRequest request;
     private PostService httpService;
 
-    public PostService getPostService() {
-        return httpService;
-    }
-
     public void setPostService(PostService httpService) {
         this.httpService = httpService;
+    }
+
+    //
+    // Recurrent payment
+    //
+    public PayPalResponse getTokenForRecurrentType(String successUrl, String failUrl, String currencyCode, String communityRewriteUrl, String billingAgreementDescription) {
+        LOGGER.info("Getting token for billing agreement...");
+        return makeRequest(request.createBillingAgreementTokenRequest(successUrl, failUrl, currencyCode, communityRewriteUrl, billingAgreementDescription));
+    }
+
+    public PayPalResponse getPaymentDetailsInfoForRecurrentType(String token, String communityRewriteUrl) {
+        LOGGER.info("Getting billing agreement...");
+        return makeRequest(request.createBillingAgreementRequest(token, communityRewriteUrl));
+    }
+
+    public PayPalResponse makePaymentForRecurrentType(String billingAgreementTxId, String currencyCode, BigDecimal amount, String communityRewriteUrl) {
+        LOGGER.info("Making reference tx with billing agreement...");
+        return makeRequest(request.createReferenceTransactionRequest(billingAgreementTxId, currencyCode, amount, communityRewriteUrl));
+    }
+
+    //
+    // Onetime payment (Pay with credit Card available link) type
+    //
+    public PayPalResponse getTokenForOnetimeType(String successUrl, String failUrl, String communityRewriteUrl, String currencyCode, BigDecimal amount) {
+        LOGGER.info("Getting token for onetime payment...");
+        return makeRequest(request.createOnetimePaymentTokenRequest(successUrl, failUrl, currencyCode, communityRewriteUrl, amount));
+    }
+
+    public PayPalResponse getPaymentDetailsInfoForOnetimeType(String token, String communityRewriteUrl) {
+        LOGGER.info("Getting checkout details...");
+        return makeRequest(request.createCheckoutDetailsRequest(token, communityRewriteUrl));
+    }
+
+    public PayPalResponse makePaymentForOnetimeType(String token, String communityRewriteUrl, String payerId, String currencyCode, BigDecimal amount) {
+        LOGGER.info("Making do payment request...");
+        return makeRequest(request.createDoPaymentRequest(token, payerId, currencyCode, amount, communityRewriteUrl));
+    }
+
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
+    }
+
+    public void setRequest(PayPalRequest request) {
+        this.request = request;
     }
 
     /**
@@ -41,28 +80,5 @@ public class PayPalHttpService {
         BasicResponse response = httpService.sendHttpPost(apiUrl, params, null);
         LOGGER.info("PayPal http service get response: {}", response);
         return new PayPalResponse(response);
-    }
-
-    public PayPalResponse makeTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityRewriteUrlParameter) {
-        LOGGER.info("Getting token for billing agreement...");
-        return makeRequest(request.createTokenRequest(billingAgreementDescription, successUrl, failUrl, currencyCode, communityRewriteUrlParameter));
-    }
-
-    public PayPalResponse makeBillingAgreementRequest(String token, String communityRewriteUrlParameter) {
-        LOGGER.info("Getting billing agreement...");
-        return makeRequest(request.createBillingAgreementRequest(token, communityRewriteUrlParameter));
-    }
-
-    public PayPalResponse makeReferenceTransactionRequest(String billingAgreementTxId, String currencyCode, BigDecimal amount, String communityRewriteUrlParameter) {
-        LOGGER.info("Making reference tx with billing agreement...");
-        return makeRequest(request.createReferenceTransactionRequest(billingAgreementTxId, currencyCode, amount, communityRewriteUrlParameter));
-    }
-
-    public void setApiUrl(String apiUrl) {
-        this.apiUrl = apiUrl;
-    }
-
-    public void setRequest(PayPalRequest request) {
-        this.request = request;
     }
 }

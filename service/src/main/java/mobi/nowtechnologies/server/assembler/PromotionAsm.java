@@ -48,7 +48,8 @@ public class PromotionAsm {
         promotionDto.setActive(promotion.getIsActive());
         promotionDto.setDescription(promotion.getDescription());
         promotionDto.setEndDate(Utils.getDateFromInt(promotion.getEndDate()));
-        promotionDto.setFreeWeeks(promotion.getFreeWeeks());
+        promotionDto.setDuration(promotion.getPeriod().getDuration());
+        promotionDto.setDurationUnit(promotion.getPeriod().getDurationUnit());
         promotionDto.setI(promotion.getI());
         promotionDto.setLabel(promotion.getLabel());
         promotionDto.setMaxUsers(promotion.getMaxUsers());

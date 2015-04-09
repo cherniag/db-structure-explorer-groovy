@@ -41,7 +41,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
     public void startPayment(PendingPayment pendingPayment) throws ServiceException {
         MigPaymentDetails currentPaymentDetails = (MigPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
         PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        Community community = entityService.findById(Community.class, paymentPolicy.getCommunityId().byteValue());
+        Community community = pendingPayment.getUser().getCommunity();
 
         Period period = paymentPolicy.getPeriod();
 
