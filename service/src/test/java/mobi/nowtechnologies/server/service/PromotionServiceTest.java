@@ -672,6 +672,7 @@ public class PromotionServiceTest {
         final Promotion promotion = new Promotion().withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
         promotion.setPeriod(new Period(DurationUnit.WEEKS, 3));
         promotion.getPromoCode().withPromotion(promotion);
+        promotion.setI(1);
 
         int freeTrialStartedTimestampSeconds = 1;
 
@@ -721,7 +722,8 @@ public class PromotionServiceTest {
         verify(entityServiceMock, times(1)).updateEntity(user);
         verify(promotionServiceSpy, times(1)).updatePromotionNumUsers(promotion);
         verify(eventLoggerService, times(1)).logPromotionByPromoCodeApplied(eq(user.getId()),
-                                                                            eq(promotion.getPromoCode().getCode()),
+                                                                            eq(user.getUuid()),
+                                                                            eq(promotion.getI()),
                                                                             eq(freeTrialStartedTimestampSeconds * 1000L),
                                                                             eq(promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds) * 1000L));
     }
@@ -742,6 +744,7 @@ public class PromotionServiceTest {
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
         promotion.setEndDate((int) (calendar.getTimeInMillis() / 1000));
+        promotion.setI(1);
 
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
         Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
@@ -783,6 +786,7 @@ public class PromotionServiceTest {
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
         promotion.setPeriod(new Period(DurationUnit.WEEKS, 52));
+        promotion.setI(1);
 
         Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
             @Override

@@ -376,7 +376,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         updatePromotionNumUsers(promotion);
 
-        eventLoggerService.logPromotionByPromoCodeApplied(user.getId(), promoCode.getCode(), freeTrialStartSeconds * 1000L, freeTrialEndSeconds * 1000L);
+        eventLoggerService.logPromotionByPromoCodeApplied(user.getId(), user.getUuid(), promotion.getI(), freeTrialStartSeconds * 1000L, freeTrialEndSeconds * 1000L);
 
         return user.withIsPromotionApplied(true);
     }
