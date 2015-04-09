@@ -15,8 +15,8 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
-@Entity
-@Table(name = "device")
+//@Entity
+//@Table(name = "device")
 public class Device {
 
     @Id

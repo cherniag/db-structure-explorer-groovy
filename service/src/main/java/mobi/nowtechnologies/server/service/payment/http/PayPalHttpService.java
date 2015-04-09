@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.service.payment.http;
 
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PayPalHttpService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PayPalHttpService.class);
 
     private String apiUrl;

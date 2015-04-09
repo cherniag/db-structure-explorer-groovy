@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.shared.service;
+package mobi.nowtechnologies.server.support.http;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;

@@ -4,6 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="shared.PostService" class="mobi.nowtechnologies.server.shared.service.PostService"/>
+    <bean id="shared.PostService" class="mobi.nowtechnologies.server.support.http.PostsSaverPostService"/>
+
+    
 
 </beans>

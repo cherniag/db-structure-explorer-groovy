@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.apptests.sms;
 import mobi.nowtechnologies.server.apptests.email.DbMailService;
 import mobi.nowtechnologies.server.service.payment.request.MigRequest;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -28,8 +28,11 @@ public class MigPostService extends PostService {
         model.put(MigRequest.MigRequestParam.OADCTYPE.toString(), extractField(nameValuePairs, MigRequest.MigRequestParam.OADCTYPE));
         model.put(MigRequest.MigRequestParam.MESSAGEID.toString(), extractField(nameValuePairs, MigRequest.MigRequestParam.MESSAGEID));
 
-        dbMailService.sendMessage(MIG, extractField(nameValuePairs, MigRequest.MigRequestParam.NUMBERS), extractField(nameValuePairs, MigRequest.MigRequestParam.OADC),
-                                  extractField(nameValuePairs, MigRequest.MigRequestParam.BODY), model);
+        dbMailService.sendMessage(MIG,
+                                  extractField(nameValuePairs, MigRequest.MigRequestParam.NUMBERS),
+                                  extractField(nameValuePairs, MigRequest.MigRequestParam.OADC),
+                                  extractField(nameValuePairs, MigRequest.MigRequestParam.BODY),
+                                  model);
 
         return new BasicResponse() {
             @Override

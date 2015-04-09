@@ -9,9 +9,9 @@ import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.transport.service.PostsSaverPostService;
+import mobi.nowtechnologies.server.support.http.PostsSaverPostService;
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
-import static mobi.nowtechnologies.server.transport.service.PostsSaverPostService.Monitor;
+import static mobi.nowtechnologies.server.support.http.PostsSaverPostService.Monitor;
 
 import javax.annotation.Resource;
 
