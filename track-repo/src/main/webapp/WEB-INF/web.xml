@@ -12,11 +12,6 @@
 	</listener>
 
 	<context-param>
-		<param-name>application.name</param-name>
-		<param-value>trackrepo</param-value>
-	</context-param>
-
-	<context-param>
 		<param-name>project.version</param-name>
 		<param-value>${project.version}</param-value>
 	</context-param>

@@ -7,10 +7,6 @@
     <display-name>Now Technologies Server Admin UI</display-name>
 
     <context-param>
-        <param-name>application.name</param-name>
-        <param-value>admin</param-value>
-    </context-param>
-    <context-param>
         <param-name>project.version</param-name>
         <param-value>${project.version}</param-value>
     </context-param>
