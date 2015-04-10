@@ -28,7 +28,7 @@
           p:config-ref="environmentStringPBEConfig"/>
 
     <bean id="environmentStringPBEConfig"
-          class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig"
+          class="mobi.nowtechnologies.server.shared.message.DefaultMasterPasswordEnvironmentStringPBEConfig"
           p:algorithm="PBEWithMD5AndDES"
           p:passwordSysPropertyName="pwd"/>
 
