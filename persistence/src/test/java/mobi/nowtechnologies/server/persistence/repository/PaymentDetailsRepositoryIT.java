@@ -7,9 +7,12 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.PENDING;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 
 import javax.annotation.Resource;
 
@@ -74,41 +77,6 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
         return user;
     }
 
-    /**
-     * Adding new payment details to user should disable old one and add a new one with activated equals to true
-     */
-    @Test
-    @Transactional
-    public void addingNewPaymentDetailsAndToserWithExistingPaymentDetails() {
-        User user = createUser();
-        entityDao.saveEntity(user);
-
-        PayPalPaymentDetails paymentDetails = getPaymentDetails("2345-2345-2345-23452-2345");
-        paymentDetails.setActivated(true);
-        paymentDetails.setOwner(user);
-        paymentDetailsRepository.save(paymentDetails);
-
-        user.setCurrentPaymentDetails(paymentDetails);
-        entityDao.saveEntity(user);
-
-        assertEquals(1, user.getPaymentDetailsList().size());
-
-        PayPalPaymentDetails newPaymentDetails = getPaymentDetails("1111-2345-2345-23452-2345");
-        newPaymentDetails.setActivated(true);
-        user.getCurrentPaymentDetails().setActivated(false);
-        newPaymentDetails.setOwner(user);
-        newPaymentDetails = (PayPalPaymentDetails) paymentDetailsRepository.save(newPaymentDetails);
-
-        assertEquals(2, user.getPaymentDetailsList().size());
-        for (PaymentDetails pd : user.getPaymentDetailsList()) {
-            if ("2345-2345-2345-23452-2345".equals(((PayPalPaymentDetails) pd).getBillingAgreementTxId())) {
-                assertEquals(false, pd.isActivated());
-            } else {
-                assertEquals(true, pd.isActivated());
-            }
-        }
-    }
-
     @Test
     public void shouldFindFailurePaymentPaymentDetailsWithNoNotification() {
         //given
@@ -144,6 +112,68 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
         //then
         assertNotNull(paymentDetailsList);
         assertThat(paymentDetailsList.size(), is(0));
+    }
+
+    @Test
+    public void findPaymentDetailsByOwner() {
+        //given
+        final UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+
+        User user1 = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user1.setUserName(Utils.getRandomUUID());
+        user1.setUserGroup(o2UserGroup);
+        user1.setDeviceUID(Utils.getRandomUUID());
+        userRepository.save(user1);
+        PaymentDetails paymentDetails1 = getPaymentDetails(Utils.getRandomUUID());
+        paymentDetails1.setOwner(user1);
+        paymentDetailsRepository.save(paymentDetails1);
+
+        User user2 = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user2.setUserName(Utils.getRandomUUID());
+        user2.setUserGroup(o2UserGroup);
+        user2.setDeviceUID(Utils.getRandomUUID());
+        userRepository.save(user2);
+        PaymentDetails paymentDetails2 = getPaymentDetails(Utils.getRandomUUID());
+        paymentDetails2.setOwner(user2);
+        paymentDetailsRepository.save(paymentDetails2);
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findPaymentDetailsByOwner(user1);
+
+        //then
+        assertThat(paymentDetailsList.size(), is(1));
+        assertThat(paymentDetailsList.get(0).getI(), is(paymentDetails1.getI()));
+        assertThat(paymentDetailsList.get(0).getOwner(), is(user1));
+    }
+
+    @Test
+    public void findPaymentDetailsByOwnerIdAndLastPaymentStatus() {
+        //given
+        final UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserName(Utils.getRandomUUID());
+        user.setUserGroup(o2UserGroup);
+        user.setDeviceUID(Utils.getRandomUUID());
+        userRepository.save(user);
+
+        PaymentDetails successfulPaymentDetails = getPaymentDetails(Utils.getRandomUUID());
+        successfulPaymentDetails.setOwner(user);
+        successfulPaymentDetails.setLastPaymentStatus(SUCCESSFUL);
+        paymentDetailsRepository.save(successfulPaymentDetails);
+
+        PaymentDetails pendingPaymentDetails = getPaymentDetails(Utils.getRandomUUID());
+        pendingPaymentDetails.setOwner(user);
+        pendingPaymentDetails.setLastPaymentStatus(PENDING);
+        paymentDetailsRepository.save(pendingPaymentDetails);
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findPaymentDetailsByOwnerIdAndLastPaymentStatus(user.getId(), PENDING);
+
+        //then
+        assertThat(paymentDetailsList.size(), is(1));
+        assertThat(paymentDetailsList.get(0).getI(), is(pendingPaymentDetails.getI()));
+        assertThat(paymentDetailsList.get(0).getLastPaymentStatus(), is(PENDING));
     }
 
     @Test

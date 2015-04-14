@@ -189,8 +189,6 @@ public class User implements Serializable {
     @Column(columnDefinition = "char(255)")
     private Contract contract;
     private int numPsmsRetries;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
-    private List<PaymentDetails> paymentDetailsList;
     @OneToOne
     @JoinColumn(name = "currentPaymentDetailsId", nullable = true, insertable = false, updatable = true)
     private PaymentDetails currentPaymentDetails;
@@ -281,7 +279,6 @@ public class User implements Serializable {
         setSessionID("");
         setPin("");
         setTempToken("");
-        setPaymentDetailsList(new ArrayList<PaymentDetails>());
         setUserType(UserType.UNDEFINED);
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
         setTariff(_3G);
@@ -453,24 +450,6 @@ public class User implements Serializable {
 
     public boolean hasPhoneNumber() {
         return !isEmpty(getMobile());
-    }
-
-    public void addPaymentDetails(PaymentDetails paymentDetails) {
-        if (null != paymentDetails) {
-            this.paymentDetailsList.add(paymentDetails);
-            if (paymentDetails.getOwner() != this) {
-                paymentDetails.setOwner(this);
-            }
-        }
-    }
-
-    public PaymentDetails getPendingPaymentDetails() {
-        for (PaymentDetails pd : paymentDetailsList) {
-            if (PaymentDetailsStatus.PENDING.equals(pd.getLastPaymentStatus())) {
-                return pd;
-            }
-        }
-        return null;
     }
 
     public int getId() {
@@ -736,14 +715,6 @@ public class User implements Serializable {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
-    }
-
-    public List<PaymentDetails> getPaymentDetailsList() {
-        return paymentDetailsList;
-    }
-
-    public void setPaymentDetailsList(List<PaymentDetails> paymentDetailsList) {
-        this.paymentDetailsList = paymentDetailsList;
     }
 
     public PaymentDetails getCurrentPaymentDetails() {

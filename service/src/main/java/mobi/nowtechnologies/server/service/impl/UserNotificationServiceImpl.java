@@ -259,7 +259,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
             final mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = user.getStatus();
             final String userStatusName = userStatus.getName();
-            final List<PaymentDetails> paymentDetailsList = user.getPaymentDetailsList();
+            final List<PaymentDetails> paymentDetailsList = paymentDetailsService.getPaymentDetails(user);
 
             if (userStatusName == null) {
                 throw new NullPointerException("The parameter userStatusName is null");

@@ -803,7 +803,7 @@ public class UserNotificationServiceImplTest {
         user.setDeviceType(androidDeviceType);
         user.setStatus(limitedUserStatus);
 
-        user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+        //user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.limited.not.for.device.type");
 
@@ -849,7 +849,7 @@ public class UserNotificationServiceImplTest {
         user.setDeviceType(androidDeviceType);
         user.setStatus(subscribedUserStatus);
 
-        user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+        //user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.limited.not.for.device.type");
 
@@ -895,7 +895,7 @@ public class UserNotificationServiceImplTest {
         user.setDeviceType(androidDeviceType);
         user.setStatus(limitedUserStatus);
 
-        user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+        //user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.limited.not.for.device.type");
 
@@ -941,7 +941,7 @@ public class UserNotificationServiceImplTest {
         user.setDeviceType(androidDeviceType);
         user.setStatus(limitedUserStatus);
 
-        user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+        //user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
 
         doReturn(true).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.limited.not.for.device.type");
 
@@ -989,7 +989,7 @@ public class UserNotificationServiceImplTest {
 
         PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
-        user.setPaymentDetailsList(Collections.<PaymentDetails>singletonList(paymentDetails));
+        when(paymentDetailsServiceMock.getPaymentDetails(user)).thenReturn(Collections.singletonList(paymentDetails));
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.limited.not.for.device.type");
 
@@ -1071,7 +1071,7 @@ public class UserNotificationServiceImplTest {
         user.setDeviceType(androidDeviceType);
         user.setStatus(limitedUserStatus);
 
-        user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+        //user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.limited.not.for.device.type");
 
