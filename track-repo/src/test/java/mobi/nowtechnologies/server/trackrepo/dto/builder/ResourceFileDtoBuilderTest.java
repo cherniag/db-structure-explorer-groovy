@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
 package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -233,7 +237,6 @@ public class ResourceFileDtoBuilderTest {
         ServletContext servletContext = new MockServletContext();
         fixture = new ResourceFileDtoBuilder();
 
-        fixture.setWorkDir(new ServletContextResource(servletContext, WORKDIR_PATH));
         fixture.setPublishDir(new ServletContextResource(servletContext, ENCODE_DIST_PATH));
     }
 

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.versioncheck;
 
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
@@ -8,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionMessage;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.VersionCheckRepository;
 import mobi.nowtechnologies.server.persistence.repository.VersionMessageRepository;
 
@@ -48,6 +48,9 @@ public class VersionCheckServiceIT {
     private VersionMessageRepository versionMessageRepository;
     @Resource
     private VersionCheckRepository versionCheckRepository;
+    @Resource
+    private CommunityRepository communityRepository;
+
     private Community community;
     private DeviceType deviceType;
 
@@ -60,31 +63,35 @@ public class VersionCheckServiceIT {
         VersionMessage versionMessage5 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_MIGRATED", "http://play.google.com/new_community"));
 
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage1, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("o2"), versionMessage1, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME,
                              ClientVersion.from("1.5.0"), "image_revoked_1.5.0.jpg"));
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage4, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("o2"), versionMessage4, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME,
                              ClientVersion.from("1.5.5"), null));
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage4, VersionCheckStatus.MIGRATED, O2_TRACKS_APPLICATION_NAME,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("o2"), versionMessage4, VersionCheckStatus.MIGRATED, O2_TRACKS_APPLICATION_NAME,
                              ClientVersion.from("1.5.9"), null));
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage1, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME_WQ,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("o2"), versionMessage1, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME_WQ,
                              ClientVersion.from("1.5.0-RELEASE"), "image_revoked_1.5.0-RELEASE.jpg"));
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage2, VersionCheckStatus.FORCED_UPDATE, O2_TRACKS_APPLICATION_NAME,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("o2"), versionMessage2, VersionCheckStatus.FORCED_UPDATE, O2_TRACKS_APPLICATION_NAME,
                              ClientVersion.from("1.6.0"), "image_forced_1.6.0.jpg"));
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage3, VersionCheckStatus.SUGGESTED_UPDATE, O2_TRACKS_APPLICATION_NAME,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("o2"), versionMessage3, VersionCheckStatus.SUGGESTED_UPDATE, O2_TRACKS_APPLICATION_NAME,
                              ClientVersion.from("1.7.0"), "image_suggested_1.7.0.jpg"));
         versionCheckRepository.saveAndFlush(
-            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("vf_nz"), versionMessage5, VersionCheckStatus.MIGRATED, VF_NZ_TRACKS_APPLICATION_NAME,
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), findCommunity("vf_nz"), versionMessage5, VersionCheckStatus.MIGRATED, VF_NZ_TRACKS_APPLICATION_NAME,
                              ClientVersion.from("2.0.0"), "image_migrated_2.0.0.jpg"));
+    }
+
+    private Community findCommunity(String url) {
+        return communityRepository.findByRewriteUrlParameter(url);
     }
 
     @Test
     public void testVersionForO2CommunityWhereRangesArePresent() {
-        community = CommunityDao.getCommunity("o2");
+        community = findCommunity("o2");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
         checkVersion(null, 0, 0, 1, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
         checkVersion(null, 1, 0, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
@@ -103,7 +110,7 @@ public class VersionCheckServiceIT {
 
     @Test
     public void testVersionForO2CommunityWhereRangesArePresentForQualifier() {
-        community = CommunityDao.getCommunity("o2");
+        community = findCommunity("o2");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
         checkVersion("RELEASE", 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME_WQ, "image_revoked_1.5.0-RELEASE.jpg",
                      false);
@@ -112,7 +119,7 @@ public class VersionCheckServiceIT {
 
     @Test
     public void testVersionForHLUKCommunityWhereNoConfigurationAtAll() {
-        community = CommunityDao.getCommunity("hl_uk");
+        community = findCommunity("hl_uk");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
         checkVersion(null, 1, 4, 0, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME, null, false);
         checkVersion(null, 1, 7, 1, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME, null, false);
@@ -120,7 +127,7 @@ public class VersionCheckServiceIT {
 
     @Test
     public void checkMigratedVersionStatus() {
-        community = CommunityDao.getCommunity("vf_nz");
+        community = findCommunity("vf_nz");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
         checkVersion(null, 1, 5, 0, VersionCheckStatus.MIGRATED, "VERSION_MIGRATED", "http://play.google.com/new_community", VF_NZ_TRACKS_APPLICATION_NAME, "image_migrated_2.0.0.jpg", true);
         checkVersion(null, 2, 0, 0, VersionCheckStatus.MIGRATED, "VERSION_MIGRATED", "http://play.google.com/new_community", VF_NZ_TRACKS_APPLICATION_NAME, "image_migrated_2.0.0.jpg", true);

@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
+import mobi.nowtechnologies.server.web.service.impl.UserDetailsImpl;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
@@ -28,7 +28,6 @@ import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
@@ -97,15 +96,6 @@ public class PaymentsControllerIT extends AbstractWebControllerIT {
 
         assertEquals("payments", viewName);
         assertEquals(5, paymentPolicies.size());
-    }
-
-
-    @Test
-    public void testPaymentPageUnavailableForMTV1() throws Exception {
-        String communityUrl = "mtv1";
-        SecurityContextHolder.setContext(createSecurityContext(110));
-        mockMvc.perform(get("/payments.html").cookie(new Cookie[] {new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).
-            andExpect(view().name("payments_coming_soon"));
     }
 
     private SecurityContext createSecurityContext(int userId) {

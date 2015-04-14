@@ -36,7 +36,6 @@ public class SonyParser extends IParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(SonyParser.class);
 
     private ArrayList<String> files = new ArrayList<String>();
-    ;
     private String logFile;
     private String tempLogFile;
 

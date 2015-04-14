@@ -119,7 +119,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         deviceType.setI((byte) 7);
         deviceType.setName(DeviceType.WINDOWS_PHONE);
 
-        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
         user.setDeviceType(deviceType);
         userService.updateUser(user);
 

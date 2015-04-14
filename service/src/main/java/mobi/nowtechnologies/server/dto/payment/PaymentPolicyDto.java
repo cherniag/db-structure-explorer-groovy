@@ -42,6 +42,7 @@ public class PaymentPolicyDto {
     private MediaType paymentPolicyMediaType;
     private PaymentPolicyType paymentPolicyType;
     private String appStoreProductId;
+    private int order;
 
     public PaymentPolicyDto() { }
 
@@ -77,6 +78,7 @@ public class PaymentPolicyDto {
         setThreeG(Tariff._3G == policy.getTariff());
         setPaymentPolicyType(policy.getPaymentPolicyType());
         setAppStoreProductId(policy.getAppStoreProductId());
+        this.order = policy.getOrder();
     }
 
     public boolean isMonthly() {
@@ -234,19 +236,42 @@ public class PaymentPolicyDto {
                                         .append("oldDuration", oldDuration).append("oldPeriodUnit", oldDurationUnit).append("currencyISO", currencyISO)
                                         .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription).append("fourG", fourG).append("threeG", threeG)
                                         .append("paymentPolicyMediaType", paymentPolicyMediaType).append("paymentPolicyType", paymentPolicyType).append("appStoreProductId", appStoreProductId)
-                                        .toString();
+                                        .append("order", order).toString();
     }
 
-    public static class ByDurationAsc implements Comparator<PaymentPolicyDto> {
+    public static class ByOrderAscAndDurationAsc implements Comparator<PaymentPolicyDto> {
 
         @Override
         public int compare(PaymentPolicyDto dto1, PaymentPolicyDto dto2) {
-            int durationUnitCompareResult = dto1.getDurationUnit().compareTo(dto2.getDurationUnit());
-            return durationUnitCompareResult != 0 ?
-                   durationUnitCompareResult :
-                   Integer.compare(dto1.getDuration(), dto2.getDuration());
+            int compareResult = Integer.compare(dto1.order, dto2.order);
+
+            if (compareResult == 0) {
+                compareResult = dto1.getDurationUnit().compareTo(dto2.getDurationUnit());
+            }
+
+            if (compareResult == 0) {
+                compareResult = Integer.compare(dto1.getDuration(), dto2.getDuration());
+            }
+
+            return compareResult;
         }
     }
 
-    ;
+    public static class ByOrderAscAndDurationDesc implements Comparator<PaymentPolicyDto> {
+
+        @Override
+        public int compare(PaymentPolicyDto dto1, PaymentPolicyDto dto2) {
+            int compareResult = Integer.compare(dto1.order, dto2.order);
+
+            if (compareResult == 0) {
+                compareResult = dto2.getDurationUnit().compareTo(dto1.getDurationUnit());
+            }
+
+            if (compareResult == 0) {
+                compareResult = Integer.compare(dto2.getDuration(), dto1.getDuration());
+            }
+
+            return compareResult;
+        }
+    }
 }

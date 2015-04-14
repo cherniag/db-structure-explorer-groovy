@@ -46,9 +46,9 @@ public class GetStreamzineController extends CommonController {
     }
 
     @RequestMapping(method = GET,
-                    value = {"**/{community}/{apiVersion:6.10}/GET_STREAMZINE", "**/{community}/{apiVersion:6.9}/GET_STREAMZINE", "**/{community}/{apiVersion:6.8}/GET_STREAMZINE",
-                        "**/{community}/{apiVersion:6.7}/GET_STREAMZINE", "**/{community}/{apiVersion:6.6}/GET_STREAMZINE", "**/{community}/{apiVersion:6.5}/GET_STREAMZINE",
-                        "**/{community}/{apiVersion:6.4}/GET_STREAMZINE", "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"})
+                    value = {"**/{community}/{apiVersion:6.11}/GET_STREAMZINE", "**/{community}/{apiVersion:6.10}/GET_STREAMZINE", "**/{community}/{apiVersion:6.9}/GET_STREAMZINE",
+                        "**/{community}/{apiVersion:6.8}/GET_STREAMZINE", "**/{community}/{apiVersion:6.7}/GET_STREAMZINE", "**/{community}/{apiVersion:6.6}/GET_STREAMZINE",
+                        "**/{community}/{apiVersion:6.5}/GET_STREAMZINE", "**/{community}/{apiVersion:6.4}/GET_STREAMZINE", "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"})
     public Response getUpdateWithCache(@PathVariable("community") String community, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
                                        @RequestParam("TIMESTAMP") String timestamp, @RequestParam("WIDTHXHEIGHT") Resolution resolution,
                                        @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {

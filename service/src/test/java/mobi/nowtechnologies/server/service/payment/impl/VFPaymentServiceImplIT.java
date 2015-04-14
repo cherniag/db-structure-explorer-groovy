@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.payment.impl;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -59,6 +60,9 @@ public class VFPaymentServiceImplIT {
     @Resource(name = "service.PaymentPolicyService")
     private PaymentPolicyService paymentPolicyService;
 
+    @Resource
+    private UserRepository userRepository;
+
     @Resource(name = "service.map.paymentSystems")
     private Map<String, PaymentSystemService> paymentSystems;
 
@@ -83,7 +87,7 @@ public class VFPaymentServiceImplIT {
         String community = "vf_nz";
         Integer paymentPolicyId = 231;
 
-        User user = userService.findByNameAndCommunity(userName, community);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, community);
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
         paymentService.commitPaymentDetails(user, paymentPolicy);
 
@@ -105,7 +109,7 @@ public class VFPaymentServiceImplIT {
         Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247312", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
 
         int nextSubPayment = Utils.getEpochSeconds() + 4 * Utils.WEEK_SECONDS;
-        user = userService.findByNameAndCommunity(userName, community);
+        user = userRepository.findByUserNameAndCommunityUrl(userName, community);
         assertTrue(Math.abs(nextSubPayment - user.getNextSubPayment()) < 4);
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
@@ -118,7 +122,7 @@ public class VFPaymentServiceImplIT {
         String community = VF_NZ_COMMUNITY_REWRITE_URL;
         Integer paymentPolicyId = 231;
 
-        User user = userService.findByNameAndCommunity(userName, community);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, community);
         Integer oldNextSubPayment = user.getNextSubPayment();
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
         paymentService.commitPaymentDetails(user, paymentPolicy);
@@ -141,7 +145,7 @@ public class VFPaymentServiceImplIT {
         processorContainer.processStatusReportMessage(deliverSm);
 
         Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247312", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
-        user = userService.findByNameAndCommunity(userName, community);
+        user = userRepository.findByUserNameAndCommunityUrl(userName, community);
         assertEquals(oldNextSubPayment.intValue(), user.getNextSubPayment());
         assertEquals("001", user.getCurrentPaymentDetails().getErrorCode());
         assertEquals("UNDELIV", user.getCurrentPaymentDetails().getDescriptionError());

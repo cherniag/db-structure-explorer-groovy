@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
+
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,7 +19,9 @@ public class PromotionDto {
 
     private Date endDate;
 
-    private byte freeWeeks;
+    private int duration;
+
+    private DurationUnit durationUnit;
 
     private boolean isActive;
 
@@ -65,12 +69,20 @@ public class PromotionDto {
         this.endDate = endDate;
     }
 
-    public byte getFreeWeeks() {
-        return freeWeeks;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setFreeWeeks(byte freeWeeks) {
-        this.freeWeeks = freeWeeks;
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public DurationUnit getDurationUnit() {
+        return durationUnit;
+    }
+
+    public void setDurationUnit(DurationUnit durationUnit) {
+        this.durationUnit = durationUnit;
     }
 
     public boolean isActive() {
@@ -131,8 +143,8 @@ public class PromotionDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("i", i).append("description", description).append("type", type).append("endDate", endDate).append("freeWeeks", freeWeeks).append("isActive", isActive)
-                                        .append("maxUsers", maxUsers).append("numUsers", numUsers).append("startDate", startDate).append("subWeeks", subWeeks).append("showPromotion", showPromotion)
-                                        .append("label", label).toString();
+        return new ToStringBuilder(this).append("i", i).append("description", description).append("type", type).append("endDate", endDate).append("duration", duration)
+                                        .append("durationUnit", durationUnit).append("isActive", isActive).append("maxUsers", maxUsers).append("numUsers", numUsers).append("startDate", startDate)
+                                        .append("subWeeks", subWeeks).append("showPromotion", showPromotion).append("label", label).toString();
     }
 }

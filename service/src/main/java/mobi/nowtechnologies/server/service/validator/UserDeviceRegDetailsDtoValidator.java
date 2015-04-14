@@ -16,7 +16,7 @@ import org.springframework.validation.Errors;
  */
 public class UserDeviceRegDetailsDtoValidator extends BaseValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserRegDetailsDtoValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDeviceRegDetailsDtoValidator.class);
 
     private final String communityUri;
     private final String remoteAddr;

@@ -19,8 +19,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity
 @Table(name = "tb_userGroups")
 public class UserGroup implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -110,9 +108,5 @@ public class UserGroup implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("chartId", chartId).append("communityId", communityId).append("drmPolicyId", drmPolicyId).append("name", name).toString();
-    }
-
-    public static enum Fields {
-        i, chartId, communityId, drmPolicyId, name
     }
 }

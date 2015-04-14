@@ -27,10 +27,10 @@ public class ApplyInitPromoController extends CommonController {
     private UpdateO2UserTask updateO2UserTask;
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.10}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.9}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.8}/APPLY_INIT_PROMO",
-                        "**/{community}/{apiVersion:6\\.7}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.6}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.5}/APPLY_INIT_PROMO",
-                        "**/{community}/{apiVersion:6\\.4}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO",
-                        "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.10}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.9}/APPLY_INIT_PROMO",
+                        "**/{community}/{apiVersion:6\\.8}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.7}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.6}/APPLY_INIT_PROMO",
+                        "**/{community}/{apiVersion:6\\.5}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.4}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO",
+                        "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO", "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO"})
     public ModelAndView applyPromotionWithReactivation(@RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                        @RequestParam("OTAC_TOKEN") String token, @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
 

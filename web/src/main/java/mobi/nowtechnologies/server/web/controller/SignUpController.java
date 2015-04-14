@@ -2,10 +2,10 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.validator.UserRegDetailsDtoValidator;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.web.asm.UserRegDetailsDtoValidator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.WebUtils;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -46,11 +45,11 @@ public class SignUpController extends CommonController {
 
     private RememberMeServices rememberMeServices;
     private AuthenticationManager authenticationManager;
+    private UserRegDetailsDtoValidator userRegDetailsDtoValidator;
 
     @InitBinder(UserRegDetailsDto.USER_REG_DETAILS_DTO)
-    public void initBinder(HttpServletRequest request, WebDataBinder binder) {
-        String communityName = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue();
-        binder.setValidator(new UserRegDetailsDtoValidator(request, userService, communityName));
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(userRegDetailsDtoValidator);
     }
 
     @RequestMapping(value = "/signup.html", method = RequestMethod.GET)
@@ -121,5 +120,9 @@ public class SignUpController extends CommonController {
 
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
+    }
+
+    public void setUserRegDetailsDtoValidator(UserRegDetailsDtoValidator userRegDetailsDtoValidator) {
+        this.userRegDetailsDtoValidator = userRegDetailsDtoValidator;
     }
 }

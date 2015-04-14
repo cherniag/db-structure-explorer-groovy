@@ -11,10 +11,6 @@ public class OrMatcher<T> implements Matcher<T> {
 
     private Iterable<Matcher<T>> matchers;
 
-    public OrMatcher(Iterable<Matcher<T>> matchers) {
-        this.matchers = matchers;
-    }
-
     public OrMatcher(Matcher<T>... matchers) {
         this.matchers = Lists.newArrayList(matchers);
     }

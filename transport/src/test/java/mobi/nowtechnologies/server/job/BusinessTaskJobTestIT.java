@@ -54,7 +54,7 @@ public class BusinessTaskJobTestIT {
     private BusinessTaskJob businessTaskJob;
 
     @Resource
-    private TaskRepository taskRepository;
+    private TaskRepository<Task> taskRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -89,7 +89,7 @@ public class BusinessTaskJobTestIT {
         sendChargeNotificationTask.setUser(userRepository.save(user));
         sendChargeNotificationTask.setCreationTimestamp(now - 2000L);
         sendChargeNotificationTask.setExecutionTimestamp(now);
-        sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
+        sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.saveAndFlush(sendChargeNotificationTask);
         businessTaskJob.execute();
         TimeUnit.SECONDS.sleep(3);
         Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());
@@ -112,7 +112,7 @@ public class BusinessTaskJobTestIT {
         sendChargeNotificationTask.setUser(userRepository.save(user));
         sendChargeNotificationTask.setCreationTimestamp(now - 2000L);
         sendChargeNotificationTask.setExecutionTimestamp(now + 3000L);
-        sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
+        sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.saveAndFlush(sendChargeNotificationTask);
         businessTaskJob.execute();
         TimeUnit.SECONDS.sleep(3);
         Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());

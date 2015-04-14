@@ -134,19 +134,6 @@ public class PaymentDetailsService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void createPaymentDetailsForO2Payment(int userId, PaymentPolicy policy, String communityUrl) {
-        User user = userService.findById(userId);
-
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        applyPromoToLimitedUsers(user, community);
-
-        O2PSMSPaymentDetails details = o2PaymentService.commitPaymentDetails(user, policy);
-        user.setCurrentPaymentDetails(details);
-        update(details);
-        userRepository.save(user);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getPaymentPolicyId());
@@ -192,10 +179,10 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         Community community = communityService.getCommunityByUrl(communityUrl);
 
-        applyPromoToLimitedUsers(user, community);
+        applyPromoToLimitedUsers(user);
         PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 
         return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user, community);
@@ -203,18 +190,17 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public PayPalPaymentDetails createPayPalPaymentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentDetailsDto pdto = PayPalDto.toPaymentDetails(dto);
         return (PayPalPaymentDetails) createPaymentDetails(pdto, user, community);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, String communityUrl, int userId) throws ServiceException {
-        User user = userService.findById(userId);
+    public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, int userId) throws ServiceException {
+        User user = userRepository.findOne(userId);
 
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        applyPromoToLimitedUsers(user, community);
+        applyPromoToLimitedUsers(user);
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPoliceId);
 
         return payPalPaymentService.commitPaymentDetails(token, user, paymentPolicy, true);
@@ -222,7 +208,7 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public MigPaymentDetails createMigPaymentDetails(PSmsDto dto, String communityUrl, int userId) throws ServiceException {
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
 
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentDetailsDto pdto = PSmsDto.toPaymentDetails(dto);
@@ -250,7 +236,7 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public MigPaymentDetails commitMigPaymentDetails(String pin, int userId) {
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         return migPaymentService.commitPaymnetDetails(user, pin);
     }
 
@@ -283,7 +269,7 @@ public class PaymentDetailsService {
     public void buyByPayPalPaymentDetails(String token, String communityUrl, int userId, Integer offerId) throws ServiceException {
         LOGGER.debug("buyByPayPalPaymentDetails input parameters token, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] {token, communityUrl, userId, offerId});
 
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(user.getOperator(), PAY_PAL, community.getId());
 
@@ -305,7 +291,7 @@ public class PaymentDetailsService {
         LOGGER
             .debug("buyByCreditCardPaymentDetails input parameters creditCardDto, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] {creditCardDto, communityUrl, userId, offerId});
 
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), CREDIT_CARD, community.getId());
 
@@ -325,7 +311,7 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean resendPin(int userId, String phone, String communityUri) throws ServiceException {
-        User user = userService.findById(userId);
+        User user = userRepository.findOne(userId);
         String code = Utils.getRandomString(4);
         user.setPin(code);
         userService.updateUser(user);
@@ -410,10 +396,10 @@ public class PaymentDetailsService {
         return user;
     }
 
-    private void applyPromoToLimitedUsers(User user, Community community) {
+    private void applyPromoToLimitedUsers(User user) {
         if (user.isLimited()) {
 
-            Promotion twoWeeksTrial = promotionService.getActivePromotion(PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+            Promotion twoWeeksTrial = promotionService.getActivePromotion(user.getUserGroup(), PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE);
             long now = System.currentTimeMillis();
             int dbSecs = (int) (now / 1000); // in db we keep time in seconds not milliseconds
             if (twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate()) {

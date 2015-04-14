@@ -69,13 +69,6 @@ public class TrackDtoFactory {
         return new PageListDto<TrackDto>(getTrackDtos(sampleTrack, amount), 10, 1, amount);
     }
 
-    /**
-     * @return
-     */
-    public static List<TrackDto> getEmptyTrackDtos() {
-        return new ArrayList<TrackDto>();
-    }
-
     public static PageListDto<TrackDto> getEmptyTrackPage() {
         return new PageListDto<TrackDto>(new ArrayList<TrackDto>(), 0, 1, 0);
     }

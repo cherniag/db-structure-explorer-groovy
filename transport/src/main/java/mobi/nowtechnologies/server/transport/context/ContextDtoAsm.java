@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.context;
 
-import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -44,14 +43,12 @@ public class ContextDtoAsm {
     @Resource
     BehaviorInfoService behaviorInfoService;
     @Resource
-    TimeService timeService;
-    @Resource
     ChartBehaviorService chartBehaviorService;
 
     //
     // API
     //
-    public ContextDto assemble(User user, boolean needToLookAtActivationDate) {
+    public ContextDto assemble(User user, boolean needToLookAtActivationDate, Date serverTime) {
         if (!needToLookAtActivationDate && behaviorInfoService.isFirstDeviceLoginBeforeReferralsActivation(user)) {
             // we do not create snapshots and thus can't move forward
             return ContextDto.empty();
@@ -62,7 +59,6 @@ public class ContextDtoAsm {
         BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(needToLookAtActivationDate, community);
         UserReferralsSnapshot snapshot = behaviorInfoService.getUserReferralsSnapshot(user, behaviorConfig);
 
-        Date serverTime = timeService.now();
         List<Pair<UserStatusType, Date>> userStatusTypeDateMap = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
 
         ContextDto context = ContextDto.normal(serverTime);

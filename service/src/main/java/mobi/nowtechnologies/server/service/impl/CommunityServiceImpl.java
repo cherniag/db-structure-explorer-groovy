@@ -33,11 +33,6 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<Community> list() {
-        return communityRepository.findAll();
-    }
-
-    @Override
     public List<Community> getLiveCommunities() {
         return communityRepository.findByLive(true);
     }

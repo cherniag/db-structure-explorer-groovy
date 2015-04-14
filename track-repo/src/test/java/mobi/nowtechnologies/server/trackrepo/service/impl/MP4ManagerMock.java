@@ -37,14 +37,4 @@ public class MP4ManagerMock implements IMP4Manager {
         }
         return 0;
     }
-
-    @Override
-    public int processHeader(InputStream header, OutputStream out, UitsParameters params, String md5) {
-        return 0;
-    }
-
-    @Override
-    public String getMediaHash(String audioFile) {
-        return null;
-    }
 }

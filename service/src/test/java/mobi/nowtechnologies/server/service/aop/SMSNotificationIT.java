@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
@@ -103,7 +104,7 @@ public class SMSNotificationIT {
 
     private MigHttpService mockMigService;
 
-    private UserService mockUserService;
+    private UserRepository userRepository;
 
     private UserNotificationService userNotificationServiceMock;
 
@@ -121,7 +122,7 @@ public class SMSNotificationIT {
 
         Mockito.doNothing().when(userService).updateLastBefore48SmsMillis(anyLong(), anyInt());
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
         userService.updateLastBefore48SmsMillis(System.currentTimeMillis(), user.getId());
 
@@ -137,7 +138,7 @@ public class SMSNotificationIT {
         Mockito.doReturn(null).when(userService).unsubscribeUser(any(User.class), anyString());
         Mockito.doReturn(user).when(entityService).findById(any(Class.class), any(Object.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
         UnsubscribeDto unsubscribeDto = new UnsubscribeDto();
         unsubscribeDto.setReason("");
@@ -164,8 +165,8 @@ public class SMSNotificationIT {
         Mockito.doReturn(null).when(payPalPaymentService).commitPayment(any(PendingPayment.class), any(PayPalResponse.class));
         Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
-        Mockito.doReturn(response).when(mockPaypalHttpService).makeReferenceTransactionRequest(anyString(), anyString(), any(BigDecimal.class), anyString());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
+        Mockito.doReturn(response).when(mockPaypalHttpService).makePaymentForRecurrentType(anyString(), anyString(), any(BigDecimal.class), anyString());
 
         payPalPaymentService.startPayment(pendingPayment);
 
@@ -193,7 +194,7 @@ public class SMSNotificationIT {
         Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
         Mockito.doNothing().when(entityService).removeEntity(any(Class.class), any(Object.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
         Mockito.doReturn(response).when(mockSagePayHttpService).makeReleaseRequest(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class));
         Mockito.doReturn(response).when(mockSagePayHttpService).makeRepeatRequest(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class));
 
@@ -221,7 +222,7 @@ public class SMSNotificationIT {
 
         Mockito.doReturn(null).when(o2PaymentService).commitPayment(any(PendingPayment.class), any(PayPalResponse.class));
         Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
         Mockito.doReturn("false").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms.send"), any(Object[].class), eq((Locale) null));
         Mockito.doReturn("false").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms.send"), any(Object[].class), eq((Locale) null));
         Mockito.doReturn("falsedfdsfsd").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms"), any(Object[].class), eq((Locale) null));
@@ -241,7 +242,7 @@ public class SMSNotificationIT {
 
         Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPaymentDetails(any(CreditCardDto.class), anyString(), anyInt());
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
         paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, "O2", user.getId());
 
@@ -254,11 +255,11 @@ public class SMSNotificationIT {
         user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
         int paymentPolicyId = 1;
 
-        Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyInt(), anyString(), anyInt());
+        Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyInt(), anyInt());
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
-        paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, "O2", user.getId());
+        paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, user.getId());
 
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
     }
@@ -270,7 +271,7 @@ public class SMSNotificationIT {
 
         Mockito.doReturn(null).when(paymentDetailsService).commitMigPaymentDetails(anyString(), anyInt());
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
         paymentDetailsService.commitMigPaymentDetails("xxxxxxxxxxxxxxxxx", user.getId());
 
@@ -280,7 +281,7 @@ public class SMSNotificationIT {
     @Before
     public void setUp() throws Exception {
         mockMigService = mock(MigHttpService.class);
-        mockUserService = mock(UserService.class);
+        userRepository = mock(UserRepository.class);
         mockPaypalHttpService = mock(PayPalHttpService.class);
         mockSagePayHttpService = mock(SagePayHttpService.class);
         mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
@@ -288,7 +289,7 @@ public class SMSNotificationIT {
 
         userNotificationServiceMock = mock(UserNotificationService.class);
 
-        smsNotificationFixture.setUserService(mockUserService);
+        smsNotificationFixture.setUserRepository(userRepository);
         smsNotificationFixture.setUserNotificationService(userNotificationServiceMock);
 
         payPalPaymentService.setEntityService(entityService);

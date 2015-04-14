@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller.core;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
-import mobi.nowtechnologies.server.error.ThrottlingException;
+import mobi.nowtechnologies.server.service.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
@@ -89,10 +89,6 @@ public abstract class CommonController extends ProfileController {
 
     public void setCurrentRemoteAddr(String remoteAddr) {
         this.remoteAddrThreadLocal.set(remoteAddr);
-    }
-
-    public String getCurrentCommandName() {
-        return this.commandNameThreadLocal.get();
     }
 
     public void setCurrentCommandName(String commandName) {

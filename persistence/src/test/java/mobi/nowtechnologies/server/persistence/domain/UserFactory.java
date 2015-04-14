@@ -39,14 +39,6 @@ public class UserFactory {
     }
 
 
-    public static Collection<User> getUserUnmodifableCollection() {
-        Collection<User> users = getUserCollection();
-
-        users = Collections.unmodifiableCollection(users);
-        return users;
-    }
-
-
     public static User createUser(ActivationStatus status) {
 
         UserStatus userStatus = new UserStatus();

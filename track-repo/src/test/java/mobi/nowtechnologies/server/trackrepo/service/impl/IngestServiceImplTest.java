@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -8,8 +9,10 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
+import mobi.nowtechnologies.server.trackrepo.ingest.Ingestor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -17,33 +20,38 @@ import java.util.Set;
 
 import org.junit.*;
 import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
 
-import org.powermock.modules.junit4.PowerMockRunner;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.core.Is.is;
 
 /**
  * User: Alexsandr_Kolpakov Date: 7/17/13 Time: 12:25 PM
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class IngestServiceImplTest {
 
-    private IngestServiceImpl fixture;
+    @Mock
+    TimeService timeServiceMock;
 
-    @Before
-    public void setUp() throws Exception {
-        fixture = spy(new IngestServiceImpl());
-    }
+    @InjectMocks
+    @Spy
+    IngestServiceImpl ingestServiceSpy;
 
     @Test
     public void testAddOrUpdateTerritories_NotNullTers_Success() throws Exception {
         Track track = TrackFactory.anyTrack();
         track.setTerritories(new HashSet<Territory>());
 
-        List<DropTerritory> dropTerritories = new ArrayList<DropTerritory>();
+        List<DropTerritory> dropTerritories = new ArrayList<>();
         DropTerritory dropTerritory = new DropTerritory();
         dropTerritory.startdate = new Date();
         dropTerritory.label = "Label1";
@@ -55,22 +63,24 @@ public class IngestServiceImplTest {
         dropTerritory.country = "UA";
         dropTerritories.add(dropTerritory);
 
-        doReturn(true).when(fixture).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
-        boolean result = fixture.addOrUpdateTerritories(track, dropTerritories);
+        doReturn(true).when(ingestServiceSpy).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
 
-        Assert.assertTrue(result);
+        boolean result = ingestServiceSpy.addOrUpdateTerritories(track, dropTerritories, ingestor);
+
+        assertTrue(result);
         Assert.assertEquals("GB, UA", track.getTerritoryCodes());
         Assert.assertEquals("Label1", track.getLabel());
 
-        verify(fixture, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+        verify(ingestServiceSpy, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
     }
 
     @Test
     public void testAddOrUpdateTerritories_NullTers_Success() throws Exception {
         Track track = TrackFactory.anyTrack();
 
-        List<DropTerritory> dropTerritories = new ArrayList<DropTerritory>();
+        List<DropTerritory> dropTerritories = new ArrayList<>();
         DropTerritory dropTerritory = new DropTerritory();
         dropTerritory.startdate = new Date();
         dropTerritory.label = "Label1";
@@ -82,15 +92,17 @@ public class IngestServiceImplTest {
         dropTerritory.country = "UA";
         dropTerritories.add(dropTerritory);
 
-        doReturn(true).when(fixture).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
-        boolean result = fixture.addOrUpdateTerritories(track, dropTerritories);
+        doReturn(true).when(ingestServiceSpy).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
 
-        Assert.assertTrue(result);
+        boolean result = ingestServiceSpy.addOrUpdateTerritories(track, dropTerritories, ingestor);
+
+        assertTrue(result);
         Assert.assertEquals("GB, UA", track.getTerritoryCodes());
         Assert.assertEquals("Label1", track.getLabel());
 
-        verify(fixture, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+        verify(ingestServiceSpy, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
     }
 
     @Test
@@ -109,13 +121,13 @@ public class IngestServiceImplTest {
         audioDropFile.isrc = "dffffff";
         dropFiles.add(audioDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(ingestServiceSpy, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -140,14 +152,14 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(audioDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(ingestServiceSpy, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -167,14 +179,14 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
         Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(videoDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(ingestServiceSpy, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -198,13 +210,13 @@ public class IngestServiceImplTest {
         videoDropFile.isrc = "dffffff";
         dropFiles.add(videoDropFile);
 
-        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+        boolean result = ingestServiceSpy.addOrUpdateFiles(track, dropFiles, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
-        Assert.assertFalse(result);
+        assertFalse(result);
         Assert.assertEquals(null, track.getMediaFile());
         Assert.assertEquals(null, track.getCoverFile());
 
-        verify(fixture, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(ingestServiceSpy, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean(), eq(Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13));
     }
 
     @Test
@@ -225,9 +237,9 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true);
+        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.WARNER);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
         Assert.assertNotNull(videoFile.getId());
         Assert.assertEquals(dropFile.duration, videoFile.getDuration());
@@ -252,9 +264,9 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, false);
+        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, false, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
-        Assert.assertFalse(result);
+        assertFalse(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
         Assert.assertNotNull(videoFile.getId());
         Assert.assertEquals("path/video", videoFile.getPath());
@@ -278,9 +290,9 @@ public class IngestServiceImplTest {
         dropFile.isrc = "dffffff";
         dropFile.duration = 100;
 
-        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true);
+        boolean result = ingestServiceSpy.addOrUpdateFile(track.getFiles(), dropFile, true, Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
         Assert.assertNull(videoFile.getId());
         Assert.assertEquals(dropFile.duration, videoFile.getDuration());
@@ -304,15 +316,17 @@ public class IngestServiceImplTest {
         dropTerritory.country = "UA";
         dropTerritories.add(dropTerritory);
 
-        doReturn(false).when(fixture).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
 
-        boolean result = fixture.addOrUpdateTerritories(track, dropTerritories);
+        doReturn(false).when(ingestServiceSpy).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
 
-        Assert.assertFalse(result);
+        boolean result = ingestServiceSpy.addOrUpdateTerritories(track, dropTerritories, ingestor);
+
+        assertFalse(result);
         Assert.assertEquals("", track.getTerritoryCodes());
         Assert.assertEquals(null, track.getLabel());
 
-        verify(fixture, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+        verify(ingestServiceSpy, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class), any(Ingestor.class));
     }
 
     @Test
@@ -321,12 +335,12 @@ public class IngestServiceImplTest {
         Long curTime = System.currentTimeMillis();
         curTime = curTime - curTime % 100000;
 
-        IngestWizardData result = fixture.updateIngestData(data, false);
+        IngestWizardData result = ingestServiceSpy.updateIngestData(data, false);
 
         Assert.assertNotNull(result);
         Long suid = new Long(result.getSuid());
         Assert.assertEquals(curTime.longValue(), suid - suid % 100000);
-        Assert.assertEquals(1, fixture.ingestDataBuffer.size());
+        Assert.assertEquals(1, ingestServiceSpy.ingestDataBuffer.size());
     }
 
     @Test
@@ -335,18 +349,18 @@ public class IngestServiceImplTest {
         for (int i = 1; i < IngestServiceImpl.MAX_SIZE_DATA_BUFFER; i++) {
             IngestWizardData data = new IngestWizardData();
             data.setSuid(String.valueOf(curTime + i * 1000));
-            fixture.ingestDataBuffer.put(data.getSuid(), data);
+            ingestServiceSpy.ingestDataBuffer.put(data.getSuid(), data);
         }
         IngestWizardData dataExpired = new IngestWizardData();
         dataExpired.setSuid(String.valueOf(curTime - IngestServiceImpl.EXPIRE_PERIOD_BUFFER * 2));
-        fixture.ingestDataBuffer.put(dataExpired.getSuid(), dataExpired);
+        ingestServiceSpy.ingestDataBuffer.put(dataExpired.getSuid(), dataExpired);
 
         IngestWizardData data = null;
 
-        IngestWizardData result = fixture.updateIngestData(data, false);
+        IngestWizardData result = ingestServiceSpy.updateIngestData(data, false);
 
-        Assert.assertNull(fixture.ingestDataBuffer.get(dataExpired.getSuid()));
-        Assert.assertEquals(IngestServiceImpl.MAX_SIZE_DATA_BUFFER, fixture.ingestDataBuffer.size());
+        Assert.assertNull(ingestServiceSpy.ingestDataBuffer.get(dataExpired.getSuid()));
+        Assert.assertEquals(IngestServiceImpl.MAX_SIZE_DATA_BUFFER, ingestServiceSpy.ingestDataBuffer.size());
     }
 
     @Test
@@ -355,15 +369,15 @@ public class IngestServiceImplTest {
         for (int i = 1; i <= IngestServiceImpl.MAX_SIZE_DATA_BUFFER; i++) {
             IngestWizardData data = new IngestWizardData();
             data.setSuid(String.valueOf(curTime - i * 1000));
-            fixture.ingestDataBuffer.put(data.getSuid(), data);
+            ingestServiceSpy.ingestDataBuffer.put(data.getSuid(), data);
         }
 
         IngestWizardData data = null;
 
-        IngestWizardData result = fixture.updateIngestData(data, false);
+        IngestWizardData result = ingestServiceSpy.updateIngestData(data, false);
 
-        Assert.assertNull(fixture.ingestDataBuffer.get(curTime - IngestServiceImpl.MAX_SIZE_DATA_BUFFER * 1000));
-        Assert.assertEquals(IngestServiceImpl.MAX_SIZE_DATA_BUFFER, fixture.ingestDataBuffer.size());
+        Assert.assertNull(ingestServiceSpy.ingestDataBuffer.get(curTime - IngestServiceImpl.MAX_SIZE_DATA_BUFFER * 1000));
+        Assert.assertEquals(IngestServiceImpl.MAX_SIZE_DATA_BUFFER, ingestServiceSpy.ingestDataBuffer.size());
     }
 
     @Test(expected = IngestSessionClosedException.class)
@@ -371,7 +385,7 @@ public class IngestServiceImplTest {
         Long curTime = System.currentTimeMillis();
         IngestWizardData data = new IngestWizardData();
 
-        fixture.updateIngestData(data, false);
+        ingestServiceSpy.updateIngestData(data, false);
     }
 
     @Test
@@ -379,15 +393,15 @@ public class IngestServiceImplTest {
         Long curTime = System.currentTimeMillis();
         IngestWizardData data1 = new IngestWizardData();
         data1.setSuid(String.valueOf(curTime - 1000));
-        fixture.ingestDataBuffer.put(data1.getSuid(), data1);
+        ingestServiceSpy.ingestDataBuffer.put(data1.getSuid(), data1);
 
         IngestWizardData data = new IngestWizardData();
         data.setSuid(data1.getSuid());
 
-        IngestWizardData result = fixture.updateIngestData(data, true);
+        IngestWizardData result = ingestServiceSpy.updateIngestData(data, true);
 
         Assert.assertSame(data1, result);
-        Assert.assertEquals(0, fixture.ingestDataBuffer.size());
+        Assert.assertEquals(0, ingestServiceSpy.ingestDataBuffer.size());
     }
 
     @Test
@@ -395,14 +409,407 @@ public class IngestServiceImplTest {
         Long curTime = System.currentTimeMillis();
         IngestWizardData data1 = new IngestWizardData();
         data1.setSuid(String.valueOf(curTime - 1000));
-        fixture.ingestDataBuffer.put(data1.getSuid(), data1);
+        ingestServiceSpy.ingestDataBuffer.put(data1.getSuid(), data1);
 
         IngestWizardData data = new IngestWizardData();
         data.setSuid(data1.getSuid());
 
-        IngestWizardData result = fixture.updateIngestData(data, false);
+        IngestWizardData result = ingestServiceSpy.updateIngestData(data, false);
 
         Assert.assertSame(data1, result);
-        Assert.assertEquals(1, fixture.ingestDataBuffer.size());
+        Assert.assertEquals(1, ingestServiceSpy.ingestDataBuffer.size());
+    }
+
+    @Test
+     public void shouldReturnTrueWithoutTerritoriesChangesWhenDropTerritoryDoesNotHaveCountry() {
+        //given
+        Set<Territory> territories = Collections.emptySet();
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = null;
+
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(true));
+        assertThat(territories.size(), is(0));
+    }
+
+    @Test
+    public void shouldReturnTrueAndAddNewTerritoryInToTerritoriesWhenNoSuchCountryInTerritories() {
+        //given
+        Set<Territory> territories = new HashSet<>();
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = "country";
+        dropTerritory.distributor = "distributor";
+        dropTerritory.label = "label";
+        dropTerritory.publisher = "publisher";
+        dropTerritory.currency = "currency";
+        dropTerritory.price = Float.MAX_VALUE;
+        dropTerritory.startdate = new Date(0);
+        dropTerritory.reportingId = "reportingId";
+        dropTerritory.dealReference = "dealReference";
+
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
+
+        Date dateMock = mock(Date.class);
+        when(timeServiceMock.now()).thenReturn(dateMock);
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(true));
+        assertThat(territories.size(), is(1));
+
+        Territory territory = territories.iterator().next();
+        assertThat(territory.getCode(), is(dropTerritory.country));
+        assertThat(territory.getCreateDate(), is(dateMock));
+        assertThat(territory.getDistributor(), is(dropTerritory.distributor));
+        assertThat(territory.getPublisher(), is(dropTerritory.publisher));
+        assertThat(territory.getLabel(), is(dropTerritory.label));
+        assertThat(territory.getCurrency(), is(dropTerritory.currency));
+        assertThat(territory.getPrice(), is(dropTerritory.price));
+        assertThat(territory.getStartDate(), is(dropTerritory.startdate));
+        assertThat(territory.getReportingId(), is(dropTerritory.reportingId));
+        assertThat(territory.getPriceCode(), is(dropTerritory.priceCode));
+        assertThat(territory.getDealReference(), is(dropTerritory.dealReference));
+        assertThat(territory.isDeleted(), is(false));
+        assertThat(territory.getDeleteDate(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldReturnTrueAndModifyTerritoryInTerritoriesWhenNoSuchCountryInTerritories() {
+        //given
+        Date terrCreateDate = new Date();
+
+        Territory terr = new Territory();
+        terr.setCode("country");
+        terr.setCreateDate(terrCreateDate);
+
+        Set<Territory> territories = new HashSet<>();
+        territories.add(terr);
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = terr.getCode();
+        dropTerritory.distributor = "distributor";
+        dropTerritory.label = "label";
+        dropTerritory.publisher = "publisher";
+        dropTerritory.currency = "currency";
+        dropTerritory.price = Float.MAX_VALUE;
+        dropTerritory.startdate = new Date(0);
+        dropTerritory.reportingId = "reportingId";
+        dropTerritory.dealReference = "dealReference";
+
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
+
+        Date dateMock = mock(Date.class);
+        when(timeServiceMock.now()).thenReturn(dateMock);
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(true));
+        assertThat(territories.size(), is(1));
+
+        Territory territory = territories.iterator().next();
+        assertThat(territory.getCode(), is(dropTerritory.country));
+        assertThat(territory.getCreateDate(), is(terrCreateDate));
+        assertThat(territory.getDistributor(), is(dropTerritory.distributor));
+        assertThat(territory.getPublisher(), is(dropTerritory.publisher));
+        assertThat(territory.getLabel(), is(dropTerritory.label));
+        assertThat(territory.getCurrency(), is(dropTerritory.currency));
+        assertThat(territory.getPrice(), is(dropTerritory.price));
+        assertThat(territory.getStartDate(), is(dropTerritory.startdate));
+        assertThat(territory.getReportingId(), is(dropTerritory.reportingId));
+        assertThat(territory.getPriceCode(), is(dropTerritory.priceCode));
+        assertThat(territory.getDealReference(), is(dropTerritory.dealReference));
+        assertThat(territory.isDeleted(), is(false));
+        assertThat(territory.getDeleteDate(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldReturnTrueAndModifyTerritoryInTerritoriesWhenSuchCountryAlreadyExistsAndTakeDownIsFalse() {
+        //given
+        Date terrCreateDate = new Date();
+
+        Territory terr = new Territory();
+        terr.setCode("country");
+        terr.setCreateDate(terrCreateDate);
+
+        Set<Territory> territories = new HashSet<>();
+        territories.add(terr);
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = terr.getCode();
+        dropTerritory.distributor = "distributor";
+        dropTerritory.label = "label";
+        dropTerritory.publisher = "publisher";
+        dropTerritory.currency = "currency";
+        dropTerritory.price = Float.MAX_VALUE;
+        dropTerritory.startdate = new Date(0);
+        dropTerritory.reportingId = "reportingId";
+        dropTerritory.dealReference = "dealReference";
+        dropTerritory.takeDown = false;
+
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
+
+        Date dateMock = mock(Date.class);
+        when(timeServiceMock.now()).thenReturn(dateMock);
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(true));
+        assertThat(territories.size(), is(1));
+
+        Territory territory = territories.iterator().next();
+        assertThat(territory.getCode(), is(dropTerritory.country));
+        assertThat(territory.getCreateDate(), is(terrCreateDate));
+        assertThat(territory.getDistributor(), is(dropTerritory.distributor));
+        assertThat(territory.getPublisher(), is(dropTerritory.publisher));
+        assertThat(territory.getLabel(), is(dropTerritory.label));
+        assertThat(territory.getCurrency(), is(dropTerritory.currency));
+        assertThat(territory.getPrice(), is(dropTerritory.price));
+        assertThat(territory.getStartDate(), is(dropTerritory.startdate));
+        assertThat(territory.getReportingId(), is(dropTerritory.reportingId));
+        assertThat(territory.getPriceCode(), is(dropTerritory.priceCode));
+        assertThat(territory.getDealReference(), is(dropTerritory.dealReference));
+        assertThat(territory.isDeleted(), is(false));
+        assertThat(territory.getDeleteDate(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldReturnTrueAndModifyTerritoryInTerritoriesWhenSuchCountryAlreadyExistsAndTakeDownIsTrue() {
+        //given
+        Date terrCreateDate = new Date();
+        String distributor = "";
+        String publisher = "";
+        String label = "";
+        String currency = "";
+        float price = Float.MIN_VALUE;
+        Date startDate = new Date();
+        String reportingId = "";
+        String priceCode = "";
+        String dealReference = "";
+
+        Territory terr = new Territory();
+        terr.setCode("country");
+        terr.setCreateDate(terrCreateDate);
+        terr.setDistributor(distributor);
+        terr.setPublisher(publisher);
+        terr.setLabel(label);
+        terr.setCurrency(currency);
+        terr.setPrice(price);
+        terr.setStartDate(startDate);
+        terr.setReportingId(reportingId);
+        terr.setPriceCode(priceCode);
+        terr.setDealReference(dealReference);
+
+        Set<Territory> territories = new HashSet<>();
+        territories.add(terr);
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = terr.getCode();
+        dropTerritory.distributor = "distributor";
+        dropTerritory.label = "label";
+        dropTerritory.publisher = "publisher";
+        dropTerritory.currency = "currency";
+        dropTerritory.price = Float.MAX_VALUE;
+        dropTerritory.startdate = new Date(0);
+        dropTerritory.reportingId = "reportingId";
+        dropTerritory.dealReference = "dealReference";
+        dropTerritory.takeDown = true;
+
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
+
+        Date dateMock = mock(Date.class);
+        when(timeServiceMock.now()).thenReturn(dateMock);
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(false));
+        assertThat(territories.size(), is(1));
+
+        Territory territory = territories.iterator().next();
+        assertThat(territory.getCode(), is(dropTerritory.country));
+        assertThat(territory.getCreateDate(), is(terrCreateDate));
+        assertThat(territory.getDistributor(), is(distributor));
+        assertThat(territory.getPublisher(), is(publisher));
+        assertThat(territory.getLabel(), is(label));
+        assertThat(territory.getCurrency(), is(currency));
+        assertThat(territory.getPrice(), is(price));
+        assertThat(territory.getStartDate(), is(startDate));
+        assertThat(territory.getReportingId(), is(reportingId));
+        assertThat(territory.getPriceCode(), is(priceCode));
+        assertThat(territory.getDealReference(), is(dealReference));
+        assertThat(territory.isDeleted(), is(true));
+        assertThat(territory.getDeleteDate(), is(dateMock));
+    }
+
+    @Test
+    public void shouldReturnTrueAndModifyTerritoryInTerritoriesWhenTerritoryIsWorldWideAndIngestorIsUNIVERSALAndTakeDownIsTrue() {
+        //given
+        Date terrCreateDate = new Date();
+        String distributor = "";
+        String publisher = "";
+        String label = "";
+        String currency = "";
+        float price = Float.MIN_VALUE;
+        Date startDate = new Date();
+        String reportingId = "";
+        String priceCode = "";
+        String dealReference = "";
+        String country = "country";
+
+        Territory terr = new Territory();
+        terr.setCode(country);
+        terr.setCreateDate(terrCreateDate);
+        terr.setDistributor(distributor);
+        terr.setPublisher(publisher);
+        terr.setLabel(label);
+        terr.setCurrency(currency);
+        terr.setPrice(price);
+        terr.setStartDate(startDate);
+        terr.setReportingId(reportingId);
+        terr.setPriceCode(priceCode);
+        terr.setDealReference(dealReference);
+
+        Set<Territory> territories = new HashSet<>();
+        territories.add(terr);
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = "WorldWide";
+        dropTerritory.distributor = "distributor";
+        dropTerritory.label = "label";
+        dropTerritory.publisher = "publisher";
+        dropTerritory.currency = "currency";
+        dropTerritory.price = Float.MAX_VALUE;
+        dropTerritory.startdate = new Date(0);
+        dropTerritory.reportingId = "reportingId";
+        dropTerritory.dealReference = "dealReference";
+        dropTerritory.takeDown = true;
+
+        Ingestor ingestor = Ingestor.UNIVERSAL_DDEX_3_7_ASSET_AND_METADATA_1_13;
+
+        Date dateMock = mock(Date.class);
+        when(timeServiceMock.now()).thenReturn(dateMock);
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(true));
+        assertThat(territories.size(), is(2));
+
+        for (Territory territory : territories) {
+            if (territory.getCode().equals(country)) {
+                assertThat(territory.getCreateDate(), is(terrCreateDate));
+                assertThat(territory.getDistributor(), is(distributor));
+                assertThat(territory.getPublisher(), is(publisher));
+                assertThat(territory.getLabel(), is(label));
+                assertThat(territory.getCurrency(), is(currency));
+                assertThat(territory.getPrice(), is(price));
+                assertThat(territory.getStartDate(), is(startDate));
+                assertThat(territory.getReportingId(), is(reportingId));
+                assertThat(territory.getPriceCode(), is(priceCode));
+                assertThat(territory.getDealReference(), is(dealReference));
+                assertThat(territory.isDeleted(), is(false));
+                assertThat(territory.getDeleteDate(), is(nullValue()));
+            }else{
+                assertThat(territory.getCode(), is("WorldWide"));
+                assertThat(territory.getCreateDate(), is(dateMock));
+                assertThat(territory.getDistributor(), is(dropTerritory.distributor));
+                assertThat(territory.getPublisher(), is(dropTerritory.publisher));
+                assertThat(territory.getLabel(), is(dropTerritory.label));
+                assertThat(territory.getCurrency(), is(dropTerritory.currency));
+                assertThat(territory.getPrice(), is(dropTerritory.price));
+                assertThat(territory.getStartDate(), is(dropTerritory.startdate));
+                assertThat(territory.getReportingId(), is(dropTerritory.reportingId));
+                assertThat(territory.getPriceCode(), is(dropTerritory.priceCode));
+                assertThat(territory.getDealReference(), is(dropTerritory.dealReference));
+                assertThat(territory.isDeleted(), is(false));
+                assertThat(territory.getDeleteDate(), is(nullValue()));
+            }
+        }
+    }
+
+    @Test
+    public void shouldReturnFalseAndModifyAllTerritoriesInTerritoriesWhenTerritoryIsWorldWideAndIngestorIsEMI_UMGAndTakeDownIsTrue() {
+        //given
+        Date terrCreateDate = new Date();
+        String country = "country";
+        String distributor = "";
+        String publisher = "";
+        String label = "";
+        String currency = "";
+        float price = Float.MIN_VALUE;
+        Date startDate = new Date();
+        String reportingId = "";
+        String priceCode = "";
+        String dealReference = "";
+
+        Territory terr = new Territory();
+        terr.setCode(country);
+        terr.setCreateDate(terrCreateDate);
+        terr.setDistributor(distributor);
+        terr.setPublisher(publisher);
+        terr.setLabel(label);
+        terr.setCurrency(currency);
+        terr.setPrice(price);
+        terr.setStartDate(startDate);
+        terr.setReportingId(reportingId);
+        terr.setPriceCode(priceCode);
+        terr.setDealReference(dealReference);
+
+        Set<Territory> territories = new HashSet<>();
+        territories.add(terr);
+
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.country = "WorldWide";
+        dropTerritory.distributor = "distributor";
+        dropTerritory.label = "label";
+        dropTerritory.publisher = "publisher";
+        dropTerritory.currency = "currency";
+        dropTerritory.price = Float.MAX_VALUE;
+        dropTerritory.startdate = new Date(0);
+        dropTerritory.reportingId = "reportingId";
+        dropTerritory.dealReference = "dealReference";
+        dropTerritory.takeDown = true;
+
+        Ingestor ingestor = Ingestor.EMI_UMG;
+
+        Date dateMock = mock(Date.class);
+        when(timeServiceMock.now()).thenReturn(dateMock);
+
+        //when
+        boolean addOrUpdateTerritory = ingestServiceSpy.addOrUpdateTerritory(territories, dropTerritory, ingestor);
+
+        //then
+        assertThat(addOrUpdateTerritory, is(false));
+        assertThat(territories.size(), is(1));
+
+        Territory territory = territories.iterator().next();
+        assertThat(territory.getCode(), is(country));
+        assertThat(territory.getCreateDate(), is(terrCreateDate));
+        assertThat(territory.getDistributor(), is(distributor));
+        assertThat(territory.getPublisher(), is(publisher));
+        assertThat(territory.getLabel(), is(label));
+        assertThat(territory.getCurrency(), is(currency));
+        assertThat(territory.getPrice(), is(price));
+        assertThat(territory.getStartDate(), is(startDate));
+        assertThat(territory.getReportingId(), is(reportingId));
+        assertThat(territory.getPriceCode(), is(priceCode));
+        assertThat(territory.getDealReference(), is(dealReference));
+        assertThat(territory.isDeleted(), is(true));
+        assertThat(territory.getDeleteDate(), is(dateMock));
     }
 }

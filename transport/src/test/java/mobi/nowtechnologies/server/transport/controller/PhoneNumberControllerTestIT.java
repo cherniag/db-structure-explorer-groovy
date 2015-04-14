@@ -18,7 +18,6 @@ import javax.xml.transform.dom.DOMSource;
 import java.io.ByteArrayInputStream;
 
 import com.sentaca.spring.smpp.mo.MOMessage;
-import org.apache.commons.lang3.StringUtils;
 import org.jsmpp.bean.DeliverSm;
 import org.smslib.Message;
 import org.w3c.dom.Document;
@@ -147,7 +146,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setProvider(null);
         vfUserService.updateUser(user);
 
@@ -174,7 +173,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
             "></response>"));
 
 
-        user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         assertEquals(null, user.getProvider());
 
         DeliverSm deliverSm = new DeliverSm();
@@ -203,7 +202,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setProvider(null);
         vfUserService.updateUser(user);
 
@@ -213,7 +212,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
             "></response>"));
 
 
-        user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         assertEquals(null, user.getProvider());
 
         DeliverSm deliverSm = new DeliverSm();
@@ -284,9 +283,11 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         o2ProviderServiceSpy.setO2Service(o2Service);
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
-                                                                                     .param("TIMESTAMP", timestamp)).andExpect(status().isOk()).andExpect(content().string(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl" +
-            ">http://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
+                                                                                     .param("TIMESTAMP", timestamp)).andExpect(status().isOk()).andExpect(
+            content().string(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber" +
+                "><redeemServerUrl" +
+                ">http://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
     }
 
     @Test
@@ -300,11 +301,26 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        resetMobile(userName);
+        resetMobile(userName, communityName);
 
         mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
                                                                                              .param("TIMESTAMP", timestamp)).andExpect(status().isForbidden())
                .andExpect(xpath("/response/errorMessage/errorCode").string("604"));
+    }
+
+    @Test
+    public void shouldInvalidPhoneNumberGivenVersionLessOrEqual5() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a444";
+        String phone = "+44711111xxxxx";
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(
+            post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").number(601d));
     }
 
     @Test
@@ -319,7 +335,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        resetMobile(userName);
+        resetMobile(userName, communityName);
 
         mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
                                                                                              .param("TIMESTAMP", timestamp).param("PHONE", phone)).andExpect(status().isForbidden())
@@ -369,7 +385,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        resetMobile(userName);
+        resetMobile(userName, communityName);
 
         mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
                                                                                              .param("TIMESTAMP", timestamp)).andExpect(status().isOk())
@@ -388,7 +404,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        resetMobile(userName);
+        resetMobile(userName, communityName);
 
         mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
                                                                                              .param("TIMESTAMP", timestamp).param("PHONE", phone)).andExpect(status().isOk())
@@ -503,12 +519,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         reset(vfGatewayServiceSpy);
     }
 
-    private void resetMobile(String userName) {
-        User user = userService.findByName(userName);
+    private void resetMobile(String userName, String communityName) {
+        User user = userRepository.findByUserNameAndCommunityUrl(userName, communityName);
         user.setMobile(null);
 
         userService.updateUser(user);
-        user = userService.findByName(userName);
-        assertTrue(StringUtils.isEmpty(user.getMobile()));
     }
 }

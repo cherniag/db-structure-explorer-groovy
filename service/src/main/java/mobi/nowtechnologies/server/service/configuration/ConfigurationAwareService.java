@@ -22,11 +22,6 @@ public class ConfigurationAwareService<T extends TriggerType, Value> implements 
         return ruleServiceSupport;
     }
 
-    //TODO: get rid of this, introduced for test purpose
-    protected void setRuleServiceSupport(RuleServiceSupport ruleServiceSupport) {
-        this.ruleServiceSupport = ruleServiceSupport;
-    }
-
     public Configuration<T, Value, ? extends RuleBuilder<?, Value>> getConfiguration() {
         return configuration;
     }
