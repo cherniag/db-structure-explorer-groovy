@@ -68,15 +68,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ComparisonChain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
@@ -1362,19 +1357,6 @@ public class User implements Serializable {
 
     public boolean hasAppReceiptInLimitedState() {
         return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
-    }
-
-    public PaymentDetails getPreviousPaymentDetails() {
-        if (paymentDetailsList.size() > 1) {
-            Collections.sort(paymentDetailsList, new Comparator<PaymentDetails>() {
-                @Override
-                public int compare(PaymentDetails pd1, PaymentDetails pd2) {
-                    return ComparisonChain.start().compare(pd2.getCreationTimestampMillis(), pd1.getCreationTimestampMillis()).result();
-                }
-            });
-            return paymentDetailsList.get(1);
-        }
-        return null;
     }
 
     public User withOldUser(User oldUser) {
