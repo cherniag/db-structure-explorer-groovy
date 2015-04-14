@@ -9,39 +9,12 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
-
-    <bean id="propertyPlaceholderConfigurer"
-          class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
-          c:stringEncryptor-ref="configurationEncryptor"
-          p:locations-ref="appPropertiesLocations"
-          p:ignoreUnresolvablePlaceholders="true"
-          p:ignoreResourceNotFound="true"/>
-
-    <bean id="appPropResourceConfigurer"
-          class="mobi.nowtechnologies.server.utils.AppPropResourceConfigurer"
-          p:locations-ref="appPropertiesLocations"
-          p:ignoreUnresolvablePlaceholders="true"
-          p:ignoreResourceNotFound="true"/>
-
     <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
     </util:list>
 
-    <bean id="configurationEncryptor"
-          class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
-          p:config-ref="environmentStringPBEConfig"/>
-
-    <bean id="environmentStringPBEConfig"
-          class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig"
-          p:algorithm="PBEWithMD5AndDES"
-          p:passwordSysPropertyName="pwd"/>
-
     <beans profile="application-tests">
-
-        <util:constant
-                id="SYSTEM_PROPERTIES_MODE_OVERRIDE"
-                static-field="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
 
         <bean id="propertyPlaceholderConfigurer"
               class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
@@ -49,7 +22,7 @@
               p:locations-ref="appPropertiesLocations"
               p:ignoreUnresolvablePlaceholders="true"
               p:ignoreResourceNotFound="true"
-              p:systemPropertiesMode="#{SYSTEM_PROPERTIES_MODE_OVERRIDE}"/>
+              p:systemPropertiesMode="#{T(org.springframework.beans.factory.config.PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_OVERRIDE)}"/>
 
         <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
             <value>classpath:application.properties</value>

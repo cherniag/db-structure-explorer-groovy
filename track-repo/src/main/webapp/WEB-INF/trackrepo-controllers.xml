@@ -28,7 +28,7 @@
  	</bean>
 
 	<bean class="mobi.nowtechnologies.server.admin.prop.PropController">
-		<property name="appPropResourceConfigurer" ref="trackrepoAppPropertyPlaceholderConfigurer"/>
+		<property name="appPropResourceConfigurer" ref="appPropResourceConfigurer"/>
 	</bean>
 
 </beans>

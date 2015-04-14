@@ -13,18 +13,6 @@
     -->
     <context:annotation-config/>
 
-    <!-- Application properties     -->
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:application.properties</value>
-                <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-            </list>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
-        <property name="ignoreResourceNotFound" value="true" />
-    </bean>
-
     <!-- TODO re-check usage of this bean -->
     <bean id="web.FlashMapManager" class="mobi.nowtechnologies.server.web.view.CookieFlashMapManager"/>
 

@@ -2,8 +2,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
@@ -12,35 +10,12 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- Application properties     -->
-    <bean id="propertyPlaceholderConfigurer"
-          class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
-          c:stringEncryptor-ref="trackRepo.configurationEncryptor"
-          p:locations-ref="trackRepo.appPropertiesLocations"
-          p:ignoreUnresolvablePlaceholders="true"
-          p:ignoreResourceNotFound="true"/>
-
-    <bean id="trackrepoAppPropertyPlaceholderConfigurer"
-          class="mobi.nowtechnologies.server.utils.AppPropResourceConfigurer"
-          p:locations-ref="trackRepo.appPropertiesLocations"
-          p:ignoreUnresolvablePlaceholders="true"
-          p:ignoreResourceNotFound="true"/>
-
-    <util:list id="trackRepo.appPropertiesLocations" value-type="org.springframework.core.io.Resource">
+    <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>classpath:trackrepo-application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
     </util:list>
-
-    <bean id="trackRepo.configurationEncryptor"
-          class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
-          p:config-ref="trackRepo.environmentStringPBEConfig"/>
-
-    <bean id="trackRepo.environmentStringPBEConfig"
-          class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig"
-          p:algorithm="PBEWithMD5AndDES"
-          p:passwordSysPropertyName="pwd"/>
 
 	<!-- Configures the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven>
