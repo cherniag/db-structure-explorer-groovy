@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
@@ -53,9 +52,6 @@ public class VFPaymentServiceImplIT {
 
     @Resource(name = "service.PaymentDetailsService")
     private PaymentDetailsService paymentDetailsService;
-
-    @Resource(name = "vf_nz.service.UserService")
-    private UserService userService;
 
     @Resource(name = "service.PaymentPolicyService")
     private PaymentPolicyService paymentPolicyService;
@@ -153,25 +149,6 @@ public class VFPaymentServiceImplIT {
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
         assertEquals(0, pendingPayments.size());
-    }
-
-    @Test
-    public void commitPaymentDetails() throws Exception {
-        final String userName = "+642102247312";
-        final String community = VF_NZ_COMMUNITY_REWRITE_URL;
-        final Integer paymentPolicyId = 231;
-
-        User user = userService.findByNameAndCommunity(userName, community);
-        user.setCurrentPaymentDetails(null);
-        userService.updateUser(user);
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
-
-        paymentService.commitPaymentDetails(user, paymentPolicy);
-
-        assertNotNull(user.getCurrentPaymentDetails());
-        assertTrue(user.getCurrentPaymentDetails().isActivated());
-        assertNotNull(user.getCurrentPaymentDetails().getI());
-        assertEquals(user.getCurrentPaymentDetails().getPaymentPolicy(), paymentPolicy);
     }
 
     protected String buildMessage(String msgId, String sub, String dlvrd, String submitDate, String doneDate, String stat, String err, String text) {
