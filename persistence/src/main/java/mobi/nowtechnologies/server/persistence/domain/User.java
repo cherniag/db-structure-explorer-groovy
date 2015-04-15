@@ -68,15 +68,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ComparisonChain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
@@ -189,8 +184,6 @@ public class User implements Serializable {
     @Column(columnDefinition = "char(255)")
     private Contract contract;
     private int numPsmsRetries;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
-    private List<PaymentDetails> paymentDetailsList;
     @OneToOne
     @JoinColumn(name = "currentPaymentDetailsId", nullable = true, insertable = false, updatable = true)
     private PaymentDetails currentPaymentDetails;
@@ -281,7 +274,6 @@ public class User implements Serializable {
         setSessionID("");
         setPin("");
         setTempToken("");
-        setPaymentDetailsList(new ArrayList<PaymentDetails>());
         setUserType(UserType.UNDEFINED);
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
         setTariff(_3G);
@@ -453,24 +445,6 @@ public class User implements Serializable {
 
     public boolean hasPhoneNumber() {
         return !isEmpty(getMobile());
-    }
-
-    public void addPaymentDetails(PaymentDetails paymentDetails) {
-        if (null != paymentDetails) {
-            this.paymentDetailsList.add(paymentDetails);
-            if (paymentDetails.getOwner() != this) {
-                paymentDetails.setOwner(this);
-            }
-        }
-    }
-
-    public PaymentDetails getPendingPaymentDetails() {
-        for (PaymentDetails pd : paymentDetailsList) {
-            if (PaymentDetailsStatus.PENDING.equals(pd.getLastPaymentStatus())) {
-                return pd;
-            }
-        }
-        return null;
     }
 
     public int getId() {
@@ -736,14 +710,6 @@ public class User implements Serializable {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
-    }
-
-    public List<PaymentDetails> getPaymentDetailsList() {
-        return paymentDetailsList;
-    }
-
-    public void setPaymentDetailsList(List<PaymentDetails> paymentDetailsList) {
-        this.paymentDetailsList = paymentDetailsList;
     }
 
     public PaymentDetails getCurrentPaymentDetails() {
@@ -1391,19 +1357,6 @@ public class User implements Serializable {
 
     public boolean hasAppReceiptInLimitedState() {
         return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
-    }
-
-    public PaymentDetails getPreviousPaymentDetails() {
-        if (paymentDetailsList.size() > 1) {
-            Collections.sort(paymentDetailsList, new Comparator<PaymentDetails>() {
-                @Override
-                public int compare(PaymentDetails pd1, PaymentDetails pd2) {
-                    return ComparisonChain.start().compare(pd2.getCreationTimestampMillis(), pd1.getCreationTimestampMillis()).result();
-                }
-            });
-            return paymentDetailsList.get(1);
-        }
-        return null;
     }
 
     public User withOldUser(User oldUser) {
