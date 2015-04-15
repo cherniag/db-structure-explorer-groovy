@@ -8,8 +8,6 @@ import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 
 import org.jasypt.encryption.StringEncryptor;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringUtils.trim;
@@ -26,23 +24,16 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
 
     private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
-    private StandardPBEStringEncryptor stringEncryptor;
+    private StringEncryptor stringEncryptor;
     private PropLocale propLocale;
-    private String password;
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public void setReloadableResourceBundleMessageSource(ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource) {
         this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
     }
 
-    public void setStringEncryptor(StandardPBEStringEncryptor stringEncryptor) {
+    public void setStringEncryptor(StringEncryptor stringEncryptor) {
         this.stringEncryptor = stringEncryptor;
     }
-
-
 
     public void setPropLocale(PropLocale propLocale) {
         this.propLocale = propLocale;
@@ -121,12 +112,6 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
         if (!isEncryptedValue(originalValue)) {
             return originalValue;
         }
-        try {
-            return decrypt(originalValue, stringEncryptor);
-        }
-        catch (EncryptionOperationNotPossibleException e) {
-            LOGGER.error("Exception decrypting with password: " + password + " value: "+ originalValue);
-            throw e;
-        }
+        return decrypt(originalValue, stringEncryptor);
     }
 }

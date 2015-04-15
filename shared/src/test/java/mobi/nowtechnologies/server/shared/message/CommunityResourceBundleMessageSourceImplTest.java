@@ -27,7 +27,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Locale.class, CommunityResourceBundleMessageSourceImpl.class, PropertyValueEncryptionUtils.class})
-@Ignore
 public class CommunityResourceBundleMessageSourceImplTest {
 
     @Mock

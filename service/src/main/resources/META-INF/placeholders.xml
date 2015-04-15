@@ -26,7 +26,7 @@
     <bean id="configurationEncryptor"
           class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
         <property name="config">
-            <bean class="org.jasypt.encryption.pbe.config.SimplePBEConfig" p:password="#{environment.getProperty('pwd', 'secret')}"/>
+            <bean class="org.jasypt.encryption.pbe.config.SimplePBEConfig" p:password="#{environment.getProperty('jasyptPassword', 'secret')}"/>
         </property>
     </bean>
 
