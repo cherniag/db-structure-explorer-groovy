@@ -324,10 +324,15 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
 
+	<bean id="serviceProps" class="mobi.nowtechnologies.server.shared.message.Prop" parent="serviceReloadableResourceBundleMessageSource"/>
+
+	<bean id="propLocale" class="mobi.nowtechnologies.server.shared.message.PropLocale"/>
+
     <bean id="serviceMessageSource"
           class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
         <property name="reloadableResourceBundleMessageSource" ref="serviceReloadableResourceBundleMessageSource"/>
         <property name="stringEncryptor" ref="configurationEncryptor"/>
+		<property name="propLocale" ref="propLocale"/>
     </bean>
 
 	<import resource="social.xml" />

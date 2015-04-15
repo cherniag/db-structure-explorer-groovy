@@ -13,19 +13,6 @@
     -->
     <context:annotation-config/>
 
-    <!-- Application properties     -->
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:application.properties</value>
-                <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-                <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
-            </list>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
-        <property name="ignoreResourceNotFound" value="true" />
-    </bean>
-
     <!-- TODO re-check usage of this bean -->
     <bean id="web.FlashMapManager" class="mobi.nowtechnologies.server.web.view.CookieFlashMapManager"/>
 
@@ -41,9 +28,6 @@
     <utils:list id="tilesLocation">
         <value>/WEB-INF/tiles-defs/template-defs.xml</value>
     </utils:list>
-
-
-
 
     <bean id="web.tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
         <property name="definitions" ref="tilesLocation"/>
@@ -84,6 +68,8 @@
         <property name="cacheSeconds" value="180" />
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
+
+    <bean id="messageProps" class="mobi.nowtechnologies.server.shared.message.Prop" parent="messageSource"/>
 
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.CookieLocaleResolver">

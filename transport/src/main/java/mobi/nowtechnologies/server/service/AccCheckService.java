@@ -31,7 +31,7 @@ public class AccCheckService {
     private DevicePromotionsService deviceService;
     @Resource
     private ChartService chartService;
-    @Resource
+    @Resource(name = "nowTechBasedRememberMeServices")
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
 
     public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails, boolean withOneTimePayment) {

@@ -80,6 +80,8 @@
         <value>/i18n/messages</value>
     </utils:list>
 
+    <bean id="messageProps" class="mobi.nowtechnologies.server.shared.message.Prop" parent="messageSource" />
+
     <alias name="messageSource" alias="rootMessageSource"/>
 
     <beans profile="TEST">
