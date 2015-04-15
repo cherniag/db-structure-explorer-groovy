@@ -14,13 +14,8 @@ http://www.springframework.org/schema/util
 http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="task.xml"/>
-
-    <import resource="classpath:META-INF\service-details-extractors.xml"/>
-
-    <import resource="classpath:META-INF\service-chart-supporter.xml"/>
-
-	<!-- Application properties -->
-    <import resource="placeholders.xml"/>
+    <import resource="classpath:META-INF/service-details-extractors.xml"/>
+    <import resource="classpath:META-INF/service-chart-supporter.xml"/>
     <import resource="streamzine-service.xml"/>
     <import resource="classpath:META-INF/smpp.xml"/>
 
@@ -325,8 +320,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     </bean>
 
 	<bean id="serviceProps" class="mobi.nowtechnologies.server.shared.message.Prop" parent="serviceReloadableResourceBundleMessageSource"/>
-
-	<bean id="propLocale" class="mobi.nowtechnologies.server.shared.message.PropLocale"/>
 
     <bean id="serviceMessageSource"
           class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">

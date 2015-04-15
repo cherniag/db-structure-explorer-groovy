@@ -9,15 +9,14 @@
 
     <import resource="/WEB-INF/transport-servlet.xml" />
 
-    <utils:list id="appPropertiesLocations">
+    <utils:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application-test.properties</value>
     </utils:list>
     
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="autoStartup" value="false" />
 		<property name="triggers">
-			<list>
-			</list>
+			<list/>
 		</property>
 	</bean>
 	

@@ -29,6 +29,9 @@
         <value>/WEB-INF/tiles-defs/template-defs.xml</value>
     </utils:list>
 
+
+
+
     <bean id="web.tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
         <property name="definitions" ref="tilesLocation"/>
 
@@ -104,6 +107,7 @@
         </bean>
     </mvc:interceptors>
 
+    <import resource="classpath:META-INF/placeholders.xml"/>
     <import resource="controllers.xml" />
     <bean id="JacksonView" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="order" value="1"/>

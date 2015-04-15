@@ -9,7 +9,7 @@
 
     <import resource="classpath:web-servlet.xml"/>
 
-    <utils:list id="appPropertiesLocations">
+    <utils:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
     </utils:list>
 </beans>

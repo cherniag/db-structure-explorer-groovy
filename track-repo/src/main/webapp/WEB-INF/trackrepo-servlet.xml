@@ -10,6 +10,8 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <import resource="classpath:META-INF/placeholders.xml"/>
+
     <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>classpath:trackrepo-application.properties</value>
@@ -81,6 +83,6 @@
 		 </list>
 	  </property>
 	</bean>
-	
+
 	<import resource="trackrepo-controllers.xml" />
 </beans>

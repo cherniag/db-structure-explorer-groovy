@@ -9,11 +9,37 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
+
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
+          c:stringEncryptor-ref="configurationEncryptor"
+          p:locations-ref="appPropertiesLocations"
+          p:ignoreUnresolvablePlaceholders="true"
+          p:ignoreResourceNotFound="true"/>
+
+    <bean id="appPropResourceConfigurer"
+          class="mobi.nowtechnologies.server.utils.AppPropResourceConfigurer"
+          p:locations-ref="appPropertiesLocations"
+          p:ignoreUnresolvablePlaceholders="true"
+          p:ignoreResourceNotFound="true"/>
+
+    <bean id="configurationEncryptor"
+          class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="config">
+            <bean
+                    class="org.jasypt.encryption.pbe.config.SimplePBEConfig"
+                    p:algorithm="PBEWithMD5AndDES"
+                    p:password="#{environment.getProperty('pwd', 'secret')}"/>
+        </property>
+    </bean>
+
     <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
     </util:list>
+
+    <bean id="propLocale" class="mobi.nowtechnologies.server.shared.message.PropLocale"/>
 
     <beans profile="application-tests">
 

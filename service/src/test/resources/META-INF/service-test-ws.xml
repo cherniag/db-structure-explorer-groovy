@@ -50,7 +50,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springfr
     <bean id="subBalancePaymentListener" class="java.lang.Object" />
     <bean id="service.RefundService" class="java.lang.Object"/>
 
-    <utils:list id="appPropertiesLocations">
+    <utils:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application-test.properties</value>
     </utils:list>
 

@@ -141,7 +141,8 @@
             </list>
         </property>
     </bean>
-	
+
+	<import resource="classpath:META-INF/placeholders.xml"/>
 	<import resource="admin-controllers.xml" />
 
     <context:annotation-config/>
