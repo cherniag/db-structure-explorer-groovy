@@ -326,6 +326,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="reloadableResourceBundleMessageSource" ref="serviceReloadableResourceBundleMessageSource"/>
         <property name="stringEncryptor" ref="configurationEncryptor"/>
 		<property name="propLocale" ref="propLocale"/>
+        <property name="password" value="#{environment.getProperty('pwd', 'secret')}"/>
     </bean>
 
 	<import resource="social.xml" />
