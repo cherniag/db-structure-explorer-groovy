@@ -12,4 +12,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 public interface ITunesService {
 
     void processInAppSubscription(User user, String transactionReceipt);
+
+    int processXPlayCapSubscription(User user, String transactionReceipt) throws ITunesXPlayCapSubscriptionException;
 }

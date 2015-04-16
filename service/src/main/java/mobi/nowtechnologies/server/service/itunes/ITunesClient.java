@@ -9,5 +9,5 @@ package mobi.nowtechnologies.server.service.itunes;
  */
 public interface ITunesClient {
 
-    ITunesResult verifyReceipt(ITunesConnectionConfig connectionConfig, String appStoreReceipt);
+    ITunesResult verifyReceipt(ITunesConnectionConfig connectionConfig, String appStoreReceipt) throws ITunesClientException;
 }
