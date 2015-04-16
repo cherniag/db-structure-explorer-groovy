@@ -26,7 +26,7 @@ public class AppVersion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer i;
+    private byte i;
 
     @Column(name = "description", columnDefinition = "char(50)")
     private String description;
@@ -41,11 +41,11 @@ public class AppVersion implements Serializable {
     public AppVersion() {
     }
 
-    public Integer getI() {
+    public byte getI() {
         return this.i;
     }
 
-    public void setI(Integer i) {
+    public void setI(byte i) {
         this.i = i;
     }
 
