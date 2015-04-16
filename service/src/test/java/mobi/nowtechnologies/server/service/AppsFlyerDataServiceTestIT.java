@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AppsFlyerData;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 
 import javax.annotation.Resource;
 
@@ -32,6 +33,9 @@ public class AppsFlyerDataServiceTestIT {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public void saveAppsFlyerData() throws Exception {
@@ -83,7 +87,7 @@ public class AppsFlyerDataServiceTestIT {
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
         user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user = userRepository.saveAndFlush(user);
         return user;
     }

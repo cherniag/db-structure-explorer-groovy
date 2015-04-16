@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
@@ -48,6 +49,9 @@ public class PaymentSystemServiceIT {
     @Resource(name = "service.EntityService")
     private EntityService entityService;
 
+    @Resource
+    UserStatusRepository userStatusRepository;
+
     @Autowired
     private CommunityRepository communityRepository;
 
@@ -61,7 +65,7 @@ public class PaymentSystemServiceIT {
 
         User user = new User();
         user.setUserName(UUID.randomUUID().toString());
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
         currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);

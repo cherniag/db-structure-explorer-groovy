@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
@@ -10,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
@@ -18,6 +18,7 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.configuration.ConfigurationAwareService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -56,12 +57,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g";
-
-    private CommunityResourceBundleMessageSource messageSource;
-    private EntityService entityService;
-    private UserService userService;
-    private DevicePromotionsService deviceService;
-
     @Resource
     PromotionRepository promotionRepository;
 
@@ -76,6 +71,14 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     @Resource
     UserRepository userRepository;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
+
+    private CommunityResourceBundleMessageSource messageSource;
+    private EntityService entityService;
+    private UserService userService;
+    private DevicePromotionsService deviceService;
 
     @Transactional(readOnly = true)
     public Promotion getActivePromotion(Community community, String promotionCode) {
@@ -123,9 +126,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
 
         if (resPromotion == null) {
-            resPromotion = (promotions.size() > 0) ?
-                           promotions.get(0) :
-                           null;
+            resPromotion = (promotions.size() > 0) ? promotions.get(0) : null;
         }
         LOGGER.info("Output parameter resPromotion=[{}]", resPromotion);
         return resPromotion;
@@ -237,7 +238,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
             throw new NullPointerException("The parameter user is null");
         }
 
-        if (UserStatusDao.LIMITED.equals(user.getStatus().getName())) {
+        if (UserStatusType.LIMITED.name().equals(user.getStatus().getName())) {
 
             Promotion potentialPromoCodePromotion = user.getPotentialPromoCodePromotion();
             if (potentialPromoCodePromotion != null) {
@@ -365,8 +366,8 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
             user.setVideoFreeTrialHasBeenActivated(true);
         }
 
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
-        user.setFreeTrialStartedTimestampMillis(secondsToMillis(freeTrialStartSeconds));
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
+        user.setFreeTrialStartedTimestampMillis(DateTimeUtils.secondsToMillis(freeTrialStartSeconds));
         user = entityService.updateEntity(user);
 
         updatePromotionNumUsers(promotion);

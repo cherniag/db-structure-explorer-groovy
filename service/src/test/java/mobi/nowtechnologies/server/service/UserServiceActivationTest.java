@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
@@ -31,7 +30,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, AccountLog.class, EmailValidator.class})
+@PrepareForTest({UserService.class, Utils.class, DeviceTypeDao.class, AccountLog.class, EmailValidator.class})
 public class UserServiceActivationTest {
 
     private UserService userServiceSpy;
@@ -89,7 +88,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
     }
 
     @Test

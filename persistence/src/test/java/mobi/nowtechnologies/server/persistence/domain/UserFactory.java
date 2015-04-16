@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -41,7 +40,7 @@ public class UserFactory {
 
         UserStatus userStatus = new UserStatus();
         userStatus.setI((byte) 10);
-        userStatus.setName(UserStatusDao.SUBSCRIBED);
+        userStatus.setName(UserStatusType.SUBSCRIBED.name());
 
         PaymentStatus paymentStatus = new PaymentStatus();
         paymentStatus.setId(2);
@@ -113,6 +112,10 @@ public class UserFactory {
     }
 
     public static User userWithDefaultNotNullFields() {
+        UserStatus userStatus = new UserStatus();
+        userStatus.setI((byte) 11);
+        userStatus.setName(UserStatusType.LIMITED.name());
+
         User user = new User();
         user.setDisplayName("");
         user.setTitle("");
@@ -121,7 +124,7 @@ public class UserFactory {
         user.setUserName("");
         user.setSubBalance((byte) 0);
         user.setToken("");
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatus);
         user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
         user.setDevice("");
         user.setUserGroup(UserGroupFactory.createUserGroup());

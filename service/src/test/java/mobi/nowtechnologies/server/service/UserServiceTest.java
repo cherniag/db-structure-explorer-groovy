@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
@@ -19,6 +18,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -29,6 +29,7 @@ import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -138,7 +139,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, AccountLog.class, EmailValidator.class})
+@PrepareForTest({UserService.class, Utils.class, DeviceTypeDao.class, AccountLog.class, EmailValidator.class})
 public class UserServiceTest {
 
     public static final int YEAR_SECONDS = 365 * 24 * 60 * 60;
@@ -164,6 +165,8 @@ public class UserServiceTest {
     UserGroupRepository userGroupRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    UserStatusRepository userStatusRepository;
 
     private UserService userServiceSpy;
     private EntityService entityServiceMock;
@@ -255,8 +258,7 @@ public class UserServiceTest {
         userServiceSpy.userTransactionRepository = userTransactionRepository;
         userServiceSpy.operatorRepository = operatorRepository;
         userServiceSpy.userRepository = userRepository;
-
-        PowerMockito.mockStatic(UserStatusDao.class);
+        userServiceSpy.userStatusRepository = userStatusRepository;
 
         userWithPromoAnswer = new Answer() {
             @Override
@@ -378,16 +380,14 @@ public class UserServiceTest {
         PaymentDetails paymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
         mockedUser.setCurrentPaymentDetails(paymentDetails);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -428,15 +428,13 @@ public class UserServiceTest {
         PaymentDetails paymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
         mockedUser.setCurrentPaymentDetails(paymentDetails);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -478,15 +476,13 @@ public class UserServiceTest {
         PaymentDetails paymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
         mockedUser.setCurrentPaymentDetails(paymentDetails);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -529,15 +525,13 @@ public class UserServiceTest {
         PaymentDetails paymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
         mockedUser.setCurrentPaymentDetails(paymentDetails);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -580,15 +574,13 @@ public class UserServiceTest {
         mockedUser.setNextSubPayment(nextSubPayment);
         mockedUser.setCurrentPaymentDetails(paymentDetails);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -629,15 +621,13 @@ public class UserServiceTest {
 
         mockedUser.setCurrentPaymentDetails(null);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -676,15 +666,13 @@ public class UserServiceTest {
         mockedUser.setNextSubPayment(30000000);
         mockedUser.setLastSuccessfulPaymentTimeMillis(System.currentTimeMillis());
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         userServiceSpy.updateUser(userDto);
 
@@ -708,15 +696,13 @@ public class UserServiceTest {
 
         User mockedUser = null;
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         userServiceSpy.updateUser(userDto);
 
@@ -752,33 +738,19 @@ public class UserServiceTest {
         mockedUser.setLastSuccessfulPaymentTimeMillis(System.currentTimeMillis());
         mockedUser.setCurrentPaymentDetails(migPaymentDetails);
 
-        Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-        final UserStatus mockedUserStatus = new UserStatus();
-        USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
         PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+
+        final UserStatus mockedUserStatus = new UserStatus();
+        Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
 
         userServiceSpy.updateUser(userDto);
 
         verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE);
         verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP);
         verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testUpdateUser_UserStatusDao_getUserStatusMapIdAsKey_RuntimeException_Failure() throws Exception {
-        UserDto userDto = UserDtoFactory.createUserDto();
-
-        User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
-
-        PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-        PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenThrow(new RuntimeException());
-
-        userServiceSpy.updateUser(userDto);
     }
 
     @Test(expected = RuntimeException.class)
@@ -1079,7 +1051,7 @@ public class UserServiceTest {
         final DeviceType noneDeviceType = new DeviceType();
         noneDeviceType.setName(DeviceType.NONE);
         final UserStatus userStatus = new UserStatus();
-        userStatus.setName(UserStatusDao.LIMITED);
+        userStatus.setName(UserStatusType.LIMITED.name());
         user.setStatus(userStatus);
         final Community community = CommunityFactory.createCommunity();
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
@@ -1092,14 +1064,13 @@ public class UserServiceTest {
 
         PowerMockito.mockStatic(Utils.class);
         PowerMockito.mockStatic(DeviceTypeDao.class);
-        PowerMockito.mockStatic(UserStatusDao.class);
 
         Mockito.doReturn(user).when(entityServiceMock).saveEntity(any(User.class));
         Mockito.when(createStoredToken(anyString(), anyString())).thenReturn(storedToken);
         Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
         Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
         Mockito.when(userGroupRepository.findByCommunity(community)).thenReturn(userGroup);
-        Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(userStatus);
         Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
         Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
         PowerMockito.doReturn(notExistUser ? null : user).when(userRepository).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
@@ -1130,8 +1101,7 @@ public class UserServiceTest {
         PowerMockito.whenNew(User.class).withNoArguments().thenReturn(expectedUser);
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
-        PowerMockito.mockStatic(UserStatusDao.class);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(new UserStatus());
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(new UserStatus());
         Answer returnFirsParamAnswer = new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -1187,7 +1157,7 @@ public class UserServiceTest {
         assertEquals(user.getDeviceType().getName().toLowerCase(), deviceTypeName);
         assertEquals(user.getOperator(), operator.getId());
         assertEquals(user.getDeviceUID(), deviceUID);
-        assertEquals(user.getStatus().getName(), UserStatusDao.LIMITED);
+        assertEquals(user.getStatus().getName(), UserStatusType.LIMITED.name());
         assertEquals(user.getActivationStatus(), ActivationStatus.REGISTERED);
 
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
@@ -1199,7 +1169,6 @@ public class UserServiceTest {
         verifyStatic(times(1));
         DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
         verifyStatic(times(1));
-        UserStatusDao.getLimitedUserStatus();
     }
 
     @Test()
@@ -1250,7 +1219,6 @@ public class UserServiceTest {
         verifyStatic(times(0));
         DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
         verifyStatic(times(0));
-        UserStatusDao.getLimitedUserStatus();
     }
 
     @Test()
@@ -1333,11 +1301,9 @@ public class UserServiceTest {
         submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
         submittedPayment.setPaymentSystem(iTunesSubscriptionType);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -1404,11 +1370,9 @@ public class UserServiceTest {
         submittedPayment.setPaymentSystem(migSmsType);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -1473,11 +1437,9 @@ public class UserServiceTest {
         submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
         submittedPayment.setPaymentSystem(iTunesSubscriptionType);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -1544,11 +1506,9 @@ public class UserServiceTest {
         submittedPayment.setPaymentSystem(migSmsType);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -1616,11 +1576,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         final int currentTimeSeconds = oldNextSubPayment + 25;
         final long currentTimeMillis = currentTimeSeconds * 1000L;
@@ -1692,11 +1650,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         final int currentTimeSeconds = oldNextSubPayment + 25;
         final long currentTimeMillis = currentTimeSeconds * 1000L;
@@ -1768,11 +1724,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         final int currentTimeSeconds = oldNextSubPayment - 5;
         final long currentTimeMillis = currentTimeSeconds * 1000L;
@@ -1842,11 +1796,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -1915,11 +1867,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -1989,11 +1939,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -2064,11 +2012,9 @@ public class UserServiceTest {
         final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
         submittedPayment.setPeriod(period);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -2123,8 +2069,7 @@ public class UserServiceTest {
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
 
         boolean isIOsnonO2ItunesSubscribedUser = user.isIOsNonO2ITunesSubscribedUser();
 
@@ -2168,11 +2113,9 @@ public class UserServiceTest {
         final Period periodMock = PowerMockito.mock(Period.class);
         submittedPayment.setPeriod(periodMock);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
-        PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
+        Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
         Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -2224,8 +2167,7 @@ public class UserServiceTest {
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+        Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
 
         boolean isIOsnonO2ItunesSubscribedUser = user.isIOsNonO2ITunesSubscribedUser();
 

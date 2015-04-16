@@ -2,8 +2,10 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import javax.annotation.Resource;
@@ -26,12 +28,14 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @Ignore
 public class WeeklyUpdateServiceIT {
 
-    private static final mobi.nowtechnologies.server.persistence.domain.UserStatus userSubscribtionStatus = UserStatusDao.getEulaUserStatus();
     @Resource(name = "service.WeeklyUpdateService")
     private WeeklyUpdateService weeklyUpdateService;
     private User testUser;
     @Resource(name = "persistence.EntityDao")
     private EntityDao entityDao;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public final void testSaveWeeklyPayment() throws Exception {
@@ -80,7 +84,7 @@ public class WeeklyUpdateServiceIT {
         testUser.setPin("");
         testUser.setPostcode("412");
         testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-        testUser.setStatus(userSubscribtionStatus);
+        testUser.setStatus(userStatusRepository.findByName(UserStatus.EULA.name()));
         testUser.setSubBalance((byte) 5);
         testUser.setTempToken("NONE");
         testUser.setTitle("Mr");

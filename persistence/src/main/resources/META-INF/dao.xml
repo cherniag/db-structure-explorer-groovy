@@ -53,17 +53,6 @@
 		<property name="dataSource" ref="persistence.DataSource" />
 	</bean>
 
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.UserStatusDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
-	</bean>
-
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="mobi.nowtechnologies.server.device.domain.DeviceTypeDao"/>
 		<property name="targetMethod" value="setDeviceTypeRepository"/>

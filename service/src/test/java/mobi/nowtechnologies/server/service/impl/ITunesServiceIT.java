@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentLock;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.persistence.repository.ITunesPaymentLockRepos
 import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
@@ -50,6 +51,8 @@ public class ITunesServiceIT {
     SubmittedPaymentRepository submittedPaymentRepository;
     @Resource
     AccountLogRepository accountLogRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @After
     public void tearDown() throws Exception {
@@ -167,7 +170,7 @@ public class ITunesServiceIT {
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
         user.setDeviceType(DeviceTypeDao.getIOSDeviceType());
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user = userRepository.saveAndFlush(user);
         return user;
     }

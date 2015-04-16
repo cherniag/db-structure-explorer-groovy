@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields;
@@ -15,8 +16,6 @@ import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.UPDATE_O2_USER;
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.VALIDATE_PHONE_NUMBER;
 import static mobi.nowtechnologies.server.shared.Utils.DAY_MILLISECONDS;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
@@ -47,26 +46,22 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     private static final int HOUR_SECONDS = 60 * 60;
     private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
     private static final int TWO_DAY_SECONDS = 2 * DAY_SECONDS;
-
-    @Resource(name = "userRepository")
-    private UserRepository userRepository;
-
-    @Resource(name = "userLogRepository")
-    private UserLogRepository userLogRepository;
-
-    @Resource(name = "paymentDetailsRepository")
-    private PaymentDetailsRepository paymentDetailsRepository;
-
-    @Resource(name = "paymentPolicyRepository")
-    private PaymentPolicyRepository paymentPolicyRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
     @Resource
     CommunityRepository communityRepository;
     @Resource
     UserGroupRepository userGroupRepository;
-
+    @Resource
+    UserStatusRepository userStatusRepository;
+    @Resource(name = "userRepository")
+    private UserRepository userRepository;
+    @Resource(name = "userLogRepository")
+    private UserLogRepository userLogRepository;
+    @Resource(name = "paymentDetailsRepository")
+    private PaymentDetailsRepository paymentDetailsRepository;
+    @Resource(name = "paymentPolicyRepository")
+    private PaymentPolicyRepository paymentPolicyRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Value("35")
     private int maxCount;
 
@@ -82,12 +77,12 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindBefore48hExpireUsers() throws Exception {
-        final int epochSeconds = getEpochSeconds();
+        final int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setLastBefore48SmsMillis(0);
         testUser.setNextSubPayment(epochSeconds + TWO_DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         testUser = userRepository.save(testUser);
 
@@ -112,12 +107,12 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindBefore48hExpireUsers_InActivePaymentDetails() throws Exception {
-        final int epochSeconds = getEpochSeconds();
+        final int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setLastBefore48SmsMillis(0);
         testUser.setNextSubPayment(epochSeconds + TWO_DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         testUser = userRepository.save(testUser);
 
@@ -142,13 +137,13 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     @Rollback
     public void testFindBefore48hExpireUsers_LastBefore48SmsMillisAfter48() throws Exception {
-        final int epochSeconds = getEpochSeconds();
+        final int epochSeconds = DateTimeUtils.getEpochSeconds();
         final int nextSubPaymentSeconds = epochSeconds + DAY_SECONDS;
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setLastBefore48SmsMillis((nextSubPaymentSeconds - 10) * 1000L);
         testUser.setNextSubPayment(nextSubPaymentSeconds);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         testUser = userRepository.save(testUser);
 
@@ -172,12 +167,12 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindBefore48hExpireUsers_NextSubPaymentAtThreeDays() throws Exception {
-        final int epochSeconds = getEpochSeconds();
+        final int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setLastBefore48SmsMillis(0);
         testUser.setNextSubPayment(epochSeconds + 3 * DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         testUser = userRepository.save(testUser);
 
@@ -201,12 +196,12 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindBefore48hExpireUsers_NextSubPaymentAtDay() throws Exception {
-        final int epochSeconds = getEpochSeconds();
+        final int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setLastBefore48SmsMillis(0);
         testUser.setNextSubPayment(epochSeconds + DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         testUser = userRepository.save(testUser);
 
@@ -231,12 +226,12 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindBefore48hExpireUsers_NextSubPaymentNow() throws Exception {
-        final int epochSeconds = getEpochSeconds();
+        final int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setLastBefore48SmsMillis(0);
         testUser.setNextSubPayment(epochSeconds);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         testUser = userRepository.save(testUser);
 
@@ -274,7 +269,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testGetUsersForRetryPayment_MadeRetriesNotEqRetriesOnError_Success() throws Exception {
 
-        int epochSeconds = getEpochSeconds();
+        int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         UserGroup o2UserGroup = findUserGroupForO2Community();
 
@@ -317,7 +312,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testGetUsersForRetryPayment_O2CommunityUserWithActivatePaymentDetailsAndNextSubPaymentInTheFutureAndMadeRetriesEqRetriesOnError_Success() throws Exception {
 
-        int epochSeconds = getEpochSeconds();
+        int epochSeconds = DateTimeUtils.getEpochSeconds();
 
         UserGroup o2UserGroup = findUserGroupForO2Community();
 
@@ -355,7 +350,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testGetUsersForRetryPayment_O2CommunityUserWithActivatePaymentDetailsAndNextSubPaymentInThePastAndMadeRetriesEqRetriesOnErrorAndMadeAttemptsIs1_Success() throws Exception {
 
-        int epochSeconds = getEpochSeconds() - 1;
+        int epochSeconds = DateTimeUtils.getEpochSeconds() - 1;
 
         UserGroup o2UserGroup = findUserGroupForO2Community();
 
@@ -366,8 +361,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         testUser = userRepository.save(testUser);
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository
-            .save(PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields().withAfterNextSubPaymentSeconds(100).withCommunity(o2UserGroup.getCommunity()).withAdvancedPaymentSeconds(1));
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields()
+                                                                                       .withAfterNextSubPaymentSeconds(100)
+                                                                                       .withCommunity(o2UserGroup.getCommunity())
+                                                                                       .withAdvancedPaymentSeconds(1));
 
         PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -399,7 +396,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindUsersForUpdate_WithTwoMoreDayAndLessDay_Success() throws Exception {
-        long epochMillis = getEpochMillis() - DAY_MILLISECONDS;
+        long epochMillis = DateTimeUtils.getEpochMillis() - DAY_MILLISECONDS;
 
         UserGroup o2UserGroup = findUserGroupForO2Community();
 
@@ -410,8 +407,11 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User testUser1 =
             userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("2").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis + DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
-        userLogRepository
-            .save(new UserLog().withLogTimeMillis(epochMillis - DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(VALIDATE_PHONE_NUMBER).withDescription("dfdf"));
+        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis - DAY_MILLISECONDS)
+                                            .withUser(testUser1)
+                                            .withUserLogStatus(SUCCESS)
+                                            .withUserLogType(VALIDATE_PHONE_NUMBER)
+                                            .withDescription("dfdf"));
 
         User testUser2 =
             userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("3").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
@@ -426,7 +426,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testGetUsersForPendingPayment_O2_O2_CONSUMER_PSMS_Success() throws Exception {
         //given
-        int epochSeconds = getEpochSeconds() - 1;
+        int epochSeconds = DateTimeUtils.getEpochSeconds() - 1;
 
         UserGroup o2UserGroup = findUserGroupForO2Community();
 
@@ -511,12 +511,16 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void shouldFindByUserNameAndCommunityAndOtherThanPassedId() {
         //given
-        User user = userRepository.save(
-            UserFactory.createUser(ACTIVATED).withUserName("145645").withMobile("+447766666667").withUserGroup(findUserGroupForO2Community())
-                       .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
-        User user2 = userRepository.save(
-            UserFactory.createUser(ACTIVATED).withUserName("+447766666667").withMobile("222").withUserGroup(findUserGroupForO2Community())
-                       .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
+        User user = userRepository.save(UserFactory.createUser(ACTIVATED)
+                                                   .withUserName("145645")
+                                                   .withMobile("+447766666667")
+                                                   .withUserGroup(findUserGroupForO2Community())
+                                                   .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
+        User user2 = userRepository.save(UserFactory.createUser(ACTIVATED)
+                                                    .withUserName("+447766666667")
+                                                    .withMobile("222")
+                                                    .withUserGroup(findUserGroupForO2Community())
+                                                    .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
 
         //when
         User actualUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
@@ -529,8 +533,11 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testDetectUserAccountWithSameDeviceAndDisableIt() {
         //given
-        User user = userRepository.save(UserFactory.createUser(ACTIVATED)).withUserName("145645").withMobile("+447766666667")
-                                  .withUserGroup(findUserGroupForO2Community()).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
+        User user = userRepository.save(UserFactory.createUser(ACTIVATED))
+                                  .withUserName("145645")
+                                  .withMobile("+447766666667")
+                                  .withUserGroup(findUserGroupForO2Community())
+                                  .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
         Integer id = user.getId();
         int count = userRepository.detectUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
         assertEquals(1, count);

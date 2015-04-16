@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
@@ -12,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPo
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -78,7 +79,6 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({UserService.class,
-                 UserStatusDao.class,
                  Utils.class,
                  DeviceTypeDao.class,
                  AccountLog.class,
@@ -104,6 +104,8 @@ public class PromotionServiceTest {
     UserBannedRepository userBannedRepositoryMock;
     @Mock
     UserTransactionRepository userTransactionRepository;
+    @Mock
+    UserStatusRepository userStatusRepository;
     @Mock
     EntityService entityServiceMock;
     @Mock
@@ -157,6 +159,7 @@ public class PromotionServiceTest {
         promotionServiceSpy.promotionRepository = promotionRepositoryMock;
         promotionServiceSpy.userBannedRepository = userBannedRepositoryMock;
         promotionServiceSpy.userTransactionRepository = userTransactionRepository;
+        promotionServiceSpy.userStatusRepository = userStatusRepository;
     }
 
     @Test
@@ -674,7 +677,6 @@ public class PromotionServiceTest {
 
         Mockito.doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
 
-        mockStatic(UserStatusDao.class);
         mockStatic(Utils.class);
 
         final int currentTimeSeconds = Integer.MAX_VALUE;
@@ -684,7 +686,7 @@ public class PromotionServiceTest {
         PowerMockito.when(Utils.secondsToMillis(freeTrialStartedTimestampSeconds)).thenReturn(freeTrialStartedTimestampSeconds * 1000L);
 
         mobi.nowtechnologies.server.persistence.domain.UserStatus subscribedUserStatus = new mobi.nowtechnologies.server.persistence.domain.UserStatus();
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+        PowerMockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
 
         doReturn(user).when(entityServiceMock).updateEntity(user);
         Mockito.doAnswer(new Answer() {

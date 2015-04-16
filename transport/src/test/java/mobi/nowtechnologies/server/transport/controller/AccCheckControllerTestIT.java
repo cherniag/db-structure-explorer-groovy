@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
@@ -431,6 +430,8 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
     @Test
     public void testAccountCheckForITunesClientWhichDoesNotHaveLockedTracks() throws Exception {
         final String userName = "+447111111118";
+        UserStatus userStatus = new UserStatus();
+        userStatus.setI((byte) 10);
 
         //given
         User entity = UserFactory.createUser(ActivationStatus.ACTIVATED)
@@ -446,7 +447,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
                                  .withMobile("+447111111118")
                                  .withUserGroup(userGroupRepository.findByCommunity(communityRepository.findByName("o2")));
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
-        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte) 10));
+        entity.setStatus(userStatus);
         entity.setDevice("");
         entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
         entity.setDeviceString("IOS");

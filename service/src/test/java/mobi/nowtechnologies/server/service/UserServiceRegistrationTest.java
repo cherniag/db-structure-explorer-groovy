@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
@@ -31,6 +32,8 @@ public class UserServiceRegistrationTest {
     private UserGroupRepository userGroupRepository;
     @Mock
     private CountryService countryService;
+    @Mock
+    UserStatusRepository userStatusRepository;
     @InjectMocks
     private UserService userService = new UserService() {
         @Override

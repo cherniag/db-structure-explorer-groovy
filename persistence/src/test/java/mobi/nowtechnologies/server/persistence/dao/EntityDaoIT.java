@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import javax.annotation.Resource;
@@ -25,6 +27,10 @@ public class EntityDaoIT {
 
     @Resource(name = "persistence.EntityDao")
     private EntityDao entityDao;
+
+
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     //@TODO Complete test writing
@@ -52,7 +58,7 @@ public class EntityDaoIT {
         testUser.setNextSubPayment(1307219588);
         testUser.setPostcode("412");
         testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         testUser.setSubBalance(5);
         testUser.setTempToken("NONE");
         testUser.setTitle("Mr");

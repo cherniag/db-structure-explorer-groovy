@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
@@ -62,7 +61,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class})
+@PrepareForTest({UserService.class, Utils.class, DeviceTypeDao.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class})
 public class O2PaymentServiceImplTest {
 
     private UserService userServiceMock;
@@ -87,8 +86,6 @@ public class O2PaymentServiceImplTest {
         mockO2ClientService = mock(O2ProviderService.class);
         mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
         paymentEventNotifier = mock(PaymentEventNotifier.class);
-
-        mockStatic(UserStatusDao.class);
 
         mockApplicationEventPublisher = mock(ApplicationEventPublisher.class);
 

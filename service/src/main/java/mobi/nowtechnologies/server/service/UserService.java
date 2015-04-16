@@ -7,12 +7,12 @@ import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -24,6 +24,7 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
@@ -111,6 +112,22 @@ public class UserService {
     public static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
     private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
+    @Resource
+    UserGroupRepository userGroupRepository;
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
+    @Resource
+    UserRepository userRepository;
+    @Resource
+    ReactivationUserInfoRepository reactivationUserInfoRepository;
+    @Resource
+    UserTransactionRepository userTransactionRepository;
+    @Resource
+    OperatorRepository operatorRepository;
+    @Resource
+    PromotionRepository promotionRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
     private boolean sendActivationSMS = false;
     private O2UserDetailsUpdater o2UserDetailsUpdater;
     private UserDetailsUpdater userDetailsUpdater;
@@ -136,27 +153,6 @@ public class UserService {
     private AppsFlyerDataService appsFlyerDataService;
     private UrbanAirshipTokenService urbanAirshipTokenService;
     private UserActivationStatusService userActivationStatusService;
-
-    @Resource
-    UserGroupRepository userGroupRepository;
-
-    @Resource
-    PaymentDetailsRepository paymentDetailsRepository;
-
-    @Resource
-    UserRepository userRepository;
-
-    @Resource
-    ReactivationUserInfoRepository reactivationUserInfoRepository;
-
-    @Resource
-    UserTransactionRepository userTransactionRepository;
-
-    @Resource
-    OperatorRepository operatorRepository;
-
-    @Resource
-    PromotionRepository promotionRepository;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -301,7 +297,7 @@ public class UserService {
             String deviceUserToken = Utils.createTimestampToken(user.getTempToken(), timestamp);
             if (localUserToken.equalsIgnoreCase(userToken) || deviceUserToken.equalsIgnoreCase(userToken)) {
                 PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-                if (null == currentPaymentDetails && user.getStatus().getI() == UserStatusDao.getEulaUserStatus().getI()) {
+                if (null == currentPaymentDetails && UserStatus.EULA.name().equals(user.getStatus().getName())) {
                     LOGGER.info("The user [{}] couldn't login in while he has no payment details and he is in status [{}]", new Object[] {user, UserStatus.EULA.name()});
                 } else {
                     return user;
@@ -534,7 +530,7 @@ public class UserService {
         LOGGER.info("after save account log entity");
 
         LOGGER.info("before update user entity {}", user.getId());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         entityService.updateEntity(user);
         LOGGER.info("after update user entity {}", user.getId());
 
@@ -650,7 +646,7 @@ public class UserService {
         user.setCountry(countryService.findIdByFullName("Great Britain"));
         user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
         user.setOperator(getOperator());
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user.setDeviceUID(deviceUID);
         user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ? userDeviceRegDetailsDto.getDeviceModel() : deviceType.getName());
 
@@ -739,7 +735,7 @@ public class UserService {
 
         user = UserAsm.fromUserDto(userDto, user);
 
-        mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = UserStatusDao.getUserStatusMapUserStatusAsKey().get(userDto.getUserStatus());
+        mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = userStatusRepository.findByName(userDto.getUserStatus().name());
 
         user.setStatus(userStatus);
 
@@ -960,7 +956,7 @@ public class UserService {
             throw new ServiceException("The parameter user is null");
         }
 
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         userRepository.save(user);
         LOGGER.info("So the user subscription status was changed on LIMITED for user with id [{}]", user.getId());
     }
