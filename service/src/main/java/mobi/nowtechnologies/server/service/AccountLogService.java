@@ -11,7 +11,6 @@ import static mobi.nowtechnologies.server.shared.enums.TransactionType.ACCOUNT_M
 
 import javax.annotation.Resource;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,22 +44,11 @@ public class AccountLogService {
         LOGGER.debug("input parameters userId, balanceAfter, relatedMedia, relatedPaymentUID, accountLogType: [{}], [{}], [{}], [{}], [{}]", userId, balanceAfter, relatedMedia, relatedPayment,
                      accountLogType);
 
-        AccountLog accountLog = accountLogRepository.save(new AccountLog(userId, relatedPayment, balanceAfter, accountLogType, relatedMedia));
+        AccountLog entity = new AccountLog(userId, relatedPayment, balanceAfter, accountLogType, relatedMedia);
+        AccountLog accountLog = accountLogRepository.save(entity);
 
         LOGGER.debug("Output parameter accountLog=[{}]", accountLog);
         return accountLog;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Integer> getRelatedMediaUIDsByLogType(final int userId, final TransactionType transactionType) {
-        LOGGER.debug("input parameters userId, transactionType: [{}], [{}]", userId, transactionType);
-        List<Integer> result = new LinkedList<Integer>();
-        List<AccountLog> accountLogs = accountLogRepository.findByUserAndTransactionType(userId, transactionType);
-        for (AccountLog log : accountLogs) {
-            result.add(log.getRelatedMediaUID());
-        }
-        LOGGER.info("Output parameter result=[{}]", result);
-        return result;
     }
 
     @Transactional(readOnly = true)

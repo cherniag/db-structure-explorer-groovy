@@ -237,7 +237,7 @@ public class PaymentDetailsService {
         return migPaymentService.sendPin(phone, messageSource.getMessage(communityUri, "sms.freeMsg", args, null));
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public PaymentDetails activatePaymentDetailsByPayment(Long paymentDetailsId) {
         LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
 

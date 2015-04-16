@@ -20,10 +20,4 @@ public interface AccountLogRepository extends JpaRepository<AccountLog, Integer>
            "where accountLog.userId=:userId " +
            "order by accountLog.logTimestamp desc")
     List<AccountLog> findByUserId(@Param("userId") Integer userId);
-
-    @Query("select accountLog from AccountLog accountLog " +
-           "where accountLog.userId=:userId " +
-           "and accountLog.transactionType=:transactionType " +
-           "order by accountLog.id desc")
-    List<AccountLog> findByUserAndTransactionType(@Param("userId") Integer userId, @Param("transactionType") TransactionType transactionType);
 }

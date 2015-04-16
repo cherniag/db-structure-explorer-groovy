@@ -19,9 +19,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity
 @Table(name = "tb_promotionPaymentPolicy")
 public class PromotionPaymentPolicy {
-
-    public static final String NQ_GET_PROMOTION_PAYMENT_WITH_PAYMENT_POLICY = "getPromotionPaymentWithPaymentPolicy";
-
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     private Long id;
@@ -79,6 +76,6 @@ public class PromotionPaymentPolicy {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("subcost", subcost).append("period", period).append("promotion", promotion).append("paymentPolicies", paymentPolicies).toString();
+        return new ToStringBuilder(this).append("id", id).append("subcost", subcost).append("period", period).toString();
     }
 }
