@@ -25,7 +25,6 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsReposito
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
@@ -147,7 +146,6 @@ public class UserService {
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
     private DeviceUserDataService deviceUserDataService;
     private AppsFlyerDataService appsFlyerDataService;
-    private UserTransactionRepository userTransactionRepository;
     private UrbanAirshipTokenService urbanAirshipTokenService;
     private UserActivationStatusService userActivationStatusService;
 
@@ -358,7 +356,6 @@ public class UserService {
 
         deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(tempUser);
-        userTransactionRepository.deleteByUser(tempUser);
 
         appsFlyerDataService.mergeAppsFlyerData(tempUser, oldUser);
 
@@ -1308,10 +1305,6 @@ public class UserService {
 
     public void setAppsFlyerDataService(AppsFlyerDataService appsFlyerDataService) {
         this.appsFlyerDataService = appsFlyerDataService;
-    }
-
-    public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {
-        this.userTransactionRepository = userTransactionRepository;
     }
 
     public void setUserActivationStatusService(UserActivationStatusService userActivationStatusService) {

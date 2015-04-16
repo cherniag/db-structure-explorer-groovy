@@ -30,7 +30,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -157,8 +156,6 @@ public class UserServiceTest {
     @Mock
     AppsFlyerDataService appsFlyerDataService;
     @Mock
-    UserTransactionRepository userTransactionRepository;
-    @Mock
     UserActivationStatusService userActivationStatusService;
 
     private UserService userServiceSpy;
@@ -252,7 +249,6 @@ public class UserServiceTest {
         userServiceSpy.setAutoOptInRuleService(autoOptInRuleServiceMock);
         userServiceSpy.setDeviceUserDataService(deviceUserDataService);
         userServiceSpy.setAppsFlyerDataService(appsFlyerDataService);
-        userServiceSpy.setUserTransactionRepository(userTransactionRepository);
         userServiceSpy.setUserActivationStatusService(userActivationStatusService);
 
         PowerMockito.mockStatic(UserStatusDao.class);

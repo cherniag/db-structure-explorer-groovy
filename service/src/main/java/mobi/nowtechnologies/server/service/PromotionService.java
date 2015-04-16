@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
+import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
@@ -10,15 +11,12 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
-import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.configuration.ConfigurationAwareService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -62,7 +60,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
     private DevicePromotionsService deviceService;
-    private UserTransactionRepository userTransactionRepository;
+    private EventLoggerService eventLoggerService;
     private UserGroupRepository userGroupRepository;
     private UserRepository userRepository;
 
@@ -346,16 +344,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return null;
     }
 
-    private void logAboutPromoApplying(User user, PromoCode promoCode, long start, long end) {
-        UserTransaction userTransaction = new UserTransaction();
-        userTransaction.setUser(user);
-        userTransaction.setPromoCode(promoCode.getCode());
-        userTransaction.setStartTimestamp(start);
-        userTransaction.setEndTimestamp(end);
-        userTransaction.setTransactionType(UserTransactionType.PROMOTION_BY_PROMO_CODE);
-        userTransactionRepository.save(userTransaction);
-    }
-
     private User applyPromoForNotBannedUser(PromoParams promoParams) {
         Promotion promotion = promoParams.promotion;
         User user = promoParams.user;
@@ -388,7 +376,8 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         updatePromotionNumUsers(promotion);
 
-        logAboutPromoApplying(user, promoCode, freeTrialStartSeconds * 1000L, freeTrialEndSeconds * 1000L);
+        eventLoggerService.logPromotionByPromoCodeApplied(user.getId(), user.getUuid(), promotion.getI(), freeTrialStartSeconds * 1000L, freeTrialEndSeconds * 1000L);
+
         return user.withIsPromotionApplied(true);
     }
 
@@ -436,8 +425,8 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
     }
 
-    public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {
-        this.userTransactionRepository = userTransactionRepository;
+    public void setEventLoggerService(EventLoggerService eventLoggerService) {
+        this.eventLoggerService = eventLoggerService;
     }
 
     public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
