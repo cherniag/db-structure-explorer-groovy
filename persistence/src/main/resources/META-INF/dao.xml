@@ -16,34 +16,7 @@
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
-	<bean id="persistence.MediaDao" class="mobi.nowtechnologies.server.persistence.dao.MediaDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-	</bean>
-
-	<bean id="persistence.PromotionDao"
-		class="mobi.nowtechnologies.server.persistence.dao.PromotionDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
 	<bean id="persistence.EntityDao" class="mobi.nowtechnologies.server.persistence.dao.EntityDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
-	<bean id="persistence.AccountLogDao"
-		class="mobi.nowtechnologies.server.persistence.dao.AccountLogDao">
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
-	<bean id="persistence.PaymentDetailsDao"
-		class="mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-	</bean>
-
-	<bean id="persistence.CountryAppVersionDao"
-		class="mobi.nowtechnologies.server.persistence.dao.CountryAppVersionDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
@@ -101,17 +74,6 @@
 		<property name="arguments">
 			<list>
 				<ref bean="deviceTypeRepository" />
-			</list>
-		</property>
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.OperatorDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
 			</list>
 		</property>
 	</bean>

@@ -24,7 +24,11 @@ public class Country implements Serializable {
     private String name;
     private String fullName;
 
-    public Country() {
+    protected Country() {}
+
+    public Country(String name, String fullName) {
+        this.name = name;
+        this.fullName = fullName;
     }
 
     public int getI() {

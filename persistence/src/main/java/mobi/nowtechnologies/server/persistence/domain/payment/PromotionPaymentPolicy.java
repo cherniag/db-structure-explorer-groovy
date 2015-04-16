@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import java.math.BigDecimal;
@@ -20,8 +18,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "tb_promotionPaymentPolicy")
-@NamedQueries({@NamedQuery(name = PromotionPaymentPolicy.NQ_GET_PROMOTION_PAYMENT_WITH_PAYMENT_POLICY,
-                           query = "select promo from PromotionPaymentPolicy promo join promo.paymentPolicies pPolicy where promo.promotion=? and pPolicy=?")})
 public class PromotionPaymentPolicy {
 
     public static final String NQ_GET_PROMOTION_PAYMENT_WITH_PAYMENT_POLICY = "getPromotionPaymentWithPaymentPolicy";

@@ -29,7 +29,7 @@ public class Community implements Serializable {
     private Integer id;
 
     @Column(name = "appVersion", insertable = false, updatable = false)
-    private byte appVersionId;
+    private Integer appVersionId;
 
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "appVersion")

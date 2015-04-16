@@ -25,8 +25,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -36,11 +34,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "tb_paymentPolicy")
-@NamedQueries(value = {@NamedQuery(name = PaymentPolicy.GET_OPERATORS_LIST,
-                                   query = "select paymentPolicy.operator from PaymentPolicy paymentPolicy where paymentPolicy.communityId=?1 and paymentPolicy.paymentType=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
-    public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)

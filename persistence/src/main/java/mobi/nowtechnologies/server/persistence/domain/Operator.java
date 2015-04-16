@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -28,10 +25,6 @@ public class Operator implements Serializable {
     private String name;
 
     private String migName;
-
-    public static Map<Integer, Operator> getMapAsIds() {
-        return OperatorDao.getMapAsIds();
-    }
 
     public int getId() {
         return id;

@@ -1,13 +1,16 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.MediaDao;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+
+import javax.annotation.Resource;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,40 +32,31 @@ public class MediaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaService.class);
     private static final PageRequest PAGE_REQUEST_50 = new PageRequest(0, 50);
 
-    private MediaDao mediaDao;
+    @Resource
     private MediaRepository mediaRepository;
+
+    @Resource
     private ChartRepository chartRepository;
+
+    @Resource
     private ChartDetailRepository chartDetailRepository;
 
-    public void setMediaDao(MediaDao aMediaDao) {
-        this.mediaDao = aMediaDao;
-    }
-
-    public void setMediaRepository(MediaRepository mediaRepository) {
-        this.mediaRepository = mediaRepository;
-    }
-
-    public void setChartRepository(ChartRepository chartRepository) {
-        this.chartRepository = chartRepository;
-    }
-
-    public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
-        this.chartDetailRepository = chartDetailRepository;
-    }
+    @Resource
+    DrmRepository drmRepository;
 
     public Media findByIsrc(String mediaIsrc) {
         if (mediaIsrc == null) {
             throw new ServiceException("The parameter mediaIsrc is null");
         }
 
-
         List<Media> medias = mediaRepository.getByIsrc(mediaIsrc);
 
         return Iterables.getFirst(medias, null);
     }
 
+    @Transactional
     public void conditionalUpdateByUserAndMedia(int userId, int mediaId) {
-        mediaDao.conditionalUpdateByUserAndMedia(userId, mediaId);
+        drmRepository.updateByUserAndMedia(userId, mediaId, DateTimeUtils.getEpochSeconds());
     }
 
     @Transactional(readOnly = true)

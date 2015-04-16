@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -34,7 +33,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class})
+@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, AccountLog.class, EmailValidator.class})
 public class UserServiceActivationTest {
 
     private UserService userServiceSpy;
@@ -79,7 +78,6 @@ public class UserServiceActivationTest {
 
         userServiceSpy.setCountryService(countryServiceMock);
         userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
-        userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setCountryByIpService(countryByIpServiceMock);
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
         userServiceSpy.setUrbanAirshipTokenService(urbanAirshipTokenServiceMock);
@@ -91,7 +89,7 @@ public class UserServiceActivationTest {
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);
         userServiceSpy.setAccountLogService(accountLogServiceMock);
-        userServiceSpy.setUserRepository(userRepositoryMock);
+        userServiceSpy.userRepository = userRepositoryMock;
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);

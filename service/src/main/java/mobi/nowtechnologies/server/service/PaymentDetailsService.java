@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
@@ -13,7 +12,9 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -35,6 +36,8 @@ import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_COD
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
+import javax.annotation.Resource;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -55,71 +58,28 @@ public class PaymentDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetailsService.class);
 
     private CommunityResourceBundleMessageSource messageSource;
-    private PaymentDetailsDao paymentDetailsDao;
+
     private PaymentPolicyService paymentPolicyService;
     private SagePayPaymentService sagePayPaymentService;
     private PayPalPaymentService payPalPaymentService;
     private MigPaymentService migPaymentService;
-
     private PromotionService promotionService;
     private UserService userService;
     private CommunityService communityService;
-    private PaymentDetailsRepository paymentDetailsRepository;
-    private UserRepository userRepository;
     private UserNotificationService userNotificationService;
     private O2PaymentServiceImpl o2PaymentService;
 
-    public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
-        this.o2PaymentService = o2PaymentService;
-    }
+    @Resource
+    UserRepository userRepository;
 
-    public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
-        this.paymentDetailsDao = paymentDetailsDao;
-    }
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
 
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Resource
+    PromotionPaymentPolicyRepository promotionPaymentPolicyRepository;
 
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
-    }
-
-    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
-        this.paymentPolicyService = paymentPolicyService;
-    }
-
-    public void setSagePayPaymentService(SagePayPaymentService sagePayPaymentService) {
-        this.sagePayPaymentService = sagePayPaymentService;
-    }
-
-    public void setPayPalPaymentService(PayPalPaymentService payPalPaymentService) {
-        this.payPalPaymentService = payPalPaymentService;
-    }
-
-    public void setMigPaymentService(MigPaymentService migPaymentService) {
-        this.migPaymentService = migPaymentService;
-    }
-
-    public void setPromotionService(PromotionService promotionService) {
-        this.promotionService = promotionService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
-    }
-
-    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
-        this.paymentDetailsRepository = paymentDetailsRepository;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
+    @Resource
+    OperatorRepository operatorRepository;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
@@ -128,7 +88,7 @@ public class PaymentDetailsService {
         Promotion promotion = user.getPotentialPromotion();
         PromotionPaymentPolicy promotionPaymentPolicy = null;
         if (null != promotion) {
-            promotionPaymentPolicy = paymentDetailsDao.getPromotionPaymentPolicy(promotion, paymentPolicy);
+            promotionPaymentPolicy = promotionPaymentPolicyRepository.findPromotionPaymentPolicy(promotion, paymentPolicy);
         }
 
         PaymentDetails paymentDetails = null;
@@ -159,7 +119,7 @@ public class PaymentDetailsService {
                     promotionService.incrementUserNumber(promotion);
                 }
 
-                paymentDetails = paymentDetailsDao.update(paymentDetails);
+                paymentDetails = paymentDetailsRepository.save(paymentDetails);
             }
         }
 
@@ -264,7 +224,7 @@ public class PaymentDetailsService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
         Community community = communityService.getCommunityByUrl(communityUrl);
-        return paymentDetailsDao.getAvailableOperators(community, paymentType);
+        return operatorRepository.findOperators(community.getId(), paymentType);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -286,11 +246,11 @@ public class PaymentDetailsService {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if (currentPaymentDetails != null) {
             currentPaymentDetails.setActivated(false);
-            paymentDetailsDao.update(currentPaymentDetails);
+            paymentDetailsRepository.save(currentPaymentDetails);
         }
 
         paymentDetails.setActivated(true);
-        paymentDetailsDao.update(paymentDetails);
+        paymentDetailsRepository.save(paymentDetails);
 
         user.setCurrentPaymentDetails(paymentDetails);
 
@@ -333,5 +293,45 @@ public class PaymentDetailsService {
                 promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
             }
         }
+    }
+
+    public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
+        this.o2PaymentService = o2PaymentService;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
+    }
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
+    }
+
+    public void setSagePayPaymentService(SagePayPaymentService sagePayPaymentService) {
+        this.sagePayPaymentService = sagePayPaymentService;
+    }
+
+    public void setPayPalPaymentService(PayPalPaymentService payPalPaymentService) {
+        this.payPalPaymentService = payPalPaymentService;
+    }
+
+    public void setMigPaymentService(MigPaymentService migPaymentService) {
+        this.migPaymentService = migPaymentService;
+    }
+
+    public void setPromotionService(PromotionService promotionService) {
+        this.promotionService = promotionService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 }

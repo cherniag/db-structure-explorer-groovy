@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
@@ -84,7 +83,6 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
                  Utils.class,
                  DeviceTypeDao.class,
                  UserGroupDao.class,
-                 OperatorDao.class,
                  AccountLog.class,
                  EmailValidator.class,
                  PromoParams.class,
@@ -153,14 +151,14 @@ public class PromotionServiceTest {
             }
         };
 
-        promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setMessageSource(messageSourceMock);
+        promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setUserService(userServiceMock);
-        promotionServiceSpy.setPromotionRepository(promotionRepositoryMock);
-        promotionServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setDeviceService(deviceServiceMock);
-        promotionServiceSpy.setUserTransactionRepository(userTransactionRepository);
+        promotionServiceSpy.promotionRepository = promotionRepositoryMock;
+        promotionServiceSpy.userBannedRepository = userBannedRepositoryMock;
+        promotionServiceSpy.userTransactionRepository = userTransactionRepository;
     }
 
     @Test
