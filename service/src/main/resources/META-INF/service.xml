@@ -114,7 +114,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
-		<property name="userDao" ref="persistence.UserDao" />
 		<property name="countryService" ref="service.CountryService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />

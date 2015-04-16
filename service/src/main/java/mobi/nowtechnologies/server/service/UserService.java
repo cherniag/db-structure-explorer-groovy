@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -116,7 +117,6 @@ public class UserService {
     private UserDetailsUpdater userDetailsUpdater;
     private UserServiceNotification userServiceNotification;
     private CommunityResourceBundleMessageSource messageSource;
-    private UserDao userDao;
     private EntityService entityService;
     private CountryAppVersionService countryAppVersionService;
     private CountryService countryService;
@@ -155,6 +155,9 @@ public class UserService {
 
     @Resource
     OperatorRepository operatorRepository;
+
+    @Resource
+    PromotionRepository promotionRepository;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -388,7 +391,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public synchronized void applyPromotion(User user) {
-        Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
+        Promotion promotion = promotionRepository.findActivePromotionByUserGroup(user.getUserGroup().getId(), Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
         LOGGER.info("promotion [{}]", promotion);
         if (promotion != null) {
             entityService.updateEntity(user);
@@ -1225,10 +1228,6 @@ public class UserService {
 
     public void setCountryService(CountryService countryService) {
         this.countryService = countryService;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
     }
 
     public void setEntityService(EntityService entityService) {

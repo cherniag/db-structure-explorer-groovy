@@ -256,6 +256,20 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         assertEquals(promo.getI(), promotionWithFilters.get(0).getI());
     }
 
+    @Test
+    public void testFindActivePromotionByUserGroup() {
+        //given
+        Promotion promo = new Promotion().withStartDate(0).withEndDate(Integer.MAX_VALUE).withIsActive(true).withUserGroup(o2UserGroup).withType(ADD_SUBBALANCE_PROMOTION);
+        promo = saved(promo);
+
+        // when
+        Promotion promotion = promotionRepository.findActivePromotionByUserGroup(o2UserGroup.getId(), Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
+
+        //then
+        assertNotNull(promotion);
+        assertEquals(promo.getI(), promotion.getI());
+    }
+
     Promotion o2PromotionByPromoCodeAfter2014StartDate() {
         o2PromotionByPromoCodeAfter2014StartDate =
             new Promotion().withStartDate(2014).withEndDate(2016).withIsActive(true).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");

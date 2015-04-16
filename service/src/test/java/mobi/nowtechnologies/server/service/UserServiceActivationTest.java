@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
@@ -38,7 +37,6 @@ public class UserServiceActivationTest {
 
     private UserService userServiceSpy;
     private UserRepository userRepositoryMock;
-    private UserDao userDaoMock;
     private EntityService entityServiceMock;
     private AccountLogService accountLogServiceMock;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
@@ -64,7 +62,6 @@ public class UserServiceActivationTest {
         paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
         UrbanAirshipTokenService urbanAirshipTokenServiceMock = PowerMockito.mock(UrbanAirshipTokenService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
-        userDaoMock = PowerMockito.mock(UserDao.class);
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
         entityServiceMock = PowerMockito.mock(EntityService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
@@ -82,7 +79,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
         userServiceSpy.setUrbanAirshipTokenService(urbanAirshipTokenServiceMock);
         userServiceSpy.setPromotionService(promotionServiceMock);
-        userServiceSpy.setUserDao(userDaoMock);
         userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
         userServiceSpy.setEntityService(entityServiceMock);
         userServiceSpy.setCommunityService(communityServiceMock);
