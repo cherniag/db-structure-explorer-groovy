@@ -20,7 +20,4 @@ public class UserGroupDao {
         USER_GROUP_MAP_COMMUNITY_ID_AS_KEY = Collections.unmodifiableMap(userGroupCommunityIdMap);
     }
 
-    public static Map<Integer, UserGroup> getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY() {
-        return USER_GROUP_MAP_COMMUNITY_ID_AS_KEY;
-    }
 }

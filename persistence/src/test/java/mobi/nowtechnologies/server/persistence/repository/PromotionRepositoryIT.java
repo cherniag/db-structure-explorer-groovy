@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.filter.PUserStateFilter;
-import static mobi.nowtechnologies.server.persistence.dao.UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_SUBBALANCE_PROMOTION;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
@@ -29,14 +28,17 @@ import static org.hamcrest.CoreMatchers.is;
 
 public class PromotionRepositoryIT extends AbstractRepositoryIT {
 
-    @Resource(name = "promotionRepository")
+    @Resource
     PromotionRepository promotionRepository;
 
-    @Resource(name = "promoCodeRepository")
+    @Resource
     PromoCodeRepository promoCodeRepository;
 
-    @Resource(name = "communityRepository")
+    @Resource
     CommunityRepository communityRepository;
+
+    @Resource
+    UserGroupRepository userGroupRepository;
 
     private String promotionCode;
 
@@ -52,7 +54,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
     public void setUp() {
         Community o2Community = communityRepository.findByRewriteUrlParameter("o2");
 
-        o2UserGroup = getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2Community.getId());
+        o2UserGroup = userGroupRepository.findByCommunity(o2Community);
     }
 
 

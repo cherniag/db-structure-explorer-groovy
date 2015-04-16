@@ -89,17 +89,6 @@
 		</property>
 	</bean>
 
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.UserGroupDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
-	</bean>
-
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
     <jpa:repositories base-package="mobi.nowtechnologies.server" entity-manager-factory-ref="persistence.EntityManagerFactory" transaction-manager-ref="persistence.TransactionManager">
 		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.social.domain.*Repository"/>

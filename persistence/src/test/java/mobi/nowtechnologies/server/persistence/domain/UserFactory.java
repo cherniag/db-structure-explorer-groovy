@@ -3,13 +3,10 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
@@ -115,19 +112,6 @@ public class UserFactory {
         return user;
     }
 
-    public static User createUserWithVideoPaymentDetails(Tariff subscribedUserTariff) {
-        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(subscribedUserTariff);
-        paymentPolicy.setContentCategory("");
-
-        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-        paymentDetails.setPaymentPolicy(paymentPolicy);
-
-        User user = createUser(ACTIVATED);
-        user.setCurrentPaymentDetails(paymentDetails);
-
-        return user;
-    }
-
     public static User userWithDefaultNotNullFields() {
         User user = new User();
         user.setDisplayName("");
@@ -140,7 +124,7 @@ public class UserFactory {
         user.setStatus(UserStatusDao.getLimitedUserStatus());
         user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
         user.setDevice("");
-        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(7));
+        user.setUserGroup(UserGroupFactory.createUserGroup());
         user.setUserType(UserType.DEV);
         user.setLastDeviceLogin(0);
         user.setLastWebLogin(0);

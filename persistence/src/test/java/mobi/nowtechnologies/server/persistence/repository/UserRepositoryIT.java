@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -47,7 +47,6 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     private static final int HOUR_SECONDS = 60 * 60;
     private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
     private static final int TWO_DAY_SECONDS = 2 * DAY_SECONDS;
-    private static final int o2CommunityId = 7;
 
     @Resource(name = "userRepository")
     private UserRepository userRepository;
@@ -63,6 +62,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @PersistenceContext
     private EntityManager entityManager;
+    @Resource
+    CommunityRepository communityRepository;
+    @Resource
+    UserGroupRepository userGroupRepository;
 
     @Value("35")
     private int maxCount;
@@ -273,7 +276,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         int epochSeconds = getEpochSeconds();
 
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setNextSubPayment(epochSeconds + DAY_SECONDS);
@@ -316,7 +319,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         int epochSeconds = getEpochSeconds();
 
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setNextSubPayment(epochSeconds + DAY_SECONDS);
@@ -354,7 +357,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         int epochSeconds = getEpochSeconds() - 1;
 
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setNextSubPayment(epochSeconds);
@@ -398,7 +401,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     public void testFindUsersForUpdate_WithTwoMoreDayAndLessDay_Success() throws Exception {
         long epochMillis = getEpochMillis() - DAY_MILLISECONDS;
 
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User testUser =
             userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("1").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc61"));
@@ -425,7 +428,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         //given
         int epochSeconds = getEpochSeconds() - 1;
 
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User testUser = UserFactory.createUser(ACTIVATED);
         testUser.setNextSubPayment(epochSeconds);
@@ -467,7 +470,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void shouldFindOneRecordByPinMobileAndCommunity() throws Exception {
         //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User user = userRepository.save(UserFactory.createUser(ACTIVATED).withMobile("mobile").withPin("pin").withUserGroup(o2UserGroup));
 
@@ -481,7 +484,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void shouldNotFindOneRecordByPinMobileAndCommunity() throws Exception {
         //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+        UserGroup o2UserGroup = findUserGroupForO2Community();
 
         User user = userRepository.save(UserFactory.createUser(ACTIVATED).withMobile("mobile").withPin("pin").withUserGroup(o2UserGroup));
 
@@ -495,7 +498,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void shouldFindUserTree() {
         //given
-        User user = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("1").withMobile("2").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+        User user = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("1").withMobile("2").withUserGroup(findUserGroupForO2Community()));
 
         //when
         User actualUser = userRepository.findUserTree(user.getId());
@@ -509,10 +512,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     public void shouldFindByUserNameAndCommunityAndOtherThanPassedId() {
         //given
         User user = userRepository.save(
-            UserFactory.createUser(ACTIVATED).withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId))
+            UserFactory.createUser(ACTIVATED).withUserName("145645").withMobile("+447766666667").withUserGroup(findUserGroupForO2Community())
                        .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
         User user2 = userRepository.save(
-            UserFactory.createUser(ACTIVATED).withUserName("+447766666667").withMobile("222").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId))
+            UserFactory.createUser(ACTIVATED).withUserName("+447766666667").withMobile("222").withUserGroup(findUserGroupForO2Community())
                        .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
 
         //when
@@ -527,7 +530,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     public void testDetectUserAccountWithSameDeviceAndDisableIt() {
         //given
         User user = userRepository.save(UserFactory.createUser(ACTIVATED)).withUserName("145645").withMobile("+447766666667")
-                                  .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
+                                  .withUserGroup(findUserGroupForO2Community()).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
         Integer id = user.getId();
         int count = userRepository.detectUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
         assertEquals(1, count);
@@ -537,4 +540,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         assertTrue(newUser.getDeviceUID().contains("disabled"));
 
     }
+
+    private UserGroup findUserGroupForO2Community() {
+        Community c = communityRepository.findByRewriteUrlParameter("o2");
+        return userGroupRepository.findByCommunity(c);
+    }
+
 }

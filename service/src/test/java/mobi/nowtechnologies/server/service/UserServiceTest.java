@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -139,7 +138,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, AccountLog.class, EmailValidator.class})
+@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, AccountLog.class, EmailValidator.class})
 public class UserServiceTest {
 
     public static final int YEAR_SECONDS = 365 * 24 * 60 * 60;
@@ -1083,7 +1082,6 @@ public class UserServiceTest {
         final Community community = CommunityFactory.createCommunity();
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
-        final Map<Integer, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
         final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
         userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
         userDeviceRegDetailsDto.setCommunityUri(communityName);
@@ -1093,13 +1091,12 @@ public class UserServiceTest {
         PowerMockito.mockStatic(Utils.class);
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.mockStatic(UserStatusDao.class);
-        PowerMockito.mockStatic(UserGroupDao.class);
 
         Mockito.doReturn(user).when(entityServiceMock).saveEntity(any(User.class));
         Mockito.when(createStoredToken(anyString(), anyString())).thenReturn(storedToken);
         Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
         Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
-        Mockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(userGroupMap);
+        Mockito.when(userGroupRepositoryMock.findByCommunity(community)).thenReturn(userGroup);
         Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
         Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
         Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
@@ -1131,8 +1128,6 @@ public class UserServiceTest {
         PowerMockito.whenNew(User.class).withNoArguments().thenReturn(expectedUser);
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
-        PowerMockito.mockStatic(UserGroupDao.class);
-        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Integer, UserGroup>());
         PowerMockito.mockStatic(UserStatusDao.class);
         PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(new UserStatus());
         Answer returnFirsParamAnswer = new Answer() {
@@ -1168,7 +1163,7 @@ public class UserServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    @Test()
+    @Test
     public void testRegisterUser_WOPotentialPromo_Success() throws Exception {
         final String storedToken = "50c86945713ac8c870eafbc19980706b";
         final String communityName = "chartsnow";
@@ -1201,8 +1196,6 @@ public class UserServiceTest {
         createStoredToken(anyString(), anyString());
         verifyStatic(times(1));
         DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
-        verifyStatic(times(1));
-        UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
         verifyStatic(times(1));
         UserStatusDao.getLimitedUserStatus();
     }
@@ -1254,8 +1247,6 @@ public class UserServiceTest {
         createStoredToken(anyString(), anyString());
         verifyStatic(times(0));
         DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
-        verifyStatic(times(0));
-        UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
         verifyStatic(times(0));
         UserStatusDao.getLimitedUserStatus();
     }
