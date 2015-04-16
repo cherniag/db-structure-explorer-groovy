@@ -81,17 +81,6 @@
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="staticMethod"
-			value="mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao.setEntityDao" />
-		<property name="arguments">
-			<list>
-				<ref bean="persistence.EntityDao" />
-			</list>
-		</property>
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
 			value="mobi.nowtechnologies.server.persistence.dao.UserGroupDao.setEntityDao" />
 		<property name="arguments">
 			<list>
