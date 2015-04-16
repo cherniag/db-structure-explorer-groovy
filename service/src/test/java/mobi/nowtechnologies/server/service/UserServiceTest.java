@@ -1098,7 +1098,7 @@ public class UserServiceTest {
         Mockito.when(createStoredToken(anyString(), anyString())).thenReturn(storedToken);
         Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
         Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
-        Mockito.when(userGroupRepositoryMock.findByCommunity(community)).thenReturn(userGroup);
+        Mockito.when(userGroupRepository.findByCommunity(community)).thenReturn(userGroup);
         Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
         Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
         Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
