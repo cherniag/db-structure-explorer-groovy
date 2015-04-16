@@ -72,8 +72,6 @@
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
 
-    <bean id="messageProps" class="mobi.nowtechnologies.server.shared.message.Prop" parent="messageSource"/>
-
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
         <property name="defaultLocale" value="en" />
@@ -82,7 +80,9 @@
 
     <mvc:interceptors>
         <!-- Community Change Interceptor and Resolver definition -->
-        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor" />
+        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor">
+            <property name="propLocale" ref="propLocale"/>
+        </bean>
 
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
