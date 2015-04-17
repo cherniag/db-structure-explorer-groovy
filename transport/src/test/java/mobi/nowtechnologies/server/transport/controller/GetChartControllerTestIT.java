@@ -244,9 +244,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                .andExpect(jsonPath("response.data[1].chart.playlists[0].badge_icon").value("badge_picture_IOS_640x960"));
     }
 
-
     @Test
-    @Ignore
     public void testGetChart_O2_v4d0_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
@@ -260,7 +258,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
         mockMvc.perform(
             post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
-               .andExpect(status().isOk()).andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists()).andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_2"))
+               .andExpect(status().isOk()).andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists()).andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_4"))
                .andExpect(xpath("/response/chart/track[duration=10000]").exists()).andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists()).andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
