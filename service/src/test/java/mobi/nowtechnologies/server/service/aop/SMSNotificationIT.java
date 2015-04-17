@@ -14,7 +14,6 @@ import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -29,7 +28,7 @@ import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +57,7 @@ import static org.mockito.Mockito.*;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
@@ -69,10 +68,6 @@ public class SMSNotificationIT {
 
     @Autowired
     private SMSNotification smsNotificationFixture;
-
-    @Autowired
-    @Qualifier("service.WeeklyUpdateService")
-    private WeeklyUpdateService weeklyUpdateService;
 
     @Autowired
     @Qualifier("service.SpyUserService")
@@ -110,8 +105,8 @@ public class SMSNotificationIT {
 
     private CommunityResourceBundleMessageSource mockMessageSource;
 
-    private BasicResponse successfulResponse = PaymentTestUtils
-        .createBasicResponse(HttpServletResponse.SC_OK, "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
+    private BasicResponse successfulResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                                                                                    "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
 
     private O2ProviderService mockO2ClientService;
 
@@ -136,7 +131,6 @@ public class SMSNotificationIT {
         user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 
         Mockito.doReturn(null).when(userService).unsubscribeUser(any(User.class), anyString());
-        Mockito.doReturn(user).when(entityService).findById(any(Class.class), any(Object.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
@@ -226,7 +220,8 @@ public class SMSNotificationIT {
         Mockito.doReturn("false").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms.send"), any(Object[].class), eq((Locale) null));
         Mockito.doReturn("false").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms.send"), any(Object[].class), eq((Locale) null));
         Mockito.doReturn("falsedfdsfsd").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms"), any(Object[].class), eq((Locale) null));
-        Mockito.doReturn(response).when(mockO2ClientService)
+        Mockito.doReturn(response)
+               .when(mockO2ClientService)
                .makePremiumSMSRequest(anyInt(), anyString(), any(BigDecimal.class), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean());
 
         o2PaymentService.startPayment(pendingPayment);

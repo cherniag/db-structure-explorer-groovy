@@ -6,7 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
@@ -46,7 +46,6 @@ public class PaymentTestUtils {
         PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
         paymentDetailsDto.setAmount("2.50");
         paymentDetailsDto.setCurrency("EUR");
-        paymentDetailsDto.setOfferId(1);
         paymentDetailsDto.setToken("78955453JH2KY00DTV1ZC8H");
         return paymentDetailsDto;
     }

@@ -115,7 +115,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
         String pin = Utils.generateRandom4DigitsPIN();
         user.setPin(pin);
 
-        paymentDetails = (MigPaymentDetails) getPaymentDetailsRepository().save(paymentDetails);
+        paymentDetails = getPaymentDetailsRepository().save(paymentDetails);
         sendPin(migPhoneNumber, messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.freeMsg", new Object[] {pin}, null));
         LOGGER.info("Free sms with pin code was sent");
         return paymentDetails;
@@ -128,7 +128,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
         LOGGER.info("Verifying pin from mig...");
         if (StringUtils.hasText(verificationPin) && user.getPin().equals(verificationPin)) {
 
-            MigPaymentDetails paymentDetails = (MigPaymentDetails) user.getPendingPaymentDetails();
+            MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(user.getId());
             user.setPin("");
 
             paymentDetails = (MigPaymentDetails) super.commitPaymentDetails(user, paymentDetails);

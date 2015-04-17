@@ -5,19 +5,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd" profile="application-tests">
         <!-- Facebook -->
-        <bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService" />
-        <bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
+        <bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService" />
+        <bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
 
         <!-- Google Plus -->
-        <bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService" />
-        <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTemplateProvider"/>
+        <bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService" />
+        <bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusOperationsAdaptor"/>
 
         <!-- O2 -->
         <bean id="service.O2Service" class="mobi.nowtechnologies.server.apptests.provider.o2.O2ServiceStub">
-            <property name="phoneExtensionsService" ref="phoneExtensionsService"/>
+            <property name="o2PhoneExtensionsService" ref="o2PhoneExtensionsService"/>
         </bean>
 
-        <bean id="phoneExtensionsService" class="mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService"/>
+        <bean id="o2PhoneExtensionsService" class="mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService"/>
 
         <!-- Email -->
         <bean id="mailModelSerializer" class="mobi.nowtechnologies.server.apptests.email.MailModelSerializer" />

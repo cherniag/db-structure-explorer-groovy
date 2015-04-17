@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory;
  */
 public class VFNZProviderServiceImpl implements VFNZProviderService {
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger LOGGER = LoggerFactory.getLogger(VFNZProviderServiceImpl.class);
     protected String providerNumber;
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
     private VFNZSMSGatewayServiceImpl gatewayService;
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     private Community vfnzCommunity = new Community().withRewriteUrl("vf_nz");
 
     @Override
@@ -76,7 +76,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
         this.providerNumber = providerNumber;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 }

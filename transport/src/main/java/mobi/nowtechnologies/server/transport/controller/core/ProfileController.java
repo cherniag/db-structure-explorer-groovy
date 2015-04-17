@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.transport.controller.core;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -95,8 +95,21 @@ public abstract class ProfileController {
                 PROFILE_LOGGER.debug(
                     "communityFromRequest=[{}]; deviceModelFromRequest=[{}]; deviceTypeFromRequest=[{}]; deviceUIDFromRequest=[{}]; PHONEFromRequest=[{}]; newUserId=[{}]; newUserName=[{}]; " +
                     "newCommunityRewriteUri=[{}]; newMobile=[{}]; newDeviceUID=[{}]; newDeviceModel=[{}]; newDeviceType=[{}]; result=[{}]; executionTimeMillis=[{}]; errorMessage=[{}]",
-                    new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri,
-                        newMobile, newDeviceUID, newDeviceModel, newDeviceType, result, executionTimeMillis, errorMessage});
+                    new Object[] {communityFromRequest,
+                                  deviceModelFromRequest,
+                                  deviceTypeFromRequest,
+                                  deviceUIDFromRequest,
+                                  PHONEFromRequest,
+                                  newUserId,
+                                  newUserName,
+                                  newCommunityRewriteUri,
+                                  newMobile,
+                                  newDeviceUID,
+                                  newDeviceModel,
+                                  newDeviceType,
+                                  result,
+                                  executionTimeMillis,
+                                  errorMessage});
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
-import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -9,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -27,7 +25,6 @@ import java.util.List;
 import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +37,7 @@ public class PaymentPolicyService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicyService.class);
 
-    private PaymentPolicyDao paymentPolicyDao;
-
     private PaymentPolicyRepository paymentPolicyRepository;
-
-    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
-        this.paymentPolicyDao = paymentPolicyDao;
-    }
 
     public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
         this.paymentPolicyRepository = paymentPolicyRepository;
@@ -64,11 +55,6 @@ public class PaymentPolicyService {
         return paymentPolicyRepository.findOne(id);
     }
 
-    public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, int communityId) {
-        Validate.notNull(paymentType, "The parameter paymentType is null");
-        return paymentPolicyDao.getPaymentPolicy(operatorId, paymentType, communityId);
-    }
-
     public PaymentPolicyDto getPaymentPolicy(PaymentPolicy paymentPolicy, PromotionPaymentPolicy promotionPaymentPolicy) {
         PaymentPolicyDto dto = null;
         if (isNotNull(paymentPolicy)) {
@@ -82,16 +68,6 @@ public class PaymentPolicyService {
             return getPaymentPolicy(paymentDetails.getPaymentPolicy(), paymentDetails.getPromotionPaymentPolicy());
         }
         return null;
-    }
-
-    public List<OfferPaymentPolicyDto> getOfferPaymentPolicyDto(String communityURL) {
-        LOGGER.debug("input parameters communityURL: [{}]", communityURL);
-
-        List<PaymentPolicy> paymentPolicies = paymentPolicyDao.getPaymentPolicies(communityURL, true);
-        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = PaymentPolicy.toOfferPaymentPolicyDtos(paymentPolicies);
-
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
-        return offerPaymentPolicyDtos;
     }
 
     @Transactional(readOnly = true)
@@ -114,6 +90,12 @@ public class PaymentPolicyService {
         }
 
         return unmodifiableList(paymentPolicyDtos);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentPolicy> findPaymentPolicies(User user) {
+        List<MediaType> mediaTypes = getMediaTypes(user);
+        return paymentPolicyRepository.findPaymentPolicies(user.getCommunity(), mediaTypes);
     }
 
     private List<PaymentPolicyDto> getMergedPaymentPolicies(User user, SegmentType defaultSegment, ProviderType defaultProvider) {

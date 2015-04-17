@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
+import mobi.nowtechnologies.server.support.http.PostsSaverPostService;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 

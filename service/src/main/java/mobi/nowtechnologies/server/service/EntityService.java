@@ -23,16 +23,6 @@ public class EntityService {
         this.entityDao = entityDao;
     }
 
-    public <T> T findById(Class<T> entityClass, Object id) {
-        if (id == null) {
-            throw new ServiceException("The parameter id is null");
-        }
-        if (entityClass == null) {
-            throw new ServiceException("The parameter entityClass is null");
-        }
-        return entityDao.findById(entityClass, id);
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public <T> T updateEntity(T entity) {
         if (entity == null) {

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
@@ -48,7 +48,7 @@ public class UserServiceActivationTest {
     private CommunityService communityServiceMock;
     private CountryService countryServiceMock;
     private O2ProviderService o2ClientServiceMock;
-    private DeviceService deviceServiceMock;
+    private DevicePromotionsService deviceServiceMock;
     private RefundService refundServiceMock;
 
     private PromotionService promotionServiceMock;
@@ -69,7 +69,7 @@ public class UserServiceActivationTest {
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
         entityServiceMock = PowerMockito.mock(EntityService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
-        deviceServiceMock = PowerMockito.mock(DeviceService.class);
+        deviceServiceMock = PowerMockito.mock(DevicePromotionsService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
         accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
         o2ClientServiceMock = PowerMockito.mock(O2ProviderService.class);
@@ -91,8 +91,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);
         userServiceSpy.setAccountLogService(accountLogServiceMock);
-        userServiceSpy.setMailService(mailServiceMock);
-        userServiceSpy.setO2ClientService(o2ClientServiceMock);
         userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);

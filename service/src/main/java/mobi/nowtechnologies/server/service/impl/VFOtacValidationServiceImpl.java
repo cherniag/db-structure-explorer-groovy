@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.VFOtacValidationService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
@@ -21,7 +21,7 @@ public class VFOtacValidationServiceImpl implements VFOtacValidationService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     @Resource
     private UserRepository userRepository;
 

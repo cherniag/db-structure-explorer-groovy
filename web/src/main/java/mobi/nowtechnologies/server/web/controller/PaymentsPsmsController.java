@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl;
 import static mobi.nowtechnologies.server.web.controller.PaymentsController.POLICY_REQ_PARAM;
@@ -32,10 +34,9 @@ public class PaymentsPsmsController extends CommonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
 
-    @SuppressWarnings("unused")
-    private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
+    private PaymentDetailsService paymentDetailsService;
     private O2PaymentServiceImpl o2PaymentService;
     private VFPaymentServiceImpl vfPaymentService;
 
@@ -54,17 +55,24 @@ public class PaymentsPsmsController extends CommonController {
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        BasicPSMSPaymentServiceImpl paymentService = getPaymentService(user);
-        paymentService.commitPaymentDetails(user, policy);
+        PaymentDetails paymentDetails = createPaymentDetails(user, policy);
+        paymentDetailsService.commitPaymentDetails(user, paymentDetails);
 
         return new ModelAndView("redirect:/" + scopePrefix + ".html");
     }
 
-    public BasicPSMSPaymentServiceImpl getPaymentService(User user) {
-        return user.isVFNZCommunityUser() ?
-               vfPaymentService :
-               o2PaymentService;
-        //        return PaymentDetails.VF_PSMS_TYPE.equalsIgnoreCase(type) ? vfPaymentService : o2PaymentService;
+    private PaymentDetails createPaymentDetails(User user, PaymentPolicy policy) {
+        if(user.isVFNZCommunityUser()) {
+            int retriesOnError = vfPaymentService.getRetriesOnError();
+            return new VFPSMSPaymentDetails(policy, user, retriesOnError);
+        }
+
+        if(user.isO2CommunityUser()) {
+            int retriesOnError = o2PaymentService.getRetriesOnError();
+            return new O2PSMSPaymentDetails(policy, user, retriesOnError);
+        }
+
+        throw new IllegalArgumentException("Can not create Payment Detail");
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {

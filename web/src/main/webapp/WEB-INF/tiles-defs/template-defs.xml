@@ -40,15 +40,7 @@
   </definition>
 
   <!-- END Unauthenticated pages -->
-  
-  <definition name="getapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/getapp/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/getapp/content.jsp"/>
-	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/footer.jsp"/>
-	  <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/footSection.jsp"/>
-  </definition>
-  
+
   <definition name="account" extends="mainTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/account/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
@@ -61,18 +53,6 @@
 	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/change_account/content.jsp"/>
   </definition>
   
-   <definition name="payment_history" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/payment_history/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payment_history/content.jsp"/>
-  </definition>
-  
-   <definition name="purchased_tracks" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/purchased_tracks/headSection.jsp"/>
-	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/purchased_tracks/content.jsp"/>
-  </definition>
-
   <definition name="videotrial" extends="mainTemplate" preparer="web.CommunityViewPreparer">
   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/videotrial/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
@@ -176,66 +156,17 @@
         <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_common/can_not_change_payment_options.jsp"/>
     </definition>
 
- <definition name="contact_us" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-  	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/contact_us/headSection.jsp"/>
-	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/contact_us/content.jsp"/>
-  </definition>
-  
    <definition name="privacy_policy" extends="mainTemplate" preparer="web.CommunityViewPreparer">
   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/privacy_policy/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
 	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/privacy_policy/content.jsp"/>
   </definition>
-  
-  <definition name="faq" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/faq/headSection.jsp"/>
-	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/faq/content.jsp"/>
-  </definition>
-  
+
   <definition name="terms" extends="mainTemplate" preparer="web.CommunityViewPreparer">
    	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/terms/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
 	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/terms/content.jsp"/>
   </definition>
-  
-  <definition name="offers" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/store/offers/headSection.jsp"/>
-	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offers/content.jsp"/>
-	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/footer.jsp"/>
-	  <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/footSection.jsp"/>
-  </definition>
-  
-  <definition name="offer" extends="mainTemplate" preparer="web.CommunityViewPreparer">
-   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/store/offer/headSection.jsp"/>
-	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
-	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer/content.jsp"/>
-	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/footer.jsp"/>
-	  <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/footSection.jsp"/>
-  </definition>
-  
-  <definition name="offer/payments" extends="offers" preparer="web.CommunityViewPreparer">
-   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/headSection.jsp"/>
- 	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/content.jsp"/>
-  </definition>
-  
-		<definition name="offer/payments/creditcard" extends="offer/payments" preparer="web.CommunityViewPreparer">
-			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/creditcard/content.jsp"/>
-		</definition>
-		<definition name="offer/payments/creditcard_preview" extends="offer/payments" preparer="web.CommunityViewPreparer">
-			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/creditcard_preview/content.jsp"/>
-		</definition>
-		<definition name="offer/payments/creditcard_details_successful" template="/WEB-INF/templates/ajaxTemplate.jsp" preparer="web.CommunityViewPreparer">
-			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/creditcard_details_successful/content.jsp"/>
-		</definition>
-		<definition name="offer/payments/creditcard_details_fail" template="/WEB-INF/templates/ajaxTemplate.jsp" preparer="web.CommunityViewPreparer">
-			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/creditcard_details_fail/content.jsp"/>
-		</definition>
-		<definition name="offer/payments/paypal" extends="offer/payments" preparer="web.CommunityViewPreparer">
-			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/store/offer_payments/paypal/content.jsp"/>
-		</definition>
 
   <definition name="errors/500" extends="mainTemplate" preparer="web.CommunityViewPreparer">
   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/errors/headSection.jsp"/>
@@ -268,5 +199,7 @@
       <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
       <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_coming_soon/content.jsp"/>
   </definition>
+
+	<definition name="prop" template="/WEB-INF/views/www/default/admin/prop/prop.jsp"/>
 
 </tiles-definitions>

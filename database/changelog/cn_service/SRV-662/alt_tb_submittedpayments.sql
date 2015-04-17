@@ -1,0 +1,1 @@
+alter table tb_submittedpayments drop column offerId;

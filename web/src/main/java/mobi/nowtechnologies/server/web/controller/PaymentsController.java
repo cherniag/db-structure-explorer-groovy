@@ -5,12 +5,12 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -50,20 +50,16 @@ public class PaymentsController extends CommonController {
     public static final String PAGE_MANAGE_PAYMENTS_INAPP = PATH_DELIM + VIEW_MANAGE_PAYMENTS_INAPP + PAGE_EXT;
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentsController.class);
     private static final String PAYMENTS_NOTE_MSG_CODE = "pays.page.h1.options.note";
+
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
-    private UserService userService;
     private UserRepository userRepository;
-    private CommunityService communityService;
     private PromotionService promotionService;
+    private PaymentDetailsRepository paymentDetailsRepository;
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     private SubscriptionInfoAsm subscriptionInfoAsm;
-
-    public CommunityResourceBundleMessageSource getCommunityResourceBundleMessageSource() {
-        return communityResourceBundleMessageSource;
-    }
 
     public void setCommunityResourceBundleMessageSource(CommunityResourceBundleMessageSource communityResourceBundleMessageSource) {
         this.communityResourceBundleMessageSource = communityResourceBundleMessageSource;
@@ -77,16 +73,12 @@ public class PaymentsController extends CommonController {
         this.paymentPolicyService = paymentPolicyService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     public void setPromotionService(PromotionService promotionService) {
@@ -197,7 +189,10 @@ public class PaymentsController extends CommonController {
     public ModelAndView getOneClickSubscriptionSuccessfulPage(@PathVariable("scopePrefix") String scopePrefix) {
 
         final int userId = getSecurityContextDetails().getUserId();
-        PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findByUserIdAndPaymentDetailsType(userId, PaymentDetailsType.PAYMENT);
+
+        final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = convertToDto(paymentDetailsList);
 
         final ModelAndView modelAndView;
         if (paymentDetailsByPaymentDto == null || !paymentDetailsByPaymentDto.isActivated()) {
@@ -209,6 +204,16 @@ public class PaymentsController extends CommonController {
 
         LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
+    }
+
+    private PaymentDetailsByPaymentDto convertToDto(List<PaymentDetails> paymentDetailsList) {
+        final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto;
+        if (paymentDetailsList.isEmpty()) {
+            paymentDetailsByPaymentDto = null;
+        } else {
+            paymentDetailsByPaymentDto = paymentDetailsList.get(0).toPaymentDetailsByPaymentDto();
+        }
+        return paymentDetailsByPaymentDto;
     }
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
@@ -231,7 +236,9 @@ public class PaymentsController extends CommonController {
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
         if (!user.isIOsNonO2ITunesSubscribedUser()) {
-            return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
+            List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findByUserIdAndPaymentDetailsType(user.getId(), PaymentDetailsType.PAYMENT);
+
+            return convertToDto(paymentDetailsList);
         }
         return null;
     }

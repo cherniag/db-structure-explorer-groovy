@@ -2,13 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="task.Scheduler" class="mobi.nowtechnologies.server.service.util.Scheduler">
-        <property name="messageSource" ref="serviceMessageSource" />
-    </bean>
-
     <bean id="task.TaskService" class="mobi.nowtechnologies.server.service.TaskService">
         <property name="taskRepository" ref="taskRepository" />
-        <property name="scheduler" ref="task.Scheduler" />
         <property name="messageSource" ref="serviceMessageSource" />
+        <property name="timeService" ref="timeService"/>
     </bean>
 </beans>

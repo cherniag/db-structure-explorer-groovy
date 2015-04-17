@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class PaymentSystemResponse {
 
@@ -18,13 +18,12 @@ public abstract class PaymentSystemResponse {
 
         if (!isFuture) {
             httpStatus = response.getStatusCode();
-            if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length() > 255) {
-                message = response.getMessage().substring(0, 254);
-            } else {
-                message = response.getMessage();
-            }
+            message = StringUtils.substring(response.getMessage(), 0, 255);
             descriptionError = "";
         }
+    }
+
+    public PaymentSystemResponse() {
     }
 
     public PaymentSystemResponse(boolean isFuture) {

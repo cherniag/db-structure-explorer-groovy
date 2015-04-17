@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -340,9 +340,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             httpPost.setHeaders(getSecuredHeaders());
             HttpResponse httpResponse = getHttpClient().execute(httpPost);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
+            if (statusCode == HttpURLConnection.HTTP_OK || statusCode == HttpURLConnection.HTTP_CREATED) {
                 trackDto = gson.fromJson(new InputStreamReader(httpResponse.getEntity().getContent()), TrackDto.class);
-            } else if (statusCode == HttpStatus.SC_NO_CONTENT) {
+            } else if (statusCode == HttpURLConnection.HTTP_NO_CONTENT) {
                 trackDto = null;
             } else {
                 throw new Exception("Wrong status code [" + statusCode + "] of response: [" + httpResponse + "]");
@@ -463,9 +463,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     }
 
     protected List<NameValuePair> buildPageParams(Pageable page, List<NameValuePair>... paramsArr) {
-        List<NameValuePair> params = paramsArr.length == 0 ?
-                                     new LinkedList<NameValuePair>() :
-                                     paramsArr[0];
+        List<NameValuePair> params = paramsArr.length == 0 ? new LinkedList<NameValuePair>() : paramsArr[0];
 
         params.add(new BasicNameValuePair("page.size", String.valueOf(page.getPageSize())));
         params.add(new BasicNameValuePair("page.page", String.valueOf(page.getPageNumber() + 1)));

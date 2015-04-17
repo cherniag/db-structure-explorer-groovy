@@ -20,11 +20,12 @@ import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.PaymentEventNotifier;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class PayPalPaymentServiceImplTest{
+public class PayPalPaymentServiceImplTest {
 
     private static final String SUCCESS_URL = "http://localhost/success";
     private static final String FAILURE_URL = "http://localhost/fail";
@@ -87,13 +88,16 @@ public class PayPalPaymentServiceImplTest{
     @InjectMocks
     private PayPalPaymentServiceImpl payPalPaymentService;
 
+    @Mock
+    private PaymentEventNotifier paymentEventNotifier;
+
     @Captor
     private ArgumentCaptor<Object> updateEntityServiceCaptor;
     @Captor
     private ArgumentCaptor<PaymentEvent> paymentEventsCaptor;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         payPalPaymentService.setRedirectURL(REDIRECT_URL);
         payPalPaymentService.setRetriesOnError(RETRIES_ON_ERROR);
 

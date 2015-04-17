@@ -14,14 +14,10 @@ http://www.springframework.org/schema/util
 http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="task.xml"/>
-
-    <import resource="classpath:META-INF\service-details-extractors.xml"/>
-
-    <import resource="classpath:META-INF\service-chart-supporter.xml"/>
-
-	<!-- Application properties -->
-    <import resource="placeholders.xml"/>
+    <import resource="classpath:META-INF/service-details-extractors.xml"/>
+    <import resource="classpath:META-INF/service-chart-supporter.xml"/>
     <import resource="streamzine-service.xml"/>
+    <import resource="classpath:META-INF/smpp.xml"/>
 
 	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
@@ -116,13 +112,13 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="userDao" ref="persistence.UserDao" />
 		<property name="countryService" ref="service.CountryService" />
 		<property name="promotionService" ref="service.PromotionService" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
 		<property name="communityService" ref="service.communityService" />
-		<property name="mailService" ref="service.MailService" />
-		<property name="deviceService" ref="service.DeviceService" />
+        <property name="deviceService" ref="service.DevicePromotionsService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
         <property name="refundService" ref="service.RefundService" />
@@ -156,7 +152,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <bean id="vf_nz.service.MobileProviderService" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZProviderServiceImpl">
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
-        <property name="deviceService" ref="service.DeviceService" />
+        <property name="deviceService" ref="service.DevicePromotionsService" />
     </bean>
 
     <bean id="vf_nz.service.VFNZUnsubscribeProccessor" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor">
@@ -178,53 +174,36 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     </bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
-        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
-        <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>
+        <property name="o2PaymentService" ref="service.o2PaymentService"/>
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
 		<property name="migPaymentService" ref="service.migPaymentService" />
-		<property name="o2PaymentService" ref="service.o2PaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 
 		<property name="messageSource" ref="serviceMessageSource" />
 
 		<property name="communityService" ref="service.communityService" />
-		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		
+		<property name="userNotificationService" ref="service.UserNotificationService" />
 		<property name="userRepository" ref="userRepository" />
 	</bean>
 
-	<bean id="service.DeviceService" class="mobi.nowtechnologies.server.service.DeviceService">
+	<bean id="service.DevicePromotionsService" class="mobi.nowtechnologies.server.service.DevicePromotionsService">
 		<property name="notPromotedDeviceRepository" ref="notPromotedDeviceRepository" />
 		<property name="promotedDeviceRepository" ref="promotedDeviceRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 
-	<bean id="service.DeviceTypeService" class="mobi.nowtechnologies.server.service.DeviceTypeService">
-	</bean>
-
 	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
-		<property name="drmDao" ref="persistence.DrmDao" />
-		<property name="entityService" ref="service.EntityService" />
-		<property name="mediaService" ref="service.MediaService" />
 		<property name="drmRepository" ref="drmRepository" />
 	</bean>
 
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService">
 		<property name="accountLogDao" ref="persistence.AccountLogDao" />
 		<property name="accountLogRepository" ref="accountLogRepository" />
-	</bean>
-
-	<bean id="service.MediaLogService" class="mobi.nowtechnologies.server.service.MediaLogService">
-		<property name="mediaLogDao" ref="persistence.MediaLogDao" />
-	</bean>
-
-	<bean id="service.MediaLogTypeService" class="mobi.nowtechnologies.server.service.MediaLogTypeService">
-		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
 	</bean>
 
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" >
@@ -234,8 +213,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="userBannedRepository" ref="userBannedRepository" />
-        <property name="deviceService" ref="service.DeviceService" />
-        <property name="communityService" ref="service.communityService"/>
+        <property name="deviceService" ref="service.DevicePromotionsService" />
         <property name="userTransactionRepository" ref="userTransactionRepository"/>
         <property name="userGroupRepository" ref="userGroupRepository"/>
         <property name="userRepository" ref="userRepository"/>
@@ -273,7 +251,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
-		<property name="mediaService" ref="service.MediaService" />
         <property name="mediaRepository" ref="mediaRepository"/>
 	</bean>
 
@@ -294,14 +271,14 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.MediaService" class="mobi.nowtechnologies.server.service.MediaService">
 		<property name="mediaDao" ref="persistence.MediaDao" />
-		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
-		<property name="mediaLogService" ref="service.MediaLogService" />
 		<property name="mediaRepository" ref="mediaRepository" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 	</bean>
 
 	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
+        <property name="mediaLogTypeRepository" ref="mediaLogTypeRepository" />
+        <property name="mediaLogRepository" ref="mediaLogRepository" />
 		<property name="mediaService" ref="service.MediaService" />
         <property name="mediaRepository" ref="mediaRepository" />
         <property name="userRepository" ref="userRepository" />
@@ -320,12 +297,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	</bean>
 
 	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
-		<property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao" />
 		<property name="paymentPolicyRepository" ref="paymentPolicyRepository" />
-	</bean>
-
-	<bean id="service.PaymentService" class="mobi.nowtechnologies.server.service.PaymentService">
-		<property name="paymentDao" ref="persistence.PaymentDao" />
 	</bean>
 
     <bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
@@ -337,7 +309,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
-                <value>file:#{systemProperties['catalina.base']}/conf/services</value>
+                <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/services</value>
                 <value>classpath:services</value>
             </list>
         </property>
@@ -351,6 +323,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
           class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
         <property name="reloadableResourceBundleMessageSource" ref="serviceReloadableResourceBundleMessageSource"/>
         <property name="stringEncryptor" ref="configurationEncryptor"/>
+		<property name="propLocale" ref="propLocale"/>
     </bean>
 
 	<import resource="social.xml" />
@@ -379,7 +352,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="communityRepository" ref="communityRepository" />
 	</bean>
 
-	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"></bean>
+	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"/>
 
 	<bean id="service.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
 		<property name="userName" value="${cloudFile.userName}" />
@@ -406,21 +379,12 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 
 	<bean id="service.MessageService" class="mobi.nowtechnologies.server.service.MessageService">
-		<property name="userService" ref="service.UserService" />
 		<property name="filterService" ref="service.FilterService" />
-		<property name="communityService" ref="service.communityService" />
 		<property name="messageRepository" ref="messageRepository" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
+        <property name="communityRepository" ref="communityRepository" />
 	</bean>
 
-	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
-		<property name="filterService" ref="service.FilterService" />
-		<property name="offerRepository" ref="offerRepository" />
-		<property name="itemRepository" ref="itemRepository" />
-		<property name="userRepository" ref="userRepository" />
-		<property name="accountLogService" ref="service.AccountLogService" />
-		<property name="cloudFileService" ref="service.CloudFileService" />
-	</bean>
 
 	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.trackrepo.TrackRepositoryHttpClientImpl">
 		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />
@@ -441,8 +405,13 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="filterWithCriteriaRepository" ref="filterWithCriteriaRepository" />
 	</bean>
 
+    <bean name="smsServiceFacade" class="mobi.nowtechnologies.server.service.impl.SmsServiceFacade">
+        <property name="messageSource" ref="serviceMessageSource" />
+    </bean>
+
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
 		<property name="userService" ref="service.UserService" />
+		<property name="smsServiceFacade" ref="smsServiceFacade" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="paymentsUrl" value="${payments.url}" />
 		<property name="unsubscribeUrl" value="${unsubscribe.url}" />
@@ -450,12 +419,16 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="availableCommunities" value="${sms.available.communities}" />
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
-		<property name="deviceService" ref="service.DeviceService"/>
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+		<property name="deviceService" ref="service.DevicePromotionsService"/>
+        <property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
 	</bean>
 
     <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>
     <alias name="vf_nz.service.VFNZSMSGatewayService" alias="vf_nz.service.SmsProvider"/>
+
+    <bean id="service.bean.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.DumbMessageNotificationServiceImpl"/>
+    <bean id="o2.service.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.O2OAndVFNZMessageNotificationServiceImpl"/>
+    <bean id="vf_nz.service.messageNotificationService" class="mobi.nowtechnologies.server.service.impl.O2OAndVFNZMessageNotificationServiceImpl"/>
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
@@ -463,7 +436,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="limitValidatePhoneNumber" value="${o2.server.validation.phonenumber.limit}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
-		<property name="deviceService" ref="service.DeviceService" />
+		<property name="deviceService" ref="service.DevicePromotionsService" />
 		<property name="userLogRepository" ref="userLogRepository" />
 		<property name="communityService" ref="service.communityService" />		
 		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
@@ -581,8 +554,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl"/>
 
-    <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl">
-    </bean>
+    <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl"/>
 
 	   <bean id="imageService" class="mobi.nowtechnologies.server.service.file.image.ImageService" />
 
@@ -599,7 +571,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="userService" ref="service.UserService"/>
     </bean>
 
-    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.social.core.UserPromoService"/>
+    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoService"/>
 
     <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService">
         <property name="configuration" ref="configuration.AutoOptIn"/>
@@ -610,14 +582,11 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
 
-
-    <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
+    <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.versioncheck.service.VersionCheckService"/>
 
     <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService"/>
 
 	<import resource="payment.xml" />
-
-	<import resource="smpp-stub.xml" />
 
 	<import resource="service-application-tests.xml" />
 </beans>
