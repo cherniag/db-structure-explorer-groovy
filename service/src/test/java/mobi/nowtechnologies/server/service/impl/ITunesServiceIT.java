@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -169,7 +169,7 @@ public class ITunesServiceIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getIOSDeviceType());
+        user.setDeviceType(DeviceTypeCache.getIOSDeviceType());
         user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user = userRepository.saveAndFlush(user);
         return user;

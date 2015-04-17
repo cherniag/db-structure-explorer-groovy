@@ -213,7 +213,7 @@ public class ChartDetailRepositoryIT extends AbstractRepositoryIT {
         ChartDetail chartDetail4 = chartDetailRepository.save(new ChartDetail().withChart(chart).withPosition(1).withPublishTime(6L).withMedia(media3));
 
         //when
-        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.getDuplicatedMediaChartDetails(chart, asList(1L, 5L, 6L), asList(media1.getI(), media3.getI()));
+        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.findDuplicatedMediaChartDetails(chart, asList(1L, 5L, 6L), asList(media1.getI(), media3.getI()));
 
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(3));
@@ -254,7 +254,7 @@ public class ChartDetailRepositoryIT extends AbstractRepositoryIT {
         chartDetailRepository.save(new ChartDetail().withChart(chart).withPosition(1).withPublishTime(6L).withMedia(media3));
 
         //when
-        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.getDuplicatedMediaChartDetails(chart, asList(-1L, -5L, -6L), asList(media1.getI(), media3.getI()));
+        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.findDuplicatedMediaChartDetails(chart, asList(-1L, -5L, -6L), asList(media1.getI(), media3.getI()));
 
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));
@@ -291,7 +291,7 @@ public class ChartDetailRepositoryIT extends AbstractRepositoryIT {
         chartDetailRepository.save(new ChartDetail().withChart(chart).withPosition(1).withPublishTime(6L).withMedia(media3));
 
         //when
-        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.getDuplicatedMediaChartDetails(chart, asList(1L, 5L, 6L), asList(-1, -2));
+        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.findDuplicatedMediaChartDetails(chart, asList(1L, 5L, 6L), asList(-1, -2));
 
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));
@@ -328,7 +328,7 @@ public class ChartDetailRepositoryIT extends AbstractRepositoryIT {
         chartDetailRepository.save(new ChartDetail().withChart(chart).withPosition(1).withPublishTime(6L).withMedia(media3));
 
         //when
-        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.getDuplicatedMediaChartDetails(null, asList(1L, 5L, 6L), asList(media1.getI(), media3.getI()));
+        List<ChartDetail> duplicatedMediaChartDetails = chartDetailRepository.findDuplicatedMediaChartDetails(null, asList(1L, 5L, 6L), asList(media1.getI(), media3.getI()));
 
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));

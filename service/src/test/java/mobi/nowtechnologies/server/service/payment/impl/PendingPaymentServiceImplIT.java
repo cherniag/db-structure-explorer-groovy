@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
@@ -117,7 +117,7 @@ public class PendingPaymentServiceImplIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user.setLastDeviceLogin(1);
         user.setActivationStatus(ActivationStatus.ACTIVATED);

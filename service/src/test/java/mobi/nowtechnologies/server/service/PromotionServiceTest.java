@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -82,7 +82,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({UserService.class,
                  Utils.class,
-                 DeviceTypeDao.class,
+                 DeviceTypeCache.class,
                  AccountLog.class,
                  EmailValidator.class,
                  PromoParams.class,

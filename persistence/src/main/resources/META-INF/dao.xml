@@ -50,7 +50,7 @@
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass" value="mobi.nowtechnologies.server.device.domain.DeviceTypeDao"/>
+        <property name="targetClass" value="mobi.nowtechnologies.server.device.domain.DeviceTypeCache"/>
 		<property name="targetMethod" value="setDeviceTypeRepository"/>
 		<property name="arguments">
 			<list>

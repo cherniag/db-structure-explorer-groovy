@@ -353,7 +353,7 @@ public class MessageService {
         Community community = communityRepository.findByRewriteUrlParameter(communityURL.toLowerCase());
 
         final long choosedPublishTimeMillis = choosedPublishDate.getTime();
-        final long count = messageRepository.getCount(community, choosedPublishTimeMillis, MessageType.NEWS);
+        final long count = messageRepository.countMessages(community, choosedPublishTimeMillis, MessageType.NEWS);
         boolean isNewsForChoosedPublishDateAlreadyExist = (count > 0);
         if (!isNewsForChoosedPublishDateAlreadyExist) {
 
@@ -395,7 +395,7 @@ public class MessageService {
 
         final List<Message> messages;
         if (nearestLatestPublishTimeMillis != null) {
-            messages = messageRepository.getActualNews(community, nearestLatestPublishTimeMillis);
+            messages = messageRepository.findActualNews(community, nearestLatestPublishTimeMillis);
         } else {
             messages = Collections.EMPTY_LIST;
         }
@@ -466,7 +466,7 @@ public class MessageService {
 
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
 
-        List<Long> allPublishTimeMillis = messageRepository.getAllPublishTimeMillis(community);
+        List<Long> allPublishTimeMillis = messageRepository.findAllPublishTimeMillis(community);
         LOGGER.info("Output parameter [{}]", allPublishTimeMillis);
         return allPublishTimeMillis;
     }

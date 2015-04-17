@@ -22,7 +22,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                    "and (promotion.maxUsers=0 or promotion.numUsers<promotion.maxUsers) " +
                    "and promotion.isActive=true " +
                    "and promotion.type=?4")
-    Promotion getActivePromoCodePromotion(String promotionCode, UserGroup userGroup, int epochSeconds, String promotionType);
+    Promotion findActivePromoCodePromotion(String promotionCode, UserGroup userGroup, int epochSeconds, String promotionType);
 
 
     @Query(value = "select promotion from Promotion promotion " +
@@ -31,7 +31,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                    "promoCode.code=?1 " +
                    "and promotion.userGroup=?2 " +
                    "and promotion.type=?3")
-    Promotion getPromotionByPromoCode(String promotionCode, UserGroup userGroup, String promotionType);
+    Promotion findPromotionByPromoCode(String promotionCode, UserGroup userGroup, String promotionType);
 
 
     @Modifying

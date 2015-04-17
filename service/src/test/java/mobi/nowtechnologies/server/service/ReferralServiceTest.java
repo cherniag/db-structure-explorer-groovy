@@ -130,7 +130,7 @@ public class ReferralServiceTest {
 
         verify(userReferralsSnapshotRepository).findAll(referralUserIds);
 
-        verify(referralRepository).getCountByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
+        verify(referralRepository).countByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
         snapshot1.updateMatchesData(anyInt(), any(Date.class));
     }
 
@@ -176,7 +176,7 @@ public class ReferralServiceTest {
 
         verify(userReferralsSnapshotRepository).findAll(referralUserIds);
 
-        verify(referralRepository).getCountByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
+        verify(referralRepository).countByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
         snapshot1.updateMatchesData(anyInt(), any(Date.class));
     }
 

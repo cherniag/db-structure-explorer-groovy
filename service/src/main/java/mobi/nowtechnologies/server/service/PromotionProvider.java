@@ -65,7 +65,7 @@ public class PromotionProvider {
 
 
         public Promotion getPromotion() {
-            return repository.getPromotionByPromoCode(promoCode, userGroup, ADD_FREE_WEEKS_PROMOTION);
+            return repository.findPromotionByPromoCode(promoCode, userGroup, ADD_FREE_WEEKS_PROMOTION);
         }
 
         public PromoCode getPromoCode() {

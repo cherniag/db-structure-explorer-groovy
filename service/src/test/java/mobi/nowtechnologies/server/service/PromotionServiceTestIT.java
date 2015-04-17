@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
@@ -122,7 +122,7 @@ public class PromotionServiceTestIT {
 
     private User createUser(Tariff tariff, String communityRewriteUrl) {
         User user = new User();
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setMobile(MOBILE);
         user.setTariff(tariff);
         user.setUserGroup(getUserGroup(communityRewriteUrl));

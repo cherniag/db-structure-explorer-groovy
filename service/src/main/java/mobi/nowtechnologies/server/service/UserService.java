@@ -5,7 +5,7 @@ import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
@@ -184,7 +184,7 @@ public class UserService {
 
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
         UserGroup userGroup = userGroupRepository.findByCommunity(community);
-        return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+        return userRepository.updateUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
     private MergeResult applyInitPromoInternal(PromoRequest promoRequest) {
@@ -986,7 +986,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<User> getListOfUsersForWeeklyUpdate() {
-        List<User> users = userRepository.getListOfUsersForWeeklyUpdate(getEpochSeconds(), PAGEABLE_FOR_WEEKLY_UPDATE);
+        List<User> users = userRepository.findListOfUsersForWeeklyUpdate(getEpochSeconds(), PAGEABLE_FOR_WEEKLY_UPDATE);
         LOGGER.debug("Output parameter users=[{}]", users);
         return users;
     }
@@ -1305,9 +1305,9 @@ public class UserService {
     }
 
     protected DeviceType getDeviceType(String device) {
-        DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(device);
+        DeviceType deviceType = DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(device);
         if (deviceType == null) {
-            return DeviceTypeDao.getNoneDeviceType();
+            return DeviceTypeCache.getNoneDeviceType();
         }
         return deviceType;
     }

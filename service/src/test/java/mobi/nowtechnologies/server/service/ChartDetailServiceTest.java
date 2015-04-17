@@ -294,7 +294,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getActualChartItems(Byte,Date) method test.
+     * Run the List<ChartDetail> findActualChartItems(Byte,Date) method test.
      *
      * @throws Exception
      */
@@ -307,7 +307,7 @@ public class ChartDetailServiceTest {
         List<ChartDetail> originalChartDetails = getChartDetails(0L);
 
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
-        Mockito.when(mockChartDetailRepository.getActualChartItems(Mockito.eq(chartId), Mockito.eq(nearestLatestPublishTimeMillis))).thenReturn(originalChartDetails);
+        Mockito.when(mockChartDetailRepository.findActualChartItems(Mockito.eq(chartId), Mockito.eq(nearestLatestPublishTimeMillis))).thenReturn(originalChartDetails);
 
         List<ChartDetail> actualChartDetails = fixtureChartDetailService.getActualChartItems(chartId, selectedPublishDate);
 
@@ -317,7 +317,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getActualChartItems(Byte,Date) method test.
+     * Run the List<ChartDetail> findActualChartItems(Byte,Date) method test.
      *
      * @throws Exception
      */
@@ -336,7 +336,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getActualChartItems(Byte,Date) method test.
+     * Run the List<ChartDetail> findActualChartItems(Byte,Date) method test.
      *
      * @throws Exception
      */
@@ -349,7 +349,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getActualChartItems(Byte,Date) method test.
+     * Run the List<ChartDetail> findActualChartItems(Byte,Date) method test.
      *
      * @throws Exception
      */
@@ -362,7 +362,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<String> getAllChannels() method test.
+     * Run the List<String> findAllChannels() method test.
      *
      * @throws Exception
      */
@@ -371,7 +371,7 @@ public class ChartDetailServiceTest {
 
         List<String> allChannels = Arrays.asList("c1", "a2");
 
-        Mockito.when(mockChartDetailRepository.getAllChannels()).thenReturn(allChannels);
+        Mockito.when(mockChartDetailRepository.findAllChannels()).thenReturn(allChannels);
 
         List<String> actualAllChannels = fixtureChartDetailService.getAllChannels();
 
@@ -391,7 +391,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getChartItemsByDate(Byte,Date) method test.
+     * Run the List<ChartDetail> findChartItemsByDate(Byte,Date) method test.
      *
      * @throws Exception
      */
@@ -403,7 +403,7 @@ public class ChartDetailServiceTest {
         final long selectedPublishTimeMillis = selectedPublishDate.getTime();
         List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishTimeMillis);
 
-        Mockito.when(mockChartDetailRepository.getChartItemsByDate(Mockito.eq(chartId), Mockito.eq(selectedPublishTimeMillis))).thenReturn(originalChartDetails);
+        Mockito.when(mockChartDetailRepository.findChartItemsByDate(Mockito.eq(chartId), Mockito.eq(selectedPublishTimeMillis))).thenReturn(originalChartDetails);
 
         List<ChartDetail> actualChartDetails = fixtureChartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
 
@@ -460,7 +460,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getChartItemsByDate(List<ChartDetailDto>) method test on delete exception.
+     * Run the List<ChartDetail> findChartItemsByDate(List<ChartDetailDto>) method test on delete exception.
      *
      * @throws Exception
      */
@@ -480,7 +480,7 @@ public class ChartDetailServiceTest {
     }
 
     /**
-     * Run the List<ChartDetail> getChartItemsByDate(List<ChartDetailDto>) method test on insert exception.
+     * Run the List<ChartDetail> findChartItemsByDate(List<ChartDetailDto>) method test on insert exception.
      *
      * @throws Exception
      */
@@ -507,7 +507,7 @@ public class ChartDetailServiceTest {
 
         List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishDateTime);
 
-        Mockito.when(mockChartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
+        Mockito.when(mockChartDetailRepository.findAllActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
 
         Mockito.doNothing().when(mockChartDetailRepository).delete(originalChartDetails);
 
@@ -524,7 +524,7 @@ public class ChartDetailServiceTest {
 
         List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishDateTime);
 
-        Mockito.when(mockChartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
+        Mockito.when(mockChartDetailRepository.findAllActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
         Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).delete(originalChartDetails);
 
         fixtureChartDetailService.deleteChartItems(chartId, selectedPublishDateTime);
@@ -536,7 +536,7 @@ public class ChartDetailServiceTest {
         Integer chartId = 1;
         long selectedPublishDateTime = 0;
 
-        Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).getAllActualChartDetails(chartId, selectedPublishDateTime);
+        Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).findAllActualChartDetails(chartId, selectedPublishDateTime);
 
         fixtureChartDetailService.deleteChartItems(chartId, selectedPublishDateTime);
     }
@@ -550,14 +550,14 @@ public class ChartDetailServiceTest {
 
         int expectedUpdatedRowCount = 5;
 
-        Mockito.when(mockChartDetailRepository.getCount(chartId, selectedPublishDateTime)).thenReturn(0L);
+        Mockito.when(mockChartDetailRepository.countChartDetail(chartId, selectedPublishDateTime)).thenReturn(0L);
         Mockito.when(mockChartDetailRepository.updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId)).thenReturn(expectedUpdatedRowCount);
 
         int actualUpdatedRowCount = fixtureChartDetailService.updateChartItems(chartId, selectedPublishDateTime, newPublishDateTime);
 
         assertEquals(expectedUpdatedRowCount, actualUpdatedRowCount);
 
-        Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
+        Mockito.verify(mockChartDetailRepository).countChartDetail(chartId, selectedPublishDateTime);
         Mockito.verify(mockChartDetailRepository).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
 
     }
@@ -571,13 +571,13 @@ public class ChartDetailServiceTest {
 
         int expectedUpdatedRowCount = 5;
 
-        Mockito.when(mockChartDetailRepository.getCount(chartId, selectedPublishDateTime)).thenReturn(1L);
+        Mockito.when(mockChartDetailRepository.countChartDetail(chartId, selectedPublishDateTime)).thenReturn(1L);
 
         int actualUpdatedRowCount = fixtureChartDetailService.updateChartItems(chartId, selectedPublishDateTime, newPublishDateTime);
 
         assertEquals(expectedUpdatedRowCount, actualUpdatedRowCount);
 
-        Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
+        Mockito.verify(mockChartDetailRepository).countChartDetail(chartId, selectedPublishDateTime);
         Mockito.verify(mockChartDetailRepository, times(0)).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
 
     }
@@ -591,14 +591,14 @@ public class ChartDetailServiceTest {
 
         int expectedUpdatedRowCount = 0;
 
-        Mockito.when(mockChartDetailRepository.getCount(chartId, selectedPublishDateTime)).thenReturn(0L);
+        Mockito.when(mockChartDetailRepository.countChartDetail(chartId, selectedPublishDateTime)).thenReturn(0L);
         Mockito.when(mockChartDetailRepository.updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId)).thenReturn(expectedUpdatedRowCount);
 
         int actualUpdatedRowCount = fixtureChartDetailService.updateChartItems(chartId, selectedPublishDateTime, newPublishDateTime);
 
         assertEquals(expectedUpdatedRowCount, actualUpdatedRowCount);
 
-        Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
+        Mockito.verify(mockChartDetailRepository).countChartDetail(chartId, selectedPublishDateTime);
         Mockito.verify(mockChartDetailRepository).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
 
     }
@@ -612,7 +612,7 @@ public class ChartDetailServiceTest {
         List<Media> ids = Collections.singletonList(new Media());
 
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(nearestPublishDateTime.getTime());
-        Mockito.when(mockChartDetailRepository.getLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+        Mockito.when(mockChartDetailRepository.findLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
 
         List<Media> result = fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);
 
@@ -620,7 +620,7 @@ public class ChartDetailServiceTest {
         assertEquals(ids.size(), result.size());
 
         Mockito.verify(mockChartDetailRepository).findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId));
-        Mockito.verify(mockChartDetailRepository).getLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
+        Mockito.verify(mockChartDetailRepository).findLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
 
     }
 
@@ -633,7 +633,7 @@ public class ChartDetailServiceTest {
         List<Media> ids = Collections.singletonList(new Media());
 
         Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(null);
-        Mockito.when(mockChartDetailRepository.getLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+        Mockito.when(mockChartDetailRepository.findLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
 
         List<Media> result = fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);
 
@@ -641,7 +641,7 @@ public class ChartDetailServiceTest {
         assertEquals(0, result.size());
 
         Mockito.verify(mockChartDetailRepository).findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId));
-        Mockito.verify(mockChartDetailRepository, times(0)).getLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
+        Mockito.verify(mockChartDetailRepository, times(0)).findLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
 
     }
 
@@ -653,7 +653,7 @@ public class ChartDetailServiceTest {
         Date nearestPublishDateTime = new Date();
         List<Media> mediaList = Collections.singletonList(new Media());
 
-        Mockito.when(mockChartDetailRepository.getLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(mediaList);
+        Mockito.when(mockChartDetailRepository.findLockedChartItemByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(mediaList);
 
         fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);
     }

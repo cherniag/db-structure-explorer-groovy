@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Titov Mykhaylo (titov)
  */
 @Deprecated
-public final class DeviceTypeDao {
+public final class DeviceTypeCache {
 
     private static Map<Byte, DeviceType> DEVICE_TYPE_MAP_ID_AS_KEY_AND_DEVICE_TYPE_VALUE;
     private static Map<String, DeviceType> DEVICE_TYPE_MAP_NAME_AS_KEY_AND_DEVICE_TYPE_VALUE;
@@ -29,7 +29,7 @@ public final class DeviceTypeDao {
     private static DeviceType blackberryDeviceType;
     private static DeviceType symbianDeviceType;
 
-    private DeviceTypeDao() {
+    private DeviceTypeCache() {
     }
 
     public static void setDeviceTypeRepository(DeviceTypeRepository deviceTypeRepository) {

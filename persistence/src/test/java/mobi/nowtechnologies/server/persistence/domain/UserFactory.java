@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -125,7 +125,7 @@ public class UserFactory {
         user.setSubBalance((byte) 0);
         user.setToken("");
         user.setStatus(userStatus);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setDevice("");
         user.setUserGroup(UserGroupFactory.createUserGroup());
         user.setUserType(UserType.DEV);

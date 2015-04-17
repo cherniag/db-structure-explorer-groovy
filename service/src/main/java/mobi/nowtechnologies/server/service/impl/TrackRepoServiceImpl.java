@@ -288,7 +288,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     private Artist createOrUpdateArtist(TrackDto track, TrackDto config) {
-        Artist artist = artistRepository.getByName(config.getArtist());
+        Artist artist = artistRepository.findByName(config.getArtist());
         if (artist == null) {
             artist = new Artist();
         }
@@ -307,7 +307,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         }
         String genreName = track.getGenre();
         genreName = genreName.replaceAll("&", "");
-        Genre genre = (Genre) genreRepository.getByName(genreName);
+        Genre genre = (Genre) genreRepository.findByName(genreName);
         if (genre == null) {
             genre = new Genre();
             genre.setName(genreName);
@@ -355,7 +355,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         }
 
         String fullFileName = fileDto.getFullFilename();
-        MediaFile file = mediaFileRepository.getByName(fullFileName);
+        MediaFile file = mediaFileRepository.findByName(fullFileName);
 
         if (file == null) {
             file = new MediaFile();
@@ -391,7 +391,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     @Transactional(readOnly = true)
     protected String getArtistInfo(String artistName) {
         Pageable one = new PageRequest(0, 1);
-        List<Artist> artists = artistRepository.getByNames(artistName, one);
+        List<Artist> artists = artistRepository.findByNames(artistName, one);
         if (artists == null || artists.size() == 0) {
             return "";
         } else {

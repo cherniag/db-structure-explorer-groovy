@@ -49,7 +49,7 @@ public class MediaService {
             throw new ServiceException("The parameter mediaIsrc is null");
         }
 
-        List<Media> medias = mediaRepository.getByIsrc(mediaIsrc);
+        List<Media> medias = mediaRepository.findByIsrc(mediaIsrc);
 
         return Iterables.getFirst(medias, null);
     }
@@ -61,17 +61,17 @@ public class MediaService {
 
     @Transactional(readOnly = true)
     public List<Media> getMedias(String searchWords) {
-        return mediaRepository.getMedias("%" + searchWords + "%");
+        return mediaRepository.findMedias("%" + searchWords + "%");
     }
 
     @Transactional(readOnly = true)
     public List<Media> getVideo(String searchWords) {
-        return mediaRepository.getMedias("%" + searchWords + "%", FileType.VIDEO.getIdAsByte());
+        return mediaRepository.findMedias("%" + searchWords + "%", FileType.VIDEO.getIdAsByte());
     }
 
     @Transactional(readOnly = true)
     public List<Media> getMusic(String searchWords) {
-        return mediaRepository.getMedias("%" + searchWords + "%", FileType.MOBILE_AUDIO.getIdAsByte());
+        return mediaRepository.findMedias("%" + searchWords + "%", FileType.MOBILE_AUDIO.getIdAsByte());
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +79,7 @@ public class MediaService {
         LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] searchWord [{}] excludedIds [{}]", communityRewriteUrl, timeMillis, searchWord, excludedIds);
         Set<Media> medias = Sets.newHashSet();
 
-        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<Chart> charts = chartRepository.findByCommunityURL(communityRewriteUrl);
         for (Chart chart : charts) {
             Long latestPublishDate = chartDetailRepository.findNearestLatestPublishDate(timeMillis, chart.getI());
             if (latestPublishDate != null) {
@@ -94,7 +94,7 @@ public class MediaService {
     public Set<Media> getMediasByChartAndPublishTimeAndMediaIds(String communityRewriteUrl, long timeMillis, Collection<Integer> ids) {
         LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] ids [{}]", communityRewriteUrl, timeMillis, ids);
         Set<Media> medias = Sets.newHashSet();
-        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<Chart> charts = chartRepository.findByCommunityURL(communityRewriteUrl);
         for (Chart chart : charts) {
             Long latestPublishDate = chartDetailRepository.findNearestLatestPublishDate(timeMillis, chart.getI());
             if (latestPublishDate != null) {

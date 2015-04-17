@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
@@ -64,6 +65,7 @@ public class UserServiceRegistrationTest {
     @Test
     public void registerNewUserWithoutPromotion() throws Exception {
         when(userRepository.findUserWithUserNameAsPassedDeviceUID("deviceUID".toLowerCase(), community)).thenReturn(null);
+        when(countryService.findIdByName("GB")).thenReturn(new Country("GB", "Great Britain"));
 
         User registerUser = userService.registerUser(userDeviceRegDetailsDto, false, false);
 

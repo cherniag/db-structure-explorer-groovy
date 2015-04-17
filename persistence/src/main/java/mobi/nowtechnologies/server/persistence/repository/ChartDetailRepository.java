@@ -15,32 +15,32 @@ import org.springframework.data.repository.query.Param;
 public interface ChartDetailRepository extends JpaRepository<ChartDetail, Integer> {
 
     @Query("select chartDetail.publishTimeMillis from ChartDetail chartDetail where chartDetail.chart.i=?1 group by chartDetail.publishTimeMillis")
-    List<Long> getAllPublishTimeMillis(Integer chartId);
+    List<Long> findAllPublishTimeMillis(Integer chartId);
 
     @Query(
         "select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.chart" +
         ".i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis order by chartDetail.position asc")
-    List<ChartDetail> getActualChartItems(@Param("chartId") Integer chartId, @Param("publishTimeMillis") long publishTimeMillis);
+    List<ChartDetail> findActualChartItems(@Param("chartId") Integer chartId, @Param("publishTimeMillis") long publishTimeMillis);
 
     @Query("select chartDetail from ChartDetail chartDetail where chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis order by chartDetail.position asc")
-    List<ChartDetail> getAllActualChartDetails(@Param("chartId") Integer chartId, @Param("publishTimeMillis") long publishTimeMillis);
+    List<ChartDetail> findAllActualChartDetails(@Param("chartId") Integer chartId, @Param("publishTimeMillis") long publishTimeMillis);
 
     @Query(
         "select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.chart" +
         ".i=?1 and chartDetail.publishTimeMillis=?2 order by chartDetail.position asc")
-    List<ChartDetail> getChartItemsByDate(Integer chartId, long publishTimeMillis);
+    List<ChartDetail> findChartItemsByDate(Integer chartId, long publishTimeMillis);
 
     @Query("select chartDetail.media from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true order by chartDetail.media.trackId")
-    List<Media> getLockedChartItemByDate(Integer chartId, long publishTimeMillis);
+    List<Media> findLockedChartItemByDate(Integer chartId, long publishTimeMillis);
 
     @Query("select count(chartDetail) from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2")
-    long getCount(Integer chartId, long chosenPublishTimeMillis);
+    long countChartDetail(Integer chartId, long chosenPublishTimeMillis);
 
     @Query("select max(chartDetail.publishTimeMillis) from ChartDetail chartDetail where chartDetail.chart.i=?2 and chartDetail.publishTimeMillis<=?1")
     Long findNearestLatestPublishDate(long chosenPublishTimeMillis, Integer chartId);
 
     @Query("select chartDetail.channel from ChartDetail chartDetail where chartDetail.channel is not null group by chartDetail.channel")
-    List<String> getAllChannels();
+    List<String> findAllChannels();
 
     @Query(
         "select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join " +
@@ -80,7 +80,7 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
            "where chart=:chart " +
            "and chartDetail.publishTimeMillis in :publishTimeMillisList " +
            "and chartDetail.media.i in :mediaIds")
-    List<ChartDetail> getDuplicatedMediaChartDetails(@Param("chart") Chart chart, @Param("publishTimeMillisList") List<Long> publishTimeMillisList, @Param("mediaIds") List<Integer> mediaIds);
+    List<ChartDetail> findDuplicatedMediaChartDetails(@Param("chart") Chart chart, @Param("publishTimeMillisList") List<Long> publishTimeMillisList, @Param("mediaIds") List<Integer> mediaIds);
 
     @Modifying
     @Query(value = "update ChartDetail chartDetail " +

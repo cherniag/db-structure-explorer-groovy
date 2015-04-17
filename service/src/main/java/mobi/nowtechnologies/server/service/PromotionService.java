@@ -95,7 +95,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, userGroup.getCommunity().getRewriteUrlParameter());
 
-        return promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
+        return promotionRepository.findActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
     }
 
     private Promotion getPromotionForUser(User user) {

@@ -103,7 +103,7 @@ class CommonAssertionsService {
             def accountCheckResponse = deviceSet.getPhoneState(it).lastAccountCheckResponse
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def promotion = promotionRepository.getPromotionByPromoCode(user.getLastPromo().getCode(),
+            def promotion = promotionRepository.findPromotionByPromoCode(user.getLastPromo().getCode(),
                     user.getUserGroup(),
                     user.getLastPromo().getPromotion().getType())
             //TODO: what's wrong

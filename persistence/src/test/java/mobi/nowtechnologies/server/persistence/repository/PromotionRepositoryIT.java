@@ -65,7 +65,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(o2PromotionByPromoCodeBefore2014EndDate().withIsActive(false));
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
-        activePromoCodePromotion = promotionRepository.getPromotionByPromoCode(promotionCode, o2UserGroup, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findPromotionByPromoCode(promotionCode, o2UserGroup, ADD_FREE_WEEKS_PROMOTION);
         Assert.assertNotNull(activePromoCodePromotion);
         Assert.assertEquals(activePromoCodePromotion.getI(), o2PromotionByPromoCodeBefore2014EndDate.getI());
     }
@@ -77,7 +77,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(o2PromotionByPromoCodeBefore2014EndDate().withIsActive(false).withEndDate(2000));
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
-        activePromoCodePromotion = promotionRepository.getPromotionByPromoCode(promotionCode, o2UserGroup, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findPromotionByPromoCode(promotionCode, o2UserGroup, ADD_FREE_WEEKS_PROMOTION);
         Assert.assertNotNull(activePromoCodePromotion);
         Assert.assertEquals(activePromoCodePromotion.getI(), o2PromotionByPromoCodeBefore2014EndDate.getI());
     }
@@ -96,7 +96,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsDoNotReturnedPromotion();
@@ -112,7 +112,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsDoNotReturnedPromotion();
@@ -128,7 +128,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTime2015Seconds, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTime2015Seconds, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsDoNotReturnedPromotion();
@@ -144,7 +144,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsDoNotReturnedPromotion();
@@ -160,7 +160,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionAfter2014StartDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsDoNotReturnedPromotion();
@@ -176,7 +176,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionBefore2014EndDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTimeOneSecond, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsReturnedPromotionBefore2014();
@@ -195,7 +195,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         saved(promoCodeForO2PromotionAfter2014StartDate());
 
         // when
-        activePromoCodePromotion = promotionRepository.getActivePromoCodePromotion(promotionCode, o2UserGroup, currentTime2015Seconds, ADD_FREE_WEEKS_PROMOTION);
+        activePromoCodePromotion = promotionRepository.findActivePromoCodePromotion(promotionCode, o2UserGroup, currentTime2015Seconds, ADD_FREE_WEEKS_PROMOTION);
 
         //then
         validateAsReturnedPromotionAfter2014StartDate();

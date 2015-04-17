@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
@@ -83,7 +83,7 @@ public class UserTransactionRepositoryIT extends AbstractRepositoryIT {
         user.setUserName(Utils.getRandomUUID());
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user = userRepository.saveAndFlush(user);

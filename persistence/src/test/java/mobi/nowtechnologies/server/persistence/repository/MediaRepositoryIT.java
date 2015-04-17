@@ -47,7 +47,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
             .save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
-        List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
+        List<Media> medias = mediaRepository.findMedias(searchWords, mediaType);
 
         //then
         assertThat(medias.size(), is(1));
@@ -69,7 +69,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
             .save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
-        List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
+        List<Media> medias = mediaRepository.findMedias(searchWords, mediaType);
 
         //then
         assertThat(medias.size(), is(1));
@@ -91,7 +91,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
             .save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
-        List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
+        List<Media> medias = mediaRepository.findMedias(searchWords, mediaType);
 
         //then
         assertThat(medias.size(), is(1));
@@ -113,7 +113,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
             .save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
-        List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
+        List<Media> medias = mediaRepository.findMedias(searchWords, mediaType);
 
         //then
         assertThat(medias.size(), is(1));
@@ -135,7 +135,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
             .save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
-        List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
+        List<Media> medias = mediaRepository.findMedias(searchWords, mediaType);
 
         //then
         assertThat(medias.size(), is(1));
@@ -157,7 +157,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
             .save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
-        List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
+        List<Media> medias = mediaRepository.findMedias(searchWords, mediaType);
 
         //then
         assertThat(medias.size(), is(1));

@@ -298,7 +298,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         testUser = userRepository.save(testUser);
 
-        Page<User> userPage = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> userPage = userRepository.findUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(userPage);
 
@@ -337,7 +337,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         testUser = userRepository.save(testUser);
 
-        Page<User> userPage = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> userPage = userRepository.findUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(userPage);
 
@@ -382,7 +382,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         testUser = userRepository.save(testUser);
 
-        Page<User> userPage = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> userPage = userRepository.findUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(userPage);
 
@@ -417,7 +417,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
             userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("3").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
         userLogRepository.save(new UserLog().withLogTimeMillis(0L).withUser(testUser2).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
 
-        List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis, o2UserGroup.getId());
+        List<Integer> actualUsers = userRepository.findUsersForUpdate(epochMillis, o2UserGroup.getId());
 
         assertNotNull(actualUsers);
         assertEquals(3, actualUsers.size());
@@ -539,7 +539,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
                                   .withUserGroup(findUserGroupForO2Community())
                                   .withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
         Integer id = user.getId();
-        int count = userRepository.detectUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
+        int count = userRepository.updateUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
         assertEquals(1, count);
 
         entityManager.clear();

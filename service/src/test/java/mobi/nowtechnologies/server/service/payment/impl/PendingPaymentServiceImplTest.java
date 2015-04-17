@@ -205,7 +205,7 @@ public class PendingPaymentServiceImplTest {
         when(page.hasNextPage()).thenReturn(true);
 
         pendingPaymentService.setMaxCount(maxCount);
-        when(userRepository.getUsersForRetryPayment(anyInt(), any(PageRequest.class))).thenReturn(page);
+        when(userRepository.findUsersForRetryPayment(anyInt(), any(PageRequest.class))).thenReturn(page);
 
         List<PendingPayment> createRetryPayments = pendingPaymentService.createRetryPayments();
 

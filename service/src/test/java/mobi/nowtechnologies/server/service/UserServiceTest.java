@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceType;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
@@ -141,7 +141,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, Utils.class, DeviceTypeDao.class, AccountLog.class, EmailValidator.class})
+@PrepareForTest({UserService.class, Utils.class, DeviceTypeCache.class, AccountLog.class, EmailValidator.class})
 public class UserServiceTest {
 
     public static final int YEAR_SECONDS = 365 * 24 * 60 * 60;
@@ -1065,12 +1065,12 @@ public class UserServiceTest {
         userDeviceRegDetailsDto.setIpAddress(ipAddress);
 
         PowerMockito.mockStatic(Utils.class);
-        PowerMockito.mockStatic(DeviceTypeDao.class);
+        PowerMockito.mockStatic(DeviceTypeCache.class);
 
         Mockito.doReturn(user).when(userRepository).save(any(User.class));
         Mockito.when(createStoredToken(anyString(), anyString())).thenReturn(storedToken);
-        Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
-        Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
+        Mockito.when(DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
+        Mockito.when(DeviceTypeCache.getNoneDeviceType()).thenReturn(noneDeviceType);
         Mockito.when(userGroupRepository.findByCommunity(community)).thenReturn(userGroup);
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(userStatus);
         Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
@@ -1104,8 +1104,8 @@ public class UserServiceTest {
         doReturn(userAccountWithSameDevice).when(userRepository).findByDeviceUIDAndCommunity(userDeviceRegDetailsDto.getDeviceUID(), community);
         doReturn(userAccountWithSameDevice).when(userRepository).save(userAccountWithSameDevice);
         PowerMockito.whenNew(User.class).withNoArguments().thenReturn(expectedUser);
-        PowerMockito.mockStatic(DeviceTypeDao.class);
-        PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
+        PowerMockito.mockStatic(DeviceTypeCache.class);
+        PowerMockito.when(DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(new UserStatus());
         Answer returnFirsParamAnswer = new Answer() {
             @Override
@@ -1126,7 +1126,7 @@ public class UserServiceTest {
         PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
         UserGroup userGroup = new UserGroup();
         PowerMockito.doReturn(userGroup).when(userGroupRepository).findByCommunity(community);
-        PowerMockito.doReturn(1).when(userRepository).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+        PowerMockito.doReturn(1).when(userRepository).updateUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
 
         //when
         User actualUser = userServiceSpy.registerUser(userDeviceRegDetailsDto, false, false);
@@ -1136,7 +1136,7 @@ public class UserServiceTest {
         assertThat(actualUser, is(expectedUser));
 
         verify(userRepository, times(1)).saveAndFlush(any(User.class));
-        verify(userRepository, times(1)).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+        verify(userRepository, times(1)).updateUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
     @SuppressWarnings("unchecked")
@@ -1172,7 +1172,7 @@ public class UserServiceTest {
         verifyStatic(times(1));
         createStoredToken(anyString(), anyString());
         verifyStatic(times(1));
-        DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
+        DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
         verifyStatic(times(1));
     }
 
@@ -1194,7 +1194,7 @@ public class UserServiceTest {
         assertEquals(result.getDeviceType().getName(), DeviceType.NONE);
 
         verifyStatic(times(1));
-        DeviceTypeDao.getNoneDeviceType();
+        DeviceTypeCache.getNoneDeviceType();
     }
 
     @Test
@@ -1222,7 +1222,7 @@ public class UserServiceTest {
         verifyStatic(times(0));
         createStoredToken(anyString(), anyString());
         verifyStatic(times(0));
-        DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
+        DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
         verifyStatic(times(0));
     }
 
@@ -2071,8 +2071,8 @@ public class UserServiceTest {
         user.setStatus(limitedUserStatus);
         user.setDeviceType(iosDeviceType);
 
-        PowerMockito.mockStatic(DeviceTypeDao.class);
-        PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
+        PowerMockito.mockStatic(DeviceTypeCache.class);
+        PowerMockito.when(DeviceTypeCache.getIOSDeviceType()).thenReturn(iosDeviceType);
 
         Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
 
@@ -2169,8 +2169,8 @@ public class UserServiceTest {
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
         user.setProvider(NON_O2);
 
-        PowerMockito.mockStatic(DeviceTypeDao.class);
-        PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
+        PowerMockito.mockStatic(DeviceTypeCache.class);
+        PowerMockito.when(DeviceTypeCache.getIOSDeviceType()).thenReturn(iosDeviceType);
 
         Mockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
 

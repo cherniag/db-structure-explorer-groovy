@@ -202,7 +202,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(6, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(6, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -221,7 +221,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(9, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(9, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -239,7 +239,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(11, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(11, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -259,7 +259,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(11, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(11, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -278,7 +278,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(11, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(11, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -296,7 +296,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(16, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(16, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -315,7 +315,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(14, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(14, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -336,7 +336,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user2 = userRepository.save(user2.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(16, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(16, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();
@@ -357,7 +357,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails));
 
         //when
-        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(16, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.findUsersForRetryPayment(16, pageable);
 
         //then
         List<User> users = usersForRetryPaymentPage.getContent();

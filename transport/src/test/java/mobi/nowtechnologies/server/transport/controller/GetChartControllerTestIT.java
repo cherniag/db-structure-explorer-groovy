@@ -120,9 +120,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         Integer ffChartUpdateId = updateMap.get(ChartType.FIFTH_CHART).get(0).getI();
         Integer vcChartUpdateId = updateMap.get(ChartType.VIDEO_CHART).get(0).getI();
 
-        mockMvc.perform(
-            get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
-                                                                          .param("WIDTHXHEIGHT", widthHeight)).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName)
+                                                                                      .param("USER_TOKEN", userToken)
+                                                                                      .param("TIMESTAMP", timestamp)
+                                                                                      .param("DEVICE_UID", deviceUID)
+                                                                                      .param("WIDTHXHEIGHT", widthHeight)).andDo(print()).andExpect(status().isOk())
                .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'HOT_TRACKS')].chartUpdateId").value(htChartUpdateId))
                .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'OTHER_CHART')].chartUpdateId").value(ocChartUpdateId))
                .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FOURTH_CHART')].chartUpdateId").value(ftChartUpdateId))
@@ -430,7 +432,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
         Map<ChartType, List<ChartDetail>> updateMap = new HashMap<>();
 
-        Genre genre = genreRepository.getByName("Default");
+        Genre genre = genreRepository.findByName("Default");
         Media media = chartDetailRepository.findOne(22).getMedia();
 
         // create and save charts for community

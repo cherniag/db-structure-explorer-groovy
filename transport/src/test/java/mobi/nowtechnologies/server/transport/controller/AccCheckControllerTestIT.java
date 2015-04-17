@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
@@ -449,7 +449,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
         entity.setStatus(userStatus);
         entity.setDevice("");
-        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
+        entity.setDeviceType(DeviceTypeCache.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
         entity.setDeviceString("IOS");
         entity.setLastDeviceLogin(1893448800);
         entity.setLastWebLogin(1893448800);

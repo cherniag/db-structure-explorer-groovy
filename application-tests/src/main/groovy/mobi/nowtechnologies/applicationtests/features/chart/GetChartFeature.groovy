@@ -79,7 +79,7 @@ class GetChartFeature {
             deviceSet.loginUsingFacebook(it)
         }
 
-        def charts = chartRepository.getByCommunityName(community)
+        def charts = chartRepository.findByCommunityName(community)
         charts.each {
             chartByName[it.name] = it
         }
@@ -155,7 +155,7 @@ class GetChartFeature {
             }
 
             def chartDto = responses[it].getBody().response.data[1].value as ChartDto
-            def charts = chartRepository.getByCommunityURL(it.communityUrl)
+            def charts = chartRepository.findByCommunityURL(it.communityUrl)
             def trackCount = 0
             charts.each { chart ->
                 trackCount += getTracks(chart).size()
@@ -175,7 +175,7 @@ class GetChartFeature {
 
             def chartDto = responses[it].getBody().response.data[1].value as ChartDto
 
-            def charts = chartRepository.getByCommunityURL(it.communityUrl)
+            def charts = chartRepository.findByCommunityURL(it.communityUrl)
             def playListById = [:] as Map<Integer, ChartDetail>
             charts.each { chart ->
                 def playList = getPlayList(chart)
@@ -205,7 +205,7 @@ class GetChartFeature {
 
             def chartDto = responses[it].getBody().response.data[1].value as ChartDto
 
-            def charts = chartRepository.getByCommunityURL(it.communityUrl) as List<Chart>
+            def charts = chartRepository.findByCommunityURL(it.communityUrl) as List<Chart>
             def trackByKey = [:] as Map<String, ChartDetail>
             charts.each { chart ->
                 getTracks(chart).each { track ->
