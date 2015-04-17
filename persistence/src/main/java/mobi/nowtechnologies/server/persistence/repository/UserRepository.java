@@ -59,11 +59,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "update User user " +
                    "set " +
                    "user.amountOfMoneyToUserNotification=:amountOfMoneyToUserNotification " +
-                   ", user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccesfullPaymentSmsSendingTimestampMillis " +
+                   ", user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccessfulPaymentSmsSendingTimestampMillis " +
                    "where " +
                    "user.id=:id")
     int updateFields(@Param("amountOfMoneyToUserNotification") BigDecimal amountOfMoneyToUserNotification,
-                     @Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
+                     @Param("lastSuccessfulPaymentSmsSendingTimestampMillis") long lastSuccessfulPaymentSmsSendingTimestampMillis, @Param("id") int id);
 
     @Modifying
     @Query(value = "update User user " +
@@ -76,10 +76,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
     @Query(value = "update User user " +
                    "set " +
-                   "user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccesfullPaymentSmsSendingTimestampMillis " +
+                   "user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccessfulPaymentSmsSendingTimestampMillis " +
                    "where " +
                    "user.id=:id")
-    int updateFields(@Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
+    int updateFields(@Param("lastSuccessfulPaymentSmsSendingTimestampMillis") long lastSuccessfulPaymentSmsSendingTimestampMillis, @Param("id") int id);
 
     @Query("select u from User u " +
            "join u.currentPaymentDetails pd " +
@@ -94,7 +94,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
            "and pd.activated=true " +
            "and u.lastDeviceLogin!=0")
     @QueryHints(@QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE"))
-    Page<User> getUsersForPendingPayment(int epochSeconds, Pageable pageable);
+    Page<User> findUsersForPendingPayment(int epochSeconds, Pageable pageable);
 
     @Query("select u from User u " +
            "join u.currentPaymentDetails pd " +
@@ -215,12 +215,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "select u from User u " + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%' and u.deviceUID not like '%_wipe'")
     List<User> findByMobile(String phoneNumber);
-
-    @Query(value = "select user from User user where " +
-                   "user.mobile = :phoneNumber " +
-                   "and user.userGroup.community.rewriteUrlParameter = :communityRewriteUrl " +
-                   "and user.userName not like '%_wipe'")
-    List<User> findByMobileAndCommunity(@Param("phoneNumber") String phoneNumber, @Param("communityRewriteUrl") String communityRewriteUrl);
 
     @Query(value = "select user from User user join user.userGroup userGroup " +
                    "join userGroup.community community where " +

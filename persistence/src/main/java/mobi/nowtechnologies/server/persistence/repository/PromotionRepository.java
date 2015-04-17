@@ -49,15 +49,15 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
            "and (p.numUsers < p.maxUsers or p.maxUsers = 0) " +
            "and p.endDate > :timestamp " +
            "and p.startDate < :timestamp  " +
-           "and p.userGroup.id = :userGroupId")
-    List<Promotion> findPromotionWithFilters(@Param("userGroupId") int userGroupId, @Param("timestamp") int timestamp);
+           "and p.userGroup = :userGroup")
+    List<Promotion> findPromotionWithFilters(@Param("userGroup") UserGroup userGroup, @Param("timestamp") int timestamp);
 
     @Query("select p from Promotion p " +
            "where (p.numUsers < p.maxUsers or p.maxUsers = 0) " +
            "and p.startDate < :timestamp " +
            "and p.endDate > :timestamp " +
            "and p.isActive = true " +
-           "and p.userGroup.id = :userGroupId " +
+           "and p.userGroup = :userGroup " +
            "and p.type = :promoType")
-    Promotion findActivePromotionByUserGroup(@Param("userGroupId") Integer userGroupId, @Param("promoType") String promoType, @Param("timestamp") int timestamp);
+    Promotion findActivePromotion(@Param("userGroup") UserGroup userGroup, @Param("promoType") String promoType, @Param("timestamp") int timestamp);
 }

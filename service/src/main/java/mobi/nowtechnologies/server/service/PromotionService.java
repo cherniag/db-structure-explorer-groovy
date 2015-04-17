@@ -101,7 +101,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private Promotion getPromotionForUser(User user) {
         LOGGER.debug("input parameters communityName, user: [{}], [{}]", user.getCommunity().getRewriteUrlParameter(), user.getId());
 
-        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(user.getUserGroup().getId(), DateTimeUtils.getEpochSeconds());
+        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(user.getUserGroup(), DateTimeUtils.getEpochSeconds());
         List<Promotion> promotions = new LinkedList<Promotion>();
         for (Promotion currentPromotion : promotionWithFilters) {
             List<AbstractFilter> filters = currentPromotion.getFilters();

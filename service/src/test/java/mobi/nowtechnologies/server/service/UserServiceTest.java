@@ -2228,7 +2228,7 @@ public class UserServiceTest {
         mockStatic(Utils.class);
         PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 
-        when(userRepository.getUsersForPendingPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")))).thenReturn(usersPageMock);
+        when(userRepository.findUsersForPendingPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")))).thenReturn(usersPageMock);
 
         //when
         Page<User> usersPage = userServiceSpy.getUsersForPendingPayment(maxCount);
@@ -2236,7 +2236,7 @@ public class UserServiceTest {
         //then
         assertEquals(usersPageMock, usersPage);
 
-        verify(userRepository).getUsersForPendingPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")));
+        verify(userRepository).findUsersForPendingPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")));
     }
 
     @Test

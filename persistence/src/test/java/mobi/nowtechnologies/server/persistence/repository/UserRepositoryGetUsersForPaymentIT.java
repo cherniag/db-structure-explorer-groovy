@@ -51,7 +51,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(4, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(4, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -69,7 +69,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(5, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(5, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -87,7 +87,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(6, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(6, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -105,7 +105,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(10, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(10, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -124,7 +124,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(6, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(6, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -142,7 +142,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(9, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(9, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -160,7 +160,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(9, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(9, pageable);
 
         //then
         List<User> users = usersPage.getContent();
@@ -177,7 +177,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(11, pageable);
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(11, pageable);
 
         //then
         List<User> users = usersPage.getContent();

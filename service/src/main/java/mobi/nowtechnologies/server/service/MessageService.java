@@ -229,8 +229,7 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public Message getMessageWithFilters(Integer messageId) {
-        Message message = messageRepository.findOneWithFilters(messageId);
-        return message;
+        return messageRepository.findOneWithFilters(messageId);
     }
 
     @Transactional(readOnly = true)

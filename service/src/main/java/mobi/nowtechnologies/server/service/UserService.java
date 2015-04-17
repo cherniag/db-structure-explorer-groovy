@@ -385,7 +385,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public synchronized void applyPromotion(User user) {
-        Promotion promotion = promotionRepository.findActivePromotionByUserGroup(user.getUserGroup().getId(), Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
+        Promotion promotion = promotionRepository.findActivePromotion(user.getUserGroup(), Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
         LOGGER.info("promotion [{}]", promotion);
         if (promotion != null) {
             userRepository.save(user);
@@ -981,7 +981,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<User> getUsersForPendingPayment(int maxCount) {
         int epochSeconds = getEpochSeconds();
-        return userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
+        return userRepository.findUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
     }
 
     @Transactional(readOnly = true)

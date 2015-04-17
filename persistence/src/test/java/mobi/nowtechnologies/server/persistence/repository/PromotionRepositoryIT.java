@@ -251,7 +251,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         promo = saved(promo);
 
         // when
-        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(o2UserGroup.getId(), DateTimeUtils.getEpochSeconds());
+        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(o2UserGroup, DateTimeUtils.getEpochSeconds());
 
         //then
         assertThat(promotionWithFilters.size(), is(1));
@@ -265,7 +265,7 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
         promo = saved(promo);
 
         // when
-        Promotion promotion = promotionRepository.findActivePromotionByUserGroup(o2UserGroup.getId(), Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
+        Promotion promotion = promotionRepository.findActivePromotion(o2UserGroup, Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
 
         //then
         assertNotNull(promotion);

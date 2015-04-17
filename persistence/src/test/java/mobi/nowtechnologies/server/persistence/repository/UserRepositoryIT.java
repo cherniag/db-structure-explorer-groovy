@@ -456,7 +456,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         testUser = userRepository.save(testUser);
 
         //when
-        Page<User> usersPage = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> usersPage = userRepository.findUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
 
         //then
         List<User> actualUsers = usersPage.getContent();
