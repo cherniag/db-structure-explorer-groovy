@@ -120,7 +120,6 @@ public class SagePayPaymentServiceImplTest {
         currentPaymentDetails.setTxAuthNo("wertwert");
         currentPaymentDetails.setVendorTxCode("1234123412");
         currentPaymentDetails.setVPSTxId("12341234");
-        user.addPaymentDetails(currentPaymentDetails);
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         SagePayCreditCardPaymentDetails paymentDetails = service.createPaymentDetails(paymentDto, user, paymentPolicy);
 
@@ -146,7 +145,6 @@ public class SagePayPaymentServiceImplTest {
         currentPaymentDetails.setTxAuthNo("wertwert");
         currentPaymentDetails.setVendorTxCode("1234123412");
         currentPaymentDetails.setVPSTxId("12341234");
-        user.addPaymentDetails(currentPaymentDetails);
         PaymentPolicy paymentPolicy = new PaymentPolicy();
 
         service.createPaymentDetails(paymentDto, user, paymentPolicy);

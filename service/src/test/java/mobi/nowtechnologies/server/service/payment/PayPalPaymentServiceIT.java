@@ -41,7 +41,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class PayPalPaymentServiceIT {
@@ -111,7 +111,7 @@ public class PayPalPaymentServiceIT {
         assertTrue(paymentDetails.isActivated());
         assertEquals(user.getId(), paymentDetails.getOwner().getId());
         assertEquals(user.getCurrentPaymentDetails().getI(), paymentDetails.getI());
-        assertEquals(1, user.getPaymentDetailsList().size());
+        assertEquals(1, paymentDetailsService.getPaymentDetails(user).size());
     }
 
     @Test

@@ -13,19 +13,6 @@
     -->
     <context:annotation-config/>
 
-    <!-- Application properties     -->
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:application.properties</value>
-                <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-                <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
-            </list>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
-        <property name="ignoreResourceNotFound" value="true" />
-    </bean>
-
     <!-- TODO re-check usage of this bean -->
     <bean id="web.FlashMapManager" class="mobi.nowtechnologies.server.web.view.CookieFlashMapManager"/>
 
@@ -93,7 +80,9 @@
 
     <mvc:interceptors>
         <!-- Community Change Interceptor and Resolver definition -->
-        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor" />
+        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor">
+            <property name="propLocale" ref="propLocale"/>
+        </bean>
 
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
@@ -118,6 +107,7 @@
         </bean>
     </mvc:interceptors>
 
+    <import resource="classpath:META-INF/placeholders.xml"/>
     <import resource="controllers.xml" />
     <bean id="JacksonView" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="order" value="1"/>

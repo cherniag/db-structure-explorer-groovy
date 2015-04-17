@@ -9,6 +9,7 @@ import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus
@@ -51,6 +52,8 @@ class CommonAssertionsService {
 
     @Resource
     SocialNetworkInfoRepository socialNetworkInfoRepository
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
 
     @Resource
     RunnerService runnerService;
@@ -140,7 +143,8 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            assertTrue(user.getPaymentDetailsList() == null || user.getPaymentDetailsList().isEmpty())
+            def paymentDetailsByOwner = paymentDetailsRepository.findPaymentDetailsByOwner(user)
+            assertTrue(paymentDetailsByOwner.isEmpty())
         }
     }
 

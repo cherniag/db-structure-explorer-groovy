@@ -40,7 +40,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class PaymentSystemServiceIT {
@@ -82,7 +82,7 @@ public class PaymentSystemServiceIT {
         currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
         currentPaymentDetails.setReleased(true);
         userRepository.save(user);
-        user.addPaymentDetails(currentPaymentDetails);
+        currentPaymentDetails.setOwner(user);
         paymentDetailsRepository.save(currentPaymentDetails);
 
         userRepository.save(user);

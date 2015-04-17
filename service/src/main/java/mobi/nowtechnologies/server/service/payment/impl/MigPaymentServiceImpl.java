@@ -123,7 +123,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
         LOGGER.info("Verifying pin from mig...");
         if (StringUtils.hasText(verificationPin) && user.getPin().equals(verificationPin)) {
 
-            MigPaymentDetails paymentDetails = (MigPaymentDetails) user.getPendingPaymentDetails();
+            MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(user.getId());
             user.setPin("");
 
             paymentDetails = (MigPaymentDetails) super.commitPaymentDetails(user, paymentDetails);

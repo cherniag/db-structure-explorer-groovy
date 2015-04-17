@@ -2,8 +2,6 @@
 <beans
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:p="http://www.springframework.org/schema/p"
-        xmlns:c="http://www.springframework.org/schema/c"
         xmlns:util="http://www.springframework.org/schema/util"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -21,35 +19,10 @@
         </property>
     </bean>
 
-    <bean id="propertyPlaceholderConfigurer"
-          class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
-          c:stringEncryptor-ref="trackRepo.configurationEncryptor"
-          p:locations-ref="trackRepo.appPropertiesLocations"
-          p:ignoreUnresolvablePlaceholders="true"
-          p:ignoreResourceNotFound="true"/>
-
-    <util:list id="trackRepo.appPropertiesLocations" value-type="org.springframework.core.io.Resource">
-        <value>classpath:application.properties</value>
-        <value>classpath:trackrepo-application.properties</value>
-        <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-        <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
-        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
-        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/trackrepo-application.properties</value>
-    </util:list>
-
-    <bean id="trackRepo.configurationEncryptor"
-          class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
-          p:config-ref="trackRepo.environmentStringPBEConfig"/>
-
-    <bean id="trackRepo.environmentStringPBEConfig"
-          class="mobi.nowtechnologies.server.shared.message.DefaultMasterPasswordEnvironmentStringPBEConfig"
-          p:algorithm="PBEWithMD5AndDES"
-          p:passwordSysPropertyName="pwd"/>
-	
-	<bean id="applicationProperties" class="mobi.nowtechnologies.server.trackrepo.ApplicationProperties">
+    <bean id="applicationProperties" class="mobi.nowtechnologies.server.trackrepo.ApplicationProperties">
 		<property name="binZip" value="${trackRepo.binZip}" />
 	</bean>
-	
+
 	<import resource="classpath:META-INF/shared.xml" />
 	
 	<import resource="trackrepo-dao.xml" />
@@ -57,4 +30,13 @@
 	<import resource="trackrepo-services.xml" />
 	
 	<import resource="security.xml" />
+
+    <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
+        <value>classpath:application.properties</value>
+        <value>classpath:trackrepo-application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/trackrepo-application.properties</value>
+    </util:list>
 </beans>

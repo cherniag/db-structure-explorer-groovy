@@ -188,9 +188,6 @@ public class PaymentDetails {
 
     public void setOwner(User owner) {
         this.owner = owner;
-        if (!owner.getPaymentDetailsList().contains(this)) {
-            owner.getPaymentDetailsList().add(this);
-        }
     }
 
     public int getMadeAttempts() {
