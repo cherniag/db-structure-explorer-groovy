@@ -2,8 +2,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
@@ -12,29 +10,16 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- Application properties     -->
-    <bean id="propertyPlaceholderConfigurer"
-          class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"
-          c:stringEncryptor-ref="trackRepo.configurationEncryptor"
-          p:locations-ref="trackRepo.appPropertiesLocations"
-          p:ignoreUnresolvablePlaceholders="true"
-          p:ignoreResourceNotFound="true"/>
+    <import resource="classpath:META-INF/placeholders.xml"/>
 
-    <util:list id="trackRepo.appPropertiesLocations" value-type="org.springframework.core.io.Resource">
+    <util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
         <value>classpath:application.properties</value>
         <value>classpath:trackrepo-application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
         <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/trackrepo-application.properties</value>
     </util:list>
-
-    <bean id="trackRepo.configurationEncryptor"
-          class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
-          p:config-ref="trackRepo.environmentStringPBEConfig"/>
-
-    <bean id="trackRepo.environmentStringPBEConfig"
-          class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig"
-          p:algorithm="PBEWithMD5AndDES"
-          p:passwordSysPropertyName="pwd"/>
 
 	<!-- Configures the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven>
@@ -50,6 +35,24 @@
         <property name="maxPoolSize" value="${trackRepo.executor.maxPoolSize}" />
         <property name="queueCapacity" value="${trackRepo.executor.queueCapacity}" />
     </bean>
+
+    <bean id="templateResolver"
+          class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="order" value="2" />
+        <property name="cacheable" value="false" />
+    </bean>
+
+    <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver" />
+    </bean>
+
+    <bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine" />
+        <property name="contentType" value="text/html; charset=UTF-8"/>
+    </bean>
 		
 	<mvc:interceptors>		
 		<mvc:interceptor>
@@ -62,6 +65,8 @@
 		    </bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
+
+    <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
 	
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 	  <property name="order" value="1" />
@@ -78,6 +83,6 @@
 		 </list>
 	  </property>
 	</bean>
-	
+
 	<import resource="trackrepo-controllers.xml" />
 </beans>

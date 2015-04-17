@@ -56,6 +56,13 @@ public class Utils {
         return (int) (date.getTime() / 1000);
     }
 
+    public static String truncateToLengthWithEnding(String str, int maxLength, String ending) {
+        if (str.length() > maxLength) {
+            str = str.substring(0, maxLength) + ending;
+        }
+        return str;
+    }
+
     public static String getRandomString(int length) {
         Random rand = new Random(System.currentTimeMillis());
         StringBuffer sb = new StringBuffer();
@@ -166,13 +173,6 @@ public class Utils {
         return (int) millisToSeconds(millis);
     }
 
-    public static String getOTACode(int userId, String userName) {
-        if (userName == null) {
-            throw new NullPointerException("The parameter userName is null");
-        }
-        return md5(userId + userName + SALT);
-    }
-
     public static int getNewNextSubPayment(int nextSubPayment) {
         LOGGER.debug("input parameters nextSubPayment: [{}]", nextSubPayment);
 
@@ -243,29 +243,6 @@ public class Utils {
 
         LOGGER.debug("Output parameter monthlyNextSubPayment=[{}]", monthlyNextSubPayment);
         return monthlyNextSubPayment;
-    }
-
-    /**
-     * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#datesNotEquals(java.util.Date, java.util.Date)} instead.
-     */
-    @Deprecated
-    public static boolean datesNotEquals(Date oldTime, Date newTime) {
-        return newTime.getTime() != oldTime.getTime();
-    }
-
-    public static String substring(String s, int i) {
-        if (s == null || s.length() < i) {
-            return s;
-        }
-        return s.substring(0, i);
-    }
-
-    public static String conCatLowerCase(String... strs) {
-        StringBuilder buf = new StringBuilder();
-        for (String s : strs) {
-            buf.append(s);
-        }
-        return buf.toString().toLowerCase();
     }
 
     public static int getMajorVersionNumber(String version) {

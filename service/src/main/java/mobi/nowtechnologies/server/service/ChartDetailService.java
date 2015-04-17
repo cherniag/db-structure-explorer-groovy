@@ -30,11 +30,9 @@ import org.springframework.util.StringUtils;
  * @author Alexander Kolpakov (akolpakov)
  */
 public class ChartDetailService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailService.class);
 
     private ChartDetailRepository chartDetailRepository;
-    private MediaService mediaService;
 
     private MediaRepository mediaRepository;
 
@@ -44,10 +42,6 @@ public class ChartDetailService {
 
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
-    }
-
-    public void setMediaService(MediaService mediaService) {
-        this.mediaService = mediaService;
     }
 
     @SuppressWarnings("unchecked")

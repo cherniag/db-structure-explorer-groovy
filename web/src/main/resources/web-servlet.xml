@@ -13,18 +13,6 @@
     -->
     <context:annotation-config/>
 
-    <!-- Application properties     -->
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:application.properties</value>
-                <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-            </list>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
-        <property name="ignoreResourceNotFound" value="true" />
-    </bean>
-
     <!-- TODO re-check usage of this bean -->
     <bean id="web.FlashMapManager" class="mobi.nowtechnologies.server.web.view.CookieFlashMapManager"/>
 
@@ -64,7 +52,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:cdn.properties</value>
-				<value>file:#{systemProperties['catalina.base']}/conf/cdn.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/cdn.properties</value>
 			</list>
 		</property>
         <property name="ignoreResourceNotFound" value="true" />
@@ -77,7 +65,7 @@
     <!-- Application Message Bundle -->
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames" value="file:#{systemProperties['catalina.base']}/conf/i18n/web/messages, /i18n/messages" />
+        <property name="basenames" value="file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/i18n/web/messages, /i18n/messages" />
         <property name="defaultEncoding" value="UTF-8" />
         <property name="fileEncodings" value="UTF-8" />
         <property name="cacheSeconds" value="180" />
@@ -92,7 +80,9 @@
 
     <mvc:interceptors>
         <!-- Community Change Interceptor and Resolver definition -->
-        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor" />
+        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor">
+            <property name="propLocale" ref="propLocale"/>
+        </bean>
 
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
@@ -117,6 +107,7 @@
         </bean>
     </mvc:interceptors>
 
+    <import resource="classpath:META-INF/placeholders.xml"/>
     <import resource="controllers.xml" />
     <bean id="JacksonView" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="order" value="1"/>

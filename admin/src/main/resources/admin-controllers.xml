@@ -34,12 +34,6 @@
 
     <bean class="mobi.nowtechnologies.server.admin.controller.ErrorController"/>
 
-    <bean class="mobi.nowtechnologies.server.admin.controller.OfferController">
-        <property name="offerService" ref="service.OfferService"/>
-        <property name="filterService" ref="service.FilterService"/>
-        <property name="cloudFileService" ref="service.CloudFileService"/>
-    </bean>
-
     <bean id="admin.CommonChartController" abstract="true">
         <property name="chartService" ref="service.ChartService"/>
         <property name="filesURL" value="${cloudFile.mediaCoverFileURL}"/>
@@ -89,6 +83,8 @@
         <property name="cloudFileService" ref="service.CloudFileService"/>
         <property name="filterService" ref="service.FilterService"/>
     </bean>
+
+    <bean class="mobi.nowtechnologies.server.support.props.PropController"/>
 
     <utils:map id="chartViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>

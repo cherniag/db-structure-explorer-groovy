@@ -31,7 +31,6 @@ import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_
 import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
@@ -39,7 +38,6 @@ import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.Validate.notNull;
@@ -55,7 +53,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
-    private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
+    private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g";
 
     private PromotionDao promotionDao;
     private EntityService entityService;
@@ -63,8 +61,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private CommunityResourceBundleMessageSource messageSource;
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
-    private DeviceService deviceService;
-    private CommunityService communityService;
+    private DevicePromotionsService deviceService;
     private UserTransactionRepository userTransactionRepository;
     private UserGroupRepository userGroupRepository;
     private UserRepository userRepository;
@@ -93,7 +90,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         this.userBannedRepository = userBannedRepository;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 
@@ -241,12 +238,12 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         String contract = user.getContract().name();
         if (contractChannel == null) {
             LOGGER.warn("The user contract channel is null, DIRECT will be used");
-            messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
+            messageCodeForPromoCode = PROMO_CODE_FOR_O2_CONSUMER_4G + "." + contract + "." + DIRECT.name();
         } else {
-            messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
+            messageCodeForPromoCode = PROMO_CODE_FOR_O2_CONSUMER_4G + "." + contract + "." + contractChannel.name();
         }
         LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
-        return messageCodeForPromoCode;
+        return messageCodeForPromoCode.toLowerCase();
     }
 
     @Transactional(propagation = REQUIRED)
@@ -316,10 +313,14 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         User user = promoParams.user;
         LOGGER.info("Attempt to apply promotion [{}] for user [{}] using [{}] as freeTrialStartedTimestampSeconds", promoParams.promotion, user, promoParams.freeTrialStartedTimestampSeconds);
 
-        if (isUserNotBanned(user)) {
+        UserBanned userBanned = userBannedRepository.findOne(user.getId());
+
+        if (isNull(userBanned) || userBanned.isGiveAnyPromotion()) {
             user = applyPromoForNotBannedUser(promoParams);
         } else {
-            skipPotentialPromoCodePromotionApplyingForBannedUser(user);
+            LOGGER.warn("The promotion wouldn't be applied because user is banned");
+            user.setPotentialPromoCodePromotion(null);
+            entityService.updateEntity(user);
         }
 
         return user;
@@ -336,7 +337,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     @Transactional(propagation = REQUIRED)
     protected Promotion setPotentialPromoByPromoCode(User user, String code) {
         LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
-        Community community = user.getUserGroup().getCommunity();
         if (code != null) {
             Promotion potentialPromoCodePromotion = getActivePromotion(user.getUserGroup(), code);
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
@@ -354,12 +354,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         userTransaction.setEndTimestamp(end);
         userTransaction.setTransactionType(UserTransactionType.PROMOTION_BY_PROMO_CODE);
         userTransactionRepository.save(userTransaction);
-    }
-
-    private User skipPotentialPromoCodePromotionApplyingForBannedUser(User user) {
-        LOGGER.warn("The promotion wouldn't be applied because user is banned");
-        user.setPotentialPromoCodePromotion(null);
-        return entityService.updateEntity(user);
     }
 
     private User applyPromoForNotBannedUser(PromoParams promoParams) {
@@ -398,15 +392,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return user.withIsPromotionApplied(true);
     }
 
-    public boolean isUserNotBanned(User user) {
-        UserBanned userBanned = getUserBanned(user.getId());
-        return isNull(userBanned) || userBanned.isGiveAnyPromotion();
-    }
-
-    private UserBanned getUserBanned(Integer userId) {
-        return userBannedRepository.findOne(userId);
-    }
-
     private boolean couldNotBeApplied(User user, Promotion promotion) {
         return !promotion.isCouldBeAppliedMultipleTimes() && arePromotionMediaTypesTheSame(user.getLastPromo(), promotion.getPromoCode());
     }
@@ -442,27 +427,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return existingUser;
     }
 
-    @Transactional(propagation = REQUIRED)
-    public void applyPromotionByPromoCode(final User user, final String promotionCode) {
-        Validate.notNull(user, "The parameter user is null");
-        Validate.notNull(promotionCode, "The parameter promotionCode is null");
-
-        LOGGER.debug("input parameters user, promotionCode, communityName: [{}], [{}]", user, promotionCode);
-
-        Promotion userPromotion = getActivePromotion(user.getUserGroup(), promotionCode);
-        if (userPromotion == null) {
-            LOGGER.info("Promotion code [{}] does not exist", promotionCode);
-            throw new ServiceException("Invalid promotion code. Please re-enter the code or leave the field blank");
-        }
-
-        User applyPromotionByPromoCodeUser = applyPromotionByPromoCode(user, userPromotion);
-
-        boolean isPromotionApplied = applyPromotionByPromoCodeUser.isPromotionApplied();
-        if (isPromotionApplied) {
-            userService.processAccountCheckCommandForAuthorizedUser(user.getId());
-        }
-    }
-
     public Promotion getPromotionFromRuleForAutoOptIn(User user) {
         RuleResult<PromotionProvider.PromotionProxy> ruleResult = getRuleServiceSupport().fireRules(AUTO_OPT_IN, user);
         return ruleResult.getResult().getPromotion();
@@ -470,10 +434,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
     }
 
     public void setUserTransactionRepository(UserTransactionRepository userTransactionRepository) {

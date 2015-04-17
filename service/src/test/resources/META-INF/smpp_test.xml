@@ -39,7 +39,6 @@
     <bean id="vf_nz.service.SMPPProcessorContainer" class="mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer"/>
 
     <bean id="vf_nz.service.VFNZSMSGatewayService" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl">
-        <property name="smppMessageProcessorContainer" ref="vf_nz.service.SMPPProcessorContainer"/>
         <property name="smppService" ref="vf_nz.service.SMPPService"/>
     </bean>
 </beans>

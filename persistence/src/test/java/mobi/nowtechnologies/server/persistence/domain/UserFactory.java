@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;

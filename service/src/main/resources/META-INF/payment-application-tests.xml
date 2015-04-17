@@ -9,7 +9,6 @@
     <bean id="service.migHttpService" class="mobi.nowtechnologies.server.service.payment.http.MigHttpService">
         <property name="freeSMSURL" value="${mig.freeSMSURL}" />
         <property name="premiumSMSURL" value="${mig.premiumSMSURL}" />
-        <property name="otaUrl" value="${mig.otaUrl}" />
         <property name="postService">
             <bean class="mobi.nowtechnologies.server.apptests.sms.MigPostService" />
         </property>
@@ -22,13 +21,6 @@
     <bean id="mailModelSerializer" class="mobi.nowtechnologies.server.apptests.email.MailModelSerializer" />
     <bean id="service.MailService" class="mobi.nowtechnologies.server.apptests.email.DbMailService" />
 
-    <bean id="service.PayPalHttpService" class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
-        <property name="apiUrl" value="${paypal.apiUrl}" />
-        <property name="postService">
-            <bean class="mobi.nowtechnologies.server.apptests.paypal.PayPalPostService"/>
-        </property>
-        <property name="request" ref="request.payPalRequest" />
-    </bean>
 
     <bean id="service.ITunesClient" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesClientImpl">
         <property name="httpOkCode" value="#{T(org.springframework.http.HttpStatus).OK.value()}"/>

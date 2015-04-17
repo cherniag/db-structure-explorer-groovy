@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
-import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 
 import com.sentaca.spring.smpp.mt.MTMessage;
@@ -24,14 +23,10 @@ public class VFNZSMSGatewayServiceImplTest {
     @Mock
     private SMPPServiceImpl smppServiceMock;
 
-    @Mock
-    private SMSMessageProcessorContainer smsMessageProcessorContainerMock;
-
     @Before
     public void setUp() {
         fixture = new VFNZSMSGatewayServiceImpl();
         fixture.setSmppService(smppServiceMock);
-        fixture.setSmppMessageProcessorContainer(smsMessageProcessorContainerMock);
     }
 
     @Test
@@ -53,12 +48,23 @@ public class VFNZSMSGatewayServiceImplTest {
             }
         };
 
-        Mockito.doReturn(true).when(smppServiceMock).sendMessage(Matchers.argThat(msgMatcher));
+        SMSResponse successResponse = new SMSResponse() {
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public String getDescriptionError() {
+                return null;
+            }
+        };
+
+        Mockito.doReturn(successResponse).when(smppServiceMock).sendMessage(Matchers.argThat(msgMatcher));
 
         SMSResponse result = fixture.send(dest, msg, source);
 
         Assert.assertEquals(true, result.isSuccessful());
-        Assert.assertEquals("Sms was sent successfully from [4003] to [+64212345678] with message [Test]", result.getMessage());
 
         Mockito.verify(smppServiceMock, Mockito.times(1)).sendMessage(Matchers.argThat(msgMatcher));
     }
@@ -82,12 +88,23 @@ public class VFNZSMSGatewayServiceImplTest {
             }
         };
 
-        Mockito.doReturn(false).when(smppServiceMock).sendMessage(Matchers.argThat(msgMatcher));
+        SMSResponse failResponse = new SMSResponse() {
+            @Override
+            public boolean isSuccessful() {
+                return false;
+            }
+
+            @Override
+            public String getDescriptionError() {
+                return "getDescriptionError";
+            }
+        };
+
+        Mockito.doReturn(failResponse).when(smppServiceMock).sendMessage(Matchers.argThat(msgMatcher));
 
         SMSResponse result = fixture.send(dest, msg, source);
 
         Assert.assertEquals(false, result.isSuccessful());
-        Assert.assertEquals("Sms was sent unsuccessfully from [4003] to [+64212345678] with message [Test]", result.getMessage());
 
         Mockito.verify(smppServiceMock, Mockito.times(1)).sendMessage(Matchers.argThat(msgMatcher));
     }

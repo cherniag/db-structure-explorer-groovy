@@ -3,11 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="classpath:META-INF/shared.xml"/>
     <import resource="classpath:META-INF/admin-services-test.xml"/>
     <import resource="classpath:META-INF/service-test.xml"/>
     <import resource="classpath:META-INF/dao-test.xml"/>
-    <import resource="classpath:META-INF/admin-dao-test.xml"/>
     <import resource="classpath:META-INF/security-test.xml"/>
-    <import resource="classpath:META-INF/shared.xml"/>
 
 </beans>

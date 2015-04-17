@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
@@ -42,7 +43,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 public class PayPalPaymentServiceImpIT {
 
     @Resource(name = "service.payPalPaymentService")
@@ -61,6 +62,8 @@ public class PayPalPaymentServiceImpIT {
     private PendingPaymentRepository pendingPaymentRepository;
     @Resource
     private SubmittedPaymentRepository submittedPaymentRepository;
+    @Resource
+    private AccountLogRepository accountLogRepository;
 
     @Test
     public void startPayment() throws Exception {
@@ -86,6 +89,12 @@ public class PayPalPaymentServiceImpIT {
 
         List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.SUCCESSFUL));
         assertEquals(1, submittedPayments.size());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        accountLogRepository.deleteAll();
+        submittedPaymentRepository.deleteAll();
     }
 
     private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails) {

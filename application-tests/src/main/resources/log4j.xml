@@ -43,8 +43,13 @@
         </filter>
     </appender>
 
+    <logger name="org.hibernate.stat">
+        <level value="WARN"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+
      <root>
-        <level value="INFO"></level>
+        <level value="INFO"/>
         <appender-ref ref="stdout" />
         <appender-ref ref="stderr" />
         <appender-ref ref="business-logic-web-RollingFileAppender" />

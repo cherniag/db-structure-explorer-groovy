@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * lach : 17/07/2013 : 11:41
  */
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class O2TariffServiceIT {

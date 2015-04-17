@@ -28,10 +28,10 @@ public class AccCheckService {
     @Resource
     private AccountCheckDTOAsm accountCheckDTOAsm;
     @Resource
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
     @Resource
     private ChartService chartService;
-    @Resource
+    @Resource(name = "nowTechBasedRememberMeServices")
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
 
     public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails, boolean withOneTimePayment) {

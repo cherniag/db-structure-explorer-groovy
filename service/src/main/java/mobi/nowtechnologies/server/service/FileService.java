@@ -1,14 +1,16 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.util.TrackIdGenerator;
-import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaLog;
+import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.MediaLogRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaLogTypeRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 
 import java.io.File;
@@ -16,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncode
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +63,9 @@ public class FileService {
 
     private CloudFileService cloudFileService;
 
+    private MediaLogTypeRepository mediaLogTypeRepository;
+    private MediaLogRepository mediaLogRepository;
+
     private String destinationContainerNameForAudioContent;
 
     public String getDestinationContainerNameForAudioContent() {
@@ -83,6 +86,14 @@ public class FileService {
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void setMediaLogTypeRepository(MediaLogTypeRepository mediaLogTypeRepository) {
+        this.mediaLogTypeRepository = mediaLogTypeRepository;
+    }
+
+    public void setMediaLogRepository(MediaLogRepository mediaLogRepository) {
+        this.mediaLogRepository = mediaLogRepository;
     }
 
     public void init() {
@@ -180,7 +191,15 @@ public class FileService {
 
     private void logEvents(Media media, FileType fileType, User user) {
         if (fileType.equals(FileType.PURCHASED)) {
-            mediaService.logMediaEvent(user.getId(), media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
+            MediaLogType logType = mediaLogTypeRepository.findByName(MediaLogType.DOWNLOAD_ORIGINAL);
+
+            MediaLog mediaLog = new MediaLog();
+            mediaLog.setMedia(media);
+            mediaLog.setUserUID(user.getId());
+            mediaLog.setLogTimestamp((int) (System.currentTimeMillis() / 1000));
+            mediaLog.setLogType((byte) logType.getI());
+
+            mediaLogRepository.saveAndFlush(mediaLog);
         }
 
         if (fileType.equals(FileType.HEADER)) {
@@ -235,75 +254,29 @@ public class FileService {
 				return media.getAudioPreviewFile() == null ?
 						null : media.getAudioPreviewFile().getFilename();
                   */
-                return media.getAudioFile() == null ?
-                       null :
-                       media.getAudioFile().getFilename();
+                return media.getAudioFile() == null ? null : media.getAudioFile().getFilename();
             case HEADER:
                   /* Christophe: no longer return preview for iPhone
             if (deviceTypeId == DeviceType.IOS)
 				return media.getHeaderPreviewFile() == null ?
 						null : media.getHeaderPreviewFile().getFilename();
                     */
-                return media.getHeaderFile() == null ?
-                       null :
-                       media.getHeaderFile().getFilename();
+                return media.getHeaderFile() == null ? null : media.getHeaderFile().getFilename();
             case IMAGE_LARGE:
-                return media.getImageFIleLarge() == null ?
-                       null :
-                       media.getImageFIleLarge().getFilename();
+                return media.getImageFIleLarge() == null ? null : media.getImageFIleLarge().getFilename();
             case IMAGE_SMALL:
-                return media.getImageFileSmall() == null ?
-                       null :
-                       media.getImageFileSmall().getFilename();
+                return media.getImageFileSmall() == null ? null : media.getImageFileSmall().getFilename();
             case IMAGE_RESOLUTION:
-                return media.getImgFileResolution() == null ?
-                       null :
-                       media.getImgFileResolution().getFilename();
+                return media.getImgFileResolution() == null ? null : media.getImgFileResolution().getFilename();
             case PURCHASED:
-                return media.getPurchasedFile() == null ?
-                       null :
-                       media.getPurchasedFile().getFilename();
+                return media.getPurchasedFile() == null ? null : media.getPurchasedFile().getFilename();
             default:
                 return null;
         }
     }
 
-    public String getExtention(String name) {
-        return name.substring(name.lastIndexOf(".") + 1);
-    }
-
     public String getContentType(String name) {
-        return name.endsWith(".jpg") ?
-               IMAGE_JPEG_VALUE :
-               APPLICATION_OCTET_STREAM_VALUE;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public File downloadOriginalFile(OutputStream outputStream, String isrc, int userId) throws ServiceException {
-        File file = null;
-        try {
-            file = getFile(isrc, FileService.FileType.PURCHASED, null, userId);
-        } catch (IOException e) {
-            LOGGER.error("Can't find purchased file. path=" + file.getAbsolutePath() + ", isrc=" + isrc);
-            throw new ServiceException("error.download.file", "Can't download puchased file");
-        } catch (ServiceException e) {
-            throw e;
-        }
-
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(file);
-            IOUtils.copy(fileInputStream, outputStream);
-        } catch (FileNotFoundException e) {
-            LOGGER.error("Can't find purchased file {}", file.getAbsoluteFile());
-            throw new ServiceException("error.download.file", "Can't download puchased file");
-        } catch (IOException e) {
-            LOGGER.error("User interrupted downloading process of file {}", file.toString());
-            throw new ServiceException("error.download.file", "Can't download puchased file");
-        } finally {
-            IOUtils.closeQuietly(fileInputStream);
-        }
-        return file;
+        return name.endsWith(".jpg") ? IMAGE_JPEG_VALUE : APPLICATION_OCTET_STREAM_VALUE;
     }
 
     @Transactional(readOnly = true)
@@ -311,16 +284,12 @@ public class FileService {
         LOGGER.debug("Get video url for isrc={}", mediaIsrc);
 
         boolean isWindowsPhoneUser = DeviceType.WINDOWS_PHONE.equals(user.getDeviceType().getName());
-        MediaDeliveryEnum mediaDelivery = isWindowsPhoneUser ?
-                                          MediaDeliveryEnum.HTTP :
-                                          MediaDeliveryEnum.HTTP_IOS;
+        MediaDeliveryEnum mediaDelivery = isWindowsPhoneUser ? MediaDeliveryEnum.HTTP : MediaDeliveryEnum.HTTP_IOS;
 
         Video video = brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.RENDITIONS), null, mediaDelivery);
         String url = video.getFlvUrl();
         if (isWindowsPhoneUser) {
-            url = url != null && url.endsWith(TranscodeEncodeToEnum.MP4.name().toLowerCase()) ?
-                  url :
-                  null;
+            url = url != null && url.endsWith(TranscodeEncodeToEnum.MP4.name().toLowerCase()) ? url : null;
             if (url == null) {
                 List<Rendition> renditions = video.getRenditions();
                 if (renditions != null) {

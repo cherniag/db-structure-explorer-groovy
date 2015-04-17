@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.service.MergeResult;
+import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.social.core.UserPromoService;
-import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.service.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
@@ -57,7 +57,7 @@ public class SigninGooglePlusController extends CommonController {
         try {
             LOGGER.info("APPLY_INIT_PROMO_GOOGLE_PLUS Started for accessToken[{}] in community[{}] ", accessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
-            GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
+            SocialNetworkInfo googlePlusUserInfo = googlePlusService.getGooglePlusUserInfo(accessToken, googlePlusUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, true, withOneTimePayment));
         } catch (UserCredentialsException ce) {

@@ -102,7 +102,6 @@ public abstract class AbstractControllerTestIT {
 
         o2ProviderServiceSpy.setO2Service(o2ServiceMock);
         userService.setMobileProviderService(o2ProviderServiceSpy);
-        userService.setO2ClientService(o2ProviderServiceSpy);
         ReflectionTestUtils.setField(o2ProviderDetailsExtractor, "o2ProviderService", o2ProviderServiceSpy);
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
 

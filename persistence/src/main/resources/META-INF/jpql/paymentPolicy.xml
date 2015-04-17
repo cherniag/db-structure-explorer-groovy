@@ -2,21 +2,9 @@
 <entity-mappings version="2.0"
 	xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd ">
-	
-	<named-query name="PaymentPolicy.getPaymentPolicyForMigPaymentType">
-		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.operatorId=? and paymentPolicy.paymentType=? and paymentPolicy.communityId=? ]]></query>
-	</named-query>
-	
-	<named-query name="PaymentPolicy.getPaymentPolicyForNotMigPaymentType">
-		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.paymentType=? and paymentPolicy.communityId=? ]]></query>
-	</named-query>
-	
+
 	<named-query name="PaymentPolicy.getPaymentPoliciesForCommunity">
 		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.communityId=? ]]></query>
-	</named-query>
-	
-	<named-query name="PaymentPolicy.getPaymentPoliciesByCommunityAndPaymentType">
-		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.paymentType=? and paymentPolicy.community.id=?]]></query>
 	</named-query>
 
 </entity-mappings>

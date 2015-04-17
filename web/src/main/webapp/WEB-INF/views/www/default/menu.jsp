@@ -12,18 +12,12 @@
 	String lastItemCurrentStyle = "lastItem";
 	String uri = (String) request.getAttribute("javax.servlet.forward.request_uri");
 
-	if (uri.contains("getapp.html"))
-		firstItemCurrentStyle += current;
-	else if (uri.contains("account.html"))
+	if (uri.contains("account.html"))
 		secondItemCurrentStyle += current;
 	else if (uri.contains("payments_inapp.html"))
 		thirdItemCurrentStyle += current;
 	else if (uri.contains("one_click_subscription_successful.html"))
 		thirdItemCurrentStyle += current;
-	else if (uri.contains("payment_history.html"))
-		forthItemCurrentStyle += current;
-	else if (uri.contains("purchased_tracks.html"))
-		lastItemCurrentStyle += current;
 
 	request.setAttribute("firstItemCurrentStyle", firstItemCurrentStyle);
 	request.setAttribute("secondItemCurrentStyle", secondItemCurrentStyle);
@@ -49,14 +43,6 @@
 			<li class="${thirdItemCurrentStyle}">
 				<a href="payments_inapp.html"><s:message
 						code='page.main.menu.manage.payment' /> </a>
-			</li>
-			<li class="${forthItemCurrentStyle}">
-				<a href="payment_history.html?maxResults=10"><s:message
-						code='page.main.menu.trans.history' /> </a>
-			</li>
-			<li class="${lastItemCurrentStyle}">
-				<a href="purchased_tracks.html"><s:message
-						code='page.main.menu.purchased.tracks' /> </a>
 			</li>
 		</ul>
 	</div>

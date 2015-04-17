@@ -1,19 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.DrmDao;
-import mobi.nowtechnologies.server.persistence.dao.DrmTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import org.hibernate.LazyInitializationException;
 import org.slf4j.Logger;
@@ -27,29 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Titov Mykhaylo (titov)
  */
 public class DrmService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DrmService.class);
-
-    private EntityService entityService;
-    private DrmDao drmDao;
-    private MediaService mediaService;
 
     private DrmRepository drmRepository;
 
     public void setDrmRepository(DrmRepository drmRepository) {
         this.drmRepository = drmRepository;
-    }
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
-    }
-
-    public void setDrmDao(DrmDao drmDao) {
-        this.drmDao = drmDao;
-    }
-
-    public void setMediaService(MediaService mediaService) {
-        this.mediaService = mediaService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -98,56 +72,4 @@ public class DrmService {
         return drm;
     }
 
-    public List<Drm> findDrmAndDrmTypeTree(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-        List<Drm> drms = drmDao.findDrmAndDrmTypeTree(userId);
-        LOGGER.debug("Output parameter drms=[{}]", drms);
-        return drms;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<Drm> processBuyTrackCommand(User user, List<Media> mediaList) {
-        if (user == null) {
-            throw new ServiceException("The parameter user is null");
-        }
-        if (mediaList == null) {
-            throw new ServiceException("The parameter media is null");
-        }
-
-        Object[] argArray = new Object[] {user, mediaList};
-        LOGGER.debug("input parameters userId, media, communityName: [{}], [{}], [{}]", argArray);
-
-        UserGroup userGroup = user.getUserGroup();
-        if (userGroup == null) {
-            throw new ServiceException("The parameter userGroup is null");
-        }
-
-        DrmPolicy drmPolicy = userGroup.getDrmPolicy();
-
-        if (drmPolicy == null) {
-            throw new ServiceException("The parameter drmPolicy is null");
-        }
-
-        int userId = user.getId();
-        DrmType drmType = DrmTypeDao.getPURCHASED_DRM_TYPE();
-        byte drmValue = drmPolicy.getDrmValue();
-
-        List<Drm> purchasedDrms = new LinkedList<Drm>();
-        for (Media media : mediaList) {
-            Drm drmForCurrentUser = new Drm();
-
-            drmForCurrentUser.setMedia(media);
-            drmForCurrentUser.setUser(user);
-            drmForCurrentUser.setDrmType(drmType);
-            drmForCurrentUser.setDrmValue(drmValue);
-
-            mediaService.logMediaEvent(userId, media, MediaLogTypeDao.PURCHASE);
-
-            entityService.saveEntity(drmForCurrentUser);
-
-            purchasedDrms.add(drmForCurrentUser);
-        }
-
-        return purchasedDrms;
-    }
 }

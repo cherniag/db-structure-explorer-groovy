@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.web.security;
 
+import mobi.nowtechnologies.server.shared.message.PropLocale;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
 import javax.servlet.ServletException;
@@ -41,6 +42,7 @@ public class CommunityChangeInterceptorTest {
         };
         response = new MockHttpServletResponse();
         interceptor = new CommunityChangeInterceptor();
+        interceptor.setPropLocale(new PropLocale());
         LocaleResolver localeResolver = new CookieLocaleResolver();
         request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
     }

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 
 import javax.persistence.Column;
@@ -52,7 +52,7 @@ public class Resolution {
     }
 
     public Resolution withDeviceType(String deviceType) {
-        Assert.isTrue(DeviceType.all().contains(deviceType), "Passed: " + deviceType + ", allowed: " + DeviceType.all());
+        Assert.isTrue(DeviceType.ALL_DEVICE_TYPES.contains(deviceType), "Passed: " + deviceType + ", allowed: " + DeviceType.ALL_DEVICE_TYPES);
         this.deviceType = deviceType;
         return this;
     }

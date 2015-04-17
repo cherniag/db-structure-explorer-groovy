@@ -1,0 +1,1 @@
+alter table tb_pendingpayments drop column offerId;

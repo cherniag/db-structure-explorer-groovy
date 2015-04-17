@@ -22,8 +22,9 @@ import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDeta
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 
+import java.net.HttpURLConnection;
+
 import org.springframework.context.ApplicationEventPublisher;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -42,25 +43,27 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(value = {PaymentEvent.class, Utils.class, SubmittedPayment.class})
 public class AbstractPaymentSystemServiceTest {
 
+    @Mock
     private EntityService mockEntityService;
+    @Mock
     private UserService mockUserService;
-    private AbstractPaymentSystemService mockAbstractPaymentSystemService;
+    @Mock
     private PaymentDetailsRepository mockPaymentDetailsRepository;
+    @Mock
     private ApplicationEventPublisher mockApplicationEventPublisher;
+    @Mock
+    private PaymentEventNotifier paymentEventNotifier;
+    private AbstractPaymentSystemService mockAbstractPaymentSystemService;
 
     @Before
     public void setUp() throws Exception {
-        mockEntityService = Mockito.mock(EntityService.class);
-        mockUserService = Mockito.mock(UserService.class);
-        mockPaymentDetailsRepository = Mockito.mock(PaymentDetailsRepository.class);
-        mockApplicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
-
         mockAbstractPaymentSystemService = Mockito.mock(AbstractPaymentSystemService.class, Mockito.CALLS_REAL_METHODS);
 
         mockAbstractPaymentSystemService.setEntityService(mockEntityService);
         mockAbstractPaymentSystemService.setUserService(mockUserService);
         mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
         mockAbstractPaymentSystemService.setApplicationEventPublisher(mockApplicationEventPublisher);
+        mockAbstractPaymentSystemService.setPaymentEventNotifier(paymentEventNotifier);
     }
 
     @Test
@@ -248,7 +251,7 @@ public class AbstractPaymentSystemServiceTest {
         assertNotNull(actualSubmittedPayment);
         assertEquals(submittedPayment, actualSubmittedPayment);
         assertEquals(ERROR, actualSubmittedPayment.getStatus());
-        assertEquals("", actualSubmittedPayment.getExternalTxId());
+        assertEquals(null, actualSubmittedPayment.getExternalTxId());
 
         assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
         assertEquals(1, paymentDetails.getMadeRetries());
@@ -268,7 +271,7 @@ public class AbstractPaymentSystemServiceTest {
 
         PaymentSystemResponse mockPaymentSystemResponse = Mockito.mock(PaymentSystemResponse.class);
         Mockito.when(mockPaymentSystemResponse.isSuccessful()).thenReturn(false);
-        Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(BAD_REQUEST.value());
+        Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
 
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
@@ -312,12 +315,12 @@ public class AbstractPaymentSystemServiceTest {
 
         SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
-        final String descriptionError = "Unexpected http status code [" + BAD_REQUEST.value() + "] so the madeRetries won't be incremented";
+        final String descriptionError = "Unexpected http status code [" + HttpURLConnection.HTTP_BAD_REQUEST + "] so the madeRetries won't be incremented";
 
         assertNotNull(actualSubmittedPayment);
         assertEquals(submittedPayment, actualSubmittedPayment);
         assertEquals(ERROR, actualSubmittedPayment.getStatus());
-        assertEquals("", actualSubmittedPayment.getExternalTxId());
+        assertEquals(null, actualSubmittedPayment.getExternalTxId());
         assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
 
         assertEquals(ERROR, paymentDetails.getLastPaymentStatus());

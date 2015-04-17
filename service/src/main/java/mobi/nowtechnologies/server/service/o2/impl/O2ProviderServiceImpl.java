@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
@@ -56,7 +56,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     private CommunityService communityService;
 
-    private DeviceService deviceService;
+    private DevicePromotionsService deviceService;
 
     private WebServiceGateway webServiceGateway;
 
@@ -108,7 +108,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     public String getServerO2Url(String phoneNumber) {
         Community o2Community = communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL);
 
-        String serverO2Url = (isPromoted(phoneNumber, o2Community) || isOtacPromoted(phoneNumber, o2Community)) ?
+        String serverO2Url = (isPromoted(phoneNumber, o2Community) || deviceService.isOtacPromotedDevicePhone(o2Community, phoneNumber)) ?
                              this.promotedServerO2Url :
                              this.serverO2Url;
 
@@ -119,15 +119,11 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     public String getRedeemServerO2Url(String phoneNumber) {
         Community o2Community = communityService.getCommunityByUrl(O2_COMMUNITY_REWRITE_URL);
 
-        String redeemServerO2Url = (isPromoted(phoneNumber, o2Community) || isOtacPromoted(phoneNumber, o2Community)) ?
+        String redeemServerO2Url = (isPromoted(phoneNumber, o2Community) || deviceService.isOtacPromotedDevicePhone(o2Community, phoneNumber)) ?
                                    this.redeemPromotedServerO2Url :
                                    this.redeemServerO2Url;
 
         return redeemServerO2Url;
-    }
-
-    private boolean isOtacPromoted(String phoneNumber, Community o2Community) {
-        return deviceService.isOtacPromotedDevicePhone(o2Community, phoneNumber, null);
     }
 
     private boolean isPromoted(String phoneNumber, Community o2Community) {
@@ -142,7 +138,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         this.communityService = communityService;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 

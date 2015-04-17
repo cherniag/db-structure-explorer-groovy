@@ -8,7 +8,6 @@ import java.util.List;
 import static java.util.Collections.unmodifiableList;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.Mock;
 import static org.junit.Assert.*;
@@ -17,10 +16,8 @@ import static org.mockito.MockitoAnnotations.*;
 
 import static org.hamcrest.core.Is.is;
 
-import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-@RunWith(PowerMockRunner.class)
 public class CommunityServiceImplTest {
 
     @Mock

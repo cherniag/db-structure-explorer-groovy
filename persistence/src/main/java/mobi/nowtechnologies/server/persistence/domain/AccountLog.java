@@ -55,11 +55,6 @@ public class AccountLog implements Serializable {
     @Column(name = "userUID")
     private int userId;
     private String promoCode;
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "offerId", nullable = true)
-    private Offer offer;
-    @Column(insertable = false, updatable = false)
-    private Integer offerId;
     @Column(length = 10000)
     private String description;
 
@@ -169,23 +164,6 @@ public class AccountLog implements Serializable {
         return calendar;
     }
 
-    public Offer getOffer() {
-        return offer;
-    }
-
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-        if (offer != null) {
-            offerId = offer.getId();
-        } else {
-            offerId = null;
-        }
-    }
-
-    public Integer getOfferId() {
-        return offerId;
-    }
-
     public AccountLog withDescription(String description) {
         this.description = description;
         return this;
@@ -223,7 +201,7 @@ public class AccountLog implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("balanceAfter", balanceAfter).append("logTimestamp", logTimestamp).append("relatedMediaUID", relatedMediaUID)
                                         .append("relatedPaymentUID", relatedPaymentUID).append("transactionType", transactionType).append("userId", userId).append("promoCode", promoCode)
-                                        .append("offerId", offerId).append("description", description).toString();
+                                        .append("description", description).toString();
     }
 
     public static enum Fields {

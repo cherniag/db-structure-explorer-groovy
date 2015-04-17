@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
@@ -27,13 +28,13 @@ import static org.junit.Assert.*;
  * @author Titov Mykhaylo (titov)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class PaymentDetailsServiceIT {
 
-    @Resource(name = "service.PaymentDetailsService")
-    private PaymentDetailsService paymentDetailsService;
+    @Resource
+    private PaymentDetailsRepository paymentDetailsRepository;
 
     @Resource(name = "service.EntityService")
     private EntityService entityService;
@@ -82,7 +83,7 @@ public class PaymentDetailsServiceIT {
         vfpsmsPaymentDetails.setOwner(user);
         entityService.saveEntity(vfpsmsPaymentDetails);
 
-        List<PaymentDetails> paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails(migOperator, phoneNumber);
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findActivatedPaymentDetails(migOperator, phoneNumber);
 
         assertNotNull(paymentDetailsList);
 
@@ -90,7 +91,7 @@ public class PaymentDetailsServiceIT {
 
         assertEquals(migPaymentDetails.getI(), paymentDetailsList.get(0).getI());
 
-        paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails("o2", phoneNumber);
+        paymentDetailsList = paymentDetailsRepository.findActivatedPaymentDetails("o2", phoneNumber);
 
         assertNotNull(paymentDetailsList);
 
@@ -98,7 +99,7 @@ public class PaymentDetailsServiceIT {
 
         assertEquals(o2PSMSPaymentDetails.getI(), paymentDetailsList.get(0).getI());
 
-        paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails("vf", phoneNumber);
+        paymentDetailsList = paymentDetailsRepository.findActivatedPaymentDetails("vf", phoneNumber);
 
         assertNotNull(paymentDetailsList);
 

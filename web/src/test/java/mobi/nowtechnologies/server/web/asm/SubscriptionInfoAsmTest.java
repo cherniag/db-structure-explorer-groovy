@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.web.asm;
 
 import mobi.nowtechnologies.server.TimeService;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -197,6 +197,7 @@ public class SubscriptionInfoAsmTest {
         when(details.isActivated()).thenReturn(true);
         when(user.getCurrentPaymentDetails()).thenReturn(details);
         when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.isPremium(now)).thenReturn(true);
 
         return user;
     }
@@ -208,6 +209,7 @@ public class SubscriptionInfoAsmTest {
         when(user.getCurrentPaymentDetails()).thenReturn(null);
         when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
         when(user.isSubscribedStatus()).thenReturn(true);
+        when(user.isPremium(now)).thenReturn(true);
 
         return user;
     }

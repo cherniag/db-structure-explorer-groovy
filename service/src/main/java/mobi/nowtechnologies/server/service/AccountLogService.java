@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.dao.AccountLogDao;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
@@ -47,14 +46,14 @@ public class AccountLogService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public AccountLog logAccountEvent(int userId, int balanceAfter, Media relatedMedia, SubmittedPayment relatedPayment, TransactionType accountLogType, Offer offer) {
+    public AccountLog logAccountEvent(int userId, int balanceAfter, Media relatedMedia, SubmittedPayment relatedPayment, TransactionType accountLogType) {
         if (accountLogType == null) {
             throw new PersistenceException("The parameter accountLogType is null");
         }
-        LOGGER.debug("input parameters userId, balanceAfter, relatedMedia, relatedPaymentUID, accountLogType, offer: [{}], [{}], [{}], [{}], [{}], [{}]",
-                     new Object[] {userId, balanceAfter, relatedMedia, relatedPayment, accountLogType, offer});
+        LOGGER.debug("input parameters userId, balanceAfter, relatedMedia, relatedPaymentUID, accountLogType: [{}], [{}], [{}], [{}], [{}]", userId, balanceAfter, relatedMedia, relatedPayment,
+                     accountLogType);
 
-        AccountLog accountLog = accountLogDao.logAccountEvent(userId, balanceAfter, relatedMedia, relatedPayment, accountLogType, offer);
+        AccountLog accountLog = accountLogDao.logAccountEvent(userId, balanceAfter, relatedMedia, relatedPayment, accountLogType);
 
         LOGGER.debug("Output parameter accountLog=[{}]", accountLog);
         return accountLog;

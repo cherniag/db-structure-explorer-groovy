@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Genre;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import javax.annotation.Resource;
-
-import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +13,6 @@ import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import static org.junit.Assert.*;
 
 /**
  * @author Maksym Chernolevskyi (maksym)
@@ -69,26 +65,9 @@ public class EntityDaoIT {
     }
 
     @Test
-    public void testFind() {
-        User user = entityDao.findById(User.class, 1);
-        assertEquals("", user.getFirstName());
-    }
-
-    @Test
     public void testSaveAccountLog() {
         entityDao.saveEntity(new AccountLog(98708, null, (byte) 8, null));
     }
-
-    @Test
-    public void testFindListByProperty_Success() {
-        Class<Genre> entityClass = Genre.class;
-        String fieldName = Genre.Fields.name.toString();
-        String fieldValue = "Default";
-        List<Genre> genres = entityDao.findListByProperty(entityClass, fieldName, fieldValue);
-        assertNotNull(genres);
-    }
-
-
 
 
 }
