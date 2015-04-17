@@ -235,7 +235,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     @Test
     public void testGooglePlusApplyAfterEmailRegistration() throws Exception {
         User user = userRepository
-            .save(UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
+            .save(createUser().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
         emailGenerate(user, googlePlusEmail);
@@ -247,6 +247,8 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
         checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }
+
+    private User createUser() {return UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED();}
 
     @Test
     public void testSignUpAndApplyPromoForGooglePlusAfterLoginToFacebook() throws Exception {

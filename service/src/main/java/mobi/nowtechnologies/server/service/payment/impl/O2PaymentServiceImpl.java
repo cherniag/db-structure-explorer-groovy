@@ -44,7 +44,7 @@ public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaym
             pendingPayment.setExternalTxId("");
         }
 
-        entityService.updateEntity(pendingPayment);
+        getPendingPaymentRepository().save(pendingPayment);
 
         return response;
     }

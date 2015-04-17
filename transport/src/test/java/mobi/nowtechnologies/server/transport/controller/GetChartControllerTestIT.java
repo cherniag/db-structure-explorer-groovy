@@ -120,9 +120,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         Integer ffChartUpdateId = updateMap.get(ChartType.FIFTH_CHART).get(0).getI();
         Integer vcChartUpdateId = updateMap.get(ChartType.VIDEO_CHART).get(0).getI();
 
-        mockMvc.perform(
-            get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID)
-                                                                          .param("WIDTHXHEIGHT", widthHeight)).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName)
+                                                                                      .param("USER_TOKEN", userToken)
+                                                                                      .param("TIMESTAMP", timestamp)
+                                                                                      .param("DEVICE_UID", deviceUID)
+                                                                                      .param("WIDTHXHEIGHT", widthHeight)).andDo(print()).andExpect(status().isOk())
                .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'HOT_TRACKS')].chartUpdateId").value(htChartUpdateId))
                .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'OTHER_CHART')].chartUpdateId").value(ocChartUpdateId))
                .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FOURTH_CHART')].chartUpdateId").value(ftChartUpdateId))
@@ -244,9 +246,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                .andExpect(jsonPath("response.data[1].chart.playlists[0].badge_icon").value("badge_picture_IOS_640x960"));
     }
 
-
     @Test
-    @Ignore
     public void testGetChart_O2_v4d0_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
@@ -260,7 +260,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
         mockMvc.perform(
             post("/" + communityUrl + "/" + apiVersion + "/GET_CHART").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
-               .andExpect(status().isOk()).andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists()).andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_2"))
+               .andExpect(status().isOk()).andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists()).andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_4"))
                .andExpect(xpath("/response/chart/track[duration=10000]").exists()).andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists()).andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
@@ -430,7 +430,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
         Map<ChartType, List<ChartDetail>> updateMap = new HashMap<>();
 
-        Genre genre = genreRepository.getByName("Default");
+        Genre genre = genreRepository.findByName("Default");
         Media media = chartDetailRepository.findOne(22).getMedia();
 
         // create and save charts for community

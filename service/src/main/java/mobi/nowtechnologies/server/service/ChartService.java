@@ -150,7 +150,7 @@ public class ChartService implements ApplicationContextAware {
             return Collections.EMPTY_LIST;
         }
 
-        List<Chart> charts = chartRepository.getByCommunityName(communityName);
+        List<Chart> charts = chartRepository.findByCommunityName(communityName);
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
         for (Chart chart : charts) {
@@ -173,12 +173,12 @@ public class ChartService implements ApplicationContextAware {
         List<Chart> charts = emptyList();
         if (communityURL != null) {
             charts = chartType != null ?
-                     chartRepository.getByCommunityURLAndChartType(communityURL, chartType) :
-                     chartRepository.getByCommunityURL(communityURL);
+                     chartRepository.findByCommunityURLAndChartType(communityURL, chartType) :
+                     chartRepository.findByCommunityURL(communityURL);
         } else if (communityName != null) {
             charts = chartType != null ?
-                     chartRepository.getByCommunityNameAndChartType(communityName, chartType) :
-                     chartRepository.getByCommunityName(communityName);
+                     chartRepository.findByCommunityNameAndChartType(communityName, chartType) :
+                     chartRepository.findByCommunityName(communityName);
         }
 
         List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
@@ -190,7 +190,7 @@ public class ChartService implements ApplicationContextAware {
     @Transactional(readOnly = true)
     public List<ChartDetail> getChartsByCommunityAndPublishTime(String communityRewriteUrl, Date publishDate) {
         LOGGER.debug("input parameters communityURL [{}], publishDate [{}]", communityRewriteUrl, publishDate);
-        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<Chart> charts = chartRepository.findByCommunityURL(communityRewriteUrl);
         List<ChartDetail> chartDetails = getChartDetails(charts, publishDate, false);
         LOGGER.info("Output parameter charts=[{}]", charts);
         return chartDetails;
@@ -314,7 +314,7 @@ public class ChartService implements ApplicationContextAware {
             return emptyList();
         }
 
-        List<Chart> charts = chartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        List<Chart> charts = chartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = chartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
         if (isNull(featureUpdateOfExcludedChartPublishTimeMillis)) {
@@ -335,7 +335,7 @@ public class ChartService implements ApplicationContextAware {
                 publishTimeMillisList.add(featureUpdatePublishTimeMillis);
             }
             if (!publishTimeMillisList.isEmpty()) {
-                duplicatedMediaChartDetails.addAll(chartDetailRepository.getDuplicatedMediaChartDetails(chart, publishTimeMillisList, mediaIds));
+                duplicatedMediaChartDetails.addAll(chartDetailRepository.findDuplicatedMediaChartDetails(chart, publishTimeMillisList, mediaIds));
             }
         }
 

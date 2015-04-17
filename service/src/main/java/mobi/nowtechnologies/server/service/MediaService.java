@@ -1,13 +1,16 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.MediaDao;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+
+import javax.annotation.Resource;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,55 +32,46 @@ public class MediaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaService.class);
     private static final PageRequest PAGE_REQUEST_50 = new PageRequest(0, 50);
 
-    private MediaDao mediaDao;
+    @Resource
     private MediaRepository mediaRepository;
+
+    @Resource
     private ChartRepository chartRepository;
+
+    @Resource
     private ChartDetailRepository chartDetailRepository;
 
-    public void setMediaDao(MediaDao aMediaDao) {
-        this.mediaDao = aMediaDao;
-    }
-
-    public void setMediaRepository(MediaRepository mediaRepository) {
-        this.mediaRepository = mediaRepository;
-    }
-
-    public void setChartRepository(ChartRepository chartRepository) {
-        this.chartRepository = chartRepository;
-    }
-
-    public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
-        this.chartDetailRepository = chartDetailRepository;
-    }
+    @Resource
+    DrmRepository drmRepository;
 
     public Media findByIsrc(String mediaIsrc) {
         if (mediaIsrc == null) {
             throw new ServiceException("The parameter mediaIsrc is null");
         }
 
-
-        List<Media> medias = mediaRepository.getByIsrc(mediaIsrc);
+        List<Media> medias = mediaRepository.findByIsrc(mediaIsrc);
 
         return Iterables.getFirst(medias, null);
     }
 
+    @Transactional
     public void conditionalUpdateByUserAndMedia(int userId, int mediaId) {
-        mediaDao.conditionalUpdateByUserAndMedia(userId, mediaId);
+        drmRepository.updateByUserAndMedia(userId, mediaId, DateTimeUtils.getEpochSeconds());
     }
 
     @Transactional(readOnly = true)
     public List<Media> getMedias(String searchWords) {
-        return mediaRepository.getMedias("%" + searchWords + "%");
+        return mediaRepository.findMedias("%" + searchWords + "%");
     }
 
     @Transactional(readOnly = true)
     public List<Media> getVideo(String searchWords) {
-        return mediaRepository.getMedias("%" + searchWords + "%", FileType.VIDEO.getIdAsByte());
+        return mediaRepository.findMedias("%" + searchWords + "%", FileType.VIDEO.getIdAsByte());
     }
 
     @Transactional(readOnly = true)
     public List<Media> getMusic(String searchWords) {
-        return mediaRepository.getMedias("%" + searchWords + "%", FileType.MOBILE_AUDIO.getIdAsByte());
+        return mediaRepository.findMedias("%" + searchWords + "%", FileType.MOBILE_AUDIO.getIdAsByte());
     }
 
     @Transactional(readOnly = true)
@@ -85,7 +79,7 @@ public class MediaService {
         LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] searchWord [{}] excludedIds [{}]", communityRewriteUrl, timeMillis, searchWord, excludedIds);
         Set<Media> medias = Sets.newHashSet();
 
-        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<Chart> charts = chartRepository.findByCommunityURL(communityRewriteUrl);
         for (Chart chart : charts) {
             Long latestPublishDate = chartDetailRepository.findNearestLatestPublishDate(timeMillis, chart.getI());
             if (latestPublishDate != null) {
@@ -100,7 +94,7 @@ public class MediaService {
     public Set<Media> getMediasByChartAndPublishTimeAndMediaIds(String communityRewriteUrl, long timeMillis, Collection<Integer> ids) {
         LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] ids [{}]", communityRewriteUrl, timeMillis, ids);
         Set<Media> medias = Sets.newHashSet();
-        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<Chart> charts = chartRepository.findByCommunityURL(communityRewriteUrl);
         for (Chart chart : charts) {
             Long latestPublishDate = chartDetailRepository.findNearestLatestPublishDate(timeMillis, chart.getI());
             if (latestPublishDate != null) {

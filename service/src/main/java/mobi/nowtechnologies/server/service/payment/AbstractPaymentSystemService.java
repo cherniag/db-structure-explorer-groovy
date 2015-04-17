@@ -5,7 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
@@ -29,14 +30,16 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPaymentSystemService.class);
 	
-	protected EntityService entityService;
 	private int retriesOnError;
 	private long expireMillis;
 	private ApplicationEventPublisher applicationEventPublisher;
 	protected PaymentDetailsService paymentDetailsService;
-    protected PaymentDetailsRepository paymentDetailsRepository;
 	protected UserService userService;
     private PaymentEventNotifier paymentEventNotifier;
+
+    private PaymentDetailsRepository paymentDetailsRepository;
+    private SubmittedPaymentRepository submittedPaymentRepository;
+    private PendingPaymentRepository pendingPaymentRepository;
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -69,11 +72,11 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 
 		// Store submitted payment
 		submittedPayment.setStatus(status);
-        submittedPayment = entityService.updateEntity(submittedPayment);
+        submittedPayment = submittedPaymentRepository.save(submittedPayment);
         LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
 
         paymentDetails.setLastPaymentStatus(status);
-        entityService.updateEntity(paymentDetails);
+        paymentDetailsRepository.save(paymentDetails);
 
 		// Send sync-event about committed payment
 		if (submittedPayment.getStatus().equals(SUCCESSFUL)) {
@@ -84,7 +87,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
         }
 
         // Deleting pending payment
-        entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
+        pendingPaymentRepository.delete(pendingPayment.getI());
 
         LOGGER.info("Commit process for payment with tx:{} has been finished with status {}.", submittedPayment.getInternalTxId(), submittedPayment.getStatus());
 
@@ -113,10 +116,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
         newPaymentDetails.resetMadeAttempts();
 
         return paymentDetailsRepository.save(newPaymentDetails);
-    }
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
     }
 
     public int getRetriesOnError() {
@@ -161,6 +160,18 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
         this.paymentDetailsRepository = paymentDetailsRepository;
+    }
+
+    public void setPendingPaymentRepository(PendingPaymentRepository pendingPaymentRepository) {
+        this.pendingPaymentRepository = pendingPaymentRepository;
+    }
+
+    public void setSubmittedPaymentRepository(SubmittedPaymentRepository submittedPaymentRepository) {
+        this.submittedPaymentRepository = submittedPaymentRepository;
+    }
+
+    public PendingPaymentRepository getPendingPaymentRepository() {
+        return pendingPaymentRepository;
     }
 
     @Override

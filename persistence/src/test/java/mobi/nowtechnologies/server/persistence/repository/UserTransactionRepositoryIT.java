@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -25,6 +25,8 @@ public class UserTransactionRepositoryIT extends AbstractRepositoryIT {
     UserRepository userRepository;
     @Resource
     UserTransactionRepository userTransactionRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public void testSave() throws Exception {
@@ -81,8 +83,8 @@ public class UserTransactionRepositoryIT extends AbstractRepositoryIT {
         user.setUserName(Utils.getRandomUUID());
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user = userRepository.saveAndFlush(user);
         return user;

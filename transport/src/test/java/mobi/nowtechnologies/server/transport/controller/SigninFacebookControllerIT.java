@@ -265,7 +265,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     public void testFacebookApplyAfterEmailRegistration() throws Exception {
 
         User user = userRepository
-            .save(UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
+            .save(createUser().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
         emailGenerate(user, fbEmail);
@@ -278,6 +278,12 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(post("/" + communityUrl + "/5.5/GET_CHART.json").param("USER_NAME", fbEmail).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID))
                .andExpect(status().isOk()).andDo(print()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH).exists());
 
+    }
+
+    private User createUser() {
+        User user = UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED();
+        user.setUserGroup(userGroupRepository.findOne(7));
+        return user;
     }
 
 

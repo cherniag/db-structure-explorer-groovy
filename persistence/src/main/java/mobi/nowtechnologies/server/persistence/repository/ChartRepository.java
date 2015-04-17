@@ -13,17 +13,17 @@ import org.springframework.data.repository.query.Param;
 public interface ChartRepository extends JpaRepository<Chart, Integer> {
 
     @Query("select chart from Chart chart join chart.communities community where community.rewriteUrlParameter=:communityURL and chart.i!=:excludedChartId")
-    List<Chart> getByCommunityURLAndExcludedChartId(@Param("communityURL") String communityURL, @Param("excludedChartId") Integer excludedChartId);
+    List<Chart> findByCommunityURLAndExcludedChartId(@Param("communityURL") String communityURL, @Param("excludedChartId") Integer excludedChartId);
 
     @Query("select chart from Chart chart join chart.communities community where community.rewriteUrlParameter like ?1 order by chart.name asc")
-    List<Chart> getByCommunityURL(String communityURL);
+    List<Chart> findByCommunityURL(String communityURL);
 
     @Query("select chart from Chart chart join chart.communities community where community.name = ?1 order by chart.name asc")
-    List<Chart> getByCommunityName(String communityName);
+    List<Chart> findByCommunityName(String communityName);
 
     @Query("select chart from Chart chart join chart.communities community where community.rewriteUrlParameter like ?1 and chart.type=?2 order by chart.name asc")
-    List<Chart> getByCommunityURLAndChartType(String communityURL, ChartType chartType);
+    List<Chart> findByCommunityURLAndChartType(String communityURL, ChartType chartType);
 
     @Query("select chart from Chart chart join chart.communities community where community.name = ?1 and chart.type=?2 order by chart.name asc")
-    List<Chart> getByCommunityNameAndChartType(String communityName, ChartType chartType);
+    List<Chart> findByCommunityNameAndChartType(String communityName, ChartType chartType);
 }

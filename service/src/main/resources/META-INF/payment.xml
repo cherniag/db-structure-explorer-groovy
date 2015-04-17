@@ -24,8 +24,9 @@
 	
 	<bean id="service.AbstractPaymentSystemService" abstract="true">
 		<property name="userService" ref="service.UserService" />
-		<property name="entityService" ref="service.EntityService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="submittedPaymentRepository" ref="submittedPaymentRepository" />
+		<property name="pendingPaymentRepository" ref="pendingPaymentRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
         <property name="paymentEventNotifier" ref="commonPaymentEventNotifier"/>
 	</bean>

@@ -171,7 +171,7 @@ public class PaymentPolicyServiceTest {
 
         User user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
 
-        Mockito.when(paymentPolicyRepositoryMock.getPaymentPolicies(any(Community.class), any(ProviderType.class), any(SegmentType.class), any(Contract.class), any(Tariff.class), anyList()))
+        Mockito.when(paymentPolicyRepositoryMock.findPaymentPolicies(any(Community.class), any(ProviderType.class), any(SegmentType.class), any(Contract.class), any(Tariff.class), anyList()))
                .thenReturn(paymentPolicies);
 
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyServiceFixture.getPaymentPolicyDtos(user);

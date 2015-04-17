@@ -1,9 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
@@ -21,7 +18,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
@@ -64,18 +62,22 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class})
+@PrepareForTest({UserService.class, Utils.class, DeviceTypeCache.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class})
 public class O2PaymentServiceImplTest {
 
     private UserService userServiceMock;
-    private EntityService mockEntityService;
     private CommunityResourceBundleMessageSource mockCommunityResourceBundleMessageSource;
     private PaymentDetailsService mockPaymentDetailsService;
     private O2ProviderService mockO2ClientService;
     private O2PaymentServiceImpl o2PaymentServiceImplSpy;
     private ApplicationEventPublisher mockApplicationEventPublisher;
-    private PaymentDetailsRepository mockPaymentDetailsRepository;
     private PaymentEventNotifier paymentEventNotifier;
+    @Mock
+    private PaymentDetailsRepository mockPaymentDetailsRepository;
+    @Mock
+    private PendingPaymentRepository mockPendingPaymentRepository;
+    @Mock
+    private SubmittedPaymentRepository mockSubmittedPaymentRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -85,12 +87,8 @@ public class O2PaymentServiceImplTest {
 
         mockCommunityResourceBundleMessageSource = mock(CommunityResourceBundleMessageSource.class);
         mockPaymentDetailsService = mock(PaymentDetailsService.class);
-        mockEntityService = mock(EntityService.class);
         mockO2ClientService = mock(O2ProviderService.class);
-        mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
         paymentEventNotifier = mock(PaymentEventNotifier.class);
-
-        mockStatic(UserStatusDao.class);
 
         mockApplicationEventPublisher = mock(ApplicationEventPublisher.class);
 
@@ -98,10 +96,11 @@ public class O2PaymentServiceImplTest {
         o2PaymentServiceImplSpy.setApplicationEventPublisher(mockApplicationEventPublisher);
         o2PaymentServiceImplSpy.setMessageSource(mockCommunityResourceBundleMessageSource);
         o2PaymentServiceImplSpy.setO2ClientService(mockO2ClientService);
-        o2PaymentServiceImplSpy.setEntityService(mockEntityService);
-        o2PaymentServiceImplSpy.setPaymentDetailsRepository(mockPaymentDetailsRepository);
         o2PaymentServiceImplSpy.setPaymentDetailsService(mockPaymentDetailsService);
         o2PaymentServiceImplSpy.setPaymentEventNotifier(paymentEventNotifier);
+        o2PaymentServiceImplSpy.setPaymentDetailsRepository(mockPaymentDetailsRepository);
+        o2PaymentServiceImplSpy.setPendingPaymentRepository(mockPendingPaymentRepository);
+        o2PaymentServiceImplSpy.setSubmittedPaymentRepository(mockSubmittedPaymentRepository);
     }
 
     @Test
@@ -161,7 +160,7 @@ public class O2PaymentServiceImplTest {
                                                        paymentPolicy.getSubMerchantId(),
                                                        smsNotify.booleanValue())).thenReturn(o2Response);
 
-        when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
+        when(mockPendingPaymentRepository.save(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
             @Override
             public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -174,7 +173,7 @@ public class O2PaymentServiceImplTest {
             }
         });
 
-        when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+        when(mockPaymentDetailsRepository.save(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
             @Override
             public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -187,14 +186,14 @@ public class O2PaymentServiceImplTest {
             }
         });
 
-        doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
 
 
         mock(SubmittedPayment.class);
         final SubmittedPayment submittedPayment = new SubmittedPayment();
         whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
 
-        when(mockEntityService.updateEntity(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
+        when(mockSubmittedPaymentRepository.save(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
 
             @Override
             public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -238,8 +237,8 @@ public class O2PaymentServiceImplTest {
                                                                     paymentPolicy.getContentDescription(),
                                                                     paymentPolicy.getSubMerchantId(),
                                                                     smsNotify.booleanValue());
-        verify(mockEntityService, times(1)).updateEntity(pendingPayment);
-        verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        verify(mockPendingPaymentRepository, times(1)).save(pendingPayment);
+        verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(argThat(matcher));
 
     }
@@ -305,7 +304,7 @@ public class O2PaymentServiceImplTest {
                                                        paymentPolicy.getSubMerchantId(),
                                                        smsNotify.booleanValue())).thenReturn(o2Response);
 
-        when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
+        when(mockPendingPaymentRepository.save(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
             @Override
             public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -318,7 +317,7 @@ public class O2PaymentServiceImplTest {
             }
         });
 
-        when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+        when(mockPaymentDetailsRepository.save(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
             @Override
             public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -330,14 +329,14 @@ public class O2PaymentServiceImplTest {
             }
         });
 
-        doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
 
 
         mock(SubmittedPayment.class);
         final SubmittedPayment submittedPayment = new SubmittedPayment();
         whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
 
-        when(mockEntityService.updateEntity(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
+        when(mockSubmittedPaymentRepository.save(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
 
             @Override
             public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -384,8 +383,8 @@ public class O2PaymentServiceImplTest {
                                                                     paymentPolicy.getContentDescription(),
                                                                     paymentPolicy.getSubMerchantId(),
                                                                     smsNotify.booleanValue());
-        verify(mockEntityService, times(1)).updateEntity(pendingPayment);
-        verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        verify(mockPendingPaymentRepository, times(1)).save(pendingPayment);
+        verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
         verify(userServiceMock, times(1)).unsubscribeUser(user, o2Response.getDescriptionError());
 
@@ -448,7 +447,7 @@ public class O2PaymentServiceImplTest {
                                                        paymentPolicy.getSubMerchantId(),
                                                        smsNotify.booleanValue())).thenReturn(o2Response);
 
-        when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
+        when(mockPendingPaymentRepository.save(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
             @Override
             public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -461,7 +460,7 @@ public class O2PaymentServiceImplTest {
             }
         });
 
-        when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+        when(mockPaymentDetailsRepository.save(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
             @Override
             public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -474,14 +473,14 @@ public class O2PaymentServiceImplTest {
             }
         });
 
-        doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
 
 
         mock(SubmittedPayment.class);
         final SubmittedPayment submittedPayment = new SubmittedPayment();
         whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
 
-        when(mockEntityService.updateEntity(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
+        when(mockSubmittedPaymentRepository.save(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
 
             @Override
             public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -526,8 +525,8 @@ public class O2PaymentServiceImplTest {
                                                                     paymentPolicy.getContentDescription(),
                                                                     paymentPolicy.getSubMerchantId(),
                                                                     smsNotify.booleanValue());
-        verify(mockEntityService, times(1)).updateEntity(pendingPayment);
-        verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        verify(mockPendingPaymentRepository, times(1)).save(pendingPayment);
+        verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
 
     }

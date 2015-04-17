@@ -55,7 +55,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
         }
 
         pendingPayment.setExternalTxId(response.getTransactionId());
-        entityService.updateEntity(pendingPayment);
+        getPendingPaymentRepository().save(pendingPayment);
         LOGGER.info("PayPal responded {} for pending payment id: {}", response, pendingPayment.getI());
         commitPayment(pendingPayment, response);
     }

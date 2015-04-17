@@ -137,8 +137,12 @@ public class SubscriptionService {
 
     @Transactional(value = "applicationTestsTransactionManager")
     public void setCurrentPaymentDetailsStatus(User user, PaymentDetailsStatus paymentDetailsStatus) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(user.getCommunity(), user.getProvider(), user.getSegment(), user.getContract(), user.getTariff(),
-                                                                                         Arrays.asList(AUDIO, VIDEO_AND_AUDIO));
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.findPaymentPolicies(user.getCommunity(),
+                                                                                          user.getProvider(),
+                                                                                          user.getSegment(),
+                                                                                          user.getContract(),
+                                                                                          user.getTariff(),
+                                                                                          Arrays.asList(AUDIO, VIDEO_AND_AUDIO));
 
         final PaymentPolicy paymentPolicy = paymentPolicies.get(0);
 

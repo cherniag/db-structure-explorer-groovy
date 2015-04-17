@@ -16,7 +16,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -42,10 +43,9 @@ import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.runners.*;
 import org.mockito.stubbing.*;
-import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.*;
@@ -80,7 +80,10 @@ public class PayPalPaymentServiceImplTest {
     private PaymentDetailsRepository paymentDetailsRepository;
 
     @Mock
-    private EntityService entityService;
+    private PendingPaymentRepository pendingPaymentRepository;
+
+    @Mock
+    private SubmittedPaymentRepository submittedPaymentRepository;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
@@ -92,7 +95,12 @@ public class PayPalPaymentServiceImplTest {
     private PaymentEventNotifier paymentEventNotifier;
 
     @Captor
-    private ArgumentCaptor<Object> updateEntityServiceCaptor;
+    private ArgumentCaptor<PendingPayment> pendingPaymentCaptor;
+    @Captor
+    private ArgumentCaptor<SubmittedPayment> submittedPaymentCaptor;
+    @Captor
+    private ArgumentCaptor<PaymentDetails> paymentDetailsCaptor;
+
     @Captor
     private ArgumentCaptor<PaymentEvent> paymentEventsCaptor;
 
@@ -101,20 +109,19 @@ public class PayPalPaymentServiceImplTest {
         payPalPaymentService.setRedirectURL(REDIRECT_URL);
         payPalPaymentService.setRetriesOnError(RETRIES_ON_ERROR);
 
+        when(submittedPaymentRepository.save(any(SubmittedPayment.class))).thenAnswer(new Answer<SubmittedPayment>() {
+            @Override
+            public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return (SubmittedPayment) args[0];
+            }
+        });
+
         when(paymentDetailsRepository.save(any(PaymentDetails.class))).thenAnswer(new Answer<PaymentDetails>() {
             @Override
             public PaymentDetails answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 return (PaymentDetails) args[0];
-            }
-        });
-
-        when(entityService.updateEntity(any())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                ReflectionTestUtils.setField(args[0], "i", 1L);
-                return args[0];
             }
         });
     }
@@ -301,17 +308,17 @@ public class PayPalPaymentServiceImplTest {
         verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
         verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
         verify(applicationEventPublisher).publishEvent(paymentEventsCaptor.capture());
-        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
-        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+        verify(pendingPaymentRepository).delete(anyLong());
 
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+        verify(pendingPaymentRepository, times(1)).save(pendingPaymentCaptor.capture());
+        verify(submittedPaymentRepository, times(1)).save(submittedPaymentCaptor.capture());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetailsCaptor.capture());
 
-        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
-        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+        assertSame(pendingPaymentCaptor.getValue(), pendingPayment);
+        assertSame(paymentDetailsCaptor.getValue(), paymentDetails);
+        assertSame(submittedPaymentCaptor.getValue().getPaymentDetails(), paymentDetails);
 
-        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        SubmittedPayment spArgument = submittedPaymentCaptor.getValue();
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, spArgument.getStatus());
         assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
 
@@ -345,17 +352,17 @@ public class PayPalPaymentServiceImplTest {
         verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
         verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
         verify(applicationEventPublisher).publishEvent(paymentEventsCaptor.capture());
-        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
-        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+        verify(pendingPaymentRepository).delete(anyLong());
 
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+        verify(pendingPaymentRepository, times(1)).save(pendingPaymentCaptor.capture());
+        verify(submittedPaymentRepository, times(1)).save(submittedPaymentCaptor.capture());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetailsCaptor.capture());
 
-        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
-        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+        assertSame(pendingPaymentCaptor.getValue(), pendingPayment);
+        assertSame(paymentDetailsCaptor.getValue(), paymentDetails);
+        assertSame(submittedPaymentCaptor.getValue().getPaymentDetails(), paymentDetails);
 
-        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        SubmittedPayment spArgument = submittedPaymentCaptor.getValue();
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, spArgument.getStatus());
         assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
 
@@ -388,17 +395,17 @@ public class PayPalPaymentServiceImplTest {
         verify(paymentDetails, times(1)).setDescriptionError("Unexpected http status code [500] so the madeRetries won't be incremented");
         verify(paymentDetails, times(1)).setErrorCode(null);
         verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.ERROR);
-        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
-        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+        verify(pendingPaymentRepository).delete(anyLong());
 
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+        verify(pendingPaymentRepository, times(1)).save(pendingPaymentCaptor.capture());
+        verify(submittedPaymentRepository, times(1)).save(submittedPaymentCaptor.capture());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetailsCaptor.capture());
 
-        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
-        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+        assertSame(pendingPaymentCaptor.getValue(), pendingPayment);
+        assertSame(paymentDetailsCaptor.getValue(), paymentDetails);
+        assertSame(submittedPaymentCaptor.getValue().getPaymentDetails(), paymentDetails);
 
-        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        SubmittedPayment spArgument = submittedPaymentCaptor.getValue();
         assertEquals(PaymentDetailsStatus.ERROR, spArgument.getStatus());
         assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
     }
@@ -430,17 +437,17 @@ public class PayPalPaymentServiceImplTest {
         verify(paymentDetails, times(1)).setErrorCode(null);
         verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.ERROR);
         verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
-        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
-        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+        verify(pendingPaymentRepository).delete(anyLong());
 
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+        verify(pendingPaymentRepository, times(1)).save(pendingPaymentCaptor.capture());
+        verify(submittedPaymentRepository, times(1)).save(submittedPaymentCaptor.capture());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetailsCaptor.capture());
 
-        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
-        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+        assertSame(pendingPaymentCaptor.getValue(), pendingPayment);
+        assertSame(paymentDetailsCaptor.getValue(), paymentDetails);
+        assertSame(submittedPaymentCaptor.getValue().getPaymentDetails(), paymentDetails);
 
-        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        SubmittedPayment spArgument = submittedPaymentCaptor.getValue();
         assertEquals(PaymentDetailsStatus.ERROR, spArgument.getStatus());
         assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
     }
@@ -474,17 +481,17 @@ public class PayPalPaymentServiceImplTest {
         verify(paymentDetails, times(1)).incrementMadeAttemptsAccordingToMadeRetries();
         verify(paymentDetails, times(1)).setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
         verify(applicationEventPublisher).publishEvent(paymentEventsCaptor.capture());
-        verify(entityService).removeEntity(eq(PendingPayment.class), anyInt());
-        verify(entityService, times(3)).updateEntity(updateEntityServiceCaptor.capture());
+        verify(pendingPaymentRepository).delete(anyLong());
 
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(0) instanceof PendingPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(1) instanceof SubmittedPayment);
-        assertTrue(updateEntityServiceCaptor.getAllValues().get(2) instanceof PaymentDetails);
+        verify(pendingPaymentRepository, times(1)).save(pendingPaymentCaptor.capture());
+        verify(submittedPaymentRepository, times(1)).save(submittedPaymentCaptor.capture());
+        verify(paymentDetailsRepository, times(1)).save(paymentDetailsCaptor.capture());
 
-        assertSame(updateEntityServiceCaptor.getAllValues().get(0), pendingPayment);
-        assertSame(updateEntityServiceCaptor.getAllValues().get(2), paymentDetails);
+        assertSame(pendingPaymentCaptor.getValue(), pendingPayment);
+        assertSame(paymentDetailsCaptor.getValue(), paymentDetails);
+        assertSame(submittedPaymentCaptor.getValue().getPaymentDetails(), paymentDetails);
 
-        SubmittedPayment spArgument = (SubmittedPayment) updateEntityServiceCaptor.getAllValues().get(1);
+        SubmittedPayment spArgument = submittedPaymentCaptor.getValue();
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, spArgument.getStatus());
         assertEquals(CURRENCYISO, spArgument.getCurrencyISO());
 

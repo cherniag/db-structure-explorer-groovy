@@ -1,13 +1,13 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl;
@@ -57,9 +57,6 @@ public class PayPalPaymentServiceIT {
     @Resource(name = "paymentDetailsRepository")
     private PaymentDetailsRepository paymentDetailsRepository;
 
-    @Resource(name = "persistence.EntityDao")
-    private EntityDao entityDao;
-
     @Resource(name = "service.PaymentDetailsService")
     private PaymentDetailsService paymentDetailsService;
 
@@ -68,6 +65,12 @@ public class PayPalPaymentServiceIT {
 
     @Resource(name = "communityRepository")
     private CommunityRepository communityRepository;
+
+    @Resource
+    PaymentPolicyRepository paymentPolicyRepository;
+
+    @Resource
+    UserRepository userRepository;
 
     @Before
     public void before() {
@@ -83,8 +86,6 @@ public class PayPalPaymentServiceIT {
     }
 
     private void initPayPalPaymentService() {
-        EntityService entityService = new EntityService();
-        entityService.setEntityDao(entityDao);
         PayPalHttpService httpService = new PayPalHttpService();
         httpService.setApiUrl(API_URL);
         httpService.setRequest(payPalRequest);
@@ -94,7 +95,6 @@ public class PayPalPaymentServiceIT {
         payPalPaymentServiceImpl.setRedirectURL(REDIRECT_URL);
         payPalPaymentServiceImpl.setRetriesOnError(3);
         payPalPaymentServiceImpl.setHttpService(httpService);
-        payPalPaymentServiceImpl.setEntityService(entityService);
         payPalPaymentServiceImpl.setPaymentDetailsService(paymentDetailsService);
         payPalPaymentServiceImpl.setPaymentDetailsRepository(paymentDetailsRepository);
         payPalPaymentServiceImpl.setApplicationEventPublisher(applicationEventPublisher);
@@ -136,7 +136,7 @@ public class PayPalPaymentServiceIT {
         User user = new User();
         user.setUserName("good@user.com");
         user.setActivationStatus(ActivationStatus.ACTIVATED);
-        entityDao.saveEntity(user);
+        userRepository.save(user);
         return user;
     }
 
@@ -192,7 +192,7 @@ public class PayPalPaymentServiceIT {
         Community community = communityRepository.findByName(communityName);
         PaymentPolicy paymentPolicy = PaymentTestUtils.createPaymentPolicy();
         paymentPolicy.setCommunity(community);
-        entityDao.saveEntity(paymentPolicy);
+        paymentPolicyRepository.save(paymentPolicy);
         return paymentPolicy;
     }
 

@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.device.domain.DeviceType;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -347,7 +346,7 @@ public class User implements Serializable {
     }
 
     public boolean isIOSDevice() {
-        return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
+        return DeviceTypeCache.getIOSDeviceType().equals(deviceType);
     }
 
     public boolean isInvalidPaymentPolicy() {
@@ -959,11 +958,11 @@ public class User implements Serializable {
         PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 
         AccountDto.Subscription subscription;
-        if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null) {
+        if (UserStatusType.SUBSCRIBED.name().equals(status.getName()) && currentPaymentDetails == null) {
             subscription = AccountDto.Subscription.freeTrialSubscription;
-        } else if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
+        } else if (UserStatusType.SUBSCRIBED.name().equals(status.getName()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
             subscription = AccountDto.Subscription.subscribedSubscription;
-        } else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || status.equals(UserStatusDao.getLimitedUserStatus())) {
+        } else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || UserStatusType.LIMITED.name().equals(status.getName())) {
             subscription = AccountDto.Subscription.unsubscribedSubscription;
         } else {
             throw new PersistenceException("Couldn't recognize the user subscription");
