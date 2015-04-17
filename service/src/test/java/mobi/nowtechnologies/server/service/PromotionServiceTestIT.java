@@ -1,18 +1,19 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
@@ -58,6 +59,9 @@ public class PromotionServiceTestIT {
 
     @Resource
     private UserTransactionRepository userTransactionRepository;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     private SubscriptionCampaignRecord subscriptionCampaignRecord;
 
@@ -118,7 +122,7 @@ public class PromotionServiceTestIT {
 
     private User createUser(Tariff tariff, String communityRewriteUrl) {
         User user = new User();
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setMobile(MOBILE);
         user.setTariff(tariff);
         user.setUserGroup(getUserGroup(communityRewriteUrl));
@@ -127,7 +131,7 @@ public class PromotionServiceTestIT {
         user.setSegment(SegmentType.CONSUMER);
         user.withOldUser(getOldUser());
         user.withAutoOptInEnabled(false);
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         return user;
     }
 
@@ -137,7 +141,7 @@ public class PromotionServiceTestIT {
 
     private User getOldUser() {
         User oldUser = new User();
-        oldUser.setStatus(UserStatusDao.getLimitedUserStatus());
+        oldUser.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         oldUser.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);
         oldUser.setCurrentPaymentDetails(null);
         return oldUser;

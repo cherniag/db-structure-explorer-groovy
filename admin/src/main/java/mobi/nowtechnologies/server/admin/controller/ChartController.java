@@ -131,7 +131,7 @@ public class ChartController extends AbstractCommonController {
         return new ModelAndView(viewByChartType.get(chart.getType())).addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDTOs)
                                                                      .addObject("selectedPublishDateTime", getSelectedPublishDateAsString(selectedPublishDateTime, chartItemDTOs))
                                                                      .addObject("selectedDateTime", selectedPublishDateTime)
-                                                                     .addObject("allPublishTimeMillis", chartDetailRepository.getAllPublishTimeMillis(chartId)).addObject("filesURL", filesURL)
+                                                                     .addObject("allPublishTimeMillis", chartDetailRepository.findAllPublishTimeMillis(chartId)).addObject("filesURL", filesURL)
                                                                      .addObject("chartFilesURL", chartFilesURL).addObject("chart", chartDto);
     }
 

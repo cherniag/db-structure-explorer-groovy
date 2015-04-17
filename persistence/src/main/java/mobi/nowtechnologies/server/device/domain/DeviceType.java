@@ -20,7 +20,7 @@ import java.util.Set;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * todo refactor this to enum and remove {@link DeviceTypeDao} and {@link DeviceTypeRepository}
+ * todo refactor this to enum and remove {@link DeviceTypeCache} and {@link DeviceTypeRepository}
  */
 @Entity
 @Table(name = "tb_deviceTypes")

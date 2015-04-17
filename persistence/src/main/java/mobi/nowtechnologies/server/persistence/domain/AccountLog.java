@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -28,12 +26,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "tb_accountLog")
-@NamedQueries({@NamedQuery(name = AccountLog.NQ_FIND_BY_USER_AND_LOG_TYPE,
-                           query = "select accountLog from AccountLog accountLog where accountLog.userId=? and accountLog.transactionType=? order by accountLog.id desc")})
 public class AccountLog implements Serializable {
-
-    public static final String NQ_FIND_BY_USER_AND_LOG_TYPE = "findByUserAndLogType";
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "i")
@@ -58,11 +53,16 @@ public class AccountLog implements Serializable {
     @Column(length = 10000)
     private String description;
 
-    public AccountLog() {
+    protected AccountLog() {}
+
+    public AccountLog(int userId, SubmittedPayment submittedPayment, int balanceAfter, TransactionType accountLogType, Media relatedMedia){
+        this(userId, submittedPayment, balanceAfter, accountLogType);
+
+        setMedia(relatedMedia);
     }
 
     public AccountLog(int userId, SubmittedPayment submittedPayment, int balanceAfter, TransactionType transactionType) {
-        this.logTimestamp = getEpochSeconds();
+        this.logTimestamp = DateTimeUtils.getEpochSeconds();
         this.balanceAfter = balanceAfter;
         this.transactionType = transactionType;
         this.userId = userId;

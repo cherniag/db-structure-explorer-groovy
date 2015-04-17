@@ -1,9 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
@@ -16,6 +14,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -65,6 +64,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
 
     @Resource
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
+
+    @Resource
+    private UserGroupRepository userGroupRepository;
 
     @Test
     public void testAccCheck_LatestVersion() throws Exception {
@@ -431,6 +433,8 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
     @Test
     public void testAccountCheckForITunesClientWhichDoesNotHaveLockedTracks() throws Exception {
         final String userName = "+447111111118";
+        UserStatus userStatus = new UserStatus();
+        userStatus.setI((byte) 10);
 
         //given
         User entity = UserFactory.createUser(ActivationStatus.ACTIVATED)
@@ -444,11 +448,11 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
                                  .withDeviceUID("b88106713409e92822461a876abcd74c")
                                  .withDeviceUID("d")
                                  .withMobile("+447111111118")
-                                 .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityRepository.findByName("o2").getId()));
+                                 .withUserGroup(userGroupRepository.findByCommunity(communityRepository.findByName("o2")));
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
-        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte) 10));
+        entity.setStatus(userStatus);
         entity.setDevice("");
-        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
+        entity.setDeviceType(DeviceTypeCache.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
         entity.setDeviceString("IOS");
         entity.setLastDeviceLogin(1893448800);
         entity.setLastWebLogin(1893448800);

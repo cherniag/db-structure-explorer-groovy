@@ -5,11 +5,9 @@
 package mobi.nowtechnologies.server.device.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -47,7 +45,7 @@ public class Device {
     }
 
     public DeviceType getType() {
-        return DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(type);
+        return DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(type);
     }
 
     public String getUid() {

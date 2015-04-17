@@ -12,5 +12,5 @@ import org.springframework.data.repository.query.Param;
 public interface GenreRepository extends JpaRepository<Genre, Integer> {
 
     @Query(value = "select g from Genre g where g.name = :name")
-    Genre getByName(@Param("name") String name);
+    Genre findByName(@Param("name") String name);
 }

@@ -15,8 +15,8 @@ import org.springframework.data.repository.query.Param;
 public interface ArtistRepository extends JpaRepository<Artist, Integer> {
 
     @Query(value = "select a from Artist a where a.name = :name")
-    Artist getByName(@Param("name") String name);
+    Artist findByName(@Param("name") String name);
 
     @Query(value = "select a from Artist a where a.realName = :name or a.name = :name")
-    List<Artist> getByNames(@Param("name") String name, Pageable pageable);
+    List<Artist> findByNames(@Param("name") String name, Pageable pageable);
 }

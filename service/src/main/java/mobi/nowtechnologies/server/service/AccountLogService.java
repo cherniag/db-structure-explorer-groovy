@@ -1,17 +1,16 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.AccountLogDao;
-import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
+import mobi.nowtechnologies.server.persistence.domain.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.ACCOUNT_MERGE;
 
-import java.util.LinkedList;
+import javax.annotation.Resource;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,22 +26,14 @@ public class AccountLogService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountLogService.class);
 
-    private AccountLogDao accountLogDao;
-    private AccountLogRepository accountLogRepository;
-
-    public void setAccountLogDao(AccountLogDao accountLogDao) {
-        this.accountLogDao = accountLogDao;
-    }
-
-    public void setAccountLogRepository(AccountLogRepository accountLogRepository) {
-        this.accountLogRepository = accountLogRepository;
-    }
+    @Resource
+    AccountLogRepository accountLogRepository;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public AccountLog logAccountMergeEvent(User user, User removedUser) {
-        String description = "Account was merged with " + removedUser.toString();
-        return accountLogRepository
-            .save(new AccountLog().withUser(user).withBalanceAfter(user.getSubBalance()).withTransactionType(ACCOUNT_MERGE).withDescription(description).withLogTimestamp(getEpochSeconds()));
+        AccountLog accountLog = new AccountLog(user.getId(), null, user.getSubBalance(), ACCOUNT_MERGE);
+        accountLog.setDescription("Account was merged with " + removedUser.toString());
+        return accountLogRepository.save(accountLog);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -53,22 +44,11 @@ public class AccountLogService {
         LOGGER.debug("input parameters userId, balanceAfter, relatedMedia, relatedPaymentUID, accountLogType: [{}], [{}], [{}], [{}], [{}]", userId, balanceAfter, relatedMedia, relatedPayment,
                      accountLogType);
 
-        AccountLog accountLog = accountLogDao.logAccountEvent(userId, balanceAfter, relatedMedia, relatedPayment, accountLogType);
+        AccountLog entity = new AccountLog(userId, relatedPayment, balanceAfter, accountLogType, relatedMedia);
+        AccountLog accountLog = accountLogRepository.save(entity);
 
         LOGGER.debug("Output parameter accountLog=[{}]", accountLog);
         return accountLog;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Integer> getRelatedMediaUIDsByLogType(final int userId, final TransactionType transactionType) {
-        LOGGER.debug("input parameters userId, transactionType: [{}], [{}]", userId, transactionType);
-        List<Integer> result = new LinkedList<Integer>();
-        List<AccountLog> accountLogs = accountLogDao.findByUserAndLogType(userId, transactionType);
-        for (AccountLog log : accountLogs) {
-            result.add(log.getRelatedMediaUID());
-        }
-        LOGGER.info("Output parameter result=[{}]", result);
-        return result;
     }
 
     @Transactional(readOnly = true)

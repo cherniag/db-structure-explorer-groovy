@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.versioncheck.service;
 
 import mobi.nowtechnologies.server.device.domain.DeviceType;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
 import mobi.nowtechnologies.server.versioncheck.domain.VersionCheck;
 import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckRepository;
@@ -54,7 +54,7 @@ public class VersionCheckServiceIT {
 
     @Before
     public void prepareTest() {
-        deviceType = DeviceTypeDao.getAndroidDeviceType();
+        deviceType = DeviceTypeCache.getAndroidDeviceType();
 
         VersionMessage versionMessage1 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_REJECTED", "http://play.google.com/new_community_app"));
         VersionMessage versionMessage2 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app"));

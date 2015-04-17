@@ -12,5 +12,5 @@ import org.springframework.data.repository.query.Param;
 public interface SubscriptionCampaignRepository extends JpaRepository<SubscriptionCampaignRecord, Long> {
 
     @Query("select count(scr) from SubscriptionCampaignRecord scr where scr.mobile = :mobile and scr.campaignId = :campaignId")
-    public long getCountForMobile(@Param("mobile") String mobile, @Param("campaignId") String campaignId);
+    public long countForMobile(@Param("mobile") String mobile, @Param("campaignId") String campaignId);
 }

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
@@ -13,6 +13,6 @@ public class J2MEFilter extends AbstractFilterWithCtiteria {
 
     @Override
     public boolean doFilter(User user) {
-        return DeviceTypeDao.getJ2meDeviceType().equals(user.getDeviceType());
+        return DeviceTypeCache.getJ2meDeviceType().equals(user.getDeviceType());
     }
 }

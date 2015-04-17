@@ -104,7 +104,7 @@ public class PaymentPolicyService {
         List<MediaType> mediaTypes = getMediaTypes(user);
         Community community = user.getUserGroup().getCommunity();
 
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes);
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.findPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes);
 
         List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(user, paymentPolicies);
         sort(paymentPolicyDtos, new PaymentPolicyDto.ByOrderAscAndDurationDesc());
@@ -178,7 +178,7 @@ public class PaymentPolicyService {
 
     @Transactional(readOnly = true)
     public PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType) {
-        return paymentPolicyRepository.getPaymentPolicy(community, providerType, paymentType);
+        return paymentPolicyRepository.findPaymentPolicy(community, providerType, paymentType);
     }
 
 }
