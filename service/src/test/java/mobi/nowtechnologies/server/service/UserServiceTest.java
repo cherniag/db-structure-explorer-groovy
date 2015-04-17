@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
@@ -1044,7 +1045,7 @@ public class UserServiceTest {
                                       boolean notDeviceType) throws Exception {
         final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-        final Integer countryId = 1;
+        final Country country = mock(Country.class);
         final Integer operatorId = 1;
         final DeviceType deviceType = new DeviceType();
         deviceType.setName(deviceTypeName);
@@ -1073,7 +1074,7 @@ public class UserServiceTest {
         Mockito.when(userGroupRepository.findByCommunity(community)).thenReturn(userGroup);
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(userStatus);
         Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
-        Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
+        Mockito.when(countryServiceMock.findIdByName(anyString())).thenReturn(country);
         PowerMockito.doReturn(notExistUser ? null : user).when(userRepository).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
         whenNew(User.class).withNoArguments().thenReturn(user);
         PowerMockito.doAnswer(new Answer<Object>() {
@@ -1092,6 +1093,9 @@ public class UserServiceTest {
         final String deviceUID = "imei_357841034540704";
         final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityUri("chartsnow").withDeviceModel("");
         User userAccountWithSameDevice = new User().withDeviceUID(deviceUID);
+
+        final Country country = mock(Country.class);
+        Mockito.when(countryServiceMock.findIdByName(anyString())).thenReturn(country);
 
         Community community = new Community();
         User expectedUser = new User();
@@ -1162,7 +1166,7 @@ public class UserServiceTest {
         assertEquals(user.getActivationStatus(), ActivationStatus.REGISTERED);
 
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
-        verify(countryServiceMock, times(1)).findIdByFullName(anyString());
+        verify(countryServiceMock, times(1)).findIdByName(anyString());
         verify(userRepository, times(1)).saveAndFlush(any(User.class));
         verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(1));
@@ -1212,7 +1216,7 @@ public class UserServiceTest {
         assertEquals(result.getUserName(), user.getUserName());
 
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
-        verify(countryServiceMock, times(0)).findIdByFullName(anyString());
+        verify(countryServiceMock, times(0)).findIdByName(anyString());
         verify(userRepository, times(0)).save(any(User.class));
         verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(0));

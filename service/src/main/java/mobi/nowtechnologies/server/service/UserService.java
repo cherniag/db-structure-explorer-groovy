@@ -642,7 +642,7 @@ public class UserService {
         DeviceType deviceType = getDeviceType(userDeviceRegDetailsDto.getDeviceType());
         user.setDeviceType(deviceType);
         user.setUserGroup(getUserGroup(community));
-        user.setCountry(countryService.findIdByFullName("Great Britain"));
+        user.setCountry(countryService.findIdByName("GB").getI());
         user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
         user.setOperator(getOperator());
         user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));

@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.Country;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 
 import javax.annotation.Resource;
 
@@ -30,24 +29,10 @@ public class CountryServiceIT {
 
     @Test
     public void testFindIdByFullNameGreat_Britain() throws Exception {
-        String countryFullName = "Great Britain";
+        String name = "GB";
 
-        Integer result = countryService.findIdByFullName(countryFullName);
-        assertNotNull(result);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testFindIdByFullNameWrongCountryFullName() throws Exception {
-        String countryFullName = "1";
-        countryService.findIdByFullName(countryFullName);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testFindIdByFullNameWhenCountryFullNameIsNull() throws Exception {
-        String countryFullName = null;
-
-        Integer result = countryService.findIdByFullName(countryFullName);
-        assertNotNull(result);
+        Country c = countryService.findIdByName(name);
+        assertNotNull(c);
     }
 
     @Test
