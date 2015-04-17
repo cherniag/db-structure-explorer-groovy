@@ -19,8 +19,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -107,7 +109,9 @@ public class PromotionServiceTest {
     @Mock
     UserStatusRepository userStatusRepository;
     @Mock
-    EntityService entityServiceMock;
+    UserRepository userRepository;
+    @Mock
+    PaymentDetailsRepository paymentDetailsRepository;
     @Mock
     DevicePromotionsService deviceServiceMock;
     @Mock
@@ -130,20 +134,12 @@ public class PromotionServiceTest {
                 return ruleServiceSupportMock;
             }
         });
-        when(entityServiceMock.updateEntity(any(Object.class))).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArguments()[0];
-            }
-        });
-
         userWithPromoAnswer = new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 return ((User) invocation.getArguments()[0]).withIsPromotionApplied(true);
             }
         };
-
         firstArgAnswer = new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -152,14 +148,14 @@ public class PromotionServiceTest {
         };
 
         promotionServiceSpy.setMessageSource(messageSourceMock);
-        promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setUserService(userServiceMock);
-        promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setDeviceService(deviceServiceMock);
         promotionServiceSpy.promotionRepository = promotionRepositoryMock;
         promotionServiceSpy.userBannedRepository = userBannedRepositoryMock;
         promotionServiceSpy.userTransactionRepository = userTransactionRepository;
         promotionServiceSpy.userStatusRepository = userStatusRepository;
+        promotionServiceSpy.userRepository = userRepository;
+        promotionServiceSpy.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     @Test
@@ -171,6 +167,8 @@ public class PromotionServiceTest {
         PromotionPaymentPolicy promotionPaymentPolicy = new PromotionPaymentPolicy();
         currentPaymentDetails.setPromotionPaymentPolicy(promotionPaymentPolicy);
         user.setCurrentPaymentDetails(currentPaymentDetails);
+        when(userRepository.save(user)).thenReturn(user);
+
         User userAfterPromotion = promotionServiceSpy.applyPromotion(user);
 
         assertNotNull(userAfterPromotion);
@@ -688,7 +686,7 @@ public class PromotionServiceTest {
         mobi.nowtechnologies.server.persistence.domain.UserStatus subscribedUserStatus = new mobi.nowtechnologies.server.persistence.domain.UserStatus();
         PowerMockito.when(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name())).thenReturn(subscribedUserStatus);
 
-        doReturn(user).when(entityServiceMock).updateEntity(user);
+        doReturn(user).when(userRepository).save(user);
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
@@ -717,7 +715,7 @@ public class PromotionServiceTest {
         assertThat(promotion.getNumUsers(), is(1));
 
         verify(userBannedRepositoryMock, times(1)).findOne(user.getId());
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
         verify(promotionServiceSpy, times(1)).updatePromotionNumUsers(promotion);
         verify(userTransactionRepository, times(1)).save(any(UserTransaction.class));
     }
@@ -740,7 +738,7 @@ public class PromotionServiceTest {
         promotion.setEndDate((int) (calendar.getTimeInMillis() / 1000));
 
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
-        Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(eq(user))).thenAnswer(new Answer<User>() {
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
                 User user = (User) invocation.getArguments()[0];
@@ -752,7 +750,6 @@ public class PromotionServiceTest {
             }
         });
         doReturn(true).when(promotionServiceSpy).updatePromotionNumUsers(promotion);
-        Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
 
         promotion.getPromoCode().withPromotion(promotion);
 
@@ -760,7 +757,7 @@ public class PromotionServiceTest {
 
         verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
         verify(promotionServiceSpy, times(1)).updatePromotionNumUsers(promotion);
-        verify(entityServiceMock, times(1)).updateEntity(eq(user));
+        verify(userRepository, times(1)).save(eq(user));
     }
 
     @Test
@@ -780,7 +777,7 @@ public class PromotionServiceTest {
         promotion.setPromoCode(promoCode);
         promotion.setPeriod(new Period(DurationUnit.WEEKS, 52));
 
-        Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(eq(user))).thenAnswer(new Answer<User>() {
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
                 User user = (User) invocation.getArguments()[0];
@@ -793,14 +790,13 @@ public class PromotionServiceTest {
         });
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
         doReturn(true).when(promotionServiceSpy).updatePromotionNumUsers(promotion);
-        Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
         promotion.getPromoCode().withPromotion(promotion);
 
         promotionServiceSpy.applyPromotionByPromoCode(user, promotion);
 
         verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
         verify(promotionServiceSpy, times(1)).updatePromotionNumUsers(promotion);
-        verify(entityServiceMock, times(1)).updateEntity(eq(user));
+        verify(userRepository, times(1)).save(eq(user));
     }
 
     @Test
@@ -817,7 +813,7 @@ public class PromotionServiceTest {
         promotion.setPromoCode(promoCode);
         promotion.setPeriod(new Period(DurationUnit.WEEKS, 52));
 
-        Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(eq(user))).thenAnswer(new Answer<User>() {
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
                 User user = (User) invocation.getArguments()[0];
@@ -825,14 +821,13 @@ public class PromotionServiceTest {
             }
         });
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(userBanned);
-        Mockito.when(entityServiceMock.updateEntity(eq(promotion))).thenReturn(promotion);
-        Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
+        Mockito.when(promotionRepositoryMock.save(eq(promotion))).thenReturn(promotion);
 
         promotionServiceSpy.applyPromotionByPromoCode(user, promotion);
 
         verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
-        verify(entityServiceMock, times(0)).updateEntity(eq(promotion));
-        verify(entityServiceMock, times(1)).updateEntity(eq(user));
+        verify(promotionRepositoryMock, times(0)).save(eq(promotion));
+        verify(userRepository, times(1)).save(eq(user));
     }
 
     @Test

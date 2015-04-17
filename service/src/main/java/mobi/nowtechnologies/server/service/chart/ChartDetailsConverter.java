@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.chart;
 
-import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
+import mobi.nowtechnologies.server.persistence.domain.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;

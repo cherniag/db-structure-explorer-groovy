@@ -26,6 +26,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -167,9 +168,10 @@ public class UserServiceTest {
     UserRepository userRepository;
     @Mock
     UserStatusRepository userStatusRepository;
+    @Mock
+    PaymentDetailsRepository paymentDetailsRepository;
 
     private UserService userServiceSpy;
-    private EntityService entityServiceMock;
     private AccountLogService accountLogServiceMock;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
     private MigHttpService migHttpServiceMock;
@@ -208,9 +210,9 @@ public class UserServiceTest {
         communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
         CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
         paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
+        paymentDetailsServiceMock.paymentDetailsRepository = paymentDetailsRepository;
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
-        entityServiceMock = PowerMockito.mock(EntityService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
         deviceServiceMock = PowerMockito.mock(DevicePromotionsService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
@@ -233,7 +235,6 @@ public class UserServiceTest {
         userServiceSpy.setUrbanAirshipTokenService(urbanAirshipTokenServiceMock);
         userServiceSpy.setPromotionService(promotionServiceMock);
         userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
-        userServiceSpy.setEntityService(entityServiceMock);
         userServiceSpy.setCommunityService(communityServiceMock);
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);
@@ -384,7 +385,7 @@ public class UserServiceTest {
         PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+        PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
 
         final UserStatus mockedUserStatus = new UserStatus();
         Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
@@ -669,7 +670,7 @@ public class UserServiceTest {
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+        PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
 
         final UserStatus mockedUserStatus = new UserStatus();
         Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
@@ -699,7 +700,7 @@ public class UserServiceTest {
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+        PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
 
         final UserStatus mockedUserStatus = new UserStatus();
         Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
@@ -741,7 +742,7 @@ public class UserServiceTest {
         PowerMockito.when(userRepository.findOne(userDto.getId())).thenReturn(mockedUser);
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE)).thenReturn(mock(AccountLog.class));
         PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP)).thenReturn(mock(AccountLog.class));
-        PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+        PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
 
         final UserStatus mockedUserStatus = new UserStatus();
         Mockito.when(userStatusRepository.findByName(LIMITED.name())).thenReturn(mockedUserStatus);
@@ -880,11 +881,11 @@ public class UserServiceTest {
     public void testResetSmsAccordingToLawAttributes_UserIsNull_Failure() {
         User user = null;
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         userServiceSpy.resetSmsAccordingToLawAttributes(user);
 
-        verify(entityServiceMock, times(0)).updateEntity(user);
+        verify(userRepository, times(0)).save(user);
     }
 
     @SuppressWarnings("deprecation")
@@ -914,11 +915,11 @@ public class UserServiceTest {
         SubmittedPayment submittedPayment = createSubmittedPayment();
         submittedPayment.setAmount(BigDecimal.TEN);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         userServiceSpy.populateAmountOfMoneyToUserNotification(user, submittedPayment);
 
-        verify(entityServiceMock, times(0)).updateEntity(user);
+        verify(userRepository, times(0)).save(user);
 
     }
 
@@ -932,11 +933,11 @@ public class UserServiceTest {
 
         SubmittedPayment submittedPayment = null;
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         userServiceSpy.populateAmountOfMoneyToUserNotification(user, submittedPayment);
 
-        verify(entityServiceMock, times(0)).updateEntity(user);
+        verify(userRepository, times(0)).save(user);
 
     }
 
@@ -953,8 +954,8 @@ public class UserServiceTest {
         PowerMockito.mockStatic(Utils.class);
 
         Mockito.when(getEpochMillis()).thenReturn(epochMillis);
-        PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
-        PowerMockito.when(entityServiceMock.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
+        PowerMockito.when(userRepository.save(mockedUser)).thenReturn(mockedUser);
+//        PowerMockito.when(paymentDetailsRepository.save(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
         PowerMockito.when(paymentDetailsServiceMock.deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason)).thenReturn(mockedUser);
 
         User actualUser = userServiceSpy.unsubscribeUser(mockedUser, reason);
@@ -965,7 +966,7 @@ public class UserServiceTest {
 
         assertFalse(actualCurrentPaymentDetails.isActivated());
 
-        verify(entityServiceMock).updateEntity(mockedUser);
+        verify(userRepository).save(mockedUser);
         verify(paymentDetailsServiceMock).deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason);
 
     }
@@ -1065,7 +1066,7 @@ public class UserServiceTest {
         PowerMockito.mockStatic(Utils.class);
         PowerMockito.mockStatic(DeviceTypeDao.class);
 
-        Mockito.doReturn(user).when(entityServiceMock).saveEntity(any(User.class));
+        Mockito.doReturn(user).when(userRepository).save(any(User.class));
         Mockito.when(createStoredToken(anyString(), anyString())).thenReturn(storedToken);
         Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
         Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
@@ -1114,7 +1115,7 @@ public class UserServiceTest {
             }
         };
         Mockito.when(operatorRepository.findFirst()).thenReturn(new Operator());
-        Mockito.doAnswer(returnFirsParamAnswer).when(entityServiceMock).saveEntity(any(User.class));
+        Mockito.doAnswer(returnFirsParamAnswer).when(userRepository).save(any(User.class));
         Mockito.doAnswer(returnFirsParamAnswer).when(userRepository).saveAndFlush(any(User.class));
         doReturn(expectedUser).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(any(int.class));
         PowerMockito.mockStatic(Utils.class);
@@ -1212,7 +1213,7 @@ public class UserServiceTest {
 
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
         verify(countryServiceMock, times(0)).findIdByFullName(anyString());
-        verify(entityServiceMock, times(0)).saveEntity(any(User.class));
+        verify(userRepository, times(0)).save(any(User.class));
         verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(0));
         createStoredToken(anyString(), anyString());
@@ -1305,7 +1306,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1334,7 +1335,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1374,7 +1375,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1403,7 +1404,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1441,7 +1442,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1470,7 +1471,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1510,7 +1511,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1539,7 +1540,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1583,7 +1584,7 @@ public class UserServiceTest {
         final int currentTimeSeconds = oldNextSubPayment + 25;
         final long currentTimeMillis = currentTimeSeconds * 1000L;
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1613,7 +1614,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1657,7 +1658,7 @@ public class UserServiceTest {
         final int currentTimeSeconds = oldNextSubPayment + 25;
         final long currentTimeMillis = currentTimeSeconds * 1000L;
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1687,7 +1688,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1731,7 +1732,7 @@ public class UserServiceTest {
         final int currentTimeSeconds = oldNextSubPayment - 5;
         final long currentTimeMillis = currentTimeSeconds * 1000L;
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1761,7 +1762,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1800,7 +1801,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1830,7 +1831,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), oldSubBalance, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1871,7 +1872,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1900,7 +1901,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), oldSubBalance, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -1943,7 +1944,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1973,7 +1974,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -2016,7 +2017,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2046,7 +2047,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test(expected = NullPointerException.class)
@@ -2117,7 +2118,7 @@ public class UserServiceTest {
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(limitedUserStatus);
         Mockito.when(userStatusRepository.findByName(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.name())).thenReturn(eulaUserStatus);
 
-        Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
+        Mockito.when(userRepository.save(user)).thenAnswer(new Answer<User>() {
 
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2147,7 +2148,7 @@ public class UserServiceTest {
         userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment);
 
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), 2, null, submittedPayment, CARD_TOP_UP);
-        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test

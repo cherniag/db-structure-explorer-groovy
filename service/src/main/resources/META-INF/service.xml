@@ -52,10 +52,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean class="mobi.nowtechnologies.server.service.behavior.ChartBehaviorReferralsRulesService" />
 
     <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
-
-    <bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
-		<property name="entityDao" ref="persistence.EntityDao" />
-	</bean>
 	
 	<bean id="service.UserServiceNotification" class="mobi.nowtechnologies.server.service.UserServiceNotification"/>
 
@@ -112,7 +108,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
-		<property name="entityService" ref="service.EntityService" />
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
 		<property name="countryService" ref="service.CountryService" />
 		<property name="promotionService" ref="service.PromotionService" />
@@ -200,7 +195,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService"/>
 
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" >
-		<property name="entityService" ref="service.EntityService" />
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="deviceService" ref="service.DevicePromotionsService" />
@@ -272,9 +266,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.CountryAppVersionService" class="mobi.nowtechnologies.server.service.CountryAppVersionService"/>
 
-	<bean id="service.CountryService" class="mobi.nowtechnologies.server.service.CountryService">
-		<property name="entityDao" ref="persistence.EntityDao" />
-	</bean>
+	<bean id="service.CountryService" class="mobi.nowtechnologies.server.service.CountryService"/>
 
 	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
 		<property name="paymentPolicyRepository" ref="paymentPolicyRepository" />

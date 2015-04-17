@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.domain.Country;
+import mobi.nowtechnologies.server.persistence.repository.CountryRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+
+import javax.annotation.Resource;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,15 +18,12 @@ public class CountryService {
 
     private Map<String, Country> countryMapFullNameAsKey;
 
-    private EntityDao entityDao;
-
-    public void setEntityDao(EntityDao entityDao) {
-        this.entityDao = entityDao;
-    }
+    @Resource
+    CountryRepository countryRepository;
 
     public Map<String, Country> getCountryMapFullNameAsKey() {
         if (countryMapFullNameAsKey == null) {
-            List<Country> countryList = entityDao.findAll(Country.class);
+            List<Country> countryList = getAllCountries();
             Map<String, Country> countryMapFullName = new HashMap<String, Country>();
             for (Country country : countryList) {
                 countryMapFullName.put(country.getFullName(), country);
@@ -47,7 +46,7 @@ public class CountryService {
     }
 
     public List<Country> getAllCountries() {
-        return entityDao.findAll(Country.class);
+        return countryRepository.findAll();
     }
 
 }

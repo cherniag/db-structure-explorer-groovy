@@ -133,7 +133,6 @@ public class UserService {
     private UserDetailsUpdater userDetailsUpdater;
     private UserServiceNotification userServiceNotification;
     private CommunityResourceBundleMessageSource messageSource;
-    private EntityService entityService;
     private CountryAppVersionService countryAppVersionService;
     private CountryService countryService;
     private PromotionService promotionService;
@@ -389,9 +388,9 @@ public class UserService {
         Promotion promotion = promotionRepository.findActivePromotionByUserGroup(user.getUserGroup().getId(), Promotion.ADD_SUBBALANCE_PROMOTION, DateTimeUtils.getEpochSeconds());
         LOGGER.info("promotion [{}]", promotion);
         if (promotion != null) {
-            entityService.updateEntity(user);
+            userRepository.save(user);
             promotion.setNumUsers(promotion.getNumUsers() + 1);
-            entityService.updateEntity(promotion);
+            promotionRepository.save(promotion);
             accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, PROMOTION);
         }
     }
@@ -436,7 +435,7 @@ public class UserService {
     public User unsubscribeUser(User user, final String reason) {
         LOGGER.info("Unsubscribe user {} reason : {}", user.shortInfo(), reason);
         user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
-        user = entityService.updateEntity(user);
+        user = userRepository.save(user);
         taskService.cancelSendChargeNotificationTask(user);
         LOGGER.info("Output parameter user=[{}]", user);
         return user;
@@ -531,7 +530,7 @@ public class UserService {
 
         LOGGER.info("before update user entity {}", user.getId());
         user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
-        entityService.updateEntity(user);
+        userRepository.save(user);
         LOGGER.info("after update user entity {}", user.getId());
 
         LOGGER.info("Finish processing sub balance command for user {}", user.shortInfo());
@@ -1223,10 +1222,6 @@ public class UserService {
 
     public void setCountryService(CountryService countryService) {
         this.countryService = countryService;
-    }
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
     }
 
     public void setCountryAppVersionService(CountryAppVersionService countryAppVersionService) {

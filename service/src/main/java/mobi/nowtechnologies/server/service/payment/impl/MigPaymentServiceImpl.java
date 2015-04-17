@@ -18,9 +18,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +51,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 
         pendingPayment.setInternalTxId(internalTxId);
         pendingPayment.setExternalTxId(response.getExternalTxId());
-        entityService.updateEntity(pendingPayment);
+        getPendingPaymentRepository().save(pendingPayment);
         LOGGER.info("Sent request to MIG with pending payment {}. {}", pendingPayment.getI(), response);
         if (!response.isSuccessful()) {
             LOGGER.error("External exception while making payment transaction with MIG for user {} ", pendingPayment.getUser().getId());
@@ -66,9 +63,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
     public SubmittedPayment commitPayment(String messageId, String status, String descriptionError) throws ServiceException {
         PaymentSystemResponse response = null;
         try {
-            Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-            fieldNameValueMap.put("internalTxId", messageId);
-            PendingPayment pendingPayment = entityService.findByProperties(PendingPayment.class, fieldNameValueMap);
+            PendingPayment pendingPayment = getPendingPaymentRepository().findByExternalTransactionId(messageId);
             if (null != pendingPayment) {
                 User user = pendingPayment.getUser();
                 LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity().getName()), this.getClass());

@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
@@ -28,14 +27,14 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @Ignore
 public class WeeklyUpdateServiceIT {
 
-    @Resource(name = "service.WeeklyUpdateService")
-    private WeeklyUpdateService weeklyUpdateService;
-    private User testUser;
-    @Resource(name = "persistence.EntityDao")
-    private EntityDao entityDao;
+//    @Resource(name = "service.WeeklyUpdateService")
+//    private WeeklyUpdateService weeklyUpdateService;
 
     @Resource
     UserStatusRepository userStatusRepository;
+
+    @Resource
+    UserRepository userRepository;
 
     @Test
     public final void testSaveWeeklyPayment() throws Exception {
@@ -60,7 +59,7 @@ public class WeeklyUpdateServiceIT {
     public void setUp() throws Exception {
 
 		/* User */
-        testUser = new User();
+        User testUser = new User();
         testUser.setAddress1("678");
         testUser.setAddress2("");
         testUser.setCanContact(true);
@@ -93,7 +92,7 @@ public class WeeklyUpdateServiceIT {
         testUser.setUserName("test_transaction3@test.com");
         testUser.setUserType(UserType.NORMAL);
 
-        entityDao.saveEntity(testUser);
+        userRepository.save(testUser);
     }
 
 }

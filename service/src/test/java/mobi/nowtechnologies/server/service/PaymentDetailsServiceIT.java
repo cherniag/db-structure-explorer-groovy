@@ -36,9 +36,6 @@ public class PaymentDetailsServiceIT {
     @Resource
     private PaymentDetailsRepository paymentDetailsRepository;
 
-    @Resource(name = "service.EntityService")
-    private EntityService entityService;
-
     @Resource
     private UserRepository userRepository;
 
@@ -61,7 +58,7 @@ public class PaymentDetailsServiceIT {
         migPaymentDetails.withMadeRetries(0);
         migPaymentDetails.setRetriesOnError(0);
         migPaymentDetails.setOwner(user);
-        entityService.saveEntity(migPaymentDetails);
+        paymentDetailsRepository.save(migPaymentDetails);
 
         O2PSMSPaymentDetails o2PSMSPaymentDetails = new O2PSMSPaymentDetails();
         o2PSMSPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
@@ -71,7 +68,7 @@ public class PaymentDetailsServiceIT {
         o2PSMSPaymentDetails.withMadeRetries(0);
         o2PSMSPaymentDetails.setRetriesOnError(0);
         o2PSMSPaymentDetails.setOwner(user);
-        entityService.saveEntity(o2PSMSPaymentDetails);
+        paymentDetailsRepository.save(o2PSMSPaymentDetails);
 
         VFPSMSPaymentDetails vfpsmsPaymentDetails = new VFPSMSPaymentDetails();
         vfpsmsPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
@@ -81,7 +78,7 @@ public class PaymentDetailsServiceIT {
         vfpsmsPaymentDetails.withMadeRetries(0);
         vfpsmsPaymentDetails.setRetriesOnError(0);
         vfpsmsPaymentDetails.setOwner(user);
-        entityService.saveEntity(vfpsmsPaymentDetails);
+        paymentDetailsRepository.save(vfpsmsPaymentDetails);
 
         List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findActivatedPaymentDetails(migOperator, phoneNumber);
 

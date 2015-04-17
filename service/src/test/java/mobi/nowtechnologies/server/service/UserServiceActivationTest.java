@@ -35,7 +35,6 @@ public class UserServiceActivationTest {
 
     private UserService userServiceSpy;
     private UserRepository userRepositoryMock;
-    private EntityService entityServiceMock;
     private AccountLogService accountLogServiceMock;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
     private MigHttpService migHttpServiceMock;
@@ -61,7 +60,6 @@ public class UserServiceActivationTest {
         UrbanAirshipTokenService urbanAirshipTokenServiceMock = PowerMockito.mock(UrbanAirshipTokenService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
-        entityServiceMock = PowerMockito.mock(EntityService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
         deviceServiceMock = PowerMockito.mock(DevicePromotionsService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
@@ -78,7 +76,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setUrbanAirshipTokenService(urbanAirshipTokenServiceMock);
         userServiceSpy.setPromotionService(promotionServiceMock);
         userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
-        userServiceSpy.setEntityService(entityServiceMock);
         userServiceSpy.setCommunityService(communityServiceMock);
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);

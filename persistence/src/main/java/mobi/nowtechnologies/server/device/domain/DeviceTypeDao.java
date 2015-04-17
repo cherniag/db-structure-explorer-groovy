@@ -4,7 +4,7 @@
 
 package mobi.nowtechnologies.server.device.domain;
 
-import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
+import mobi.nowtechnologies.server.persistence.domain.PersistenceException;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

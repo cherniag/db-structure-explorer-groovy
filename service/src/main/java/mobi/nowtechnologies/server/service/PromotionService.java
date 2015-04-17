@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
@@ -75,8 +76,10 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     @Resource
     UserStatusRepository userStatusRepository;
 
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
+
     private CommunityResourceBundleMessageSource messageSource;
-    private EntityService entityService;
     private UserService userService;
     private DevicePromotionsService deviceService;
 
@@ -136,12 +139,12 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public User applyPromotion(User user) {
         if (null != user.getPotentialPromotion()) {
             user.setPotentialPromotion(null);
-            user = entityService.updateEntity(user);
+            user = userRepository.save(user);
         }
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if (null != currentPaymentDetails && null != currentPaymentDetails.getPromotionPaymentPolicy()) {
             currentPaymentDetails.setPromotionPaymentPolicy(null);
-            entityService.updateEntity(currentPaymentDetails);
+            paymentDetailsRepository.save(currentPaymentDetails);
         }
         return user;
     }
@@ -150,7 +153,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public synchronized Promotion incrementUserNumber(Promotion promotion) {
         if (null != promotion) {
             promotion.setNumUsers(promotion.getNumUsers() + 1);
-            return entityService.updateEntity(promotion);
+            return promotionRepository.save(promotion);
         }
         return null;
     }
@@ -304,7 +307,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         } else {
             LOGGER.warn("The promotion wouldn't be applied because user is banned");
             user.setPotentialPromoCodePromotion(null);
-            entityService.updateEntity(user);
+            userRepository.save(user);
         }
 
         return user;
@@ -324,7 +327,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (code != null) {
             Promotion potentialPromoCodePromotion = getActivePromotion(user.getUserGroup(), code);
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
-            entityService.updateEntity(user);
+            userRepository.save(user);
             return potentialPromoCodePromotion;
         }
         return null;
@@ -368,7 +371,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user.setFreeTrialStartedTimestampMillis(DateTimeUtils.secondsToMillis(freeTrialStartSeconds));
-        user = entityService.updateEntity(user);
+        user = userRepository.save(user);
 
         updatePromotionNumUsers(promotion);
 
@@ -404,7 +407,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (existingUser.getLastSuccessfulPaymentTimeMillis() == 0) {
             Promotion promotion = getPromotionForUser(existingUser);
             existingUser.setPotentialPromotion(promotion);
-            existingUser = entityService.updateEntity(existingUser);
+            existingUser = userRepository.save(existingUser);
             LOGGER.info("Promotion [{}] was attached to user with id [{}]", promotion, existingUser.getId());
         }
         LOGGER.debug("Output parameter existingUser=[{}]", existingUser);
@@ -418,10 +421,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
-    }
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
     }
 
     public void setUserService(UserService userService) {
