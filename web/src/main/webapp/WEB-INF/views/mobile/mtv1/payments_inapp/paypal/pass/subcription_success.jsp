@@ -26,7 +26,7 @@
     </div>
     <div class="go-premium-success-notification-container">
         <div class="go-premium-success-notification">
-            <img src="${pageContext.request.contextPath}/assets/mobile/mtv1/imgs/img_notification_pass.png" class="go-premium-success-notification-img" />
+            <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_notification_pass.png" class="go-premium-success-notification-img" />
         </div>
     </div>
     <div class="go-premium-success-ad-container go-premium-success-ad-container-device">
