@@ -120,8 +120,6 @@ public class UserService {
     @Resource
     ReactivationUserInfoRepository reactivationUserInfoRepository;
     @Resource
-    UserTransactionRepository userTransactionRepository;
-    @Resource
     OperatorRepository operatorRepository;
     @Resource
     PromotionRepository promotionRepository;

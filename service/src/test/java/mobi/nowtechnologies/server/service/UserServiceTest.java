@@ -254,7 +254,6 @@ public class UserServiceTest {
 
         userServiceSpy.userGroupRepository = userGroupRepository;
         userServiceSpy.promotionRepository = promotionRepository;
-        userServiceSpy.userTransactionRepository = userTransactionRepository;
         userServiceSpy.operatorRepository = operatorRepository;
         userServiceSpy.userRepository = userRepository;
         userServiceSpy.userStatusRepository = userStatusRepository;
