@@ -17,10 +17,10 @@ public interface DeviceUserDataRepository extends JpaRepository<DeviceUserData, 
 
     @Modifying
     @Query("delete from DeviceUserData data where data.xtifyToken = :token")
-    int removeByXtifyToken(@Param("token") String token);
+    int deleteByXtifyToken(@Param("token") String token);
 
     @Modifying
     @Query("delete from DeviceUserData data where data.userId=:userId and data.communityUrl=:communityUrl and data.deviceUid=:deviceUID")
-    int removeByUser(@Param("userId") int userId, @Param("communityUrl") String communityUrl, @Param("deviceUID") String deviceUID);
+    int deleteByUser(@Param("userId") int userId, @Param("communityUrl") String communityUrl, @Param("deviceUID") String deviceUID);
 
 }

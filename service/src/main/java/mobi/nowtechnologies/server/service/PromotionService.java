@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.event.service.EventLoggerService;
-import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
@@ -11,12 +10,15 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.configuration.ConfigurationAwareService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -32,6 +34,8 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
+
+import javax.annotation.Resource;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,45 +56,28 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g";
+    @Resource
+    PromotionRepository promotionRepository;
+    
+    @Resource
+    UserBannedRepository userBannedRepository;
 
-    private PromotionDao promotionDao;
-    private EntityService entityService;
-    private UserService userService;
+    @Resource
+    UserGroupRepository userGroupRepository;
+
+    @Resource
+    UserRepository userRepository;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
+
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
+
     private CommunityResourceBundleMessageSource messageSource;
-    private PromotionRepository promotionRepository;
-    private UserBannedRepository userBannedRepository;
+    private UserService userService;
     private DevicePromotionsService deviceService;
     private EventLoggerService eventLoggerService;
-    private UserGroupRepository userGroupRepository;
-    private UserRepository userRepository;
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
-    }
-
-    public void setPromotionDao(PromotionDao promotionDao) {
-        this.promotionDao = promotionDao;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    public void setPromotionRepository(PromotionRepository promotionRepository) {
-        this.promotionRepository = promotionRepository;
-    }
-
-    public void setUserBannedRepository(UserBannedRepository userBannedRepository) {
-        this.userBannedRepository = userBannedRepository;
-    }
-
-    public void setDeviceService(DevicePromotionsService deviceService) {
-        this.deviceService = deviceService;
-    }
 
     @Transactional(readOnly = true)
     public Promotion getActivePromotion(Community community, String promotionCode) {
@@ -104,13 +91,13 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
         LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, userGroup.getCommunity().getRewriteUrlParameter());
 
-        return promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
+        return promotionRepository.findActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
     }
 
     private Promotion getPromotionForUser(User user) {
         LOGGER.debug("input parameters communityName, user: [{}], [{}]", user.getCommunity().getRewriteUrlParameter(), user.getId());
 
-        List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(user.getUserGroup().getId());
+        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(user.getUserGroup(), DateTimeUtils.getEpochSeconds());
         List<Promotion> promotions = new LinkedList<Promotion>();
         for (Promotion currentPromotion : promotionWithFilters) {
             List<AbstractFilter> filters = currentPromotion.getFilters();
@@ -138,9 +125,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
 
 
         if (resPromotion == null) {
-            resPromotion = (promotions.size() > 0) ?
-                           promotions.get(0) :
-                           null;
+            resPromotion = (promotions.size() > 0) ? promotions.get(0) : null;
         }
         LOGGER.info("Output parameter resPromotion=[{}]", resPromotion);
         return resPromotion;
@@ -150,12 +135,12 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public User applyPromotion(User user) {
         if (null != user.getPotentialPromotion()) {
             user.setPotentialPromotion(null);
-            user = entityService.updateEntity(user);
+            user = userRepository.save(user);
         }
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         if (null != currentPaymentDetails && null != currentPaymentDetails.getPromotionPaymentPolicy()) {
             currentPaymentDetails.setPromotionPaymentPolicy(null);
-            entityService.updateEntity(currentPaymentDetails);
+            paymentDetailsRepository.save(currentPaymentDetails);
         }
         return user;
     }
@@ -164,7 +149,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public synchronized Promotion incrementUserNumber(Promotion promotion) {
         if (null != promotion) {
             promotion.setNumUsers(promotion.getNumUsers() + 1);
-            return entityService.updateEntity(promotion);
+            return promotionRepository.save(promotion);
         }
         return null;
     }
@@ -252,7 +237,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
             throw new NullPointerException("The parameter user is null");
         }
 
-        if (UserStatusDao.LIMITED.equals(user.getStatus().getName())) {
+        if (UserStatusType.LIMITED.name().equals(user.getStatus().getName())) {
 
             Promotion potentialPromoCodePromotion = user.getPotentialPromoCodePromotion();
             if (potentialPromoCodePromotion != null) {
@@ -318,7 +303,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         } else {
             LOGGER.warn("The promotion wouldn't be applied because user is banned");
             user.setPotentialPromoCodePromotion(null);
-            entityService.updateEntity(user);
+            userRepository.save(user);
         }
 
         return user;
@@ -338,7 +323,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (code != null) {
             Promotion potentialPromoCodePromotion = getActivePromotion(user.getUserGroup(), code);
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
-            entityService.updateEntity(user);
+            userRepository.save(user);
             return potentialPromoCodePromotion;
         }
         return null;
@@ -370,9 +355,9 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
             user.setVideoFreeTrialHasBeenActivated(true);
         }
 
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
-        user.setFreeTrialStartedTimestampMillis(secondsToMillis(freeTrialStartSeconds));
-        user = entityService.updateEntity(user);
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
+        user.setFreeTrialStartedTimestampMillis(DateTimeUtils.secondsToMillis(freeTrialStartSeconds));
+        user = userRepository.save(user);
 
         updatePromotionNumUsers(promotion);
 
@@ -409,7 +394,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         if (existingUser.getLastSuccessfulPaymentTimeMillis() == 0) {
             Promotion promotion = getPromotionForUser(existingUser);
             existingUser.setPotentialPromotion(promotion);
-            existingUser = entityService.updateEntity(existingUser);
+            existingUser = userRepository.save(existingUser);
             LOGGER.info("Promotion [{}] was attached to user with id [{}]", promotion, existingUser.getId());
         }
         LOGGER.debug("Output parameter existingUser=[{}]", existingUser);
@@ -428,13 +413,17 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     public void setEventLoggerService(EventLoggerService eventLoggerService) {
         this.eventLoggerService = eventLoggerService;
     }
-
-    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
-        this.userGroupRepository = userGroupRepository;
+    
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    public void setDeviceService(DevicePromotionsService deviceService) {
+        this.deviceService = deviceService;
     }
 
     public static enum PromotionTriggerType implements TriggerType {

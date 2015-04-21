@@ -80,7 +80,7 @@ public class ReferralService {
 
         List<UserReferralsSnapshot> snapshots = userReferralsSnapshotRepository.findAll(referralUserIds);
         for (UserReferralsSnapshot snapshot : snapshots) {
-            int referredAndConfirmedCount = referralRepository.getCountByCommunityIdUserIdAndStates(communityId, snapshot.getUserId(), ReferralState.ACTIVATED);
+            int referredAndConfirmedCount = referralRepository.countByCommunityIdUserIdAndStates(communityId, snapshot.getUserId(), ReferralState.ACTIVATED);
 
             logger.info("trying to update matchesData in snapshotId={} for communityId={}, userId={} with currentReferrals={}", snapshot.getUserId(), communityId, snapshot.getUserId(),
                         referredAndConfirmedCount);

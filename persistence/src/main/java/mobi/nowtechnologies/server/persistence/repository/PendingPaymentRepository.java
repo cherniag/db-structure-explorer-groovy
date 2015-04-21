@@ -22,4 +22,8 @@ public interface PendingPaymentRepository extends JpaRepository<PendingPayment, 
     @Query("select pendingPayment from PendingPayment pendingPayment where pendingPayment.expireTimeMillis < :timestamp")
     List<PendingPayment> findExpiredPayments(@Param("timestamp") long timestamp);
 
+
+    @Query("select pendingPayment from PendingPayment pendingPayment where pendingPayment.internalTxId = :internalTxId")
+    PendingPayment findByExternalTransactionId(@Param("internalTxId") String internalTxId);
+
 }

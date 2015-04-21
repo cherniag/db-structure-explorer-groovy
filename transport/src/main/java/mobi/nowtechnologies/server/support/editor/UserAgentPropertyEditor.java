@@ -5,7 +5,7 @@
 package mobi.nowtechnologies.server.support.editor;
 
 import mobi.nowtechnologies.server.device.domain.DeviceType;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.support.UserAgent;
@@ -78,7 +78,7 @@ public class UserAgentPropertyEditor extends PropertyEditorSupport {
     }
 
     DeviceType toDeviceType(String deviceTypeString) {
-        return DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(deviceTypeString);
+        return DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(deviceTypeString);
     }
 
     Community toCommunity(String name) {

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -34,8 +33,6 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
     public ExpectedException exception = none();
     @Resource(name = "paymentDetailsRepository")
     private PaymentDetailsRepository paymentDetailsRepository;
-    @Resource(name = "persistence.EntityDao")
-    private EntityDao entityDao;
     @Resource(name = "userGroupRepository")
     private UserGroupRepository userGroupRepository;
     @Resource(name = "userRepository")
@@ -56,7 +53,7 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
     public void savePaymentDetailsWithChangesToUser() {
 
         User user = createUser();
-        entityDao.saveEntity(user);
+        userRepository.save(user);
 
         user.setCity("Lugansk");
         PayPalPaymentDetails paymentDetails = getPaymentDetails("2345-2345-2345-23452-2345");
@@ -250,7 +247,7 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
         exception.expectMessage("Unexpected activation status [ENTERED_NUMBER]. Payment details' owner should be in ACTIVATED activation status");
         User user = createUser();
         user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
-        entityDao.saveEntity(user);
+        userRepository.save(user);
 
         user.setCity("Lugansk");
         PayPalPaymentDetails paymentDetails = getPaymentDetails("2345-2345-2345-23452-2345");

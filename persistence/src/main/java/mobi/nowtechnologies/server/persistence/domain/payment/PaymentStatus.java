@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "tb_paymentStatus")
-public final class PaymentStatus implements Serializable {
+public class PaymentStatus implements Serializable {
 
     public static final String AWAITING_PSMS = "AWAITING_PSMS";
     public static final String PSMS_ERROR = "PSMS_ERROR";

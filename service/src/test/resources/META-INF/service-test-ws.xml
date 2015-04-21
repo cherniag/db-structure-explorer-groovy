@@ -8,7 +8,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springfr
 
     <bean id="service.VersionService" class="java.lang.Object" />
     <bean id="service.DeviceUserDataService" class="java.lang.Object" />
-    <bean id="service.EntityService" class="java.lang.Object" />
     <bean id="service.UserService" class="java.lang.Object" />
     <bean id="service.PaymentDetailsService" class="java.lang.Object" />
     <bean id="service.DevicePromotionsService" class="java.lang.Object" />

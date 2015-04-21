@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.dao;
+package mobi.nowtechnologies.server.persistence.domain;
 
 
 /**

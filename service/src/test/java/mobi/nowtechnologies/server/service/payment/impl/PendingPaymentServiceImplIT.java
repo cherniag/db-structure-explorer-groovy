@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -17,6 +17,7 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepositor
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -54,6 +55,8 @@ public class PendingPaymentServiceImplIT {
     private PendingPaymentRepository pendingPaymentRepository;
     @Resource
     private PendingPaymentService pendingPaymentService;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -114,8 +117,8 @@ public class PendingPaymentServiceImplIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user.setLastDeviceLogin(1);
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user = userRepository.saveAndFlush(user);

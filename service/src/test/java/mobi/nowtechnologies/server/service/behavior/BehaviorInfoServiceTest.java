@@ -49,13 +49,13 @@ public class BehaviorInfoServiceTest {
         when(freemiumBehaviorConfig.getReferralsDuration()).thenReturn(mock(Duration.class));
 
         when(communityConfigRepository.findByCommunity(user.getUserGroup().getCommunity())).thenReturn(communityConfig);
-        when(referralRepository.getCountByCommunityIdUserIdAndStates(communityId, userId, ReferralState.ACTIVATED)).thenReturn(activated);
+        when(referralRepository.countByCommunityIdUserIdAndStates(communityId, userId, ReferralState.ACTIVATED)).thenReturn(activated);
 
         // when
         behaviorInfoService.getUserReferralsSnapshot(user, freemiumBehaviorConfig);
 
         // then
-        verify(referralRepository, timeout(1)).getCountByCommunityIdUserIdAndStates(communityId, userId, ReferralState.ACTIVATED);
+        verify(referralRepository, timeout(1)).countByCommunityIdUserIdAndStates(communityId, userId, ReferralState.ACTIVATED);
         verify(userReferralsSnapshotRepository).findOne(anyInt());
     }
 

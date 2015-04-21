@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.UrbanAirshipToken;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 
 import javax.annotation.Resource;
 
@@ -40,6 +41,9 @@ public class UrbanAirshipTokenServiceIT {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public void testNewTokenIsSavedProperly() {
@@ -96,8 +100,8 @@ public class UrbanAirshipTokenServiceIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user = userRepository.saveAndFlush(user);
         return user;
     }

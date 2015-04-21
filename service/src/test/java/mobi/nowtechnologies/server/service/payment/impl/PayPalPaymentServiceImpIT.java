@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.repository.PendingPaymentReposito
 import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -64,6 +65,8 @@ public class PayPalPaymentServiceImpIT {
     private SubmittedPaymentRepository submittedPaymentRepository;
     @Resource
     private AccountLogRepository accountLogRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public void startPayment() throws Exception {
@@ -115,8 +118,8 @@ public class PayPalPaymentServiceImpIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user = userRepository.saveAndFlush(user);
         return user;

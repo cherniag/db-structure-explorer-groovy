@@ -85,7 +85,7 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         paymentPolicy = paymentPolicyRepository
             .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
             .withOnline(true);
-        PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        PaymentPolicy result = paymentPolicyRepository.findPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
         assertEquals(result, paymentPolicy);
     }
 
@@ -95,7 +95,7 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         paymentPolicy = paymentPolicyRepository
             .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
             .withOnline(false);
-        PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        PaymentPolicy result = paymentPolicyRepository.findPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
         assertNull(result);
     }
 

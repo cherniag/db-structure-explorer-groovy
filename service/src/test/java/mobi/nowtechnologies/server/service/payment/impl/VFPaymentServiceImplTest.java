@@ -9,7 +9,9 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentEventNotifier;
@@ -42,7 +44,6 @@ import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
@@ -70,10 +71,16 @@ public class VFPaymentServiceImplTest {
     private PaymentEventNotifier paymentEventNotifier;
     
     @Mock
-    private EntityService entityService;
-    
-    @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Mock
+    private SubmittedPaymentRepository submittedPaymentRepository;
+
+    @Mock
+    private PaymentDetailsRepository paymentDetailsRepository;
+
+    @Mock
+    private PendingPaymentRepository pendingPaymentRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -83,8 +90,10 @@ public class VFPaymentServiceImplTest {
         fixture.setUserService(userServiceMock);
         fixture.setPendingPaymentService(pendingPaymentServiceMock);
         fixture.setPaymentEventNotifier(paymentEventNotifier);
-        fixture.setEntityService(entityService);
         fixture.setApplicationEventPublisher(applicationEventPublisher);
+        fixture.setSubmittedPaymentRepository(submittedPaymentRepository);
+        fixture.setPaymentDetailsRepository(paymentDetailsRepository);
+        fixture.setPendingPaymentRepository(pendingPaymentRepository);
     }
 
     @Test
@@ -169,7 +178,7 @@ public class VFPaymentServiceImplTest {
             }
         };
 
-        when(entityService.updateEntity(any(SubmittedPayment.class))).thenAnswer(answer);
+        when(submittedPaymentRepository.save(any(SubmittedPayment.class))).thenAnswer(answer);
 
         fixture.process(vfResponse);
 

@@ -81,10 +81,6 @@
 	<bean id="service.SpyUserService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.UserService"/>
   	</bean>
-
-	<bean id="service.SpyEntityService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
-     	<property name="realObject" ref="service.EntityService"/>
-  	</bean>
   	
 	<bean id="service.SpySagePayPaymentService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.sagePayPaymentService"/>

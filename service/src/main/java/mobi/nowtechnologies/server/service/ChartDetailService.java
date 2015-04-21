@@ -83,7 +83,7 @@ public class ChartDetailService {
 
         final List<Media> chartDetails;
         if (nearestLatestPublishTimeMillis != null) {
-            chartDetails = chartDetailRepository.getLockedChartItemByDate(chartId, nearestLatestPublishTimeMillis);
+            chartDetails = chartDetailRepository.findLockedChartItemByDate(chartId, nearestLatestPublishTimeMillis);
         } else {
             chartDetails = Collections.EMPTY_LIST;
         }
@@ -108,7 +108,7 @@ public class ChartDetailService {
 
         final List<ChartDetail> chartDetails;
         if (nearestLatestPublishTimeMillis != null) {
-            chartDetails = chartDetailRepository.getActualChartItems(chartId, nearestLatestPublishTimeMillis);
+            chartDetails = chartDetailRepository.findActualChartItems(chartId, nearestLatestPublishTimeMillis);
         } else {
             chartDetails = Collections.EMPTY_LIST;
         }
@@ -124,7 +124,7 @@ public class ChartDetailService {
         notNull(selectedPublishDate, "The parameter selectedPublishDate is null");
         notNull(chartId, "The parameter chartId is null");
 
-        List<ChartDetail> chartDetails = chartDetailRepository.getChartItemsByDate(chartId, selectedPublishDate.getTime());
+        List<ChartDetail> chartDetails = chartDetailRepository.findChartItemsByDate(chartId, selectedPublishDate.getTime());
         if (chartDetails == null || chartDetails.size() == 0) {
             final List<ChartDetail> clonedChartDetails;
 
@@ -132,7 +132,7 @@ public class ChartDetailService {
 
             Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, chartId);
             if (nearestLatestPublishTimeMillis != null) {
-                chartDetails = chartDetailRepository.getChartItemsByDate(chartId, nearestLatestPublishTimeMillis);
+                chartDetails = chartDetailRepository.findChartItemsByDate(chartId, nearestLatestPublishTimeMillis);
 
                 clonedChartDetails = new LinkedList<ChartDetail>();
                 for (ChartDetail chartDetail : chartDetails) {
@@ -207,7 +207,7 @@ public class ChartDetailService {
     @Transactional(readOnly = true)
     public List<String> getAllChannels() {
 
-        List<String> allChannels = chartDetailRepository.getAllChannels();
+        List<String> allChannels = chartDetailRepository.findAllChannels();
 
         LOGGER.info("Output parameter allChannels=[{}]", allChannels);
         return allChannels;
@@ -217,7 +217,7 @@ public class ChartDetailService {
     public boolean deleteChartItems(Integer chartId, long selectedPublishDateTime) {
         LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
 
-        List<ChartDetail> chartDetails = chartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime);
+        List<ChartDetail> chartDetails = chartDetailRepository.findAllActualChartDetails(chartId, selectedPublishDateTime);
 
         chartDetailRepository.delete(chartDetails);
         boolean success = true;
@@ -230,7 +230,7 @@ public class ChartDetailService {
     public int updateChartItems(Integer chartId, long selectedPublishDateTime, long newPublishDateTime) throws ServiceCheckedException {
         LOGGER.debug("input parameters chartId, selectedPublishDateTime, newPublishDateTime: [{}], [{}], [{}]", chartId, selectedPublishDateTime, newPublishDateTime);
 
-        final long count = chartDetailRepository.getCount(chartId, newPublishDateTime);
+        final long count = chartDetailRepository.countChartDetail(chartId, newPublishDateTime);
         boolean isItemsForChoosedPublishDateAlreadyExist = (count > 0);
         if (isItemsForChoosedPublishDateAlreadyExist) {
             throw new ServiceCheckedException("chartItems.changingPublishTimeOnAlreadyScheduledTime.error",

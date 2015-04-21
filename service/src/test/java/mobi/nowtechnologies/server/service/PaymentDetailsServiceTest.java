@@ -55,7 +55,7 @@ public class PaymentDetailsServiceTest {
         user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
 
         paymentDetailsServiceSpy = PowerMockito.spy(new PaymentDetailsService());
-        paymentDetailsServiceSpy.setPaymentDetailsRepository(paymentDetailsRepositoryMock);
+        paymentDetailsServiceSpy.paymentDetailsRepository = paymentDetailsRepositoryMock;
         paymentDetailsServiceSpy.setUserService(userService);
         paymentDetailsServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 
