@@ -5,11 +5,23 @@ function hidePopup(id) {
 	document.getElementById(id).style.display = 'none';
 }
 function closeForm(){
-    window.location = "/closeApp.html";
+	window.location = "/web/closeApp.html";
 }
 
 function returnToApp(){
-    window.location = "/exitFromApp.html";
+	window.location = "/web/exitFromApp.html";
+}
+
+function feedback(email) {
+	window.location = "/web/feedback.html?email=" + email;
+}
+
+function goTo(uri){
+	window.location = uri;
+}
+
+function submitForm(id) {
+	document.getElementById(id).submit();
 }
 
 function calcScaleCoeff(pattern, actual) {
@@ -34,18 +46,6 @@ function adjustImage(img, placeholderDim) {
             //img.style.marginTop = (img.width - img.height) / 2 + "px";
         }
     }
-}
-
-function feedback(email) {
-    window.location = "/feedback.html?email=" + email;
-}
-
-function goTo(uri){
-    window.location = uri;
-}
-
-function submitForm(id) {
-    document.getElementById(id).submit();
 }
 
 function showHideBox(id, id2) {
