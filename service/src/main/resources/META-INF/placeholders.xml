@@ -30,8 +30,6 @@
         <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/application.properties</value>
     </util:list>
 
-    <bean id="propLocale" class="mobi.nowtechnologies.server.shared.message.PropLocale"/>
-
     <beans profile="application-tests">
 
         <bean id="propertyPlaceholderConfigurer"

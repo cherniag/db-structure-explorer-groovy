@@ -4,7 +4,7 @@
 
 package mobi.nowtechnologies.server.support.props;
 
-import mobi.nowtechnologies.server.shared.message.PropLocale;
+import mobi.nowtechnologies.common.util.LocaleUtils;
 
 import javax.annotation.Resource;
 
@@ -34,9 +34,6 @@ public class PropController {
     private PropertyPlaceholderConfigurer propertyPlaceholderConfigurer;
 
     @Resource
-    private PropLocale propLocale;
-
-    @Resource
     private ReloadableResourceBundleMessageSource serviceReloadableResourceBundleMessageSource;
 
     public void setPropertyPlaceholderConfigurer(PropertyPlaceholderConfigurer propertyPlaceholderConfigurer) {
@@ -56,17 +53,7 @@ public class PropController {
     }
 
     ModelAndView internal(String community, String language, String country, MessageSourceSupport messageSource) throws Exception {
-        Locale locale = PropLocale.DEFAULT_LOCALE;
-        if (language != null) {
-            if (country != null) {
-                locale = new Locale(language, country);
-            } else {
-                locale = new Locale(language);
-            }
-        }
-
-        Locale communityLocale = propLocale.getCommunityLocale(community, locale);
-
+        Locale communityLocale = LocaleUtils.buildLocale(community, language, country);
         final Method getMergedPropertiesMethod = ReloadableResourceBundleMessageSource.class.getDeclaredMethod("getMergedProperties", Locale.class);
         getMergedPropertiesMethod.setAccessible(true);
         getMergedPropertiesMethod.setAccessible(true);

@@ -80,9 +80,7 @@
 
     <mvc:interceptors>
         <!-- Community Change Interceptor and Resolver definition -->
-        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor">
-            <property name="propLocale" ref="propLocale"/>
-        </bean>
+        <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor"/>
 
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
