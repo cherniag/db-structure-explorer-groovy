@@ -45,7 +45,8 @@ public class ServiceConfigController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.GET,
-                    value = {"**/{community}/{apiVersion:6\\.11}/SERVICE_CONFIG",
+                    value = {"**/{community}/{apiVersion:6\\.12}/SERVICE_CONFIG",
+                             "**/{community}/{apiVersion:6\\.11}/SERVICE_CONFIG",
                              "**/{community}/{apiVersion:6\\.10}/SERVICE_CONFIG",
                              "**/{community}/{apiVersion:6\\.9}/SERVICE_CONFIG",
                              "**/{community}/{apiVersion:6\\.8}/SERVICE_CONFIG"})

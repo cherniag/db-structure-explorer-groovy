@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
-import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 
 import javax.annotation.PostConstruct;
 
@@ -25,7 +25,7 @@ public class JPathReceiptParser implements ITunesResponseParser {
     private JsonPath purchaseTimestampPath;
 
     @Override
-    public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseParserException {
+    public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseFormatException {
         try {
             int result = statusPath.<Integer>read(response);
 
@@ -40,7 +40,7 @@ public class JPathReceiptParser implements ITunesResponseParser {
 
             return new ITunesResult(result, productId, originalTransactionId, expireTime, purchaseTime);
         } catch (InvalidPathException e) {
-            throw new ITunesResponseParserException(e);
+            throw new ITunesResponseFormatException(e);
         }
     }
 

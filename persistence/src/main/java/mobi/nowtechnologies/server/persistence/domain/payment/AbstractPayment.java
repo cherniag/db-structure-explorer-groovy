@@ -130,8 +130,8 @@ public abstract class AbstractPayment {
         return userId;
     }
 
-    public PaymentDetails getPaymentDetails() {
-        return paymentDetails;
+    public <T extends PaymentDetails> T getPaymentDetails() {
+        return (T) paymentDetails;
     }
 
     public void setPaymentDetails(PaymentDetails paymentDetails) {

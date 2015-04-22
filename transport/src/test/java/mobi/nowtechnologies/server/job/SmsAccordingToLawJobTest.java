@@ -125,7 +125,7 @@ public class SmsAccordingToLawJobTest {
 
         List<User> users = Collections.singletonList(user);
 
-        final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
+        final MigPaymentDetails currentMigPaymentDetails = user.getCurrentPaymentDetails();
         final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails = currentMigPaymentDetails.getPaymentPolicy();
 
         final Object[] deltaSuccessfulPaymentSmsSendingTimestampMillisReachedMessageArgs =
@@ -173,7 +173,7 @@ public class SmsAccordingToLawJobTest {
 
         List<User> users = Collections.singletonList(user);
 
-        final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
+        final MigPaymentDetails currentMigPaymentDetails = user.getCurrentPaymentDetails();
         final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails = currentMigPaymentDetails.getPaymentPolicy();
 
         final Object[] amountOfMoneyToUserNotificationMessageArgs =
@@ -225,10 +225,10 @@ public class SmsAccordingToLawJobTest {
 
         userUnmodifableList = Collections.unmodifiableList(userUnmodifableList);
 
-        final MigPaymentDetails currentMigPaymentDetails1 = (MigPaymentDetails) user1.getCurrentPaymentDetails();
+        final MigPaymentDetails currentMigPaymentDetails1 = user1.getCurrentPaymentDetails();
         final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails1 = currentMigPaymentDetails1.getPaymentPolicy();
 
-        final MigPaymentDetails currentMigPaymentDetails2 = (MigPaymentDetails) user2.getCurrentPaymentDetails();
+        final MigPaymentDetails currentMigPaymentDetails2 = user2.getCurrentPaymentDetails();
         final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails2 = currentMigPaymentDetails2.getPaymentPolicy();
 
         final Object[] amountOfMoneyToUserNotificationMessageArgs1 =

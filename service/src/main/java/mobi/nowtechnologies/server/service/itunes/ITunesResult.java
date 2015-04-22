@@ -46,6 +46,10 @@ public class ITunesResult {
         return expireTime;
     }
 
+    public int getResult() {
+        return result;
+    }
+
     public String toString() {
         return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("result", result).append("productId", productId).append("originalTransactionId", originalTransactionId)
                                                             .append("expireTime", expireTime).append("purchaseTime", purchaseTime).toString();

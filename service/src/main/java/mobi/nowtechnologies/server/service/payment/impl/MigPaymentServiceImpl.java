@@ -36,7 +36,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void startPayment(PendingPayment pendingPayment) throws ServiceException {
-        MigPaymentDetails currentPaymentDetails = (MigPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
+        MigPaymentDetails currentPaymentDetails = pendingPayment.getUser().getCurrentPaymentDetails();
         PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
         Community community = pendingPayment.getUser().getCommunity();
 

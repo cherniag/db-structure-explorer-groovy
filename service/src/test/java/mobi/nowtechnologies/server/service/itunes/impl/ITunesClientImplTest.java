@@ -5,6 +5,7 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
+import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.support.http.BasicResponse;
@@ -40,7 +41,7 @@ public class ITunesClientImplTest {
         when(config.getPassword()).thenReturn("password");
     }
 
-    @Test
+    @Test(expected = ITunesConnectionException.class)
     public void testVerifyReceipt_ResposeNoOK() throws Exception {
         final String appStoreReceipt = "appStoreReceipt";
 
@@ -49,14 +50,7 @@ public class ITunesClientImplTest {
 
         when(postService.sendHttpPost(config.getUrl(), JSON_BODY)).thenReturn(basicResponse);
 
-        assertNull(iTunesClient.verifyReceipt(config, appStoreReceipt));
-
-        verify(postService, times(1)).sendHttpPost(config.getUrl(), JSON_BODY);
-        verify(config, times(3)).getUrl();
-        verify(config, times(1)).getPassword();
-        verify(basicResponse, times(1)).getStatusCode();
-
-        verifyNotWantedInteractions(basicResponse);
+        iTunesClient.verifyReceipt(config, appStoreReceipt);
     }
 
     @Test

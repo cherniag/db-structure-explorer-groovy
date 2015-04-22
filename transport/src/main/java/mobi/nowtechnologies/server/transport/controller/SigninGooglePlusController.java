@@ -30,7 +30,8 @@ public class SigninGooglePlusController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.11}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.10}/SIGN_IN_GOOGLE_PLUS",
+                    value = {"**/{community}/{apiVersion:6\\.12}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.11}/SIGN_IN_GOOGLE_PLUS",
+                             "**/{community}/{apiVersion:6\\.10}/SIGN_IN_GOOGLE_PLUS",
                         "**/{community}/{apiVersion:6\\.9}/SIGN_IN_GOOGLE_PLUS", "**/{community}/{apiVersion:6\\.8}/SIGN_IN_GOOGLE_PLUS"})
     public ModelAndView applyPromotionBySignInGooglePlusWithOneTimeSubscription(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                                 @RequestParam("ACCESS_TOKEN") String accessToken, @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,

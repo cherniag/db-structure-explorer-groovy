@@ -44,7 +44,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void startPayment(PendingPayment pendingPayment) throws ServiceException {
-        SagePayCreditCardPaymentDetails paymentDetails = (SagePayCreditCardPaymentDetails) pendingPayment.getPaymentDetails();
+        SagePayCreditCardPaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
         SagePayResponse response = null;
         if (!paymentDetails.getReleased()) {
             response = httpService.makeReleaseRequest(pendingPayment.getCurrencyISO(),
@@ -77,7 +77,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
-        SagePayCreditCardPaymentDetails paymentDetails = (SagePayCreditCardPaymentDetails) pendingPayment.getPaymentDetails();
+        SagePayCreditCardPaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
         if (response instanceof SagePayResponse && ((SagePayResponse) response).isSagePaySuccessful() && !paymentDetails.getReleased()) {
             paymentDetails.setReleased(true);
         }

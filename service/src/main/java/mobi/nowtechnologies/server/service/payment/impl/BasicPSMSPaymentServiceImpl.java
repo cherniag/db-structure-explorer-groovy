@@ -33,7 +33,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     @Override
     @Transactional(propagation = REQUIRED)
     public void startPayment(final PendingPayment pendingPayment) throws Exception {
-        final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails) pendingPayment.getPaymentDetails();
+        final PSMSPaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
         Community community = pendingPayment.getUser().getUserGroup().getCommunity();
         String communityUrl = community.getRewriteUrlParameter().toLowerCase();
@@ -61,7 +61,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     @Transactional(propagation = REQUIRED)
     public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
         final User user = pendingPayment.getUser();
-        final T paymentDetails = (T) pendingPayment.getPaymentDetails();
+        final T paymentDetails = pendingPayment.getPaymentDetails();
 
         LOGGER.info("Sent request to [{}] external system with pending payment [{}] and received response [{}]", paymentDetails.getPaymentType(), pendingPayment.getI(), response);
         if (!response.isSuccessful()) {

@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
-import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 
 import java.io.InputStream;
 
@@ -45,7 +45,7 @@ public class JPathReceiptParserTest {
         Assert.assertEquals(1420206332704L, parseResult.getPurchaseTime().longValue());
     }
 
-    @Test(expected = ITunesResponseParserException.class)
+    @Test(expected = ITunesResponseFormatException.class)
     public void parseOnetimeAsAutoRenewableReceipt() throws Exception {
         JPathReceiptParser jPathReceiptParser =
             create(JsonPath.compile("$.status"), JsonPath.compile("$.latest_receipt_info.product_id"), JsonPath.compile("$.latest_receipt_info.original_transaction_id"),

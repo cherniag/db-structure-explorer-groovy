@@ -58,7 +58,7 @@ public class GetChartController extends CommonController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.11}/GET_CHART"})
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.12}/GET_CHART", "**/{community}/{apiVersion:6\\.11}/GET_CHART"})
     public ModelAndView getChartV611(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {

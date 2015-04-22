@@ -62,7 +62,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
     @Override
     protected PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message) {
-        final VFPSMSPaymentDetails paymentDetails = (VFPSMSPaymentDetails) pendingPayment.getPaymentDetails();
+        final VFPSMSPaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
 
         gatewayService.send(paymentDetails.getPhoneNumber(), message, paymentPolicy.getShortCode(), SMSCDeliveryReceipt.SUCCESS_FAILURE, getExpireMillis());

@@ -992,7 +992,7 @@ public class UserServiceTest {
 
         MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
-        final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
+        final MigPaymentDetails currentMigPaymentDetails = user.getCurrentPaymentDetails();
         mockMakeFreeSMSRequest(currentMigPaymentDetails, SMS_SUCCESFULL_PAYMENT_TEXT, successfulMigResponse);
         mockMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toUpperCase(), SMS_SUCCESFULL_PAYMENT_TEXT_MESSAGE_CODE, successfulPaymentMessageArgs, SMS_SUCCESFULL_PAYMENT_TEXT);
         PowerMockito.mockStatic(Utils.class);
@@ -1027,7 +1027,7 @@ public class UserServiceTest {
 
         MigResponse failureMigResponse = MigResponseFactory.createFailMigResponse();
 
-        final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
+        final MigPaymentDetails currentMigPaymentDetails = user.getCurrentPaymentDetails();
         mockMakeFreeSMSRequest(currentMigPaymentDetails, SMS_SUCCESFULL_PAYMENT_TEXT, failureMigResponse);
         mockMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toUpperCase(), SMS_SUCCESFULL_PAYMENT_TEXT_MESSAGE_CODE, successfulPaymentMessageArgs, SMS_SUCCESFULL_PAYMENT_TEXT);
 
@@ -2183,6 +2183,8 @@ public class UserServiceTest {
     public void testFindUsersForItunesInAppSubscription_Success() {
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         User user2 = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.getCommunity().setRewriteUrlParameter("o2");
+        user2.getCommunity().setRewriteUrlParameter("o2");
 
         int nextSubPayment = 1;
         String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";

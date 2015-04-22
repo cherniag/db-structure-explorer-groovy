@@ -24,6 +24,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,16 +77,12 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
 
     @Transactional
     @Override
-    public void createSubmittedPayment(User user, String appStoreReceipt, ITunesResult result, ITunesPaymentService iTunesPaymentService) {
+    public void createSubmittedPayment(User user, String appStoreReceipt, ITunesResult result) {
         Community community = user.getCommunity();
 
         long expireTime = getExpireTimestamp(community, result);
-        try {
-            iTunesPaymentService.checkForDuplicates(user.getId(), expireTime);
-        } catch (DataIntegrityViolationException e) {
-            logger.info("Record with the same next sub payment millis [{}] for user [{}] already exists", expireTime, user.getId());
-            return;
-        }
+
+        checkForDuplicates(user.getId(), expireTime);
 
         PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(community, result.getProductId());
 
@@ -116,28 +113,26 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
         applicationEventPublisher.publishEvent(paymentEvent);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     @Override
     public void checkForDuplicates(int userId, long nextSubPaymentTimestamp) {
         int nextSubPayment = DateTimeUtils.millisToIntSeconds(nextSubPaymentTimestamp);
         ITunesPaymentLock iTunesPaymentLock = new ITunesPaymentLock(userId, nextSubPayment);
         iTunesPaymentLockRepository.saveAndFlush(iTunesPaymentLock);
-
+        logger.info("No iTunes payment duplicates found for user {} nextSubPayment {}", userId, nextSubPayment);
     }
 
     private long getExpireTimestamp(Community community, ITunesResult result) {
-        Long time = result.getExpireTime();
-        if (time == null) {
+        Long expireTime = result.getExpireTime();
+        if (expireTime == null) {
             logger.debug("Calculate expire timestamp for result {} and community id {}", result, community.getId());
             PaymentPolicy policy = paymentPolicyService.findByCommunityAndAppStoreProductId(community, result.getProductId());
             Period period = policy.getPeriod();
             int purchaseSeconds = DateTimeUtils.millisToIntSeconds(result.getPurchaseTime());
             int nextSubPaymentSeconds = period.toNextSubPaymentSeconds(purchaseSeconds);
-            time = DateTimeUtils.secondsToMillis(nextSubPaymentSeconds);
+            expireTime = DateTimeUtils.secondsToMillis(nextSubPaymentSeconds);
         }
-        long expireTime = time;
         Assert.isTrue(expireTime > DateTimeUtils.getEpochMillis(), "result [" + result + "] must have expireDate in future");
-
         return expireTime;
     }
 

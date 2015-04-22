@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.behavior;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
@@ -47,6 +48,19 @@ public class PaymentTimeService {
         }
     }
 
+    public Date getNextRetryTimeForITunesPayment(User user, Date serverTime) {
+        logger.info("Start calculating retry time for iTunes for user {}, time {}", user.getId(), serverTime.getTime());
+        PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
+        Preconditions.checkArgument(paymentDetails.isActivated());
+        Preconditions.checkArgument(paymentDetails instanceof ITunesPaymentDetails);
+        Preconditions.checkArgument(paymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE);
+
+        return nextRequestTime(paymentDetails.getCreationTimestampMillis(), serverTime);
+    }
+
+    //
+    // Internals
+    //
     private Date nextRequestTimeFromPendingPayment(User user, Date serverTime) {
         List<PendingPayment> pendingPayments = pendingPaymentRepository.findByUserId(user.getId());
         if(pendingPayments.size() != 1) {
@@ -66,6 +80,7 @@ public class PaymentTimeService {
         long latestTimestamp = latest.getTimestamp();
         return nextRequestTime(latestTimestamp, serverTime);
     }
+
 
     private Date nextRequestTime(long lastActionTimestamp, Date serverTime) {
         int minutesSpent = (int) ((serverTime.getTime() - lastActionTimestamp) / MILLIS_IN_MINUTE);

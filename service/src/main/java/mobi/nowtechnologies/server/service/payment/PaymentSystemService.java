@@ -6,13 +6,13 @@ import mobi.nowtechnologies.server.service.payment.response.PaymentSystemRespons
 
 public interface PaymentSystemService {
 
-    public void startPayment(PendingPayment pendingPayment) throws Exception;
+    void startPayment(PendingPayment pendingPayment) throws Exception;
 
-    public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response);
+    SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response);
 
-    public int getRetriesOnError();
+    int getRetriesOnError();
 
-    public long getExpireMillis();
+    long getExpireMillis();
 
-    public PaymentSystemResponse getExpiredResponse();
+    PaymentSystemResponse getExpiredResponse();
 }

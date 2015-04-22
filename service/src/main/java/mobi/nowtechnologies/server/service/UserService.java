@@ -92,6 +92,7 @@ import java.util.concurrent.Future;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Math.max;
 
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1070,7 +1071,7 @@ public class UserService {
         return userWithOldTariffOnOldBoughtPeriod;
     }
 
-    private User skipFreeTrial(User user) {
+    public User skipFreeTrial(User user) {
         int currentTimeSeconds = getEpochSeconds();
         long currentTimeMillis = currentTimeSeconds * 1000L;
 

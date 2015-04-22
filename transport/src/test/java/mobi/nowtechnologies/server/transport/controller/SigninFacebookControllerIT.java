@@ -34,6 +34,7 @@ import com.google.common.collect.Iterables;
 
 import org.springframework.http.MediaType;
 import org.springframework.social.facebook.api.GraphApi;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
 import org.junit.*;
 import org.springframework.test.web.servlet.MvcResult;

@@ -5,5 +5,5 @@ package mobi.nowtechnologies.server.service.itunes;
  */
 public interface ITunesResponseParser {
 
-    ITunesResult parseVerifyReceipt(String payload) throws ITunesResponseParserException;
+    ITunesResult parseVerifyReceipt(String payload) throws ITunesResponseFormatException;
 }

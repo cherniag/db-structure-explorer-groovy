@@ -364,5 +364,15 @@ public class PaymentDetails {
         setDescriptionError(descriptionError);
         setErrorCode(null);
         setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+
+        incrementMadeAttemptsAccordingToMadeRetries();
+    }
+
+    public void completeSuccessful() {
+        setDescriptionError(null);
+        setErrorCode(null);
+        setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
+
+        incrementMadeAttemptsAccordingToMadeRetries();
     }
 }

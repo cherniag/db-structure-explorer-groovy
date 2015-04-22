@@ -27,7 +27,7 @@ public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaym
     @Override
     protected PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message) {
         final User user = pendingPayment.getUser();
-        final O2PSMSPaymentDetails paymentDetails = (O2PSMSPaymentDetails) pendingPayment.getPaymentDetails();
+        final O2PSMSPaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
 
         String internalTxId = Utils.getBigRandomInt().toString();

@@ -32,7 +32,8 @@ public class SigninFacebookController extends CommonController {
     @Resource
     private UserPromoService userPromoService;
 
-    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.11}/SIGN_IN_FACEBOOK", "**/{community}/{apiVersion:6\\.10}/SIGN_IN_FACEBOOK"})
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.12}/SIGN_IN_FACEBOOK", "**/{community}/{apiVersion:6\\.11}/SIGN_IN_FACEBOOK",
+                                                          "**/{community}/{apiVersion:6\\.10}/SIGN_IN_FACEBOOK"})
     public ModelAndView applyPromotionByFacebookWithProfileImageUrl(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                     @RequestParam("ACCESS_TOKEN") String facebookAccessToken, @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
                                                                     @RequestParam("USER_NAME") String userName, @RequestParam("DEVICE_UID") String deviceUID) {

@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -242,10 +243,6 @@ public class User implements Serializable {
     private PaymentDetails lastSuccessfulPaymentDetails;
     @Column(name = "idfa", nullable = true)
     private String idfa;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
-    private List<UserIPhoneDetails> userIPhoneDetailsList;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
-    private List<UserAndroidDetails> userAndroidDetailsList;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserLog> userLogs;
     @Transient
@@ -350,6 +347,7 @@ public class User implements Serializable {
     }
 
     public boolean isInvalidPaymentPolicy() {
+        // check for null PaymentPolicy
         return isNull(currentPaymentDetails) || isPaymentPolicyInvalidByProvider() || isPaymentPolicyInvalidBySegment();
     }
 
@@ -366,10 +364,6 @@ public class User implements Serializable {
 
     public boolean isNonO2User() {
         return !O2.equals(getProvider());
-    }
-
-    public boolean isNonVFUser() {
-        return !ProviderType.VF.equals(this.provider);
     }
 
     public boolean isO2CommunityUser() {
@@ -394,10 +388,6 @@ public class User implements Serializable {
     public boolean isVFNZCommunityUser() {
         Community community = this.getUserGroup().getCommunity();
         return VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
-    }
-
-    public boolean isNotVFNZCommunityUser() {
-        return !isVFNZCommunityUser();
     }
 
     public boolean isO2Consumer() {
@@ -711,8 +701,8 @@ public class User implements Serializable {
         this.userType = userType;
     }
 
-    public PaymentDetails getCurrentPaymentDetails() {
-        return this.currentPaymentDetails;
+    public <T extends PaymentDetails> T getCurrentPaymentDetails() {
+        return (T) this.currentPaymentDetails;
     }
 
     public void setCurrentPaymentDetails(PaymentDetails currentPaymentDetails) {
@@ -762,23 +752,8 @@ public class User implements Serializable {
         this.paymentType = PaymentType.valueOfByType(paymentType);
     }
 
-    public User withDisplayName(String displayName) {
-        this.displayName = displayName;
-        return this;
-    }
-
     public User withTitle(String title) {
         this.title = title;
-        return this;
-    }
-
-    public User withFirstName(String firstName) {
-        this.firstName = firstName;
-        return this;
-    }
-
-    public User withLastName(String lastName) {
-        this.lastName = lastName;
         return this;
     }
 
@@ -859,11 +834,6 @@ public class User implements Serializable {
 
     public User withActivationStatus(ActivationStatus activationStatus) {
         setActivationStatus(activationStatus);
-        return this;
-    }
-
-    public User withFirstDeviceLoginMillis(Long firstDeviceLoginMillis) {
-        setFirstDeviceLoginMillis(firstDeviceLoginMillis);
         return this;
     }
 
@@ -1083,14 +1053,6 @@ public class User implements Serializable {
         this.lastBefore48SmsMillis = lastBefore48SmsMillis;
     }
 
-    public List<UserLog> getUserLogs() {
-        return userLogs;
-    }
-
-    public void setUserLogs(List<UserLog> userLogs) {
-        this.userLogs = userLogs;
-    }
-
     private Integer getLastPromoId() {
         if (isNotNull(lastPromo)) {
             return lastPromo.getId();
@@ -1115,34 +1077,18 @@ public class User implements Serializable {
         return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
     }
 
-    public boolean isNonO2Community() {
-        Community community = this.userGroup.getCommunity();
-        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
-
-        if (!O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(communityUrl)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean isNotActivePaymentDetails() {
-        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-        return currentPaymentDetails != null && !currentPaymentDetails.isActivated();
-    }
-
     public boolean hasActivePaymentDetails() {
         PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
         return currentPaymentDetails != null && currentPaymentDetails.isActivated();
     }
 
+    public boolean hasActiveITunesPaymentDetails() {
+        return hasActivePaymentDetails() && getCurrentPaymentDetails() instanceof ITunesPaymentDetails;
+    }
+
     public boolean hasPendingPayment() {
         PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
         return currentPaymentDetails != null && PaymentDetailsStatus.AWAITING == currentPaymentDetails.getLastPaymentStatus();
-    }
-
-    public boolean isBeforeExpiration(long timestamp, int hours) {
-        return nextSubPayment <= timestamp / 1000 + hours * 60 * 60;
     }
 
     public ProviderType getProvider() {
@@ -1354,7 +1300,7 @@ public class User implements Serializable {
         return currentPaymentDetails.getPaymentPolicy().getPaymentPolicyType() == PaymentPolicyType.ONETIME;
     }
 
-    public boolean hasAppReceiptInLimitedState() {
+    public boolean hasAppReceiptAndIsInLimitedState() {
         return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
     }
 
@@ -1409,18 +1355,8 @@ public class User implements Serializable {
         return this;
     }
 
-    public User withToken(String token) {
-        this.token = token;
-        return this;
-    }
-
     public User withUserStatus(UserStatus userStatus) {
         this.status = userStatus;
-        return this;
-    }
-
-    public User withDevice(String device) {
-        this.device = device;
         return this;
     }
 

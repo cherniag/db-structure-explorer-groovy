@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service.itunes;
 
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ public class CompositeITunesResponseParser implements ITunesResponseParser {
     private List<ITunesResponseParser> parsers = new ArrayList<ITunesResponseParser>();
 
     @Override
-    public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseParserException {
+    public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseFormatException {
         for (ITunesResponseParser parser : parsers) {
             logger.debug("Try to parse iTunes response [{}] with parser [{}]", response, parser);
 
@@ -28,11 +26,11 @@ public class CompositeITunesResponseParser implements ITunesResponseParser {
                 logger.debug("Parsed result is {}", parseResult);
 
                 return parseResult;
-            } catch (ITunesResponseParserException e) {
+            } catch (ITunesResponseFormatException e) {
                 logger.debug("Failed to parse with " + parser, e);
             }
         }
 
-        throw new ServiceException("Couldn't parse response: " + response + " with parsers: " + parsers);
+        throw new ITunesResponseFormatException("Couldn't parse response: " + response + " with parsers: " + parsers);
     }
 }

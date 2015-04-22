@@ -4,8 +4,10 @@
 
 package mobi.nowtechnologies.server.service.itunes.impl;
 
+import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionRequestDto;
@@ -29,7 +31,7 @@ public class ITunesClientImpl implements ITunesClient {
     private int httpOkCode;
 
     @Override
-    public ITunesResult verifyReceipt(ITunesConnectionConfig config, String appStoreReceipt) {
+    public ITunesResult verifyReceipt(ITunesConnectionConfig config, String appStoreReceipt) throws ITunesConnectionException, ITunesResponseFormatException {
         String url = config.getUrl();
 
         ITunesInAppSubscriptionRequestDto requestDto = new ITunesInAppSubscriptionRequestDto(appStoreReceipt, config.getPassword());
@@ -37,10 +39,14 @@ public class ITunesClientImpl implements ITunesClient {
 
         logger.info("Trying to validate in-app subscription using url [{}] with following params [{}]", url, body);
 
-        BasicResponse basicResponse = postService.sendHttpPost(url, body);
+        BasicResponse basicResponse = null;
+        try {
+            basicResponse = postService.sendHttpPost(url, body);
+        } catch (Exception e) {
+            throw new ITunesConnectionException(e.getCause());
+        }
         if (basicResponse.getStatusCode() != httpOkCode) {
-            logger.info("The request of in-app subscription validation returned unexpected basicResponse [{}]", basicResponse);
-            return null;
+            throw new ITunesConnectionException("ITunes response is unsuccessful, status=" + basicResponse.getStatusCode());
         }
 
         return iTunesResponseParser.parseVerifyReceipt(basicResponse.getMessage());

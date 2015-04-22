@@ -435,12 +435,20 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="iTunesClient" ref="service.ITunesClient"/>
 		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
 		<property name="messageSource" ref="serviceMessageSource"/>
+		<property name="iTunesPaymentDetailsService" ref="iTunesPaymentDetailsService"/>
 	</bean>
 	<bean id="service.iTunesPaymentService" class="mobi.nowtechnologies.server.service.itunes.payment.impl.ITunesPaymentServiceImpl">
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
 		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
 		<property name="timeService" ref="timeService"/>
 		<property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
+	</bean>
+
+	<bean id="iTunesPaymentDetailsService" class="mobi.nowtechnologies.server.service.ITunesPaymentDetailsService">
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+		<property name="userService" ref="service.UserService"/>
+		<property name="retriesOnError" value="${iTunes.retriesOnError}"/>
 	</bean>
 
 	<bean id="iTunesResponseParser" class="mobi.nowtechnologies.server.service.itunes.CompositeITunesResponseParser" />

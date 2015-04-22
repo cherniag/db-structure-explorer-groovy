@@ -92,6 +92,24 @@
 		<property name="o2ClientService" ref="service.O2ClientService" />
 	</bean>
 
+	<bean id="iTunesPaymentSystemService" class="mobi.nowtechnologies.server.service.payment.impl.ITunesPaymentSystemService" parent="service.AbstractPaymentSystemService">
+		<property name="retriesOnError" value="${iTunes.retriesOnError}" />
+		<property name="expireMillis" value="${iTunes.pendingExpireMillis}" />
+		<property name="iTunesClient" ref="service.ITunesClient"/>
+		<property name="messageSource" ref="serviceMessageSource"/>
+		<property name="helper" ref="iTunesPaymentSystemServiceHelper"/>
+	</bean>
+
+	<bean id="iTunesPaymentSystemServiceHelper" class="mobi.nowtechnologies.server.service.payment.ITunesPaymentSystemServiceHelper">
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
+		<property name="iTunesPaymentDetailsService" ref="iTunesPaymentDetailsService"/>
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
+		<property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>
+		<property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
+		<property name="timeService" ref="timeService"/>
+		<property name="userService" ref="service.UserService"/>
+	</bean>
+
     <bean id="service.vfPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
         <property name="retriesOnError" value="${vf.retriesOnError}" />
         <property name="expireMillis" value="${vf.pendingExpireMillis}" />
@@ -122,6 +140,7 @@
 		<entry key="migSms" value-ref="service.migPaymentService" />
 		<entry key="o2Psms" value-ref="service.o2PaymentService" />	
 		<entry key="vfPsms" value-ref="service.vfPaymentService" />
+		<entry key="#{T(mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails).ITUNES_SUBSCRIPTION}" value-ref="iTunesPaymentSystemService" />
 	</util:map>
 	
 	<!-- Listeners -->

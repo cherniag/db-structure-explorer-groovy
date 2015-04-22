@@ -7,10 +7,15 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UrbanAirshipTokenService;
+import mobi.nowtechnologies.server.service.behavior.PaymentTimeService;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +46,24 @@ public class AccCheckController extends CommonController {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    private PaymentTimeService paymentTimeService;
+
     @Resource(name = "service.UrbanAirshipTokenService")
     private UrbanAirshipTokenService urbanAirshipTokenService;
+
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.12}/ACC_CHECK"})
+    public ModelAndView accountCheckWithITunesPaymentDetails(@RequestParam("USER_NAME") String userName,
+                                                   @RequestParam("USER_TOKEN") String userToken,
+                                                   @RequestParam("TIMESTAMP") String timestamp,
+                                                   @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+                                                   @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+                                                   @RequestParam(required = false, value = "UA_TOKEN") String uaToken,
+                                                   @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+                                                   @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+                                                   @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response) throws Exception {
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, null, uaToken, xtifyToken, transactionReceipt, idfa, true, true, true, response, true);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.11}/ACC_CHECK", "**/{community}/{apiVersion:6\\.10}/ACC_CHECK", "**/{community}/{apiVersion:6\\.9}/ACC_CHECK"
 
@@ -57,7 +78,7 @@ public class AccCheckController extends CommonController {
                                                    @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
                                                    @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, null, uaToken, xtifyToken, transactionReceipt, idfa, true, true, true);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, null, uaToken, xtifyToken, transactionReceipt, idfa, true, true, true, null, false);
     }
 
 
@@ -73,7 +94,7 @@ public class AccCheckController extends CommonController {
                                                                 @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
                                                                 @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, true);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, true, null, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.7}/ACC_CHECK", "**/{community}/{apiVersion:6\\.6}/ACC_CHECK"})
@@ -88,7 +109,7 @@ public class AccCheckController extends CommonController {
                                              @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
                                              @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, false, null, false);
     }
 
     @RequestMapping(method = RequestMethod.POST,
@@ -109,7 +130,7 @@ public class AccCheckController extends CommonController {
                                                                   @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
                                                                   @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, false, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, false, false, null, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3.9}/ACC_CHECK"})
@@ -133,7 +154,7 @@ public class AccCheckController extends CommonController {
         }
         ///
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false, null, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/ACC_CHECK"})
@@ -147,7 +168,7 @@ public class AccCheckController extends CommonController {
                                                 @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                                 @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
                                                 @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false, null, false);
     }
 
     private ModelAndView accCheckImpl(String userName,
@@ -162,7 +183,9 @@ public class AccCheckController extends CommonController {
                                       String idfa,
                                       boolean checkReactivation,
                                       boolean withUuid,
-                                      boolean withOneTimePayment) throws Exception {
+                                      boolean withOneTimePayment,
+                                      HttpServletResponse response,
+                                      boolean createITunesPaymentDetails) throws Exception {
         LOGGER.info("command processing started");
         User user = null;
         Exception ex = null;
@@ -194,13 +217,14 @@ public class AccCheckController extends CommonController {
                 urbanAirshipTokenService.saveToken(user, pushNotificationToken);
             }
 
-            if (!user.hasActivePaymentDetails() && (transactionReceipt != null || user.hasAppReceiptInLimitedState())) {
-                try {
-                    iTunesService.processInAppSubscription(user, transactionReceipt);
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
+            try {
+                iTunesService.processInAppSubscription(user, transactionReceipt, createITunesPaymentDetails);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
             }
+
+            handleExpires(user, response);
+
 
             AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
 
@@ -211,6 +235,16 @@ public class AccCheckController extends CommonController {
         } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
+        }
+    }
+
+    private void handleExpires(User user, HttpServletResponse response) {
+        if(user.hasActiveITunesPaymentDetails() && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.NONE) {
+            LOGGER.info("Handle expires date for iTunes payment for user {}", user.getId());
+            Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
+            if (nextRetryTimeForITunesPayment != null && response != null) {
+                response.setDateHeader("Expires", nextRetryTimeForITunesPayment.getTime());
+            }
         }
     }
 

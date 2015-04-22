@@ -63,15 +63,13 @@ public class ITunesServiceIT {
     @Test
     public void processITunesPaymentSuccess() throws Exception {
         final int nextSubPayment = 1523820502;
-        final String productId = "com.musicqubed.ios.mp.subscription.weekly.1";
+        final String productId = "com.musicqubed.o2.autorenew.test";
         final String transactionId = "555555555555";
         String transactionReceipt = createAutoRenewableToken(productId, transactionId, nextSubPayment);
 
-        final String userName = "USERNAME_1";
-        final String deviceUID = "DEVICE_UID_1";
-        User user = createUser(userName, deviceUID, "mtv1");
+        User user = createUser("o2");
 
-        iTunesService.processInAppSubscription(user, transactionReceipt);
+        iTunesService.processInAppSubscription(user, transactionReceipt, false);
 
         User found = userRepository.findOne(user.getId());
         Assert.assertEquals(nextSubPayment, found.getNextSubPayment());
@@ -96,15 +94,13 @@ public class ITunesServiceIT {
     @Test
     public void processITunesUpSellSuccess() throws Exception {
         final int purchaseTime = Utils.getEpochSeconds() - 1000;
-        final String productId = "com.musicqubed.ios.mp.subscription.weekly.1";
+        final String productId = "com.musicqubed.o2.autorenew.test";
         final String transactionId = "555555555555";
         String transactionReceipt = createOneTimePaymentToken(productId, transactionId, purchaseTime);
 
-        final String userName = "USERNAME_2";
-        final String deviceUID = "DEVICE_UID_2";
-        User user = createUser(userName, deviceUID, "mtv1");
+        User user = createUser("o2");
 
-        iTunesService.processInAppSubscription(user, transactionReceipt);
+        iTunesService.processInAppSubscription(user, transactionReceipt, false);
 
         User found = userRepository.findOne(user.getId());
         int expectedNextSubPayment = new Period(DurationUnit.MONTHS, 1).toNextSubPaymentSeconds(purchaseTime);
@@ -130,17 +126,15 @@ public class ITunesServiceIT {
     @Test
     public void processITunesPaymentInCaseOfDuplicate() throws Exception {
         final int nextSubPayment = 1581586902;
-        final String productId = "com.musicqubed.ios.mp.subscription.weekly.1";
+        final String productId = "com.musicqubed.o2.autorenew.test";
         final String transactionId = "555555555555";
         String transactionReceipt = createAutoRenewableToken(productId, transactionId, nextSubPayment);
 
-        final String userName = "USERNAME_3";
-        final String deviceUID = "DEVICE_UID_3";
-        User user = createUser(userName, deviceUID, "mtv1");
+        User user = createUser("o2");
 
         iTunesPaymentLockRepository.saveAndFlush(new ITunesPaymentLock(user.getId(), nextSubPayment));
 
-        iTunesService.processInAppSubscription(user, transactionReceipt);
+        iTunesService.processInAppSubscription(user, transactionReceipt, false);
 
         User found = userRepository.findOne(user.getId());
         Assert.assertEquals(0, found.getNextSubPayment());
@@ -163,10 +157,10 @@ public class ITunesServiceIT {
         return String.format("onetime:200:0:%s:%s:%s000", productId, transactionId, purchaseDate);
     }
 
-    private User createUser(String userName, String deviceUID, String communityRewriteUrl) {
+    private User createUser(String communityRewriteUrl) {
         User user = new User();
-        user.setDeviceUID(deviceUID);
-        user.setUserName(userName);
+        user.setUserName(Utils.getRandomUUID());
+        user.setDeviceUID(Utils.getRandomUUID());
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
         user.setDeviceType(DeviceTypeCache.getIOSDeviceType());

@@ -117,7 +117,7 @@ public class ITunesPaymentServiceImplTest {
                                         iTunesResult.getOriginalTransactionId(), paymentType, paymentPolicy.getSubcost())).
                                                                                                                               when(applicationEventPublisher).publishEvent(any(PaymentEvent.class));
 
-        iTunesPaymentService.createSubmittedPayment(user, receipt, iTunesResult, iTunesPaymentService);
+        iTunesPaymentService.createSubmittedPayment(user, receipt, iTunesResult);
 
         verify(iTunesPaymentLockRepository, times(1)).saveAndFlush(any(ITunesPaymentLock.class));
         verify(paymentPolicyService, times(1)).findByCommunityAndAppStoreProductId(user.getCommunity(), iTunesResult.getProductId());
@@ -127,7 +127,7 @@ public class ITunesPaymentServiceImplTest {
         verifyNoMoreInteractions(iTunesPaymentLockRepository, paymentPolicyService, timeService, submittedPaymentService, applicationEventPublisher);
     }
 
-    @Test
+    @Test(expected = DataIntegrityViolationException.class)
     public void processInCaseOfDuplicates() throws Exception {
         final String base64EncodedAppStoreReceipt = "SOME_RECEIPT";
         final User user = getMockForEligibleUser(100, mock(Community.class));
@@ -136,14 +136,10 @@ public class ITunesPaymentServiceImplTest {
         when(iTunesResult.getExpireTime()).thenReturn(DateTimeUtils.moveDate(new Date(), DateTimeUtils.UTC_TIME_ZONE_ID, 1, DurationUnit.DAYS).getTime());
         when(iTunesPaymentLockRepository.saveAndFlush(any(ITunesPaymentLock.class))).thenThrow(new DataIntegrityViolationException(""));
 
-        iTunesPaymentService.createSubmittedPayment(user, base64EncodedAppStoreReceipt, iTunesResult, iTunesPaymentService);
-
-        verify(iTunesPaymentLockRepository, times(1)).saveAndFlush(any(ITunesPaymentLock.class));
-        verify(user, never()).setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        verifyNoMoreInteractions(iTunesPaymentLockRepository, paymentPolicyService, timeService, submittedPaymentService, applicationEventPublisher);
+        iTunesPaymentService.createSubmittedPayment(user, base64EncodedAppStoreReceipt, iTunesResult);
     }
 
-    @Test
+    @Test(expected = DataIntegrityViolationException.class)
     public void processInCaseOfDuplicates_ExpireTimeIsNull() throws Exception {
         final String base64EncodedAppStoreReceipt = "SOME_RECEIPT";
         Community community = mock(Community.class);
@@ -170,12 +166,7 @@ public class ITunesPaymentServiceImplTest {
          int nextSubPaymentSeconds = period.toNextSubPaymentSeconds(purchaseSeconds);
          time = DateTimeUtils.secondsToMillis(nextSubPaymentSeconds);
          */
-        iTunesPaymentService.createSubmittedPayment(user, base64EncodedAppStoreReceipt, iTunesResult, iTunesPaymentService);
-
-        verify(iTunesPaymentLockRepository, times(1)).saveAndFlush(any(ITunesPaymentLock.class));
-        verify(paymentPolicyService, times(1)).findByCommunityAndAppStoreProductId(user.getCommunity(), iTunesResult.getProductId());
-        verify(user, never()).setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        verifyNoMoreInteractions(iTunesPaymentLockRepository, paymentPolicyService, timeService, submittedPaymentService, applicationEventPublisher);
+        iTunesPaymentService.createSubmittedPayment(user, base64EncodedAppStoreReceipt, iTunesResult);
     }
 
     @Test

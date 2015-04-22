@@ -9,6 +9,8 @@ import mobi.nowtechnologies.server.persistence.domain.UrbanAirshipToken;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
@@ -21,6 +23,7 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -34,10 +37,13 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
+import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,27 +52,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
+import org.hamcrest.CustomMatcher;
+
 @Transactional
 public class AccCheckControllerTestIT extends AbstractControllerTestIT {
-
     @Resource
     private ChartRepository chartRepository;
     @Resource
     private UserRepository userRepository;
     @Resource
     private ChartDetailRepository chartDetailRepository;
-
     @Resource(name = "communityRepository")
     private CommunityRepository communityRepository;
-
     @Resource
     private UrbanAirshipTokenRepository urbanAirshipTokenRepository;
-
     @Resource
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
-
     @Resource
     private UserGroupRepository userGroupRepository;
+    @Value("${context.request.expires.minutes.time.range}")
+    private int[] timeRange;
 
     @Test
     public void testAccCheck_LatestVersion() throws Exception {
@@ -104,7 +109,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
 
     @Test
     public void testAccCheck_OnetimePayment() throws Exception {
-        String apiVersion = LATEST_SERVER_API_VERSION;
+        String apiVersion = "6.11";
 
         String communityUrl = "hl_uk";
         String userName = "zam1@ukr.net";
@@ -112,17 +117,54 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
         long purchase_date_ms = DateTimeUtils.moveDate(new Date(), DateTimeUtils.GMT_TIME_ZONE_ID, -1, DurationUnit.DAYS).getTime();
+        String appStoreProductId = "com.musicqubed.ios.hl-uk.onetime.0";
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("COMMUNITY_NAME", communityUrl)
                                                                                        .param("USER_NAME", userName)
                                                                                        .param("USER_TOKEN", userToken)
                                                                                        .param("TIMESTAMP", timestamp)
                                                                                        .param("TRANSACTION_RECEIPT",
-                                                                                              String.format("onetime:200:0:com.musicqubed.ios.hl-uk.onetime.0:1000000137405769:%s", purchase_date_ms)))
+                                                                                              String.format("onetime:200:0:%s:1000000137405769:%s", appStoreProductId, purchase_date_ms)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
                .andExpect(jsonPath("$.response.data[0].user.oneTimePayment").value(true));
+    }
 
+    @Test
+    public void testAccCheck_CreateITunesPaymentDetails() throws Exception {
+        String apiVersion = "6.12";
+
+        String communityUrl = "hl_uk";
+        String userName = "zam1@ukr.net";
+        Date now = new Date();
+        String timestamp = "" + now.getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+        long purchase_date_ms = DateTimeUtils.moveDate(now, DateTimeUtils.GMT_TIME_ZONE_ID, -1, DurationUnit.DAYS).getTime();
+        String appStoreProductId = "com.musicqubed.ios.hl-uk.onetime.0";
+
+        long expectedExpiresTime = new Date().getTime() + TimeUnit.MINUTES.toMillis(timeRange[0]);
+        String roundedExpectedExpiresTime = String.valueOf(expectedExpiresTime).substring(0, 9);
+        String appStoreReceipt = String.format("onetime:200:0:%s:1000000137405769:%s", appStoreProductId, purchase_date_ms);
+
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("COMMUNITY_NAME", communityUrl)
+                                                                                       .param("USER_NAME", userName)
+                                                                                       .param("USER_TOKEN", userToken)
+                                                                                       .param("TIMESTAMP", timestamp)
+                                                                                       .param("TRANSACTION_RECEIPT", appStoreReceipt))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
+               .andExpect(jsonPath("$.response.data[0].user.paymentType").value("iTunesSubscription"))
+               .andExpect(jsonPath("$.response.data[0].user.lastPaymentStatus").value("NONE"))
+               .andExpect(header().string("Expires", getStartsWithMatcher(roundedExpectedExpiresTime)));
+
+        User found = userRepository.findByUserNameAndCommunityUrl(userName, communityUrl);
+        ITunesPaymentDetails currentPaymentDetails = found.getCurrentPaymentDetails();
+        assertTrue(currentPaymentDetails.isActivated());
+        assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, currentPaymentDetails.getPaymentType());
+        assertEquals(PaymentDetailsStatus.NONE, currentPaymentDetails.getLastPaymentStatus());
+        assertEquals(appStoreReceipt, currentPaymentDetails.getAppStroreReceipt());
+        assertNull(currentPaymentDetails.getPaymentPolicy());
     }
 
     @Test
@@ -568,6 +610,16 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
                                                                                        .param("TIMESTAMP", timestamp)).
                    andExpect(status().isOk()).
                    andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").doesNotExist());
+    }
+
+
+    private CustomMatcher<String> getStartsWithMatcher(final String now) {
+        return new CustomMatcher<String>("Expires header should start with : " + now) {
+            @Override
+            public boolean matches(Object o) {
+                return ((String)o).startsWith(now);
+            }
+        };
     }
 
     private void setUserSelectedCharts(User user, int selectedChartId) {

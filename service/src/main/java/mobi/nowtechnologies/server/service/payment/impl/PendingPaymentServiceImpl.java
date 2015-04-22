@@ -133,6 +133,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 
     private boolean shouldNotPayIfOneTimePaymentPolicy(User user) {
         PaymentDetails details = user.getCurrentPaymentDetails();
+        // check for null
         PaymentPolicy policy = details.getPaymentPolicy();
         return details.getLastPaymentStatus() == SUCCESSFUL && policy.getPaymentPolicyType() == PaymentPolicyType.ONETIME;
     }
@@ -166,11 +167,15 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
         PendingPayment pendingPayment = new PendingPayment();
+        // PaymentPolicy is null
         PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicy(currentPaymentDetails);
         pendingPayment.setPaymentDetails(currentPaymentDetails);
+        // PaymentPolicy is null
         pendingPayment.setAmount(paymentPolicyDto.getSubcost());
+        // PaymentPolicy is null
         pendingPayment.setCurrencyISO(paymentPolicyDto.getCurrencyISO());
         pendingPayment.setPaymentSystem(currentPaymentDetails.getPaymentType());
+        // PaymentPolicy is null
         pendingPayment.setPeriod(new Period().withDuration(paymentPolicyDto.getDuration()).withDurationUnit(paymentPolicyDto.getDurationUnit()));
         pendingPayment.setUser(user);
         pendingPayment.setExternalTxId(NONE);

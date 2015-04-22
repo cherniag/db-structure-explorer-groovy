@@ -111,7 +111,7 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
             LOGGER.info("Trying to process list of [{}] users for communityURL [{}]", users.size(), communityURL);
 
             for (User user : users) {
-                final MigPaymentDetails currentActivePaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
+                final MigPaymentDetails currentActivePaymentDetails = user.getCurrentPaymentDetails();
 
                 String code = getSmsMessageCode(user, amountOfMoneyToUserNotification);
 

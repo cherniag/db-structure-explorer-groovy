@@ -26,16 +26,18 @@ public class CleanExpirePendingPaymentsJob {
             LogUtils.putClassNameMDC(this.getClass());
             LOGGER.info("[START] Clean Expire Pending Payments Job ...");
             List<PendingPayment> expiredPendingPayments = pendingPaymentService.getExpiredPendingPayments();
-            List<SubmittedPayment> cleanedPayments = new LinkedList<SubmittedPayment>();
+            int cleanedPaymentCount = 0;
             for (PendingPayment pendingPayment : expiredPendingPayments) {
                 PaymentSystemService paymentSystemService = paymentSystems.get(pendingPayment.getPaymentSystem());
                 try {
-                    cleanedPayments.add(paymentSystemService.commitPayment(pendingPayment, paymentSystemService.getExpiredResponse()));
+                    paymentSystemService.commitPayment(pendingPayment, paymentSystemService.getExpiredResponse());
+                    cleanedPaymentCount++;
                 } catch (Exception e) {
-                    LOGGER.warn("Can't remove expired pending payment with id:{} and txId:{}", pendingPayment.getI(), pendingPayment.getInternalTxId());
+                    LOGGER.error("Can't remove expired pending payment with id:{} and txId:{}, message:{}",
+                                 pendingPayment.getI(), pendingPayment.getInternalTxId(), e.getMessage());
                 }
             }
-            LOGGER.info("[DONE] Clean Expire Pending Payments Job has been finished with {} pending payments removed", cleanedPayments.size());
+            LOGGER.info("[DONE] Clean Expire Pending Payments Job has been finished with {} pending payments removed", cleanedPaymentCount);
         } catch (Exception e) {
             LOGGER.error("Error while cleaning expired pending payments. {}", e);
         } finally {

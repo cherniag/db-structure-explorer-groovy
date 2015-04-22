@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.service.itunes.ITunesResult;
  */
 public interface ITunesPaymentService {
 
-    void createSubmittedPayment(User user, String appStoreReceipt, ITunesResult result, ITunesPaymentService iTunesPaymentService);
+    void createSubmittedPayment(User user, String appStoreReceipt, ITunesResult result);
 
     void checkForDuplicates(int userId, long nextSubPaymentTimestamp);
 

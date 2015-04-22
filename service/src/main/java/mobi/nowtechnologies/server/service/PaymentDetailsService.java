@@ -81,8 +81,7 @@ public class PaymentDetailsService {
     @Resource
     OperatorRepository operatorRepository;
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
+    PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getPaymentPolicyId());
         Promotion promotion = user.getPotentialPromotion();

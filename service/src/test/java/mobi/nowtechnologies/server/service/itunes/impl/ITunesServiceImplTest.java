@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
@@ -30,6 +32,8 @@ public class ITunesServiceImplTest {
     ITunesPaymentService iTunesPaymentService;
     @Mock
     CommunityResourceBundleMessageSource messageSource;
+    @Mock
+    ITunesPaymentDetailsService iTunesPaymentDetailsService;
     @InjectMocks
     ITunesServiceImpl iTunesService;
     @Captor
@@ -45,7 +49,7 @@ public class ITunesServiceImplTest {
         final String receipt = "receipt";
 
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
-        userGroup.setCommunity(CommunityFactory.createCommunity());
+        userGroup.setCommunity(CommunityFactory.createCommunity("o2"));
 
         final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setId(1);
@@ -60,13 +64,13 @@ public class ITunesServiceImplTest {
 
         when(iTunesClient.verifyReceipt(configArgumentCaptor.capture(), eq(receipt))).thenReturn(iTunesResult);
 
-        doNothing().when(iTunesPaymentService).createSubmittedPayment(user, receipt, iTunesResult, iTunesPaymentService);
+        doNothing().when(iTunesPaymentService).createSubmittedPayment(user, receipt, iTunesResult);
 
-        iTunesService.processInAppSubscription(user, receipt);
+        iTunesService.processInAppSubscription(user, receipt, false);
 
         verify(iTunesClient, times(1)).verifyReceipt(configArgumentCaptor.capture(), eq(receipt));
         verify(iTunesResult, times(1)).isSuccessful();
-        verify(iTunesPaymentService, times(1)).createSubmittedPayment(user, receipt, iTunesResult, iTunesPaymentService);
+        verify(iTunesPaymentService, times(1)).createSubmittedPayment(user, receipt, iTunesResult);
 
         ITunesConnectionConfig config = configArgumentCaptor.getValue();
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, config.getUrl());
@@ -82,7 +86,7 @@ public class ITunesServiceImplTest {
         final String receipt = "receipt";
 
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
-        userGroup.setCommunity(CommunityFactory.createCommunity());
+        userGroup.setCommunity(CommunityFactory.createCommunity("o2"));
 
         final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setId(1);
@@ -97,13 +101,13 @@ public class ITunesServiceImplTest {
 
         when(iTunesClient.verifyReceipt(configArgumentCaptor.capture(), eq(receipt))).thenReturn(iTunesResult);
 
-        doNothing().when(iTunesPaymentService).createSubmittedPayment(user, receipt, iTunesResult, iTunesPaymentService);
+        doNothing().when(iTunesPaymentService).createSubmittedPayment(user, receipt, iTunesResult);
 
-        iTunesService.processInAppSubscription(user, receipt);
+        iTunesService.processInAppSubscription(user, receipt, false);
 
         verify(iTunesClient, times(1)).verifyReceipt(configArgumentCaptor.capture(), eq(receipt));
         verify(iTunesResult, times(1)).isSuccessful();
-        verify(iTunesPaymentService, times(1)).createSubmittedPayment(user, receipt, iTunesResult, iTunesPaymentService);
+        verify(iTunesPaymentService, times(1)).createSubmittedPayment(user, receipt, iTunesResult);
 
         ITunesConnectionConfig config = configArgumentCaptor.getValue();
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, config.getUrl());
@@ -117,12 +121,13 @@ public class ITunesServiceImplTest {
     @Test
     public void testFailure() throws Exception {
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
-        userGroup.setCommunity(CommunityFactory.createCommunity());
+        userGroup.setCommunity(CommunityFactory.createCommunity("o2"));
 
         final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setId(1);
         user.setBase64EncodedAppStoreReceipt("setBase64EncodedAppStoreReceipt");
         user.setUserGroup(userGroup);
+        user.getStatus().setName(UserStatus.LIMITED);
 
         when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL);
         when(messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
@@ -132,9 +137,9 @@ public class ITunesServiceImplTest {
 
         when(iTunesClient.verifyReceipt(any(ITunesConnectionConfig.class), eq(user.getBase64EncodedAppStoreReceipt()))).thenReturn(iTunesResult);
 
-        doNothing().when(iTunesPaymentService).createSubmittedPayment(user, user.getBase64EncodedAppStoreReceipt(), iTunesResult, iTunesPaymentService);
+        doNothing().when(iTunesPaymentService).createSubmittedPayment(user, user.getBase64EncodedAppStoreReceipt(), iTunesResult);
 
-        iTunesService.processInAppSubscription(user, null);
+        iTunesService.processInAppSubscription(user, null, false);
 
         verify(iTunesClient, times(1)).verifyReceipt(configArgumentCaptor.capture(), eq(user.getBase64EncodedAppStoreReceipt()));
         verify(iTunesResult, times(1)).isSuccessful();
@@ -148,4 +153,73 @@ public class ITunesServiceImplTest {
         verifyNoMoreInteractions(iTunesClient, iTunesPaymentService, messageSource);
     }
 
+    @Test
+    public void processInAppSubscriptionO2CommunityUserWithoutActivePaymentDetails() throws Exception {
+        final String receipt = "RECEIPT";
+        final User user = mock(User.class);
+        when(user.hasActivePaymentDetails()).thenReturn(false);
+        ITunesResult iTunesResult = mock(ITunesResult.class);
+        when(iTunesClient.verifyReceipt(configArgumentCaptor.capture(), eq(receipt))).thenReturn(iTunesResult);
+
+        iTunesService.processInAppSubscription(user, receipt, false);
+
+        verify(iTunesPaymentDetailsService, never()).assignAppStoreReceipt(eq(user), anyString());
+        ITunesConnectionConfig connectionConfig = configArgumentCaptor.getValue();
+        verify(iTunesClient, times(1)).verifyReceipt(connectionConfig, receipt);
+    }
+
+    @Test
+    public void processInAppSubscriptionO2CommunityUserWithActivePaymentDetails() throws Exception {
+        final String receipt = "RECEIPT";
+        final User user = mock(User.class);
+        when(user.isO2CommunityUser()).thenReturn(true);
+        when(user.hasActivePaymentDetails()).thenReturn(true);
+
+        iTunesService.processInAppSubscription(user, receipt, false);
+
+        verify(iTunesPaymentDetailsService, never()).assignAppStoreReceipt(eq(user), anyString());
+        verify(iTunesClient, never()).verifyReceipt(configArgumentCaptor.capture(), anyString());
+    }
+
+    @Test
+    public void processInAppSubscriptionO2CommunityUserWithoutActivePaymentDetailsAndNullReceiptAndDoesNotHaveAppReceiptInLimitedStat() throws Exception {
+        final String receipt = null;
+        final User user = mock(User.class);
+        when(user.isO2CommunityUser()).thenReturn(true);
+        when(user.hasActivePaymentDetails()).thenReturn(false);
+        when(user.hasAppReceiptAndIsInLimitedState()).thenReturn(false);
+
+        iTunesService.processInAppSubscription(user, null, false);
+
+        verify(iTunesPaymentDetailsService, never()).assignAppStoreReceipt(eq(user), anyString());
+        verify(iTunesClient, never()).verifyReceipt(configArgumentCaptor.capture(), anyString());
+    }
+
+    @Test
+    public void processInAppSubscriptionO2CommunityUserWithoutActivePaymentDetailsAndNullReceiptAndHasAppReceiptInLimitedState() throws Exception {
+        final String receipt = "RECEIPT";
+        final User user = mock(User.class);
+        when(user.isO2CommunityUser()).thenReturn(true);
+        when(user.hasActivePaymentDetails()).thenReturn(false);
+        when(user.hasAppReceiptAndIsInLimitedState()).thenReturn(true);
+        when(user.getBase64EncodedAppStoreReceipt()).thenReturn(receipt);
+        ITunesResult iTunesResult = mock(ITunesResult.class);
+        when(iTunesClient.verifyReceipt(configArgumentCaptor.capture(), eq(receipt))).thenReturn(iTunesResult);
+
+        iTunesService.processInAppSubscription(user, null, false);
+
+        verify(iTunesPaymentDetailsService, never()).assignAppStoreReceipt(eq(user), anyString());
+        ITunesConnectionConfig connectionConfig = configArgumentCaptor.getValue();
+        verify(iTunesClient, times(1)).verifyReceipt(connectionConfig, receipt);
+    }
+
+    @Test
+    public void processInAppSubscriptionAndCreateITunesPD() throws Exception {
+        final String receipt = "RECEIPT";
+        final User user = mock(User.class);
+
+        iTunesService.processInAppSubscription(user, receipt, true);
+
+        verify(iTunesPaymentDetailsService).assignAppStoreReceipt(user, receipt);
+    }
 }
