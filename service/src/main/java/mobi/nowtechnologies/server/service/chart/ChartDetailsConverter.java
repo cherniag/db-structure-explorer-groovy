@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.AppConstants;
@@ -70,9 +69,7 @@ public class ChartDetailsConverter {
 
         Drm drm = getDrm(media);
 
-        MediaFile headerFile = media.getHeaderFile();
         Integer audioSize = media.getAudioSize();
-        int headerSize = media.getHeaderSize();
         Chart chart = chartDetail.getChart();
 
         byte pos = getPosition(chartDetail, chart);
@@ -87,20 +84,12 @@ public class ChartDetailsConverter {
         chartDetailDto.setGenre1(chart.getGenre().getName());
         chartDetailDto.setGenre2(media.getGenre().getName());
 
-        chartDetailDto.setHeaderSize(headerSize);
         chartDetailDto.setImageLargeSize(media.getImageLargeSize());
         chartDetailDto.setImageSmallSize(media.getImageSmallSize());
         chartDetailDto.setInfo(chartDetail.getInfo());
         chartDetailDto.setMedia(media.getIsrcTrackId());
         chartDetailDto.setTitle(media.getTitle());
-        chartDetailDto.setTrackSize(headerSize + audioSize - 2);
         chartDetailDto.setChartDetailVersion(chartDetail.getVersionAsPrimitive());
-        chartDetailDto.setHeaderVersion(headerFile != null ?
-                                        headerFile.getVersionAsPrimitive() :
-                                        0);
-        chartDetailDto.setAudioVersion(media.getAudioFile().getVersionAsPrimitive());
-        chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersionAsPrimitive());
-        chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersionAsPrimitive());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
         chartDetailDto.setAmazonUrl(getAmazonUrl(media.getAmazonUrl(), defaultAmazonUrl, community.getRewriteUrlParameter()));
@@ -114,8 +103,7 @@ public class ChartDetailsConverter {
         return chartDetailDto;
     }
 
-    public PlaylistDto toPlaylistDto(ChartDetail chartUpdateMarker, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked,
-                                     boolean withChartUpdateId) {
+    public PlaylistDto toPlaylistDto(ChartDetail chartUpdateMarker, Resolution resolution, Community community, final boolean switchable, boolean withChartUpdateId) {
         LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartUpdateMarker, switchable);
 
         PlaylistDto playlistDto = new PlaylistDto();
@@ -136,10 +124,6 @@ public class ChartDetailsConverter {
         if (chartUpdateMarker.getBadgeId() != null && resolution != null) {
             String badgeFileName = badgesService.getBadgeFileName(chartUpdateMarker.getBadgeId(), community, resolution);
             playlistDto.setBadgeIcon(badgeFileName);
-        }
-
-        if (isPlayListLockSupported) {
-            playlistDto.setLocked(areAllTracksLocked);
         }
 
         if (withChartUpdateId) {
