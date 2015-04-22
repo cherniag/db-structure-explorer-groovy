@@ -37,6 +37,7 @@ import org.springframework.web.util.WebUtils;
 
 @Controller
 public class PaymentsMigController extends CommonController {
+    public static final String PAGE_VERIFY = "/verify.html";
 
     public static final String VIEW_PAYMENTS_PSMS = "/psms";
     public static final String VIEW_VERIFY_PAYMENTS_PSMS = "/psms_verify";

@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -59,7 +58,6 @@ public class PaymentsPayPalController extends CommonController {
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
-    private UserService userService;
     private UserRepository userRepository;
 
     @Resource
@@ -155,10 +153,6 @@ public class PaymentsPayPalController extends CommonController {
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
         this.paymentPolicyService = paymentPolicyService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     public void setUserRepository(UserRepository userRepository) {
