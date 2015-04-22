@@ -113,7 +113,7 @@ public class PaymentsCreditCardController extends CommonController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             modelAndView.setViewName(scopePrefix + VIEW_CREATE_PAYMENT_DETAIL_FAIL);
         } else {
-            paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+            paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getUserId());
             modelAndView.setViewName(scopePrefix + VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
         }
 

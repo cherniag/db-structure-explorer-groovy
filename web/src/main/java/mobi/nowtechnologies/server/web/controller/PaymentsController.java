@@ -184,9 +184,7 @@ public class PaymentsController extends CommonController {
     public ModelAndView getOneClickSubscriptionSuccessfulPage(@PathVariable("scopePrefix") String scopePrefix) {
         logger.info("Get success activate Payment Details page for user id:{} and payment details id:{}", getUserId());
 
-        final int userId = getSecurityContextDetails().getUserId();
-
-        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findByUserIdAndPaymentDetailsType(userId, PaymentDetailsType.PAYMENT);
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findByUserIdAndPaymentDetailsType(getUserId(), PaymentDetailsType.PAYMENT);
 
         final PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = convertToDto(paymentDetailsList);
 

@@ -61,7 +61,7 @@ public class PaymentsMigController extends CommonController {
                                            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
         PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(policyId);
 
-        logger.info("Get MIG payments page for user id:{} and payment policy id: {}", getSecurityContextDetails().getUserId(), paymentPolicy.getId());
+        logger.info("Get MIG payments page for user id:{} and payment policy id: {}", getUserId(), paymentPolicy.getId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PSMS);
         modelAndView.addObject(PSmsDto.NAME, new PSmsDto());
@@ -74,7 +74,7 @@ public class PaymentsMigController extends CommonController {
     @RequestMapping(value = PAGE_PAYMENTS_PSMS, method = RequestMethod.POST)
     public ModelAndView createMigPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, @Valid @ModelAttribute(PSmsDto.NAME) PSmsDto dto, BindingResult result,
                                                 @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-        logger.info("Get create MIG payments details page for user id:{}", getSecurityContextDetails().getUserId());
+        logger.info("Get create MIG payments details page for user id:{}", getUserId());
 
         if (result.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PSMS);
@@ -82,14 +82,14 @@ public class PaymentsMigController extends CommonController {
             return modelAndView;
         }
 
-        paymentDetailsService.createMigPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+        paymentDetailsService.createMigPaymentDetails(dto, communityUrl.getValue(), getUserId());
 
         return new ModelAndView(REDIRECT + REDIRECT_VERIFY_PAYMENTS_PSMS);
     }
 
     @RequestMapping(value = PAGE_VERIFY_PAYMENTS_PSMS, method = RequestMethod.GET)
     public ModelAndView getVerifySmsPage(@PathVariable("scopePrefix") String scopePrefix) {
-        logger.info("Get verify MIG payments page for user id:{}", getSecurityContextDetails().getUserId());
+        logger.info("Get verify MIG payments page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_VERIFY_PAYMENTS_PSMS);
         MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(getUserId());
@@ -103,12 +103,12 @@ public class PaymentsMigController extends CommonController {
 
     @RequestMapping(value = PAGE_VERIFY_PAYMENTS_PSMS, method = RequestMethod.POST)
     public ModelAndView commitMigPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, @ModelAttribute(VerifyDto.NAME) VerifyDto dto) {
-        logger.info("Get commit MIG payments page for user id:{}", getSecurityContextDetails().getUserId());
+        logger.info("Get commit MIG payments page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_VERIFY_PAYMENTS_PSMS);
         modelAndView.addObject(PSmsDto.NAME, new PSmsDto());
         try {
-            paymentDetailsService.commitMigPaymentDetails(dto.getPin(), getSecurityContextDetails().getUserId());
+            paymentDetailsService.commitMigPaymentDetails(dto.getPin(), getUserId());
             modelAndView.addObject("result", "successful");
         } catch (ServiceException e) {
             modelAndView.addObject("result", FAIL);
@@ -122,7 +122,7 @@ public class PaymentsMigController extends CommonController {
     @ResponseBody
     Boolean resendPsms(HttpServletRequest request, @PathVariable("scopePrefix") String scopePrefix, @ModelAttribute(PSmsDto.NAME) PSmsDto dto,
                        @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-        logger.info("Post resend PIN for user id:{} and phone: {}", getSecurityContextDetails().getUserId(), dto.getPhone());
+        logger.info("Post resend PIN for user id:{} and phone: {}", getUserId(), dto.getPhone());
 
         return paymentDetailsService.resendPin(getUserId(), dto.getPhone(), communityUrl.getValue());
     }

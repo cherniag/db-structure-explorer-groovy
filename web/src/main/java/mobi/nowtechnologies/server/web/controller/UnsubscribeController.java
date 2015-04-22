@@ -47,7 +47,7 @@ public class UnsubscribeController extends CommonController {
 
     @RequestMapping(value = SCOPE_PREFIX + "/unsubscribe.html", method = RequestMethod.GET)
     public ModelAndView getUnsubscribePage(@PathVariable("scopePrefix") String scopePrefix) {
-        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
+        User user = userRepository.findOne(getUserId());
 
         logger.info("Get unsubscribe page for user id:{}", user.getId());
 
@@ -60,16 +60,16 @@ public class UnsubscribeController extends CommonController {
 
     @RequestMapping(value = SCOPE_PREFIX + "/unsubscribeConfirmation.html", method = RequestMethod.GET)
     public ModelAndView getUnsubscribeConfirmationPage(@PathVariable("scopePrefix") String scopePrefix) {
-        logger.info("Get unsubscribe confirmation page for user id:{}", getSecurityContextDetails().getUserId());
+        logger.info("Get unsubscribe confirmation page for user id:{}", getUserId());
 
         return new ModelAndView(scopePrefix + "/unsubscribeConfirmation");
     }
 
     @RequestMapping(value = PAGE_UNSUBSCRIBE_BY_PAYPAL, method = RequestMethod.GET)
     public ModelAndView getUnsubscribePageForPayPal(@PathVariable("scopePrefix") String scopePrefix) {
-        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
+        User user = userRepository.findOne(getUserId());
 
-        logger.info("Get unsubscribe PayPal page for user id:{}", getSecurityContextDetails().getUserId());
+        logger.info("Get unsubscribe PayPal page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + "/unsubscribeByPayPal");
         if (user != null && user.isUnsubscribedUser()) {
@@ -87,14 +87,14 @@ public class UnsubscribeController extends CommonController {
     @RequestMapping(value = SCOPE_PREFIX + "/unsubscribe.html", method = RequestMethod.POST)
     public ModelAndView unsubscribe(@PathVariable("scopePrefix") String scopePrefix, @Valid @ModelAttribute(UnsubscribeDto.NAME) UnsubscribeDto dto, BindingResult result) {
 
-        logger.info("Post unsubscribe page for user id:{}", getSecurityContextDetails().getUserId());
+        logger.info("Post unsubscribe page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + "/unsubscribe");
 
         if (result.hasErrors()) {
             modelAndView.addObject("result", "fail");
         } else {
-            userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
+            userService.unsubscribeUser(getUserId(), dto);
             modelAndView.addObject("result", "successful");
         }
         return modelAndView;
@@ -102,7 +102,7 @@ public class UnsubscribeController extends CommonController {
 
     @RequestMapping(value = SCOPE_PREFIX + "/unsubscribeAndRedirect.html", method = RequestMethod.POST)
     public ModelAndView unsubscribeAndRedirect(@PathVariable("scopePrefix") String scopePrefix, @Valid @ModelAttribute(UnsubscribeDto.NAME) UnsubscribeDto dto, BindingResult result) {
-        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
+        User user = userRepository.findOne(getUserId());
 
         logger.info("Post unsubscribe and redirect page for user id:{}", user.getId());
 
@@ -113,7 +113,7 @@ public class UnsubscribeController extends CommonController {
             modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
             return modelAndView;
         } else {
-            userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
+            userService.unsubscribeUser(getUserId(), dto);
             ModelAndView modelAndView = new ModelAndView(scopePrefix + "/redirectAfterUnsubscribe");
             modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
             return modelAndView;

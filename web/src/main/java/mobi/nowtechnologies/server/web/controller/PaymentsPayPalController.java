@@ -74,7 +74,7 @@ public class PaymentsPayPalController extends CommonController {
 
         if (StringUtils.hasText(result)) {
             if (SUCCESSFUL_RESULT.equals(result) && StringUtils.hasText(token)) {
-                paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
+                paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getUserId());
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
             PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
@@ -93,7 +93,7 @@ public class PaymentsPayPalController extends CommonController {
         boolean paymentEnabled = communityResourceBundleMessageSource.readBoolean(communityUrl, "web.portal.social.info.for.paypal.enabled", false);
 
         if (paymentEnabled) {
-            Integer userId = getSecurityContextDetails().getUserId();
+            Integer userId = getUserId();
             List<SocialNetworkInfo> socialNetworkInfo = socialNetworkInfoRepository.findByUserId(userId);
             Assert.isTrue(!socialNetworkInfo.isEmpty(), "No social info for " + userId);
 
@@ -105,7 +105,7 @@ public class PaymentsPayPalController extends CommonController {
 
     @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)
     public String startPaypal() {
-        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
+        User user = userRepository.findOne(getUserId());
 
         logger.info("Get PayPal start to pay for user id:{}", user.getId());
 
@@ -130,7 +130,7 @@ public class PaymentsPayPalController extends CommonController {
                                                                             .append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);
         dto.setSuccessUrl(callbackUrl + SUCCESSFUL_RESULT);
-        PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+        PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getUserId());
         return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
     }
 

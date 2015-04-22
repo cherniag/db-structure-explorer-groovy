@@ -35,7 +35,7 @@ public abstract class CommonController implements MessageSourceAware {
 
     protected MessageSource messageSource;
 
-    protected SecurityContextDetails getSecurityContextDetails() {
+    private SecurityContextDetails getSecurityContextDetails() {
         return (SecurityContextDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 

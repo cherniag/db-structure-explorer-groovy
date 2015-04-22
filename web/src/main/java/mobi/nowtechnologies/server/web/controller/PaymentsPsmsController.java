@@ -47,7 +47,7 @@ public class PaymentsPsmsController extends CommonController {
     public ModelAndView getPsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(POLICY_REQ_PARAM) Integer policyId) {
         logger.info("Create [{}] payment details by paymentPolicy.id=[{}]", new Object[] {policyId});
 
-        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
+        User user = userRepository.findOne(getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
         PaymentDetails paymentDetails = createPaymentDetails(user, policy);
