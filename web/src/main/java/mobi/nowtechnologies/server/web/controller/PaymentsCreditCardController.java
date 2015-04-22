@@ -74,9 +74,13 @@ public class PaymentsCreditCardController extends CommonController {
     }
 
     @RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.POST)
-    public ModelAndView postCreditCardPaymentsPreview(@PathVariable("scopePrefix") String scopePrefix, @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
-                                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
+    public ModelAndView postCreditCardPaymentsPreview(@PathVariable("scopePrefix") String scopePrefix,
+                                                      @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto,
+                                                      BindingResult result,
+                                                      Locale locale) {
         PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(creditCardDto.getPaymentPolicyId());
+
+        logger.info("Post Credit Card Payments Preview page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addAllObjects(CreditCardDto.staticData);
@@ -102,6 +106,8 @@ public class PaymentsCreditCardController extends CommonController {
                                                        @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
                                                        @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
         ModelAndView modelAndView = new ModelAndView();
+
+        logger.info("Post Create Payment Details on Credit Card Payments page for user id:{}", getUserId());
 
         if (result.hasErrors()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

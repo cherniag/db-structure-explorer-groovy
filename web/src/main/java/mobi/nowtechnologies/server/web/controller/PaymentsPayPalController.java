@@ -70,6 +70,8 @@ public class PaymentsPayPalController extends CommonController {
                                       @CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
         ModelAndView modelAndModel = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PAYPAL);
 
+        logger.info("Get PayPal page for user id:{} and result: {}", getUserId(), result);
+
         if (StringUtils.hasText(result)) {
             if (SUCCESSFUL_RESULT.equals(result) && StringUtils.hasText(token)) {
                 paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
@@ -104,6 +106,9 @@ public class PaymentsPayPalController extends CommonController {
     @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)
     public String startPaypal() {
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
+
+        logger.info("Get PayPal start to pay for user id:{}", user.getId());
+
         if (user.isSubscribedUserByPaymentType(PAYPAL_TYPE)) {
             return REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
         }
@@ -115,6 +120,8 @@ public class PaymentsPayPalController extends CommonController {
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)
     public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, @ModelAttribute(PayPalDto.NAME) PayPalDto dto,
                                              @CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
+        logger.info("Post Create PayPal Payment Details for user id:{} and payment policy", getUserId(), dto.getPaymentPolicyId());
+
         PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
         dto.setBillingAgreementDescription(messageSource.getMessage("pay.paypal.billing.agreement.description",
                                                                     new Object[] {paymentPolicyDto.getDuration(), paymentPolicyDto.getDurationUnit(), paymentPolicyDto.getSubcost()}, locale));

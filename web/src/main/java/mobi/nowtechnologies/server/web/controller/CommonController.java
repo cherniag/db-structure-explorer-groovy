@@ -31,7 +31,7 @@ public abstract class CommonController implements MessageSourceAware {
     public static final String START_PARAM_DELIM = "?";
     public static final String PAGE_EXT = ".html";
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MessageSource messageSource;
 

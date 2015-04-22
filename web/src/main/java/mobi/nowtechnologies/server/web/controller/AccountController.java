@@ -16,9 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -35,9 +32,6 @@ import org.springframework.web.util.WebUtils;
  */
 @Controller
 public class AccountController extends CommonController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
-
     private UserService userService;
     private UserRepository userRepository;
     private String specificCommunityResourcesFolderPath;
@@ -67,7 +61,7 @@ public class AccountController extends CommonController {
 
     @RequestMapping(value = "account.html", method = RequestMethod.GET)
     public ModelAndView getAccountPage(HttpServletRequest request, Locale locale) {
-        LOGGER.debug("input parameters request [{}]", request);
+        logger.debug("input parameters request [{}]", request);
 
         int userId = getUserId();
 
@@ -79,13 +73,13 @@ public class AccountController extends CommonController {
 
         ModelAndView modelAndView = getAccountPageModelView(locale, accountDto, communityUrl);
 
-        LOGGER.debug("Output parameter modelAndView=[{}]", modelAndView);
+        logger.debug("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
     }
 
     @RequestMapping(value = "change_account.html", method = RequestMethod.GET)
     public ModelAndView getEditableAccountPage(HttpServletRequest request, Locale locale) {
-        LOGGER.debug("input parameters request [{}]", request);
+        logger.debug("input parameters request [{}]", request);
 
         int userId = getUserId();
 
@@ -100,14 +94,14 @@ public class AccountController extends CommonController {
         ModelAndView modelAndView = new ModelAndView("change_account");
         modelAndView.getModelMap().put(AccountDto.ACCOUNT_DTO, accountDto);
 
-        LOGGER.debug("Output parameter modelAndView=[{}]", modelAndView);
+        logger.debug("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
     }
 
     @RequestMapping(value = "change_account.html", method = RequestMethod.POST)
     public ModelAndView saveAccountDetails(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute(AccountDto.ACCOUNT_DTO) AccountDto accountDto,
                                            BindingResult bindingResult) {
-        LOGGER.debug("input parameters request [{}]", request);
+        logger.debug("input parameters request [{}]", request);
 
         ModelAndView modelAndView;
         if (bindingResult.hasErrors()) {
@@ -119,23 +113,23 @@ public class AccountController extends CommonController {
 
             modelAndView = new ModelAndView("redirect:account.html");
         }
-        LOGGER.debug("Output parameter modelAndView=[{}]", modelAndView);
+        logger.debug("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
     }
 
     private ModelAndView getAccountPageModelView(Locale locale, AccountDto accountDto, String communityUrl) {
-        LOGGER.debug("input parameters locale, accountDto, communityUrl: [{}], [{}], [{}]", new Object[] {locale, accountDto, communityUrl});
+        logger.debug("input parameters locale, accountDto, communityUrl: [{}], [{}], [{}]", new Object[] {locale, accountDto, communityUrl});
         accountDto = getLocalizedAccountDto(locale, accountDto, communityUrl);
 
         ModelAndView modelAndView = new ModelAndView("account");
         modelAndView.getModelMap().put(AccountDto.ACCOUNT_DTO, accountDto);
 
-        LOGGER.debug("Output parameter modelAndView=[{}]", modelAndView);
+        logger.debug("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
     }
 
     private AccountDto getLocalizedAccountDto(Locale locale, AccountDto accountDto, String communityUrl) {
-        LOGGER.debug("input parameters locale, accountDto, communityUrl: [{}], [{}], [{}]", new Object[] {locale, accountDto, communityUrl});
+        logger.debug("input parameters locale, accountDto, communityUrl: [{}], [{}], [{}]", new Object[] {locale, accountDto, communityUrl});
 
         final String potentialPromotion = accountDto.getPotentialPromotion();
 
@@ -153,7 +147,7 @@ public class AccountController extends CommonController {
         accountDto.setPhoneNumber(phoneNumber);
         accountDto.setPotentialPromotion(potentialPromotionImgPath);
 
-        LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
+        logger.debug("Output parameter accountDto=[{}]", accountDto);
         return accountDto;
     }
 

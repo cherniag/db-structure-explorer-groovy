@@ -11,6 +11,7 @@ public class TermsController extends CommonController {
 
     @RequestMapping(value = "terms.html", method = RequestMethod.GET)
     public ModelAndView getTermsPage(@RequestParam(required = false, value = "show_back_button", defaultValue = "1") String showBackButton) {
+        logger.info("Get Terms page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView("terms");
 

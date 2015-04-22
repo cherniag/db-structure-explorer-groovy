@@ -44,12 +44,13 @@ public class PlaylistController extends CommonController {
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
     public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
         User user = userRepository.findOne(getUserId());
+
+        logger.info("Get Playlist page for user id:{}", user.getId());
+
         if (user.isLimited()) {
             return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
         } else {
-            return new ModelAndView(VIEW_PLAYLIST).
-                                                      addObject("playlistType", playlistType).
-                                                      addObject("userID", getUserId());
+            return new ModelAndView(VIEW_PLAYLIST).addObject("playlistType", playlistType).addObject("userID", getUserId());
         }
     }
 
@@ -57,12 +58,15 @@ public class PlaylistController extends CommonController {
     public ModelAndView getPlaylists(@PathVariable("playlistType") ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL)
         throws IOException {
         User user = userService.getUserWithSelectedCharts(getUserId());
+        logger.info("Get Playlists page for user id:{}", user.getId());
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
         return new ModelAndView().addObject("playlists", PlaylistDto.toList(user, charts, env.get(URL_TO_CHART_COVER)));
     }
 
     @RequestMapping(value = JSON_PLAYLIST + "/{playlistID}", produces = "application/json", method = RequestMethod.PUT)
     public ModelAndView updatePlaylist(@PathVariable("playlistID") Integer playlistId) throws IOException {
+        logger.info("Put update Playlist page for user id:{}", getUserId());
+
         chartService.selectChartByType(getUserId(), playlistId);
         List<PlaylistDto> playlists = null;
 
@@ -71,6 +75,8 @@ public class PlaylistController extends CommonController {
 
     @RequestMapping(value = JSON_PLAYLIST_TRACKS, produces = "application/json", method = RequestMethod.GET)
     public ModelAndView getTracks(@PathVariable("playlistId") Integer playlistID) {
+        logger.info("Get tracks Playlist page for user id:{}", getUserId());
+
         List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(playlistID, new Date(), false);
         List<TrackDto> tracks = TrackDto.toList(chartDetails, env.get(URL_TO_TRACKS));
         return new ModelAndView().addObject("tracks", tracks);

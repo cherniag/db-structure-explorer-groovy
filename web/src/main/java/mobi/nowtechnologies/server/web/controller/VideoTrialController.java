@@ -7,9 +7,6 @@ import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,15 +16,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class VideoTrialController extends CommonController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(VideoTrialController.class);
-
     private UserService userService;
     private UserRepository userRepository;
 
     @RequestMapping(value = "videotrial.html", method = RequestMethod.GET)
     public ModelAndView getVideoFreeTrial(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale,
                                           @RequestParam(required = false, value = "return_url", defaultValue = "account.html") String returnUrl) {
+        logger.info("Get Vide Free Trial page for user id:{}", getUserId());
 
         ModelAndView mav = new ModelAndView("videotrial");
 
@@ -42,7 +37,7 @@ public class VideoTrialController extends CommonController {
 
         int userId = getUserId();
 
-        LOGGER.info("Calling saveVideoFreeTrial userId - {}", userId);
+        logger.info("Calling saveVideoFreeTrial userId - {}", userId);
 
         User user = userRepository.findOne(userId);
 
@@ -54,12 +49,12 @@ public class VideoTrialController extends CommonController {
             userService.activateVideoAudioFreeTrialAndAutoOptIn(user);
         } else {
             // free trial was already activated
-            LOGGER.warn("VideoFreeTrial was already activated for user ({}) but the page was called", userId);
+            logger.warn("VideoFreeTrial was already activated for user ({}) but the page was called", userId);
             mav.addObject("hasErrors", "true");
             return mav;
         }
 
-        LOGGER.info("User ({}) successfully activated video free trial", userId);
+        logger.info("User ({}) successfully activated video free trial", userId);
 
         return mav;
     }

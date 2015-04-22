@@ -13,9 +13,6 @@ import mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl;
 import static mobi.nowtechnologies.server.web.controller.PaymentsController.POLICY_REQ_PARAM;
 import static mobi.nowtechnologies.server.web.controller.PaymentsController.SCOPE_PREFIX;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +28,6 @@ public class PaymentsPsmsController extends CommonController {
 
     public static final String PAGE_PAYMENTS_PSMS = SCOPE_PREFIX + VIEW_PAYMENTS_PSMS + PAGE_EXT;
     public static final String PAGE_PAYMENTS_PSMS_CONFIRM = SCOPE_PREFIX + VIEW_PAYMENTS_PSMS_CONFIRM + PAGE_EXT;
-
-    private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
 
     private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
@@ -50,7 +45,7 @@ public class PaymentsPsmsController extends CommonController {
 
     @RequestMapping(value = {PAGE_PAYMENTS_PSMS_CONFIRM}, method = RequestMethod.GET)
     public ModelAndView getPsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(POLICY_REQ_PARAM) Integer policyId) {
-        LOG.info("Create [{}] payment details by paymentPolicy.id=[{}]", new Object[] {policyId});
+        logger.info("Create [{}] payment details by paymentPolicy.id=[{}]", new Object[] {policyId});
 
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);

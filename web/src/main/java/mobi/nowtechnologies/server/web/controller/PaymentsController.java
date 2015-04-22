@@ -27,8 +27,6 @@ import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_COD
 import java.util.List;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import org.springframework.stereotype.Controller;
@@ -48,7 +46,6 @@ public class PaymentsController extends CommonController {
     public static final String ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT = SCOPE_PREFIX + PATH_DELIM + "paymentDetails" + PATH_DELIM + "{paymentDetailsId}";
     public static final String SUCCESS_ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT = SCOPE_PREFIX + "/one_click_subscription_successful.html";
     public static final String PAGE_MANAGE_PAYMENTS_INAPP = PATH_DELIM + VIEW_MANAGE_PAYMENTS_INAPP + PAGE_EXT;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentsController.class);
     private static final String PAYMENTS_NOTE_MSG_CODE = "pays.page.h1.options.note";
 
     private PaymentDetailsService paymentDetailsService;
@@ -92,7 +89,7 @@ public class PaymentsController extends CommonController {
     protected ModelAndView getManagePaymentsPage(String viewName, Locale locale, String scopePrefix) {
         User user = userRepository.findOne(getUserId());
 
-        LOGGER.info("Request for  page[{}] with user id [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, user.getId(), locale);
+        logger.info("Request for page[{}] with user id [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, user.getId(), locale);
 
         PaymentsPage paymentsPage = new PaymentsPage();
         // the following check was added to show a static page instead of the
@@ -101,7 +98,7 @@ public class PaymentsController extends CommonController {
         String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage.for.providers", null, locale);
         if (user.isVFNZCommunityUser() && displayHoldingPageForProvider(user.getProvider(), disableVFPaymentOptions)) {
             // for vf users we display a not implemented page until the vf billing pages are done
-            LOGGER.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
+            logger.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
             return new ModelAndView(scopePrefix + "/notimplemented");
         }
         if (!paymentRequired(user, user.getCommunity())) {
@@ -176,17 +173,16 @@ public class PaymentsController extends CommonController {
 
     @RequestMapping(value = {ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.POST)
     public ModelAndView activatePaymentDetailsByPayment(@PathVariable("scopePrefix") String scopePrefix, @PathVariable("paymentDetailsId") Long paymentDetailsId) {
-        LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
+        logger.info("Post to activate Payment Details for user id:{} and payment details id:{}", getUserId(), paymentDetailsId);
 
         paymentDetailsService.activatePaymentDetailsByPayment(paymentDetailsId);
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/" + scopePrefix + "/one_click_subscription_successful.html");
-        LOGGER.debug("Output parameter [{}]", modelAndView);
-        return modelAndView;
+        return new ModelAndView("redirect:/" + scopePrefix + "/one_click_subscription_successful.html");
     }
 
     @RequestMapping(value = {SUCCESS_ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.GET)
     public ModelAndView getOneClickSubscriptionSuccessfulPage(@PathVariable("scopePrefix") String scopePrefix) {
+        logger.info("Get success activate Payment Details page for user id:{} and payment details id:{}", getUserId());
 
         final int userId = getSecurityContextDetails().getUserId();
 
@@ -202,7 +198,6 @@ public class PaymentsController extends CommonController {
             modelAndView.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
         }
 
-        LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
     }
 
