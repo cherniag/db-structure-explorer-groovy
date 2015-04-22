@@ -14,7 +14,7 @@ public interface MigPaymentService extends PaymentSystemService {
 
     public MigPaymentDetails createPaymentDetails(String phoneNumber, User user, Community community, PaymentPolicy paymentPolicy) throws ServiceException;
 
-    public MigPaymentDetails commitPaymnetDetails(User user, String verificationPin) throws ServiceException;
+    public MigPaymentDetails commitPaymentDetails(User user, String verificationPin) throws ServiceException;
 
     public SubmittedPayment commitPayment(String messageId, String status, String descriptionError) throws ServiceException;
 

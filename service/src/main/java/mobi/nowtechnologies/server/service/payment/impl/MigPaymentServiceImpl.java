@@ -118,9 +118,9 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public MigPaymentDetails commitPaymnetDetails(User user, String verificationPin) throws ServiceException {
+    public MigPaymentDetails commitPaymentDetails(User user, String verificationPin) throws ServiceException {
+        LOGGER.info("Verifying pin:{} from mig for user id:{}", verificationPin, user.getId());
 
-        LOGGER.info("Verifying pin from mig...");
         if (StringUtils.hasText(verificationPin) && user.getPin().equals(verificationPin)) {
 
             MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(user.getId());
@@ -128,7 +128,8 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 
             paymentDetails = (MigPaymentDetails) super.commitPaymentDetails(user, paymentDetails);
 
-            LOGGER.info("Verification passed. Mig payment details has been created.");
+            LOGGER.info("Verification passed. Mig payment details has been created for user id:{}", user.getId());
+
             return paymentDetails;
         }
 

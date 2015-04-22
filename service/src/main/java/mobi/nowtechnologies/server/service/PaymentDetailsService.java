@@ -211,7 +211,7 @@ public class PaymentDetailsService {
     @Transactional(propagation = Propagation.REQUIRED)
     public MigPaymentDetails commitMigPaymentDetails(String pin, int userId) {
         User user = userRepository.findOne(userId);
-        return migPaymentService.commitPaymnetDetails(user, pin);
+        return migPaymentService.commitPaymentDetails(user, pin);
     }
 
     @Transactional(readOnly = true)
