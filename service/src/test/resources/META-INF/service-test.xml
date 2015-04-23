@@ -106,7 +106,6 @@
 		<property name="iTunesClient" ref="service.ITunesClient"/>
 		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
 		<property name="messageSource" ref="serviceMessageSource"/>
-		<property name="iTunesPaymentDetailsService" ref="iTunesPaymentDetailsService"/>
     </bean>
 
 

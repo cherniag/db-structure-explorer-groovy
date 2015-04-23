@@ -4,8 +4,10 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
+import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.UrbanAirshipTokenService;
 import mobi.nowtechnologies.server.service.behavior.PaymentTimeService;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -51,6 +54,9 @@ public class AccCheckController extends CommonController {
 
     @Resource(name = "service.UrbanAirshipTokenService")
     private UrbanAirshipTokenService urbanAirshipTokenService;
+
+    @Resource
+    private ITunesPaymentDetailsService iTunesPaymentDetailsService;
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.12}/ACC_CHECK"})
     public ModelAndView accountCheckWithITunesPaymentDetails(@RequestParam("USER_NAME") String userName,
@@ -217,14 +223,7 @@ public class AccCheckController extends CommonController {
                 urbanAirshipTokenService.saveToken(user, pushNotificationToken);
             }
 
-            try {
-                iTunesService.processInAppSubscription(user, transactionReceipt, createITunesPaymentDetails);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-
-            handleExpires(user, response);
-
+            processITunesSubscription(user, response, transactionReceipt, createITunesPaymentDetails);
 
             AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
 
@@ -238,6 +237,24 @@ public class AccCheckController extends CommonController {
         }
     }
 
+    private void processITunesSubscription(User user, HttpServletResponse response, String transactionReceipt, boolean createITunesPaymentDetails) {
+        try {
+            if (createITunesPaymentDetails) {
+                if(StringUtils.isNotEmpty(transactionReceipt)) {
+                    iTunesPaymentDetailsService.assignAppStoreReceipt(user, transactionReceipt);
+                    handleExpires(user, response);
+                } else {
+                    // temp fix for migration
+                    migrateITunesSubscriberToPaymentDetailsModel(user);
+                }
+            } else {
+                iTunesService.processInAppSubscription(user, transactionReceipt);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
     private void handleExpires(User user, HttpServletResponse response) {
         if(user.hasActiveITunesPaymentDetails() && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.NONE) {
             LOGGER.info("Handle expires date for iTunes payment for user {}", user.getId());
@@ -248,5 +265,12 @@ public class AccCheckController extends CommonController {
         }
     }
 
+    private void migrateITunesSubscriberToPaymentDetailsModel(User user) {
+        boolean hasActiveITunesSubscription = user.isNextSubPaymentInTheFuture() && !user.isOnFreeTrial() && user.isSubscribedStatus() && user.isSubscribedByITunes();
+        boolean hasNotEmptyReceipt = StringUtils.isNotEmpty(user.getBase64EncodedAppStoreReceipt());
 
+        if(hasNotEmptyReceipt && hasActiveITunesSubscription && !user.hasActiveITunesPaymentDetails()) {
+            iTunesPaymentDetailsService.assignAppStoreReceipt(user, user.getBase64EncodedAppStoreReceipt());
+        }
+    }
 }

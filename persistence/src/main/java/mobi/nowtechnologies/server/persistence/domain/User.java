@@ -41,7 +41,6 @@ import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPG
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -1302,6 +1301,14 @@ public class User implements Serializable {
 
     public boolean hasAppReceiptAndIsInLimitedState() {
         return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
+    }
+
+    public String decideAppReceipt(String appStoreReceipt) {
+        if (getBase64EncodedAppStoreReceipt() != null && appStoreReceipt == null) {
+            return getBase64EncodedAppStoreReceipt();
+        } else {
+            return appStoreReceipt;
+        }
     }
 
     public User withOldUser(User oldUser) {

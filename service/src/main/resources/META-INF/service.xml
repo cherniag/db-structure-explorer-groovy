@@ -435,7 +435,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="iTunesClient" ref="service.ITunesClient"/>
 		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
 		<property name="messageSource" ref="serviceMessageSource"/>
-		<property name="iTunesPaymentDetailsService" ref="iTunesPaymentDetailsService"/>
 	</bean>
 	<bean id="service.iTunesPaymentService" class="mobi.nowtechnologies.server.service.itunes.payment.impl.ITunesPaymentServiceImpl">
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>

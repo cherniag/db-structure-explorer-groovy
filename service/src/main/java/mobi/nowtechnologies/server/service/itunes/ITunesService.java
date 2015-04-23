@@ -11,5 +11,5 @@ import mobi.nowtechnologies.server.persistence.domain.User;
  */
 public interface ITunesService {
 
-    void processInAppSubscription(User user, String transactionReceipt, boolean createITunesPaymentDetails) throws Exception;
+    void processInAppSubscription(User user, String transactionReceipt) throws Exception;
 }
