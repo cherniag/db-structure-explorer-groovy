@@ -22,14 +22,6 @@
 				<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
 			</c:set>
 			<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.duration},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
-			<div class="contentButton formButton rad5 rel" >
-				<form action="payments_inapp/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-					<input class="button buttonSmall accounts" type="submit" value="<s:message code='pays.activate.submit' />" />
-					<span class="rightButtonArrow">
-						&nbsp;
-					</span>
-				</form>
-			</div>
 			<hr />
 		</c:if>
 		

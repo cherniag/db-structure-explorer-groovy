@@ -171,15 +171,6 @@ public class PaymentsController extends CommonController {
         return false;
     }
 
-    @RequestMapping(value = {ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.POST)
-    public ModelAndView activatePaymentDetailsByPayment(@PathVariable("scopePrefix") String scopePrefix, @PathVariable("paymentDetailsId") Long paymentDetailsId) {
-        logger.info("Post to activate Payment Details for user id:{} and payment details id:{}", getUserId(), paymentDetailsId);
-
-        paymentDetailsService.activatePaymentDetailsByPayment(paymentDetailsId);
-
-        return new ModelAndView("redirect:/" + scopePrefix + "/one_click_subscription_successful.html");
-    }
-
     @RequestMapping(value = {SUCCESS_ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.GET)
     public ModelAndView getOneClickSubscriptionSuccessfulPage(@PathVariable("scopePrefix") String scopePrefix) {
         logger.info("Get success activate Payment Details page for user id:{} and payment details id:{}", getUserId());

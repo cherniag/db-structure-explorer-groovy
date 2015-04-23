@@ -167,12 +167,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
-		<property name="migPaymentService" ref="service.migPaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
-
-		<property name="messageSource" ref="serviceMessageSource" />
-
-		<property name="communityService" ref="service.communityService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>

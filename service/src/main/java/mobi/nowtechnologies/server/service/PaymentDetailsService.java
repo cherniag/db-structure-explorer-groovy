@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
@@ -17,7 +15,6 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicy
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.PinMigService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
@@ -25,7 +22,6 @@ import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.CREDIT_CARD;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
@@ -51,33 +47,24 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Alexander Kolpakov (akolpakov)
  */
 public class PaymentDetailsService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetailsService.class);
-
-    private CommunityResourceBundleMessageSource messageSource;
 
     private PaymentPolicyService paymentPolicyService;
     private SagePayPaymentService sagePayPaymentService;
     private PayPalPaymentService payPalPaymentService;
-    private MigPaymentService migPaymentService;
     private PromotionService promotionService;
     private UserService userService;
-    private CommunityService communityService;
     private UserNotificationService userNotificationService;
     private O2PaymentServiceImpl o2PaymentService;
 
     @Resource
     UserRepository userRepository;
-
     @Resource
     PaymentDetailsRepository paymentDetailsRepository;
-
     @Resource
     PromotionPaymentPolicyRepository promotionPaymentPolicyRepository;
-
     @Resource
     OperatorRepository operatorRepository;
-
     @Resource
     PinMigService pinMigService;
 
@@ -195,35 +182,6 @@ public class PaymentDetailsService {
         return detailsList.get(0);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        return operatorRepository.findOperators(community.getId(), paymentType);
-    }
-
-    @Transactional
-    public PaymentDetails activatePaymentDetailsByPayment(Long paymentDetailsId) {
-        LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
-
-        final PaymentDetails paymentDetails = paymentDetailsRepository.findOne(paymentDetailsId);
-        final User user = paymentDetails.getOwner();
-        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-        if (currentPaymentDetails != null) {
-            currentPaymentDetails.setActivated(false);
-            paymentDetailsRepository.save(currentPaymentDetails);
-        }
-
-        paymentDetails.setActivated(true);
-        paymentDetailsRepository.save(paymentDetails);
-
-        user.setCurrentPaymentDetails(paymentDetails);
-
-        userService.updateUser(user);
-
-        LOGGER.debug("Output parameter [{}]", paymentDetails);
-        return paymentDetails;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)
     public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
         LOGGER.info("Deactivate current payment details for user {} reason {}", user.shortInfo(), reason);
@@ -279,23 +237,11 @@ public class PaymentDetailsService {
         this.payPalPaymentService = payPalPaymentService;
     }
 
-    public void setMigPaymentService(MigPaymentService migPaymentService) {
-        this.migPaymentService = migPaymentService;
-    }
-
     public void setPromotionService(PromotionService promotionService) {
         this.promotionService = promotionService;
     }
 
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
     }
 }

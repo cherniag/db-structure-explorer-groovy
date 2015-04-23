@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.http.HttpStatus;
@@ -56,6 +59,7 @@ public class PaymentsMigController extends CommonController {
     private PaymentPolicyService paymentPolicyService;
     private MigPaymentDetailsService migPaymentDetailsService;
     private OperatorRepository operatorRepository;
+    private CommunityRepository communityRepository;
     private PinMigService pinMigService;
 
     @InitBinder(PSmsDto.NAME)
@@ -72,7 +76,7 @@ public class PaymentsMigController extends CommonController {
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PSMS);
         modelAndView.addObject(PSmsDto.NAME, new PSmsDto());
-        modelAndView.addObject("operators", paymentDetailsService.getAvailableOperators(communityUrl.getValue(), "PSMS"));
+        modelAndView.addObject("operators", getAvailableOperators(communityUrl.getValue(), "PSMS"));
         modelAndView.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
 
         return modelAndView;
@@ -85,7 +89,7 @@ public class PaymentsMigController extends CommonController {
 
         if (result.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PSMS);
-            modelAndView.addObject("operators", paymentDetailsService.getAvailableOperators(communityUrl.getValue(), "PSMS"));
+            modelAndView.addObject("operators", getAvailableOperators(communityUrl.getValue(), "PSMS"));
             return modelAndView;
         }
 
@@ -100,7 +104,7 @@ public class PaymentsMigController extends CommonController {
         logger.info("Get verify MIG payments page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_VERIFY_PAYMENTS_PSMS);
-        MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(getUserId());
+        MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService. getPendingPaymentDetails(getUserId());
         if (null != paymentDetails) {
             modelAndView.addObject(VerifyDto.NAME, new VerifyDto());
             modelAndView.addObject(PSmsDto.NAME, new PSmsDto(paymentDetails.getMigPhoneNumber(), paymentDetails.getPaymentPolicy().getOperatorId()));
@@ -158,9 +162,14 @@ public class PaymentsMigController extends CommonController {
         }
 
         Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
-        modelAndView.addObject("operators", paymentDetailsService.getAvailableOperators(cookie.getValue(), "PSMS"));
+        modelAndView.addObject("operators", getAvailableOperators(cookie.getValue(), "PSMS"));
         modelAndView.addObject("result", FAIL);
         return modelAndView;
+    }
+
+    public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
+        return operatorRepository.findOperators(community.getId(), paymentType);
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
@@ -181,5 +190,9 @@ public class PaymentsMigController extends CommonController {
 
     public void setPinMigService(PinMigService pinMigService) {
         this.pinMigService = pinMigService;
+    }
+
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
     }
 }

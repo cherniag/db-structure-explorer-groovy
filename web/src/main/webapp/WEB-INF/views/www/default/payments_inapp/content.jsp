@@ -108,15 +108,6 @@
 									<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
 								</c:set>
 								<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.duration},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
-								<form action="payments_inapp/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-									<div class="buttonShadow rad7">
-										<div class="buttonBox rad7">
-											<div class="buttonContent rad7 buttonWidth">
-												<input class="button" type="submit" value="<s:message code='pays.activate.submit' />" />
-											</div>
-										</div>
-									</div>
-								</form>
 							</c:if>
 						</div>
 						
