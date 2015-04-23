@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -42,11 +43,11 @@ public class MigPaymentDetailsService {
         logger.info("Verifying pin:{} from mig for user id:{}", verificationPin, user.getId());
 
         if (StringUtils.hasText(verificationPin) && user.getPin().equals(verificationPin)) {
-            migPaymentDetailsInfoService.commitPaymentDetailsInfo(user);
+            MigPaymentDetails migPaymentDetails = migPaymentDetailsInfoService.commitPaymentDetailsInfo(user);
 
             logger.info("Verification passed. Mig payment details has been created for user id:{}", user.getId());
 
-            sendNotification(user);
+            sendNotification(user, migPaymentDetails);
         } else {
             logger.info("Incorrect pin for user [{}]", user.getId());
             throw new ServiceException("Incorrect pin");
@@ -71,12 +72,11 @@ public class MigPaymentDetailsService {
         pinMigService.sendPin(userId, phone);
     }
 
-    private void sendNotification(User user) {
+    private void sendNotification(User user, MigPaymentDetails migPaymentDetails) {
         try {
             userNotificationService.sendSubscriptionChangedSMS(user);
         } catch (UnsupportedEncodingException e) {
-            logger.error("Can not send subscription SMS for user: {}", user.getId());
-            throw new RuntimeException(e);
+            logger.error("Can not send subscription SMS for user:{}, payment details:{}", user.getId(), migPaymentDetails.getI());
         }
     }
 }

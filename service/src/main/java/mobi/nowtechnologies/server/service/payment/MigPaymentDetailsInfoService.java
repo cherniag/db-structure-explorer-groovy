@@ -80,7 +80,7 @@ public class MigPaymentDetailsInfoService {
 
 
     @Transactional
-    public void commitPaymentDetailsInfo(User user) throws ServiceException {
+    public MigPaymentDetails commitPaymentDetailsInfo(User user) throws ServiceException {
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 
         MigPaymentDetails paymentDetails = findLastPendingPaymentDetails(user);
@@ -95,6 +95,8 @@ public class MigPaymentDetailsInfoService {
         user.setPin("");
         user.setCurrentPaymentDetails(paymentDetails);
         userRepository.save(user);
+
+        return paymentDetails;
     }
 
     //
