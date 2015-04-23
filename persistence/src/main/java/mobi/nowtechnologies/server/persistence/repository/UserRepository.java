@@ -42,19 +42,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                    ")")
     List<User> findUser(String communityURL, String searchWords);
 
-    @Query(value = "select user from User user " +
-                   "join user.userGroup userGroup " +
-                   "join userGroup.community community " +
-                   "join user.currentPaymentDetails currentPaymentDetails " +
-                   "where " +
-                   "TYPE(currentPaymentDetails) = MigPaymentDetails " +
-                   "and currentPaymentDetails.activated=true " +
-                   "and UPPER (community.rewriteUrlParameter)=UPPER(?1) " +
-                   "and user.lastSuccesfullPaymentSmsSendingTimestampMillis<>0 " +
-                   "and (user.amountOfMoneyToUserNotification >= ?2 " +
-                   "or (?3 - user.lastSuccesfullPaymentSmsSendingTimestampMillis)>= ?4)")
-    List<User> findActivePsmsUsers(String communityURL, BigDecimal amountOfMoneyToUserNotification, long currentTimeMillis, long deltaSuccesfullPaymentSmsSendingTimestampMillis);
-
     @Modifying
     @Query(value = "update User user " +
                    "set " +

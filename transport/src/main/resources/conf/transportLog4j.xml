@@ -106,23 +106,6 @@
         </filter>
     </appender>
 
-    <!-- Sms According To Law Job -->
-    <appender name="smsAccordingToLawJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/jobs-smsAccordingToLaw.log"/>
-        <param name="encoding" value="UTF-8"/>
-        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/jobs-smsAccordingToLaw_%d{yyyy-MM-dd}.gz"/>
-        </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %C{1}.%M() - %m%n"/>
-        </layout>
-        <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
-            <param name="contextKey" value="class"/>
-            <param name="classNames" value="mobi.nowtechnologies.server.job.SmsAccordingToLawJob"/>
-            <param name="acceptOnMatch" value="true"/>
-        </filter>
-    </appender>
-
     <!-- Sms Notification for O2 -->
     <appender name="smsNotificationForO2" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/jobs-smsNotificationO2.log"/>
@@ -415,7 +398,6 @@
     <logger name="org.springframework.orm.jpa">
         <level value="WARN"/>
         <appender-ref ref="paymentExecutionAppender"/>
-        <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
@@ -423,7 +405,6 @@
         <level value="WARN"/>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
-        <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
         <appender-ref ref="userNotificationAppender"/>
     </logger>
@@ -450,7 +431,6 @@
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
-        <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
@@ -459,14 +439,12 @@
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
-        <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
     <logger name="org.hibernate.cache">
         <level value="INFO"></level>
         <appender-ref ref="pendingPaymentJobAppender"/>
-        <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
@@ -476,7 +454,6 @@
         <appender-ref ref="migControllerAppender"/>
         <appender-ref ref="transportControllerAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
-        <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="smsNotificationForO2"/>
         <appender-ref ref="userSMSNotificationAppender"/>

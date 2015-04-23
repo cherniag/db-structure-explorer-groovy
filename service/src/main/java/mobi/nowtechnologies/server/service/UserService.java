@@ -749,32 +749,20 @@ public class UserService {
 
     }
 
-    @Transactional(propagation = REQUIRED)
-    public List<User> findActivePsmsUsers(String communityURL, BigDecimal amountOfMoneyToUserNotification, long deltaSuccesfullPaymentSmsSendingTimestampMillis) {
-        LOGGER.debug("input parameters communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis: [{}], [{}], [{}]",
-                     new Object[] {communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis});
-
-        if (communityURL == null) {
-            throw new NullPointerException("The parameter communityURL is null");
-        }
-        if (amountOfMoneyToUserNotification == null) {
-            throw new NullPointerException("The parameter amountOfMoneyToUserNotification is null");
-        }
-
-        List<User> users = userRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, getEpochMillis(), deltaSuccesfullPaymentSmsSendingTimestampMillis);
-
-        LOGGER.info("Output parameter users=[{}]", users);
-        return users;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User resetSmsAccordingToLawAttributes(User user) {
-        return resetSmsSendingTimestampMillis(user, getEpochMillis());
-    }
-
-    @Transactional(propagation = REQUIRED)
     public User setToZeroSmsAccordingToLawAttributes(User user) {
-        return resetSmsSendingTimestampMillis(user, 0);
+        LOGGER.debug("input parameters user: [{}]", user);
+
+        user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+        user.setLastSuccesfullPaymentSmsSendingTimestampMillis((long) 0);
+
+        final int id = user.getId();
+        int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
+        if (updatedRowCount != 1) {
+            throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + id + "]");
+        }
+
+        LOGGER.info("Output parameter user=[{}]", user);
+        return user;
     }
 
     @Transactional(propagation = REQUIRED, rollbackFor = {ServiceCheckedException.class, RuntimeException.class})
