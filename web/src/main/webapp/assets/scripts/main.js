@@ -24,46 +24,6 @@ function submitForm(id) {
 	document.getElementById(id).submit();
 }
 
-function calcScaleCoeff(pattern, actual) {
-    return pattern / actual;
-}
-
-function adjustImage(img, placeholderDim) {
-    if(img.height == img.width) {
-        var scale = calcScaleCoeff(placeholderDim, img.height);
-        img.width = scale * img.height ;
-    } else {
-        var min = Math.max(img.height, img.width);
-
-        var scale = calcScaleCoeff(placeholderDim, min);
-        if(img.height < img.width) {
-            img.height = scale * min;
-            // center image
-            //img.style.marginLeft = (img.height - img.width) / 2 + "px";
-        } else {
-            img.width = scale * min;
-            // center image
-            //img.style.marginTop = (img.width - img.height) / 2 + "px";
-        }
-    }
-}
-
-function showHideBox(id, id2) {
-
-	if(document.getElementById(id).style.display == 'none') {
-		document.getElementById(id).style.display = 'block';
-		if (id2) {
-			document.getElementById(id2).style.display = 'block';
-		}
-	}
-	else {
-		document.getElementById(id).style.display = 'none';
-		if (id2) {
-			document.getElementById(id2).style.display = 'none';
-		}
-	}
-}
-
 var simpleDialogOptions={opacity:100, overlayClose:true};
 var modalDialogOptions={opacity:100, escClose:false, close:false};
 

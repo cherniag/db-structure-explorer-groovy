@@ -24,9 +24,12 @@ import mobi.nowtechnologies.server.web.subscription.SubscriptionTexts;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
 import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -133,6 +136,7 @@ public class PaymentsController extends CommonController {
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
         mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user));
         mav.addObject("paymentsPage", paymentsPage);
+        mav.addObject("payAsYouGoIOSProductIds", getProductIds(user.getCommunity().getRewriteUrlParameter()));
 
         return mav;
     }
@@ -298,4 +302,14 @@ public class PaymentsController extends CommonController {
 
         return false;
     }
+
+    private List<String> getProductIds(String communityName) {
+        String iosProductIds = communityResourceBundleMessageSource.getMessage(communityName, "pay.go.ios.product.ids", null, null);
+        String[] ids = StringUtils.split(iosProductIds, ",");
+        if(ids != null){
+            return Arrays.asList(ids);
+        }
+        return Collections.emptyList();
+    }
+
 }
