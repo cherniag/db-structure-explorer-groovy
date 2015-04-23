@@ -92,7 +92,6 @@ import java.util.concurrent.Future;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Math.max;
 
-import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -770,23 +769,12 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User resetSmsAccordingToLawAttributes(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
+        return resetSmsSendingTimestampMillis(user, getEpochMillis());
+    }
 
-        if (user == null) {
-            throw new NullPointerException("The parameter user is null");
-        }
-
-        user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
-        user.setLastSuccesfullPaymentSmsSendingTimestampMillis(getEpochMillis());
-
-        final int id = user.getId();
-        int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
-        if (updatedRowCount != 1) {
-            throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + id + "]");
-        }
-
-        LOGGER.info("Output parameter user=[{}]", user);
-        return user;
+    @Transactional(propagation = REQUIRED)
+    public User setToZeroSmsAccordingToLawAttributes(User user) {
+        return resetSmsSendingTimestampMillis(user, 0);
     }
 
     @Transactional(propagation = REQUIRED, rollbackFor = {ServiceCheckedException.class, RuntimeException.class})
@@ -841,27 +829,6 @@ public class UserService {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
         }
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User setToZeroSmsAccordingToLawAttributes(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
-
-        if (user == null) {
-            throw new NullPointerException("The parameter user is null");
-        }
-
-        user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
-        user.setLastSuccesfullPaymentSmsSendingTimestampMillis(0);
-
-        final int id = user.getId();
-        int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
-        if (updatedRowCount != 1) {
-            throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + id + "]");
-        }
-
-        LOGGER.info("Output parameter user=[{}]", user);
-        return user;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1311,5 +1278,21 @@ public class UserService {
             return DeviceTypeCache.getNoneDeviceType();
         }
         return deviceType;
+    }
+
+    private User resetSmsSendingTimestampMillis(User user, long epochMillis) {
+        LOGGER.debug("input parameters user: [{}]", user);
+
+        user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+        user.setLastSuccesfullPaymentSmsSendingTimestampMillis(epochMillis);
+
+        final int id = user.getId();
+        int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
+        if (updatedRowCount != 1) {
+            throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + id + "]");
+        }
+
+        LOGGER.info("Output parameter user=[{}]", user);
+        return user;
     }
 }
