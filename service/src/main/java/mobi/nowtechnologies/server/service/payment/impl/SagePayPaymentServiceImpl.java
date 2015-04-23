@@ -96,12 +96,12 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
             throw new ServiceException("External error while trying to get sagepay payment details");
         }
 
-        return commitPaymentDetails(response, paymentDto, user, paymentPolicy, true);
+        return commitPaymentDetails(response, paymentDto, user, paymentPolicy);
     }
 
-    private SagePayCreditCardPaymentDetails commitPaymentDetails(SagePayResponse response, PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy, boolean activated)
+    private SagePayCreditCardPaymentDetails commitPaymentDetails(SagePayResponse response, PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy)
         throws ServiceException {
-        SagePayCreditCardPaymentDetails newPaymentDetails = createPaymentDetailsFromResponse(response, activated);
+        SagePayCreditCardPaymentDetails newPaymentDetails = createPaymentDetailsFromResponse(response);
 
         newPaymentDetails.setVendorTxCode(paymentDto.getVendorTxCode());
         newPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
@@ -113,10 +113,10 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
         return newPaymentDetails;
     }
 
-    protected SagePayCreditCardPaymentDetails createPaymentDetailsFromResponse(SagePayResponse response, boolean activated) {
+    protected SagePayCreditCardPaymentDetails createPaymentDetailsFromResponse(SagePayResponse response) {
         SagePayCreditCardPaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
         paymentDetails.setReleased(false);
-        paymentDetails.setActivated(activated);
+        paymentDetails.setActivated(true);
         paymentDetails.setSecurityKey(response.getSecurityKey());
         paymentDetails.setTxAuthNo(response.getTxAuthNo());
         paymentDetails.setVPSTxId(response.getVPSTxId());
