@@ -29,7 +29,6 @@ public class PayPalHttpService {
     // Recurrent payment
     //
     public PayPalResponse getTokenForRecurrentType(String successUrl, String failUrl, String currencyCode, String communityRewriteUrl, String billingAgreementDescription) {
-        LOGGER.info("Getting token for billing agreement...");
         return makeRequest(request.createBillingAgreementTokenRequest(successUrl, failUrl, currencyCode, communityRewriteUrl, billingAgreementDescription));
     }
 
@@ -46,8 +45,7 @@ public class PayPalHttpService {
     //
     // Onetime payment (Pay with credit Card available link) type
     //
-    public PayPalResponse getTokenForOnetimeType(String successUrl, String failUrl, String communityRewriteUrl, String currencyCode, BigDecimal amount) {
-        LOGGER.info("Getting token for onetime payment...");
+    public PayPalResponse getTokenForOnetimeType(String successUrl, String failUrl, String currencyCode, String communityRewriteUrl, BigDecimal amount) {
         return makeRequest(request.createOnetimePaymentTokenRequest(successUrl, failUrl, currencyCode, communityRewriteUrl, amount));
     }
 

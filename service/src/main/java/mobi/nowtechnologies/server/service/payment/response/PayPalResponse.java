@@ -105,4 +105,8 @@ public class PayPalResponse extends PaymentSystemResponse {
         PAYMENTINFO_0_TRANSACTIONID
     }
 
+    @Override
+    public String toString() {
+        return "PayPalResponse{}";
+    }
 }

@@ -4,7 +4,6 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
@@ -15,16 +14,13 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicy
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.PinMigService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
-import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.CREDIT_CARD;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
-import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -51,7 +47,6 @@ public class PaymentDetailsService {
 
     private PaymentPolicyService paymentPolicyService;
     private SagePayPaymentService sagePayPaymentService;
-    private PayPalPaymentService payPalPaymentService;
     private PromotionService promotionService;
     private UserService userService;
     private UserNotificationService userNotificationService;
@@ -85,8 +80,6 @@ public class PaymentDetailsService {
                 dto.setVendorTxCode(UUID.randomUUID().toString());
                 dto.setDescription("Creating payment details for user " + user.getUserName());
                 paymentDetails = sagePayPaymentService.createPaymentDetails(dto, user, paymentPolicy);
-            } else if (dto.getPaymentType().equals(PAY_PAL)) {
-                paymentDetails = payPalPaymentService.createPaymentDetails(dto.getBillingAgreementDescription(), dto.getSuccessUrl(), dto.getFailUrl(), user, paymentPolicy);
             } else if (dto.getPaymentType().equals(O2_PSMS)) {
                 paymentDetails = new O2PSMSPaymentDetails(paymentPolicy, user, o2PaymentService.getRetriesOnError());
                 paymentDetails = commitPaymentDetails(user, paymentDetails);
@@ -138,23 +131,6 @@ public class PaymentDetailsService {
         PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 
         return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PayPalPaymentDetails createPayPalPaymentDetails(PayPalDto dto, int userId) throws ServiceException {
-        User user = userRepository.findOne(userId);
-        PaymentDetailsDto pdto = PayPalDto.toPaymentDetails(dto);
-        return (PayPalPaymentDetails) createPaymentDetails(pdto, user);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, int userId) throws ServiceException {
-        User user = userRepository.findOne(userId);
-
-        applyPromoToLimitedUsers(user);
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPoliceId);
-
-        return payPalPaymentService.commitPaymentDetails(token, user, paymentPolicy, true);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -231,10 +207,6 @@ public class PaymentDetailsService {
 
     public void setSagePayPaymentService(SagePayPaymentService sagePayPaymentService) {
         this.sagePayPaymentService = sagePayPaymentService;
-    }
-
-    public void setPayPalPaymentService(PayPalPaymentService payPalPaymentService) {
-        this.payPalPaymentService = payPalPaymentService;
     }
 
     public void setPromotionService(PromotionService promotionService) {

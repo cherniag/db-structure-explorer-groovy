@@ -2,15 +2,13 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.PayPalPaymentDetailsService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository;
@@ -55,13 +53,14 @@ public class PaymentsPayPalController extends CommonController {
     public static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
     public static final String SUCCESSFUL_RESULT = "successful";
     public static final String FAIL_RESULT = "fail";
-    private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
     private UserRepository userRepository;
 
     @Resource
     private SocialNetworkInfoRepository socialNetworkInfoRepository;
+    @Resource
+    private PayPalPaymentDetailsService payPalPaymentDetailsService;
 
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
     public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
@@ -74,7 +73,7 @@ public class PaymentsPayPalController extends CommonController {
 
         if (StringUtils.hasText(result)) {
             if (SUCCESSFUL_RESULT.equals(result) && StringUtils.hasText(token)) {
-                paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getUserId());
+                payPalPaymentDetailsService.commitPaymentDetails(token, paymentPolicyId, getUserId());
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
             PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
@@ -130,8 +129,8 @@ public class PaymentsPayPalController extends CommonController {
                                                                             .append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);
         dto.setSuccessUrl(callbackUrl + SUCCESSFUL_RESULT);
-        PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, getUserId());
-        return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
+        String redirectUrl = payPalPaymentDetailsService.getRedirectUrl(getUserId(), dto.getPaymentPolicyId(), dto);
+        return new ModelAndView(REDIRECT + redirectUrl);
     }
 
     @ExceptionHandler(value = ServiceException.class)
@@ -152,10 +151,6 @@ public class PaymentsPayPalController extends CommonController {
         modelAndView.addObject(REQUEST_PARAM_PAYPAL, FAIL);
 
         return modelAndView;
-    }
-
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
     }
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {

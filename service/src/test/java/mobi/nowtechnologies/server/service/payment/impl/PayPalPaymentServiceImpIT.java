@@ -22,7 +22,7 @@ import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentReposi
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
+import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 public class PayPalPaymentServiceImpIT {
 
     @Resource(name = "service.payPalPaymentService")
-    private PayPalPaymentService payPalPaymentService;
+    private PaymentSystemService payPalPaymentService;
     @Resource
     private UserGroupRepository userGroupRepository;
     @Resource

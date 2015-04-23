@@ -50,13 +50,20 @@
 	</bean>
 	
 	<!-- PayPal Service -->
+    <bean class="mobi.nowtechnologies.server.service.payment.PayPalPaymentDetailsInfoService">
+        <property name="retriesOnError" value="${paypal.retriesOnError}" />
+    </bean>
+    <bean class="mobi.nowtechnologies.server.service.payment.PayPalPaymentDetailsService">
+        <property name="redirectURL" value="${paypal.redirectURL}" />
+        <property name="httpService" ref="service.PayPalHttpService"/>
+    </bean>
+
 	<bean id="request.payPalRequest" class="mobi.nowtechnologies.server.service.payment.request.PayPalRequest">
 		<property name="amountFormat" value="${paypal.amountFormat}" />
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource" />
 	</bean>
 	
 	<bean id="service.payPalPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
-		<property name="redirectURL" value="${paypal.redirectURL}" />
 		<property name="retriesOnError" value="${paypal.retriesOnError}" />
 		<property name="expireMillis" value="${paypal.pendingExpireMillis}" />
 		<property name="httpService" ref="service.PayPalHttpService"/>

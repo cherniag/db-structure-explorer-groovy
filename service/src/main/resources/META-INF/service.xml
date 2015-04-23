@@ -166,7 +166,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="o2PaymentService" ref="service.o2PaymentService"/>
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
-		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />

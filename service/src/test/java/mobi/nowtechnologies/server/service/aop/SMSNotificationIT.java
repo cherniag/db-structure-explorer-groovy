@@ -267,7 +267,7 @@ public class SMSNotificationIT {
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
     }
 
-    @Test
+/*    @Test
     public void testSendUnsubscribePotentialSMS_afterCreatedPayPalPaymentDetails_Success() throws Exception {
         User user = UserFactory.createUser(new PayPalPaymentDetails(), null);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
@@ -280,6 +280,6 @@ public class SMSNotificationIT {
         paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, user.getId());
 
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
-    }
+    }*/
 
 }

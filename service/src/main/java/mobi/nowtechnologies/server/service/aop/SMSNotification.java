@@ -103,14 +103,10 @@ public class SMSNotification {
     protected void createdCreditCardPaymentDetails() {
     }
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitPayPalPaymentDetails(..))")
-    protected void createdPayPalPaymentDetails() {
-    }
-
      /**
      * Sending sms after user was subscribed with some payment details
      */
-    @Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails()")
+    @Around("createdCreditCardPaymentDetails()")
     public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
         Object object = joinPoint.proceed();
         Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];

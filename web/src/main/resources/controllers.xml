@@ -40,7 +40,6 @@
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsPayPalController">
-        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="userRepository" ref="userRepository"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>

@@ -1,8 +1,8 @@
-package mobi.nowtechnologies.server.shared.dto.web.payment;
+package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
+import mobi.nowtechnologies.server.service.payment.PayPalPaymentDetailsService;
 
-public class PayPalDto {
+public class PayPalDto implements PayPalPaymentDetailsService.PayPalDetailsInfo {
 
     public static final String NAME = "payPalDto";
 
@@ -15,16 +15,6 @@ public class PayPalDto {
     private String failUrl;
 
     public PayPalDto() {
-    }
-
-    public static PaymentDetailsDto toPaymentDetails(PayPalDto dto) {
-        PaymentDetailsDto pdto = new PaymentDetailsDto();
-        pdto.setPaymentType("PAY_PAL");
-        pdto.setBillingAgreementDescription(dto.getBillingAgreementDescription());
-        pdto.setSuccessUrl(dto.getSuccessUrl());
-        pdto.setFailUrl(dto.getFailUrl());
-        pdto.setPaymentPolicyId(dto.getPaymentPolicyId());
-        return pdto;
     }
 
     public String getBillingAgreementDescription() {
