@@ -222,7 +222,6 @@ class GetChartFeature {
                 //Assert.assertEquals(dbTrack.position , responseTrack.position)    //magic with Windows Phone - position + 40
                 Assert.assertEquals(dbTrack.media.isrc + "_" + dbTrack.media.trackId , responseTrack.media)
                 Assert.assertEquals(dbTrack.media.artistName , responseTrack.artist)
-                Assert.assertEquals(dbTrack.media.headerSize , responseTrack.headerSize)
                 Assert.assertEquals(dbTrack.media.audioSize , responseTrack.audioSize)
                 Assert.assertEquals(dbTrack.media.imageLargeSize , responseTrack.imageLargeSize)
                 Assert.assertEquals(dbTrack.media.imageSmallSize , responseTrack.imageSmallSize)

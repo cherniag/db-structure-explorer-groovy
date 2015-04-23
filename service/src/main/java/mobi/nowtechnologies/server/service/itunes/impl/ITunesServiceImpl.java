@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
@@ -9,7 +8,6 @@ import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,38 +23,25 @@ public class ITunesServiceImpl implements ITunesService {
     private ITunesClient iTunesClient;
     private ITunesPaymentService iTunesPaymentService;
     private CommunityResourceBundleMessageSource messageSource;
-    private ITunesPaymentDetailsService iTunesPaymentDetailsService;
 
     @Override
-    public void processInAppSubscription(User user, String transactionReceipt, boolean createITunesPaymentDetails) throws Exception {
-        logger.info("Start processing ITunes subscription for user [{}], receipt [{}], createITunesPaymentDetails [{}]",
-                    user.shortInfo(), transactionReceipt, createITunesPaymentDetails);
-        if (createITunesPaymentDetails) {
-            if(StringUtils.isNotEmpty(transactionReceipt)) {
-                iTunesPaymentDetailsService.assignAppStoreReceipt(user, transactionReceipt);
-            }
-        } else {
-            processInternal(user, transactionReceipt);
+    public void processInAppSubscription(User user, String transactionReceipt) throws Exception {
+        logger.info("Start processing ITunes subscription for user [{}], receipt [{}]", user.shortInfo(), transactionReceipt);
+        if (!isEligibleForPayment(user, transactionReceipt)) {
+            return;
         }
-    }
-
-    private void processInternal(final User user, String transactionReceipt) throws Exception {
-        if (!shouldBeProcessedWithOldLogic(user, transactionReceipt)) {
-             return;
-        }
-        final String actualReceipt = decideAppReceipt(transactionReceipt, user);
-
-        logger.info("Process user with old logic");
+        final String actualReceipt = user.decideAppReceipt(transactionReceipt);
+        final String community = user.getCommunityRewriteUrl();
 
         final ITunesResult result = iTunesClient.verifyReceipt(new ITunesConnectionConfig() {
             @Override
             public String getUrl() {
-                return messageSource.getMessage(user.getCommunityRewriteUrl(), APPLE_IN_APP_I_TUNES_URL, null, null);
+                return messageSource.getMessage(community, APPLE_IN_APP_I_TUNES_URL, null, null);
             }
 
             @Override
             public String getPassword() {
-                return messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), APPLE_IN_APP_PASSWORD, null, null);
+                return messageSource.getDecryptedMessage(community, APPLE_IN_APP_PASSWORD, null, null);
             }
         }, actualReceipt);
 
@@ -73,17 +58,8 @@ public class ITunesServiceImpl implements ITunesService {
         }
     }
 
-    private boolean shouldBeProcessedWithOldLogic(User user, String transactionReceipt) {
+    private boolean isEligibleForPayment(User user, String transactionReceipt) {
         return !user.hasActivePaymentDetails() && (transactionReceipt != null || user.hasAppReceiptAndIsInLimitedState());
-    }
-
-    private String decideAppReceipt(String transactionReceipt, User user) {
-        String base64EncodedAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
-        if (base64EncodedAppStoreReceipt != null && transactionReceipt == null) {
-            return base64EncodedAppStoreReceipt;
-        } else {
-            return transactionReceipt;
-        }
     }
 
     public void setiTunesClient(ITunesClient iTunesClient) {
@@ -98,7 +74,4 @@ public class ITunesServiceImpl implements ITunesService {
         this.messageSource = messageSource;
     }
 
-    public void setiTunesPaymentDetailsService(ITunesPaymentDetailsService iTunesPaymentDetailsService) {
-        this.iTunesPaymentDetailsService = iTunesPaymentDetailsService;
-    }
 }

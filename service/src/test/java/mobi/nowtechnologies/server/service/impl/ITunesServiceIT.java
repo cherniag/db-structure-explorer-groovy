@@ -69,7 +69,7 @@ public class ITunesServiceIT {
 
         User user = createUser("o2");
 
-        iTunesService.processInAppSubscription(user, transactionReceipt, false);
+        iTunesService.processInAppSubscription(user, transactionReceipt);
 
         User found = userRepository.findOne(user.getId());
         Assert.assertEquals(nextSubPayment, found.getNextSubPayment());
@@ -100,7 +100,7 @@ public class ITunesServiceIT {
 
         User user = createUser("o2");
 
-        iTunesService.processInAppSubscription(user, transactionReceipt, false);
+        iTunesService.processInAppSubscription(user, transactionReceipt);
 
         User found = userRepository.findOne(user.getId());
         int expectedNextSubPayment = new Period(DurationUnit.MONTHS, 1).toNextSubPaymentSeconds(purchaseTime);
@@ -134,7 +134,7 @@ public class ITunesServiceIT {
 
         iTunesPaymentLockRepository.saveAndFlush(new ITunesPaymentLock(user.getId(), nextSubPayment));
 
-        iTunesService.processInAppSubscription(user, transactionReceipt, false);
+        iTunesService.processInAppSubscription(user, transactionReceipt);
 
         User found = userRepository.findOne(user.getId());
         Assert.assertEquals(0, found.getNextSubPayment());
