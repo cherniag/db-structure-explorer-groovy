@@ -1267,20 +1267,4 @@ public class UserService {
         }
         return deviceType;
     }
-
-    private User resetSmsSendingTimestampMillis(User user, long epochMillis) {
-        LOGGER.debug("input parameters user: [{}]", user);
-
-        user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
-        user.setLastSuccesfullPaymentSmsSendingTimestampMillis(epochMillis);
-
-        final int id = user.getId();
-        int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
-        if (updatedRowCount != 1) {
-            throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + id + "]");
-        }
-
-        LOGGER.info("Output parameter user=[{}]", user);
-        return user;
-    }
 }
