@@ -9,7 +9,4 @@ public interface MigPaymentService extends PaymentSystemService {
     public static final String MIG_NOT_DELIVERED = "2";
 
     public SubmittedPayment commitPayment(String messageId, String status, String descriptionError) throws ServiceException;
-
-    public boolean sendPin(String numbers, String message) throws ServiceException;
-
 }

@@ -79,6 +79,7 @@
 		<property name="timeToLiveMin" value="${mig.timeToLiveMin}" />
 	</bean>
 
+    <bean id="pinMigService" class="mobi.nowtechnologies.server.service.payment.PinMigService" />
     <bean id="migPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.MigPaymentDetailsService">
     </bean>
     <bean class="mobi.nowtechnologies.server.service.payment.MigPaymentDetailsInfoService">

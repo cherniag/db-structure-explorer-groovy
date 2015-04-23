@@ -92,16 +92,6 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
     }
 
     @Override
-    public boolean sendPin(String numbers, String message) throws ServiceException {
-        MigResponse response = httpService.makeFreeSMSRequest(numbers, message);
-        if (response.isSuccessful()) {
-            return true;
-        }
-        LOGGER.error("Problem while sending free sms. Error: {}", response.getDescriptionError());
-        return false;
-    }
-
-    @Override
     public PaymentSystemResponse getExpiredResponse() {
         return MigResponse.failMigResponse("Mig pending payment has been expired");
     }

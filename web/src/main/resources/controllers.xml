@@ -51,6 +51,7 @@
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="migPaymentDetailsService" ref="migPaymentDetailsService" />
         <property name="operatorRepository" ref="operatorRepository" />
+        <property name="pinMigService" ref="pinMigService" />
     </bean>
 
 	<bean class="mobi.nowtechnologies.server.web.controller.PaymentsPsmsController">

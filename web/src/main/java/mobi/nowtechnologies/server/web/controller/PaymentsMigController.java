@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentDetailsService;
+import mobi.nowtechnologies.server.service.payment.PinMigService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.VerifyDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -55,6 +56,7 @@ public class PaymentsMigController extends CommonController {
     private PaymentPolicyService paymentPolicyService;
     private MigPaymentDetailsService migPaymentDetailsService;
     private OperatorRepository operatorRepository;
+    private PinMigService pinMigService;
 
     @InitBinder(PSmsDto.NAME)
     public void initBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -126,11 +128,15 @@ public class PaymentsMigController extends CommonController {
     @RequestMapping(value = PAGE_VERIFY_PSMS_RESEND_PIN, method = RequestMethod.POST)
     public
     @ResponseBody
-    Boolean resendPsms(HttpServletRequest request, @PathVariable("scopePrefix") String scopePrefix, @ModelAttribute(PSmsDto.NAME) PSmsDto dto,
-                       @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+    Boolean resendPsms(HttpServletRequest request, @PathVariable("scopePrefix") String scopePrefix, @ModelAttribute(PSmsDto.NAME) PSmsDto dto) {
         logger.info("Post resend PIN for user id:{} and phone: {}", getUserId(), dto.getPhone());
 
-        return paymentDetailsService.resendPin(getUserId(), dto.getPhone(), communityUrl.getValue());
+        try {
+            pinMigService.sendPin(getUserId(), dto.getPhone());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @ExceptionHandler(value = ServiceException.class)
@@ -171,5 +177,9 @@ public class PaymentsMigController extends CommonController {
 
     public void setOperatorRepository(OperatorRepository operatorRepository) {
         this.operatorRepository = operatorRepository;
+    }
+
+    public void setPinMigService(PinMigService pinMigService) {
+        this.pinMigService = pinMigService;
     }
 }

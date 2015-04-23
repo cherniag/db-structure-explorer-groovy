@@ -19,9 +19,9 @@ import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDeta
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
+import mobi.nowtechnologies.server.service.payment.PinMigService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -77,6 +77,9 @@ public class PaymentDetailsService {
 
     @Resource
     OperatorRepository operatorRepository;
+
+    @Resource
+    PinMigService pinMigService;
 
     PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user) throws ServiceException {
 
@@ -196,16 +199,6 @@ public class PaymentDetailsService {
     public List<Operator> getAvailableOperators(String communityUrl, String paymentType) {
         Community community = communityService.getCommunityByUrl(communityUrl);
         return operatorRepository.findOperators(community.getId(), paymentType);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean resendPin(int userId, String phone, String communityUri) throws ServiceException {
-        User user = userRepository.findOne(userId);
-        String code = Utils.getRandomString(4);
-        user.setPin(code);
-        userService.updateUser(user);
-        Object[] args = {code};
-        return migPaymentService.sendPin(phone, messageSource.getMessage(communityUri, "sms.freeMsg", args, null));
     }
 
     @Transactional
