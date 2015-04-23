@@ -130,7 +130,7 @@ public class PaymentsPayPalController extends CommonController {
                                                                             .append(REQUEST_PARAM_PAYPAL).append("=");
         dto.setFailUrl(callbackUrl + FAIL_RESULT);
         dto.setSuccessUrl(callbackUrl + SUCCESSFUL_RESULT);
-        PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getUserId());
+        PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, getUserId());
         return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
     }
 

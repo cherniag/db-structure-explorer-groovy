@@ -1,11 +1,14 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
+import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.MigPaymentDetailsService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.VerifyDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -50,6 +53,8 @@ public class PaymentsMigController extends CommonController {
 
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
+    private MigPaymentDetailsService migPaymentDetailsService;
+    private OperatorRepository operatorRepository;
 
     @InitBinder(PSmsDto.NAME)
     public void initBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -82,7 +87,8 @@ public class PaymentsMigController extends CommonController {
             return modelAndView;
         }
 
-        paymentDetailsService.createMigPaymentDetails(dto, communityUrl.getValue(), getUserId());
+        Operator operator = operatorRepository.findOne(dto.getOperator());
+        migPaymentDetailsService.createPaymentDetails(getUserId(), dto.getPhone(), dto.getPaymentPolicyId(), operator);
 
         return new ModelAndView(REDIRECT + REDIRECT_VERIFY_PAYMENTS_PSMS);
     }
@@ -108,7 +114,7 @@ public class PaymentsMigController extends CommonController {
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_VERIFY_PAYMENTS_PSMS);
         modelAndView.addObject(PSmsDto.NAME, new PSmsDto());
         try {
-            paymentDetailsService.commitMigPaymentDetails(dto.getPin(), getUserId());
+            migPaymentDetailsService.commitPaymentDetails(getUserId(), dto.getPin());
             modelAndView.addObject("result", "successful");
         } catch (ServiceException e) {
             modelAndView.addObject("result", FAIL);
@@ -157,5 +163,13 @@ public class PaymentsMigController extends CommonController {
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
         this.paymentPolicyService = paymentPolicyService;
+    }
+
+    public void setMigPaymentDetailsService(MigPaymentDetailsService migPaymentDetailsService) {
+        this.migPaymentDetailsService = migPaymentDetailsService;
+    }
+
+    public void setOperatorRepository(OperatorRepository operatorRepository) {
+        this.operatorRepository = operatorRepository;
     }
 }

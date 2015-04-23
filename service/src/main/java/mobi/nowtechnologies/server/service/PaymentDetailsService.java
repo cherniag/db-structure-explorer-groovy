@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -24,14 +23,12 @@ import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
-import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.CREDIT_CARD;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
-import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PREMIUM_USER;
 import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -81,7 +78,7 @@ public class PaymentDetailsService {
     @Resource
     OperatorRepository operatorRepository;
 
-    PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
+    PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user) throws ServiceException {
 
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getPaymentPolicyId());
         Promotion promotion = user.getPotentialPromotion();
@@ -100,13 +97,6 @@ public class PaymentDetailsService {
                 paymentDetails = sagePayPaymentService.createPaymentDetails(dto, user, paymentPolicy);
             } else if (dto.getPaymentType().equals(PAY_PAL)) {
                 paymentDetails = payPalPaymentService.createPaymentDetails(dto.getBillingAgreementDescription(), dto.getSuccessUrl(), dto.getFailUrl(), user, paymentPolicy);
-            } else if (dto.getPaymentType().equals(PREMIUM_USER)) {
-                PaymentDetails pendingPaymentDetails = getPendingPaymentDetails(user.getId());
-                if (null != pendingPaymentDetails) {
-                    pendingPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
-                    pendingPaymentDetails.setDescriptionError("Was not verified and replaced by another payment details");
-                }
-                paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
             } else if (dto.getPaymentType().equals(O2_PSMS)) {
                 paymentDetails = new O2PSMSPaymentDetails(paymentPolicy, user, o2PaymentService.getRetriesOnError());
                 paymentDetails = commitPaymentDetails(user, paymentDetails);
@@ -152,22 +142,19 @@ public class PaymentDetailsService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
+    public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, int userId) throws ServiceException {
         User user = userRepository.findOne(userId);
-        Community community = communityService.getCommunityByUrl(communityUrl);
-
         applyPromoToLimitedUsers(user);
         PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 
-        return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user, community);
+        return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public PayPalPaymentDetails createPayPalPaymentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
+    public PayPalPaymentDetails createPayPalPaymentDetails(PayPalDto dto, int userId) throws ServiceException {
         User user = userRepository.findOne(userId);
-        Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentDetailsDto pdto = PayPalDto.toPaymentDetails(dto);
-        return (PayPalPaymentDetails) createPaymentDetails(pdto, user, community);
+        return (PayPalPaymentDetails) createPaymentDetails(pdto, user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -181,17 +168,6 @@ public class PaymentDetailsService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public MigPaymentDetails createMigPaymentDetails(PSmsDto dto, String communityUrl, int userId) throws ServiceException {
-        User user = userRepository.findOne(userId);
-
-        Community community = communityService.getCommunityByUrl(communityUrl);
-        PaymentDetailsDto pdto = PSmsDto.toPaymentDetails(dto);
-        String convertedPhone = userService.convertPhoneNumberFromGreatBritainToInternationalFormat(dto.getPhone());
-        pdto.setPhoneNumber(userService.getMigPhoneNumber(dto.getOperator(), convertedPhone));
-        return (MigPaymentDetails) createPaymentDetails(pdto, user, community);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public O2PSMSPaymentDetails createDefaultO2PsmsPaymentDetails(User user) throws ServiceException {
 
         PaymentPolicy defaultPaymentPolicy = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
@@ -200,18 +176,11 @@ public class PaymentDetailsService {
             throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
         }
 
-        Community community = user.getUserGroup().getCommunity();
         PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
         paymentDetailsDto.setPaymentType(O2_PSMS);
         paymentDetailsDto.setPaymentPolicyId(defaultPaymentPolicy.getId());
 
-        return (O2PSMSPaymentDetails) createPaymentDetails(paymentDetailsDto, user, community);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public MigPaymentDetails commitMigPaymentDetails(String pin, int userId) {
-        User user = userRepository.findOne(userId);
-        return migPaymentService.commitPaymentDetails(user, pin);
+        return (O2PSMSPaymentDetails) createPaymentDetails(paymentDetailsDto, user);
     }
 
     @Transactional(readOnly = true)
@@ -221,11 +190,6 @@ public class PaymentDetailsService {
             return null;
         }
         return detailsList.get(0);
-    }
-
-    @Transactional(readOnly = true)
-    public List<PaymentDetails> getPaymentDetails(User user) {
-        return paymentDetailsRepository.findPaymentDetailsByOwner(user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)

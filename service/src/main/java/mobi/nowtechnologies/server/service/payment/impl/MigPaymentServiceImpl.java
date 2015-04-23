@@ -14,7 +14,6 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 public class MigPaymentServiceImpl extends AbstractPaymentSystemService implements MigPaymentService {
 
@@ -91,50 +89,6 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
         }
         LOGGER.warn("Couldn't find PendingPayment with internalTxId  {} in MIG callback.", messageId);
         return null;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public MigPaymentDetails createPaymentDetails(String migPhoneNumber, User user, Community community, PaymentPolicy paymentPolicy) throws ServiceException {
-        LOGGER.info("Starting creating MIG payment details...");
-        MigPaymentDetails paymentDetails = new MigPaymentDetails();
-        paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
-        paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.PENDING);
-        paymentDetails.resetMadeAttempts();
-        paymentDetails.setRetriesOnError(getRetriesOnError());
-        paymentDetails.setMigPhoneNumber(migPhoneNumber);
-        paymentDetails.setPaymentPolicy(paymentPolicy);
-        paymentDetails.setActivated(false);
-        paymentDetails.setOwner(user);
-        // Storing pin to user
-        String pin = Utils.generateRandom4DigitsPIN();
-        user.setPin(pin);
-
-        paymentDetails = getPaymentDetailsRepository().save(paymentDetails);
-        sendPin(migPhoneNumber, messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.freeMsg", new Object[] {pin}, null));
-        LOGGER.info("Free sms with pin code was sent");
-        return paymentDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public MigPaymentDetails commitPaymentDetails(User user, String verificationPin) throws ServiceException {
-        LOGGER.info("Verifying pin:{} from mig for user id:{}", verificationPin, user.getId());
-
-        if (StringUtils.hasText(verificationPin) && user.getPin().equals(verificationPin)) {
-
-            MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(user.getId());
-            user.setPin("");
-
-            paymentDetails = (MigPaymentDetails) super.commitPaymentDetails(user, paymentDetails);
-
-            LOGGER.info("Verification passed. Mig payment details has been created for user id:{}", user.getId());
-
-            return paymentDetails;
-        }
-
-        LOGGER.info("Incorrect pin for user [{}]", user.getId());
-        throw new ServiceException("Incorrect pin");
     }
 
     @Override

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.shared.dto.web.payment;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -25,15 +23,6 @@ public class PSmsDto {
         super();
         this.phone = phone;
         this.operator = operator;
-    }
-
-    public static PaymentDetailsDto toPaymentDetails(PSmsDto dto) {
-        PaymentDetailsDto pdto = new PaymentDetailsDto();
-        pdto.setPaymentType("PSMS");
-        pdto.setPhoneNumber(dto.getPhone());
-        pdto.setOperator(dto.getOperator());
-        pdto.setPaymentPolicyId(dto.getPaymentPolicyId());
-        return pdto;
     }
 
     public String getPhone() {

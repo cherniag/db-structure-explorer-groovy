@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.aop;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -259,11 +258,11 @@ public class SMSNotificationIT {
         User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 
-        Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPaymentDetails(any(CreditCardDto.class), anyString(), anyInt());
+        Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPaymentDetails(any(CreditCardDto.class), anyInt());
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
-        paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, "O2", user.getId());
+        paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, user.getId());
 
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
     }
@@ -279,20 +278,6 @@ public class SMSNotificationIT {
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
         paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, user.getId());
-
-        verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
-    }
-
-    @Test
-    public void testSendUnsubscribePotentialSMS_afterCreatedMigPaymentDetails_Success() throws Exception {
-        User user = UserFactory.createUser(new MigPaymentDetails(), null);
-        user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
-
-        Mockito.doReturn(null).when(paymentDetailsService).commitMigPaymentDetails(anyString(), anyInt());
-        Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
-
-        paymentDetailsService.commitMigPaymentDetails("xxxxxxxxxxxxxxxxx", user.getId());
 
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
     }

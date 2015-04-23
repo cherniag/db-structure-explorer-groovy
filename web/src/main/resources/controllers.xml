@@ -49,6 +49,8 @@
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsMigController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
+        <property name="migPaymentDetailsService" ref="migPaymentDetailsService" />
+        <property name="operatorRepository" ref="operatorRepository" />
     </bean>
 
 	<bean class="mobi.nowtechnologies.server.web.controller.PaymentsPsmsController">

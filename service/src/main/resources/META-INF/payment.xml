@@ -78,6 +78,12 @@
 		</property>
 		<property name="timeToLiveMin" value="${mig.timeToLiveMin}" />
 	</bean>
+
+    <bean id="migPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.MigPaymentDetailsService">
+    </bean>
+    <bean class="mobi.nowtechnologies.server.service.payment.MigPaymentDetailsInfoService">
+        <property name="retriesOnError" value="${mig.retriesOnError}" />
+    </bean>
 	<bean id="service.migPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
 		<property name="retriesOnError" value="${mig.retriesOnError}" />
 		<property name="expireMillis" value="${mig.pendingExpireMillis}" />

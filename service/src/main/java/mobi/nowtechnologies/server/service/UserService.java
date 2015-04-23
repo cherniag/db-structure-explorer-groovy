@@ -472,17 +472,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String getMigPhoneNumber(int operator, String mobile) {
-        return operatorRepository.findOne(operator).getMigName() + "." + mobile;
-    }
-
-    public String convertPhoneNumberFromGreatBritainToInternationalFormat(String mobile) {
-        if (!mobile.startsWith("0044")) {
-            return mobile.replaceFirst("0", "0044");
-        }
-        return mobile;
-    }
-
     @Transactional(propagation = REQUIRED)
     public User changePassword(Integer userId, String newPassword) {
         LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[] {userId, newPassword});

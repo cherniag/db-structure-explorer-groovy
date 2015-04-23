@@ -133,7 +133,7 @@ public class PaymentDetailsServiceTest {
         expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
 
         doReturn(defaultPaymentPolicy).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
-        doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user), eq(user.getUserGroup().getCommunity()));
+        doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user));
 
         //when
         O2PSMSPaymentDetails o2PSMSPaymentDetails = paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
@@ -143,7 +143,7 @@ public class PaymentDetailsServiceTest {
         assertEquals(expectedO2PSMSPaymentDetails, o2PSMSPaymentDetails);
 
         verify(paymentPolicyServiceMock, times(1)).findDefaultO2PsmsPaymentPolicy(user);
-        verify(paymentDetailsServiceSpy, times(1)).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user), eq(user.getUserGroup().getCommunity()));
+        verify(paymentDetailsServiceSpy, times(1)).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user));
     }
 
     @Test(expected = ServiceException.class)
@@ -153,7 +153,7 @@ public class PaymentDetailsServiceTest {
         expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
 
         doReturn(defaultPaymentPolicy).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
-        doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user), eq(user.getUserGroup().getCommunity()));
+        doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user));
 
         //when
         paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
