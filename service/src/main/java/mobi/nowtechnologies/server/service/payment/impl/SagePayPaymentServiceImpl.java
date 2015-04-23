@@ -99,7 +99,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
         return commitPaymentDetails(response, paymentDto, user, paymentPolicy, true);
     }
 
-    public SagePayCreditCardPaymentDetails commitPaymentDetails(SagePayResponse response, PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy, boolean activated)
+    private SagePayCreditCardPaymentDetails commitPaymentDetails(SagePayResponse response, PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy, boolean activated)
         throws ServiceException {
         SagePayCreditCardPaymentDetails newPaymentDetails = createPaymentDetailsFromResponse(response, activated);
 
