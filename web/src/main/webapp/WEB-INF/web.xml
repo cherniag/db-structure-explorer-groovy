@@ -7,6 +7,10 @@
 	<display-name>Now Technologies Web Portal</display-name>
 
 	<!-- The context params that read by ContextLoaderListener -->
+    <context-param>
+        <param-name>project.version</param-name>
+        <param-value>${project.version}</param-value>
+    </context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:web-root.xml</param-value>
