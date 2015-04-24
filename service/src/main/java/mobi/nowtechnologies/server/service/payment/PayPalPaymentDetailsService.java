@@ -8,11 +8,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
@@ -37,17 +34,9 @@ public class PayPalPaymentDetailsService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    MigPaymentDetailsInfoService migPaymentDetailsInfoService;
-    @Resource
-    PaymentDetailsService paymentDetailsService;
-    @Resource
     UserNotificationService userNotificationService;
     @Resource
     UserRepository userRepository;
-    @Resource
-    PaymentDetailsRepository paymentDetailsRepository;
-    @Resource
-    PromotionPaymentPolicyRepository promotionPaymentPolicyRepository;
     @Resource
     PaymentPolicyRepository paymentPolicyRepository;
     @Resource
