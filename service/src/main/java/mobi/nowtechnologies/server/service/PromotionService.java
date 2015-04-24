@@ -83,13 +83,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private UserService userService;
     private DevicePromotionsService deviceService;
 
-    @Transactional(readOnly = true)
-    public Promotion getActivePromotion(Community community, String promotionCode) {
-        UserGroup userGroup = userGroupRepository.findByCommunity(community);
-
-        return getActivePromotion(userGroup, promotionCode);
-    }
-
     public Promotion getActivePromotion(UserGroup userGroup, String promotionCode) {
         notNull(promotionCode, "The parameter promotionCode is null");
 

@@ -10,12 +10,15 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
-import mobi.nowtechnologies.server.service.PromotionService;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -53,9 +56,6 @@ public class AutoOptInRuleServiceIT {
     @Autowired
     private SubscriptionCampaignRepository subscriptionCampaignRepository;
 
-    @Autowired
-    private PromotionService promotionService;
-
     @Resource
     private CommunityRepository communityRepository;
 
@@ -64,6 +64,11 @@ public class AutoOptInRuleServiceIT {
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     private SubscriptionCampaignRecord subscriptionCampaignRecord;
+
+    @Resource
+    private UserGroupRepository userGroupRepository;
+    @Resource
+    private PromotionRepository promotionRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -201,7 +206,7 @@ public class AutoOptInRuleServiceIT {
         User user = createMatchingUser();
         user.setTariff(_3G);
         String promoCode = communityResourceBundleMessageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.3g.promoCode", null, null);
-        Promotion promotion = promotionService.getActivePromotion(findO2Community(), promoCode);
+        Promotion promotion = getActivePromotion(findO2Community(), promoCode);
         user.getOldUser().setLastPromo(promotion.getPromoCode());
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
@@ -215,11 +220,16 @@ public class AutoOptInRuleServiceIT {
         User user = createMatchingUser();
         user.setTariff(_4G);
         String promoCode = communityResourceBundleMessageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.4g.promoCode", null, null);
-        Promotion promotion = promotionService.getActivePromotion(findO2Community(), promoCode);
+        Promotion promotion = getActivePromotion(findO2Community(), promoCode);
         user.getOldUser().setLastPromo(promotion.getPromoCode());
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(false));
+    }
+
+    private Promotion getActivePromotion(Community community, String promoCode) {
+        UserGroup userGroup = userGroupRepository.findByCommunity(community);
+        return promotionRepository.findActivePromoCodePromotion(promoCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
     }
 
     @Test
