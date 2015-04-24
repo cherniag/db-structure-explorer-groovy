@@ -39,6 +39,8 @@ public class PayPalPaymentDetailsInfoService {
 
     @Transactional
     public PayPalPaymentDetails commitPaymentDetails(User user, PaymentPolicy paymentPolicy, PayPalResponse response) {
+        logger.info("Committing payment details for user:{}, paymentPolicy:{}", user.getId(), paymentPolicy.getId());
+
         if(user.isLimited()) {
             promotionService.applyPromoToLimitedUser(user);
         }

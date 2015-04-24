@@ -73,7 +73,7 @@ public class PaymentsPayPalController extends CommonController {
 
         if (StringUtils.hasText(result)) {
             if (SUCCESSFUL_RESULT.equals(result) && StringUtils.hasText(token)) {
-                payPalPaymentDetailsService.commitPaymentDetails(token, paymentPolicyId, getUserId());
+                payPalPaymentDetailsService.commitPaymentDetails(getUserId(), paymentPolicyId, token);
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
             PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);

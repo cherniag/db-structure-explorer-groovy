@@ -73,7 +73,7 @@ public class PayPalPaymentDetailsService {
         return redirectUrl;
     }
 
-    public PayPalPaymentDetails commitPaymentDetails(String token, int paymentPolicyId, int userId) {
+    public PayPalPaymentDetails commitPaymentDetails(int userId, int paymentPolicyId, String token) {
         User user = userRepository.findOne(userId);
 
         PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(paymentPolicyId);
