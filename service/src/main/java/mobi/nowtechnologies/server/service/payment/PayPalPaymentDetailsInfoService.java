@@ -4,7 +4,6 @@
 
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -13,7 +12,6 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
-import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 
 import javax.annotation.Resource;
 
@@ -41,7 +39,9 @@ public class PayPalPaymentDetailsInfoService {
 
     @Transactional
     public PayPalPaymentDetails commitPaymentDetails(User user, PaymentPolicy paymentPolicy, PayPalResponse response) {
-        applyPromoToLimitedUsers(user);
+        if(user.isLimited()) {
+            promotionService.applyPromoToLimitedUser(user);
+        }
 
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 
@@ -51,17 +51,5 @@ public class PayPalPaymentDetailsInfoService {
         userRepository.save(user);
 
         return newPaymentDetails;
-    }
-
-    private void applyPromoToLimitedUsers(User user) {
-        if (user.isLimited()) {
-
-            Promotion twoWeeksTrial = promotionService.getActivePromotion(user.getUserGroup(), PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE);
-            long now = System.currentTimeMillis();
-            int dbSecs = (int) (now / 1000); // in db we keep time in seconds not milliseconds
-            if (twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate()) {
-                promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
-            }
-        }
     }
 }

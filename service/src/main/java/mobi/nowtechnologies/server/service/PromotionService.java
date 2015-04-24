@@ -29,6 +29,7 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.TriggerType;
 import static mobi.nowtechnologies.server.builder.PromoParamsBuilder.PromoParams;
+import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -42,6 +43,7 @@ import javax.annotation.Resource;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.Validate.notNull;
@@ -82,6 +84,19 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private CommunityResourceBundleMessageSource messageSource;
     private UserService userService;
     private DevicePromotionsService deviceService;
+
+    public void applyPromoToLimitedUser(User user) {
+        Preconditions.checkArgument(user.isLimited());
+
+        Promotion twoWeeksTrial = getActivePromotion(user.getUserGroup(), PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE);
+        if(twoWeeksTrial != null) {
+            long now = System.currentTimeMillis();
+            int dbSecs = (int) (now / 1000); // in db we keep time in seconds not milliseconds
+            if (twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate()) {
+                applyPromotionByPromoCode(user, twoWeeksTrial);
+            }
+        }
+    }
 
     public Promotion getActivePromotion(UserGroup userGroup, String promotionCode) {
         notNull(promotionCode, "The parameter promotionCode is null");

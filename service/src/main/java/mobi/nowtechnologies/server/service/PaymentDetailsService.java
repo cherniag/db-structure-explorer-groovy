@@ -21,7 +21,6 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.CREDIT_CARD;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
-import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
@@ -127,7 +126,9 @@ public class PaymentDetailsService {
     @Transactional(propagation = Propagation.REQUIRED)
     public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, int userId) throws ServiceException {
         User user = userRepository.findOne(userId);
-        applyPromoToLimitedUsers(user);
+        if(user.isLimited()) {
+            promotionService.applyPromoToLimitedUser(user);
+        }
         PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 
         return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user);
@@ -181,17 +182,7 @@ public class PaymentDetailsService {
         return user;
     }
 
-    private void applyPromoToLimitedUsers(User user) {
-        if (user.isLimited()) {
 
-            Promotion twoWeeksTrial = promotionService.getActivePromotion(user.getUserGroup(), PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE);
-            long now = System.currentTimeMillis();
-            int dbSecs = (int) (now / 1000); // in db we keep time in seconds not milliseconds
-            if (twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate()) {
-                promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
-            }
-        }
-    }
 
     public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
         this.o2PaymentService = o2PaymentService;
