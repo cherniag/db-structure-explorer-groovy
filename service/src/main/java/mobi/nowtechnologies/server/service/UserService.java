@@ -25,7 +25,6 @@ import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRe
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
@@ -120,8 +119,6 @@ public class UserService {
     UserRepository userRepository;
     @Resource
     ReactivationUserInfoRepository reactivationUserInfoRepository;
-    @Resource
-    UserTransactionRepository userTransactionRepository;
     @Resource
     OperatorRepository operatorRepository;
     @Resource
@@ -360,7 +357,6 @@ public class UserService {
 
         deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(tempUser);
-        userTransactionRepository.deleteByUser(tempUser);
 
         appsFlyerDataService.mergeAppsFlyerData(tempUser, oldUser);
 

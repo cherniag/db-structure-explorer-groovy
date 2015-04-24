@@ -7,6 +7,10 @@
 	
 	<display-name>Now Technologies Server</display-name>
 
+	<context-param>
+		<param-name>project.version</param-name>
+		<param-value>${project.version}</param-value>
+	</context-param>
     <context-param>
         <param-name>spring.profiles.active</param-name>
         <param-value>@profile@</param-value>
