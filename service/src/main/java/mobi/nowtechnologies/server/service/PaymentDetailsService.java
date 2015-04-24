@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPo
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
@@ -61,10 +62,12 @@ public class PaymentDetailsService {
     OperatorRepository operatorRepository;
     @Resource
     PinMigService pinMigService;
+    @Resource
+    PaymentPolicyRepository paymentPolicyRepository;
 
     PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user) throws ServiceException {
 
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getPaymentPolicyId());
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(dto.getPaymentPolicyId());
         Promotion promotion = user.getPotentialPromotion();
         PromotionPaymentPolicy promotionPaymentPolicy = null;
         if (null != promotion) {

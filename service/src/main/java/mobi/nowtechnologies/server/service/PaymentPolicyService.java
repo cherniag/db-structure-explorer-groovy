@@ -51,10 +51,6 @@ public class PaymentPolicyService {
         return paymentPolicy;
     }
 
-    public PaymentPolicy getPaymentPolicy(Integer id) {
-        return paymentPolicyRepository.findOne(id);
-    }
-
     public PaymentPolicyDto getPaymentPolicy(PaymentPolicy paymentPolicy, PromotionPaymentPolicy promotionPaymentPolicy) {
         PaymentPolicyDto dto = null;
         if (isNotNull(paymentPolicy)) {
@@ -90,12 +86,6 @@ public class PaymentPolicyService {
         }
 
         return unmodifiableList(paymentPolicyDtos);
-    }
-
-    @Transactional(readOnly = true)
-    public List<PaymentPolicy> findPaymentPolicies(User user) {
-        List<MediaType> mediaTypes = getMediaTypes(user);
-        return paymentPolicyRepository.findPaymentPolicies(user.getCommunity(), mediaTypes);
     }
 
     private List<PaymentPolicyDto> getMergedPaymentPolicies(User user, SegmentType defaultSegment, ProviderType defaultProvider) {
@@ -172,13 +162,7 @@ public class PaymentPolicyService {
     }
 
     public PaymentPolicyDto getPaymentPolicyDto(Integer paymentPolicyId) {
-        PaymentPolicy paymentPolicy = getPaymentPolicy(paymentPolicyId);
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(paymentPolicyId);
         return getPaymentPolicy(paymentPolicy, null);
     }
-
-    @Transactional(readOnly = true)
-    public PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType) {
-        return paymentPolicyRepository.findPaymentPolicy(community, providerType, paymentType);
-    }
-
 }

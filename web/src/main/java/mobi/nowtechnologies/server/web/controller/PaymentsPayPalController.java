@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -61,6 +62,8 @@ public class PaymentsPayPalController extends CommonController {
     private SocialNetworkInfoRepository socialNetworkInfoRepository;
     @Resource
     private PayPalPaymentDetailsService payPalPaymentDetailsService;
+    @Resource
+    private PaymentPolicyRepository paymentPolicyRepository;
 
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
     public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
@@ -111,14 +114,13 @@ public class PaymentsPayPalController extends CommonController {
         if (user.isSubscribedUserByPaymentType(PAYPAL_TYPE)) {
             return REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
         }
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getCommunity(), user.getProvider(), PAY_PAL);
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.findPaymentPolicy(user.getCommunity(), user.getProvider(), PAY_PAL);
         notNull(paymentPolicy);
         return "redirect:/payments_inapp/paypal.html?" + REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId();
     }
 
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)
-    public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, @ModelAttribute(PayPalDto.NAME) PayPalDto dto,
-                                             @CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
+    public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, @ModelAttribute(PayPalDto.NAME) PayPalDto dto, Locale locale) {
         logger.info("Post Create PayPal Payment Details for user id:{} and payment policy", getUserId(), dto.getPaymentPolicyId());
 
         PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());

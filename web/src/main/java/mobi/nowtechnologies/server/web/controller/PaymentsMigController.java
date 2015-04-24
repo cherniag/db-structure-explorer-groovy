@@ -104,7 +104,7 @@ public class PaymentsMigController extends CommonController {
         logger.info("Get verify MIG payments page for user id:{}", getUserId());
 
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_VERIFY_PAYMENTS_PSMS);
-        MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService. getPendingPaymentDetails(getUserId());
+        MigPaymentDetails paymentDetails = (MigPaymentDetails) paymentDetailsService.getPendingPaymentDetails(getUserId());
         if (null != paymentDetails) {
             modelAndView.addObject(VerifyDto.NAME, new VerifyDto());
             modelAndView.addObject(PSmsDto.NAME, new PSmsDto(paymentDetails.getMigPhoneNumber(), paymentDetails.getPaymentPolicy().getOperatorId()));
