@@ -74,7 +74,6 @@
         <property name="successfulHander">
             <bean class="mobi.nowtechnologies.server.web.service.impl.NowTechBasedRememberMeSuccessfulHandler">
                 <property name="userService" ref="service.UserService" />
-                <property name="promotionService" ref="service.PromotionService" />
             </bean>
         </property>
     </bean>

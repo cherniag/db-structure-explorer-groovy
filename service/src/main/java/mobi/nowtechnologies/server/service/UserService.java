@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.common.util.ServerMessage;
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
@@ -149,6 +150,7 @@ public class UserService {
     private AppsFlyerDataService appsFlyerDataService;
     private UrbanAirshipTokenService urbanAirshipTokenService;
     private UserActivationStatusService userActivationStatusService;
+    private TimeService timeService;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -660,13 +662,12 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User updateLastWebLogin(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
+    public User updateLastWebLogin(int userId) {
+        LOGGER.info("Attempt to update user last web login time");
 
-        user.setLastWebLogin(getEpochSeconds());
-        updateUser(user);
+        User user = userRepository.findOne(userId);
+        user.setLastWebLogin(timeService.nowSeconds());
 
-        LOGGER.debug("Output parameter user=[{}]", user);
         return user;
     }
 
@@ -1306,5 +1307,9 @@ public class UserService {
             return DeviceTypeCache.getNoneDeviceType();
         }
         return deviceType;
+    }
+
+    public void setTimeService(TimeService timeService) {
+        this.timeService = timeService;
     }
 }

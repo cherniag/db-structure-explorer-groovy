@@ -94,43 +94,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return promotionRepository.findActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
     }
 
-    private Promotion getPromotionForUser(User user) {
-        LOGGER.debug("input parameters communityName, user: [{}], [{}]", user.getCommunity().getRewriteUrlParameter(), user.getId());
-
-        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(user.getUserGroup(), DateTimeUtils.getEpochSeconds());
-        List<Promotion> promotions = new LinkedList<Promotion>();
-        for (Promotion currentPromotion : promotionWithFilters) {
-            List<AbstractFilter> filters = currentPromotion.getFilters();
-            boolean filtered = true;
-            for (AbstractFilter filter : filters) {
-                if (!(filtered = filter.doFilter(user, null))) {
-                    break;
-                }
-            }
-            if (filtered) {
-                promotions.add(currentPromotion);
-            }
-        }
-
-        Promotion resPromotion = null;
-        for (Promotion promotion : promotions) {
-            List<AbstractFilter> filters = promotion.getFilters();
-            for (AbstractFilter abstractFilter : filters) {
-                if (abstractFilter instanceof FreeTrialPeriodFilter) {
-                    resPromotion = promotion;
-                    break;
-                }
-            }
-        }
-
-
-        if (resPromotion == null) {
-            resPromotion = (promotions.size() > 0) ? promotions.get(0) : null;
-        }
-        LOGGER.info("Output parameter resPromotion=[{}]", resPromotion);
-        return resPromotion;
-    }
-
     @Transactional(propagation = REQUIRED)
     public User applyPromotion(User user) {
         if (null != user.getPotentialPromotion()) {
@@ -227,25 +190,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         }
         LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
         return messageCodeForPromoCode.toLowerCase();
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User applyInitialPromotion(User user) {
-        LOGGER.debug("input parameters user: [{}]", new Object[] {user});
-
-        if (user == null) {
-            throw new NullPointerException("The parameter user is null");
-        }
-
-        if (UserStatusType.LIMITED.name().equals(user.getStatus().getName())) {
-
-            Promotion potentialPromoCodePromotion = user.getPotentialPromoCodePromotion();
-            if (potentialPromoCodePromotion != null) {
-                applyPromotionByPromoCode(user, potentialPromoCodePromotion);
-            }
-        }
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -375,30 +319,6 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
                                                 lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
         LOGGER.info("Are found and last applied promotions have the same media type: [{}]", arePromotionMediaTypesTheSame);
         return arePromotionMediaTypesTheSame;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User assignPotentialPromotion(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-        User user = userRepository.findOne(userId);
-
-        user = assignPotentialPromotion(user);
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = REQUIRED)
-    public User assignPotentialPromotion(User existingUser) {
-        LOGGER.debug("input parameters communityName: [{}]", existingUser);
-        if (existingUser.getLastSuccessfulPaymentTimeMillis() == 0) {
-            Promotion promotion = getPromotionForUser(existingUser);
-            existingUser.setPotentialPromotion(promotion);
-            existingUser = userRepository.save(existingUser);
-            LOGGER.info("Promotion [{}] was attached to user with id [{}]", promotion, existingUser.getId());
-        }
-        LOGGER.debug("Output parameter existingUser=[{}]", existingUser);
-        return existingUser;
     }
 
     public Promotion getPromotionFromRuleForAutoOptIn(User user) {
