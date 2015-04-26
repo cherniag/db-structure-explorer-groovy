@@ -5,53 +5,49 @@
 package mobi.nowtechnologies.server.service.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.transaction.annotation.Transactional;
 
-public class PayPalPaymentDetailsInfoService {
+public class VFPSMSPaymentDetailsInfoService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Resource
-    PaymentDetailsService paymentDetailsService;
     @Resource
     UserRepository userRepository;
     @Resource
     PaymentDetailsRepository paymentDetailsRepository;
     @Resource
-    PromotionService promotionService;
+    PaymentDetailsService paymentDetailsService;
 
     private int retriesOnError;
+
     public void setRetriesOnError(int retriesOnError) {
         this.retriesOnError = retriesOnError;
     }
 
     @Transactional
-    public PayPalPaymentDetails createPaymentDetailsInfo(User user, PaymentPolicy paymentPolicy, PayPalResponse response) {
-        logger.info("Committing payment details for user:{}, paymentPolicy:{}", user.getId(), paymentPolicy.getId());
-
-        if(user.isLimited()) {
-            promotionService.applyPromoToLimitedUser(user);
-        }
+    public VFPSMSPaymentDetails createPaymentDetailsInfo(User user, PaymentPolicy paymentPolicy) throws ServiceException {
+        Preconditions.checkArgument(paymentPolicy != null);
 
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 
-        PayPalPaymentDetails newPaymentDetails = new PayPalPaymentDetails(user, paymentPolicy, response.getBillingAgreement(), response.getToken(), response.getPayerId(), retriesOnError);
-        newPaymentDetails = paymentDetailsRepository.save(newPaymentDetails);
-        user.setCurrentPaymentDetails(newPaymentDetails);
+        VFPSMSPaymentDetails paymentDetails = new VFPSMSPaymentDetails(paymentPolicy, user, retriesOnError);
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        paymentDetails = paymentDetailsRepository.save(paymentDetails);
         userRepository.save(user);
 
-        return newPaymentDetails;
+        return paymentDetails;
     }
 }

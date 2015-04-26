@@ -71,9 +71,6 @@ public class PayPalPaymentDetailsServiceTest {
     final String currencyISO = "GBP";
     final BigDecimal subCost = BigDecimal.TEN;
 
-//    @Captor
-//    ArgumentCaptor<PayPalPaymentDetails> paymentDetailsArgumentCaptor;
-
     @Before
     public void setUp() throws Exception {
         payPalPaymentDetailsService.setRedirectURL(redirectURL);
@@ -162,9 +159,9 @@ public class PayPalPaymentDetailsServiceTest {
         final int paymentPolicyId = 2;
         mockToGetRedirectURL(userId, paymentPolicyId, PaymentPolicyType.ONETIME, true);
         when(httpService.getPaymentDetailsInfoForOnetimeType(token, communityUrlParameter)).thenReturn(payPalResponse);
-        when(payPalPaymentDetailsInfoService.commitPaymentDetails(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
+        when(payPalPaymentDetailsInfoService.createPaymentDetailsInfo(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
 
-        PayPalPaymentDetails payPalPaymentDetails = payPalPaymentDetailsService.commitPaymentDetails(userId, paymentPolicyId, token);
+        PayPalPaymentDetails payPalPaymentDetails = payPalPaymentDetailsService.createPaymentDetails(userId, paymentPolicyId, token);
 
         assertSame(this.payPalPaymentDetails, payPalPaymentDetails);
         verify(userNotificationService).sendSubscriptionChangedSMS(user);
@@ -176,10 +173,10 @@ public class PayPalPaymentDetailsServiceTest {
         final int paymentPolicyId = 2;
         mockToGetRedirectURL(userId, paymentPolicyId, PaymentPolicyType.ONETIME, false);
         when(httpService.getPaymentDetailsInfoForOnetimeType(token, communityUrlParameter)).thenReturn(payPalResponse);
-        when(payPalPaymentDetailsInfoService.commitPaymentDetails(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
+        when(payPalPaymentDetailsInfoService.createPaymentDetailsInfo(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
 
         thrown.expect(ServiceException.class);
-        payPalPaymentDetailsService.commitPaymentDetails(userId, paymentPolicyId, token);
+        payPalPaymentDetailsService.createPaymentDetails(userId, paymentPolicyId, token);
         verifyZeroInteractions(userNotificationService);
     }
 
@@ -189,9 +186,9 @@ public class PayPalPaymentDetailsServiceTest {
         final int paymentPolicyId = 2;
         mockToGetRedirectURL(userId, paymentPolicyId, PaymentPolicyType.RECURRENT, true);
         when(httpService.getPaymentDetailsInfoForRecurrentType(token, communityUrlParameter)).thenReturn(payPalResponse);
-        when(payPalPaymentDetailsInfoService.commitPaymentDetails(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
+        when(payPalPaymentDetailsInfoService.createPaymentDetailsInfo(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
 
-        PayPalPaymentDetails payPalPaymentDetails = payPalPaymentDetailsService.commitPaymentDetails(userId, paymentPolicyId, token);
+        PayPalPaymentDetails payPalPaymentDetails = payPalPaymentDetailsService.createPaymentDetails(userId, paymentPolicyId, token);
 
         assertSame(this.payPalPaymentDetails, payPalPaymentDetails);
         verify(userNotificationService).sendSubscriptionChangedSMS(user);
@@ -203,10 +200,10 @@ public class PayPalPaymentDetailsServiceTest {
         final int paymentPolicyId = 2;
         mockToGetRedirectURL(userId, paymentPolicyId, PaymentPolicyType.RECURRENT, false);
         when(httpService.getPaymentDetailsInfoForRecurrentType(token, communityUrlParameter)).thenReturn(payPalResponse);
-        when(payPalPaymentDetailsInfoService.commitPaymentDetails(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
+        when(payPalPaymentDetailsInfoService.createPaymentDetailsInfo(user, paymentPolicy, payPalResponse)).thenReturn(payPalPaymentDetails);
 
         thrown.expect(ServiceException.class);
-        payPalPaymentDetailsService.commitPaymentDetails(userId, paymentPolicyId, token);
+        payPalPaymentDetailsService.createPaymentDetails(userId, paymentPolicyId, token);
         verifyZeroInteractions(userNotificationService);
     }
 

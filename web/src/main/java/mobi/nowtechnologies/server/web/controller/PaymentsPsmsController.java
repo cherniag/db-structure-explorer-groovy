@@ -1,15 +1,11 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
-import mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl;
+import mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService;
+import mobi.nowtechnologies.server.service.payment.VFPSMSPaymentDetailsService;
 import static mobi.nowtechnologies.server.web.controller.PaymentsController.POLICY_REQ_PARAM;
 import static mobi.nowtechnologies.server.web.controller.PaymentsController.SCOPE_PREFIX;
 
@@ -22,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PaymentsPsmsController extends CommonController {
-
     public static final String VIEW_PAYMENTS_PSMS = "/{type:vfpsms|oppsms}";
     public static final String VIEW_PAYMENTS_PSMS_CONFIRM = "/oppsms_confirm";
 
@@ -31,9 +26,8 @@ public class PaymentsPsmsController extends CommonController {
 
     private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
-    private PaymentDetailsService paymentDetailsService;
-    private O2PaymentServiceImpl o2PaymentService;
-    private VFPaymentServiceImpl vfPaymentService;
+    private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
+    private VFPSMSPaymentDetailsService vfpsmsPaymentDetailsService;
 
     @RequestMapping(value = {PAGE_PAYMENTS_PSMS}, method = RequestMethod.GET)
     public ModelAndView getPsmsPage(@PathVariable("scopePrefix") String scopePrefix, @PathVariable("type") String type, @RequestParam(POLICY_REQ_PARAM) Integer policyId) {
@@ -50,28 +44,21 @@ public class PaymentsPsmsController extends CommonController {
         User user = userRepository.findOne(getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        PaymentDetails paymentDetails = createPaymentDetails(user, policy);
-        paymentDetailsService.commitPaymentDetails(user, paymentDetails);
+        createPaymentDetails(user, policy);
 
         return new ModelAndView("redirect:/" + scopePrefix + ".html");
     }
 
-    private PaymentDetails createPaymentDetails(User user, PaymentPolicy policy) {
+    private void createPaymentDetails(User user, PaymentPolicy policy) {
         if(user.isVFNZCommunityUser()) {
-            int retriesOnError = vfPaymentService.getRetriesOnError();
-            return new VFPSMSPaymentDetails(policy, user, retriesOnError);
+            vfpsmsPaymentDetailsService.createPaymentDetails(user, policy);
         }
 
         if(user.isO2CommunityUser()) {
-            int retriesOnError = o2PaymentService.getRetriesOnError();
-            return new O2PSMSPaymentDetails(policy, user, retriesOnError);
+            o2PSMSPaymentDetailsService.createPaymentDetails(user, policy);
         }
 
         throw new IllegalArgumentException("Can not create Payment Detail");
-    }
-
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
     }
 
     public void setUserRepository(UserRepository userRepository) {
@@ -82,11 +69,11 @@ public class PaymentsPsmsController extends CommonController {
         this.paymentPolicyRepository = paymentPolicyRepository;
     }
 
-    public void setO2PaymentService(O2PaymentServiceImpl o2PaymentService) {
-        this.o2PaymentService = o2PaymentService;
+    public void setO2PSMSPaymentDetailsService(O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService) {
+        this.o2PSMSPaymentDetailsService = o2PSMSPaymentDetailsService;
     }
 
-    public void setVfPaymentService(VFPaymentServiceImpl vfPaymentService) {
-        this.vfPaymentService = vfPaymentService;
+    public void setVfpsmsPaymentDetailsService(VFPSMSPaymentDetailsService vfpsmsPaymentDetailsService) {
+        this.vfpsmsPaymentDetailsService = vfpsmsPaymentDetailsService;
     }
 }

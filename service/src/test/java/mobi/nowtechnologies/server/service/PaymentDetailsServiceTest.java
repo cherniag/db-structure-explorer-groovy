@@ -1,25 +1,19 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 
 import java.util.Date;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
@@ -43,12 +37,11 @@ public class PaymentDetailsServiceTest {
     private UserService userService;
     @Mock
     private PaymentDetailsRepository paymentDetailsRepositoryMock;
+    @Mock
+    private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
 
     private PaymentDetailsService paymentDetailsServiceSpy;
-    private PaymentPolicy defaultPaymentPolicy;
-    private O2PSMSPaymentDetails expectedO2PSMSPaymentDetails;
     private User user;
-    private ArgumentMatcher<PaymentDetailsDto> o2PsmsPaymentDetailsDtoMatcher;
 
     @Before
     public void setUp() {
@@ -57,19 +50,6 @@ public class PaymentDetailsServiceTest {
         paymentDetailsServiceSpy = PowerMockito.spy(new PaymentDetailsService());
         paymentDetailsServiceSpy.paymentDetailsRepository = paymentDetailsRepositoryMock;
         paymentDetailsServiceSpy.setUserService(userService);
-        paymentDetailsServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
-
-        o2PsmsPaymentDetailsDtoMatcher = new ArgumentMatcher<PaymentDetailsDto>() {
-            @Override
-            public boolean matches(Object argument) {
-                PaymentDetailsDto paymentDetailsDto = (PaymentDetailsDto) argument;
-
-                assertEquals(O2_PSMS, paymentDetailsDto.getPaymentType());
-                assertEquals(defaultPaymentPolicy.getId(), paymentDetailsDto.getPaymentPolicyId());
-
-                return true;
-            }
-        };
     }
 
     @Test
@@ -126,36 +106,4 @@ public class PaymentDetailsServiceTest {
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
 
-    @Test
-    public void shouldCreateDefaultO2PsmsPaymentDetails() throws ServiceException {
-        //given
-        defaultPaymentPolicy = new PaymentPolicy().withId(Integer.MAX_VALUE);
-        expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
-
-        doReturn(defaultPaymentPolicy).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
-        doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user));
-
-        //when
-        O2PSMSPaymentDetails o2PSMSPaymentDetails = paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
-
-        //then
-        assertNotNull(o2PSMSPaymentDetails);
-        assertEquals(expectedO2PSMSPaymentDetails, o2PSMSPaymentDetails);
-
-        verify(paymentPolicyServiceMock, times(1)).findDefaultO2PsmsPaymentPolicy(user);
-        verify(paymentDetailsServiceSpy, times(1)).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user));
-    }
-
-    @Test(expected = ServiceException.class)
-    public void shouldDoNotCreateDefaultO2PsmsPaymentDetails() throws ServiceException {
-        //given
-        defaultPaymentPolicy = null;
-        expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
-
-        doReturn(defaultPaymentPolicy).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
-        doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user));
-
-        //when
-        paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
-    }
 }

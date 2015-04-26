@@ -73,7 +73,7 @@ public class PayPalPaymentDetailsService {
         return redirectUrl;
     }
 
-    public PayPalPaymentDetails commitPaymentDetails(int userId, int paymentPolicyId, String token) {
+    public PayPalPaymentDetails createPaymentDetails(int userId, int paymentPolicyId, String token) {
         User user = userRepository.findOne(userId);
 
         PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(paymentPolicyId);
@@ -87,7 +87,7 @@ public class PayPalPaymentDetailsService {
             throw new ServiceException("pay.paypal.error.external", response.getDescriptionError());
         }
 
-        PayPalPaymentDetails newPaymentDetails = payPalPaymentDetailsInfoService.commitPaymentDetails(user, paymentPolicy, response);
+        PayPalPaymentDetails newPaymentDetails = payPalPaymentDetailsInfoService.createPaymentDetailsInfo(user, paymentPolicy, response);
 
         logger.info("Done creation of PayPal payment details for user:{}, payment details:{}", user.getId(), newPaymentDetails.getI());
 

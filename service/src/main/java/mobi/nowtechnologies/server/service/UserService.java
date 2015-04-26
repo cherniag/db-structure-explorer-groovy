@@ -35,6 +35,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
+import mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -137,6 +138,7 @@ public class UserService {
     private CountryService countryService;
     private PromotionService promotionService;
     private PaymentDetailsService paymentDetailsService;
+    private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
     private CommunityService communityService;
@@ -1085,7 +1087,7 @@ public class UserService {
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
 
-        PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+        PaymentDetails paymentDetails = o2PSMSPaymentDetailsService.createPaymentDetails(user);
         user = paymentDetails.getOwner();
         if (resultObject != null) {
             return new MergeResult(resultObject.isMergeDone(), user);
@@ -1099,7 +1101,7 @@ public class UserService {
         boolean subjectToAutoOptIn = autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user);
         user = promotionService.activateVideoAudioFreeTrial(user);
         if (subjectToAutoOptIn) {
-            paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+            o2PSMSPaymentDetailsService.createPaymentDetails(user);
         }
     }
 
@@ -1183,6 +1185,10 @@ public class UserService {
 
     public void setMigHttpService(MigHttpService migHttpService) {
         this.migHttpService = migHttpService;
+    }
+
+    public void setO2PSMSPaymentDetailsService(O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService) {
+        this.o2PSMSPaymentDetailsService = o2PSMSPaymentDetailsService;
     }
 
     public void setCountryByIpService(CountryByIpService countryByIpService) {

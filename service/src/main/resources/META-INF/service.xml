@@ -108,6 +108,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 		<property name="migHttpService" ref="service.migHttpService" />
+		<property name="o2PSMSPaymentDetailsService" ref="o2PSMSPaymentDetailsService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
 		<property name="communityService" ref="service.communityService" />
@@ -163,8 +164,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     </bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
-        <property name="o2PaymentService" ref="service.o2PaymentService"/>
-		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="userService" ref="service.UserService" />

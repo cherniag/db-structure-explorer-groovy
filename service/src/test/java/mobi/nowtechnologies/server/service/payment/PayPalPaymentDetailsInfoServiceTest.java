@@ -78,7 +78,7 @@ public class PayPalPaymentDetailsInfoServiceTest {
         //
         // when
         //
-        paymentTimeService.commitPaymentDetails(user, paymentPolicy, response);
+        paymentTimeService.createPaymentDetailsInfo(user, paymentPolicy, response);
 
         //
         // then
@@ -113,7 +113,7 @@ public class PayPalPaymentDetailsInfoServiceTest {
         //
         // when
         //
-        paymentTimeService.commitPaymentDetails(user, paymentPolicy, response);
+        paymentTimeService.createPaymentDetailsInfo(user, paymentPolicy, response);
 
         //
         // then
