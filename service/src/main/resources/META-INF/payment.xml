@@ -117,7 +117,6 @@
 	</bean>
 
 	<bean id="iTunesPaymentSystemServiceHelper" class="mobi.nowtechnologies.server.service.payment.ITunesPaymentSystemServiceHelper">
-		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
 		<property name="iTunesPaymentDetailsService" ref="iTunesPaymentDetailsService"/>
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
 		<property name="pendingPaymentRepository" ref="pendingPaymentRepository"/>

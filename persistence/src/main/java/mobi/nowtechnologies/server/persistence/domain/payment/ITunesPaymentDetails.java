@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 import java.util.Date;
 
@@ -20,14 +21,16 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @DiscriminatorValue(PaymentDetails.ITUNES_SUBSCRIPTION)
 public class ITunesPaymentDetails extends PaymentDetails {
 
+    @Lob
     @Column(name = "app_strore_receipt")
     private String appStroreReceipt;
 
     protected ITunesPaymentDetails() {
     }
 
-    public ITunesPaymentDetails(User user, String appStroreReceipt, int retriesOnError) {
+    public ITunesPaymentDetails(User user, PaymentPolicy paymentPolicy, String appStroreReceipt, int retriesOnError) {
         setOwner(user);
+        setPaymentPolicy(paymentPolicy);
         updateAppStroreReceipt(appStroreReceipt);
         setRetriesOnError(retriesOnError);
 

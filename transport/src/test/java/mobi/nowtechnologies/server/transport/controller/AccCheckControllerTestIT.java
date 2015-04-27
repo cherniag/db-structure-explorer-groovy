@@ -164,7 +164,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, currentPaymentDetails.getPaymentType());
         assertEquals(PaymentDetailsStatus.NONE, currentPaymentDetails.getLastPaymentStatus());
         assertEquals(appStoreReceipt, currentPaymentDetails.getAppStroreReceipt());
-        assertNull(currentPaymentDetails.getPaymentPolicy());
+        assertEquals(appStoreProductId, currentPaymentDetails.getPaymentPolicy().getAppStoreProductId());
     }
 
     @Test

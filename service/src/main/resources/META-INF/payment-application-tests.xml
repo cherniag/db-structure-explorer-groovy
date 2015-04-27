@@ -35,4 +35,6 @@
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
         <property name="messageSource" ref="serviceMessageSource"/>
     </bean>
+
+    <bean id="appStoreReceiptParser" class="mobi.nowtechnologies.server.apptests.AppStoreReceiptParserMock"/>
 </beans>

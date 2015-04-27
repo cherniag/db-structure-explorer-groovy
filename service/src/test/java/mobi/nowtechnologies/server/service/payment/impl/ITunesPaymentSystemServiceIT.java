@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
-import mobi.nowtechnologies.server.device.domain.DeviceTypeRepository;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -187,7 +185,7 @@ public class ITunesPaymentSystemServiceIT {
     }
 
     private PaymentDetails createPaymentDetails(User user, PaymentPolicy paymentPolicy, String appStroreReceipt) {
-        ITunesPaymentDetails paymentDetails = new ITunesPaymentDetails(user, appStroreReceipt, 3);
+        ITunesPaymentDetails paymentDetails = new ITunesPaymentDetails(user, paymentPolicy, appStroreReceipt, 3);
         paymentDetails.setPaymentPolicy(paymentPolicy);
         paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
         paymentDetails = paymentDetailsRepository.save(paymentDetails);

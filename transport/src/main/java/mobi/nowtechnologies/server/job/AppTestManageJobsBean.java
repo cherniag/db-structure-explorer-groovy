@@ -34,7 +34,7 @@ public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob 
 
     private void process(JobTriggerRequestRepository jobTriggerRequestService, Scheduler scheduler) {
         List<JobTriggerRequest> requests = jobTriggerRequestService.findBefore(new Date().getTime());
-        logger.debug("found {} requests", requests.size());
+        logger.trace("found {} requests", requests.size());
         for (JobTriggerRequest request : requests) {
             logger.debug("processing request {}", request);
             try {
@@ -44,7 +44,7 @@ public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob 
             }
             jobTriggerRequestService.delete(request);
         }
-        logger.debug("processing done");
+        logger.trace("processing done");
     }
 
 }

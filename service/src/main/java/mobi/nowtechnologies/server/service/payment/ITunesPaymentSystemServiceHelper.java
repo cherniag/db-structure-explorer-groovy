@@ -49,7 +49,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         final User user = pendingPayment.getUser();
         logger.info("Process payment confirmation for user {}, result {}", user.getId(), result);
 
-        updatePaymentPolicy(user, result);
+        checkPaymentPolicy(user, result);
 
         ITunesPaymentDetails updatedPaymentDetails = user.getCurrentPaymentDetails();
         updatedPaymentDetails.completeSuccessful();
@@ -88,13 +88,10 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         currentPaymentDetails.completedWithError(errorDescription);
         paymentDetailsRepository.save(currentPaymentDetails);
 
-        // if PaymentPolicy is not null - create SP
+        logger.info("Create error submitted payment for user {} transaction {}", user.getId(), pendingPayment.getInternalTxId());
         PaymentPolicy storedPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        if (storedPaymentPolicy != null) {
-            logger.info("Create error submitted payment for user {} transaction {}", user.getId(), pendingPayment.getInternalTxId());
-            SubmittedPayment submittedPayment = createFailedSubmittedPayment(user, storedPaymentPolicy, currentPaymentDetails.getAppStroreReceipt());
-            submittedPaymentService.save(submittedPayment);
-        }
+        SubmittedPayment submittedPayment = createFailedSubmittedPayment(user, storedPaymentPolicy, currentPaymentDetails.getAppStroreReceipt());
+        submittedPaymentService.save(submittedPayment);
 
         if (currentPaymentDetails.shouldBeUnSubscribed()) {
             userService.unsubscribeUser(user, errorDescription);
@@ -159,20 +156,14 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
 */
     }
 
-    private void updatePaymentPolicy(User user, ITunesResult result) {
+    private void checkPaymentPolicy(User user, ITunesResult result) {
         ITunesPaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
         String actualProductId = result.getProductId();
-        String actualReceipt = currentPaymentDetails.getAppStroreReceipt();
 
         PaymentPolicy storedPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        if (storedPaymentPolicy == null) {
-            logger.info("Payment policy is absent, try to find by product id {}", actualProductId);
-            PaymentPolicy paymentPolicyFromReceipt = getPaymentPolicy(user.getCommunity(), actualProductId);
-            currentPaymentDetails.setPaymentPolicy(paymentPolicyFromReceipt);
-        } else if (!actualProductId.equals(storedPaymentPolicy.getAppStoreProductId())) {
+        if (!actualProductId.equals(storedPaymentPolicy.getAppStoreProductId())) {
             logger.info("Stored payment policy product id {} doesn't match actual product id {}", storedPaymentPolicy.getAppStoreProductId(), actualProductId);
-            PaymentPolicy paymentPolicyFromReceipt = getPaymentPolicy(user.getCommunity(), actualProductId);
-            iTunesPaymentDetailsService.createPaymentDetails(user, paymentPolicyFromReceipt, actualReceipt);
+            iTunesPaymentDetailsService.createNewPaymentDetails(user, actualProductId, currentPaymentDetails.getAppStroreReceipt());
         }
     }
 

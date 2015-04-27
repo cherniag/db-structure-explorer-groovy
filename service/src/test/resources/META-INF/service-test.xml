@@ -117,4 +117,6 @@
 
 	<bean id="payPalPostService" class="mobi.nowtechnologies.server.apptests.paypal.PayPalPostService"/>
 
+	<bean id="appStoreReceiptParser" class="mobi.nowtechnologies.server.apptests.AppStoreReceiptParserMock"/>
+
 </beans>

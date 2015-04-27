@@ -31,6 +31,7 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigTyp
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot
+import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository
@@ -75,6 +76,8 @@ public class GetContextFeature {
     PendingPaymentRepository pendingPaymentRepository
     @Resource
     SubmittedPaymentRepository submittedPaymentRepository
+    @Resource
+    AccountLogRepository accountLogRepository
 
     @Resource
     SimpleInterpolator simpleInterpolator
@@ -272,6 +275,7 @@ public class GetContextFeature {
         appClientDeviceSet.cleanup()
         userDeviceDatas.clear()
 
+        accountLogRepository.deleteAllInBatch()
         pendingPaymentRepository.deleteAll()
         submittedPaymentRepository.deleteAll()
     }

@@ -44,7 +44,7 @@ public class PartnerDeviceSet extends ClientDevicesSet {
         state.phoneActivationDto =
             phoneNumberHttpService.phoneNumber(userDeviceData, phoneNumber, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
         state.accountCheck =
-            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
+            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat()).getEntity();
     }
 
     public void activate(UserDeviceData userDeviceData, String otac) {
