@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
@@ -24,6 +25,9 @@ public class UserServicePromotionTest {
     private PromotionService promotionServiceMock;
     @Mock
     private PaymentDetailsService paymentDetailsServiceMock;
+    @Mock
+    private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
+
     @InjectMocks
     private UserService userService;
 
@@ -51,7 +55,7 @@ public class UserServicePromotionTest {
 
         verify(ruleServiceSupportMock, times(1)).fireRules(eq(EMPTY), any(User.class));
         verify(user, times(1)).isSubjectToAutoOptIn();
-        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(any(User.class));
+        verify(o2PSMSPaymentDetailsService, times(1)).createPaymentDetails(any(User.class));
     }
 
 }

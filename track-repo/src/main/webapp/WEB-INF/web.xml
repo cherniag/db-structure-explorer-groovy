@@ -12,6 +12,11 @@
 	</listener>
 
 	<context-param>
+		<param-name>project.version</param-name>
+		<param-value>${project.version}</param-value>
+	</context-param>
+
+	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/application.xml;</param-value>
 	</context-param>

@@ -98,7 +98,10 @@
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="httpService" ref="service.migHttpService" />
 	</bean>
-	
+    <bean class="mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsInfoService">
+        <property name="retriesOnError" value="${o2.retriesOnError}" />
+    </bean>
+    <bean id="o2PSMSPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService" />
 	<bean id="service.o2PaymentService" class="mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl" parent="service.AbstractPaymentSystemService">
 		<property name="retriesOnError" value="${o2.retriesOnError}" />
 		<property name="expireMillis" value="${o2.pendingExpireMillis}" />
@@ -123,6 +126,10 @@
 		<property name="userService" ref="service.UserService"/>
 	</bean>
 
+    <bean class="mobi.nowtechnologies.server.service.payment.VFPSMSPaymentDetailsInfoService">
+        <property name="retriesOnError" value="${vf.retriesOnError}" />
+    </bean>
+    <bean id="vfpsmsPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.VFPSMSPaymentDetailsService"/>
     <bean id="service.vfPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
         <property name="retriesOnError" value="${vf.retriesOnError}" />
         <property name="expireMillis" value="${vf.pendingExpireMillis}" />

@@ -16,6 +16,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <import resource="task.xml"/>
     <import resource="classpath:META-INF/service-details-extractors.xml"/>
     <import resource="classpath:META-INF/service-chart-supporter.xml"/>
+    <import resource="classpath:event-logger.xml"/>
     <import resource="streamzine-service.xml"/>
     <import resource="classpath:META-INF/smpp.xml"/>
 
@@ -108,6 +109,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 		<property name="migHttpService" ref="service.migHttpService" />
+		<property name="o2PSMSPaymentDetailsService" ref="o2PSMSPaymentDetailsService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
 		<property name="communityService" ref="service.communityService" />
@@ -128,6 +130,8 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="deviceUserDataService" ref="service.DeviceUserDataService"/>
         <property name="appsFlyerDataService" ref="service.AppsFlyerDataService"/>
         <property name="userActivationStatusService" ref="userActivationStatusService"/>
+
+		<property name="timeService" ref="timeService"/>
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">
@@ -163,12 +167,9 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     </bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
-        <property name="o2PaymentService" ref="service.o2PaymentService"/>
-		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 
 	<bean id="service.DevicePromotionsService" class="mobi.nowtechnologies.server.service.DevicePromotionsService">
@@ -187,6 +188,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="deviceService" ref="service.DevicePromotionsService" />
+		<property name="eventLoggerService" ref="eventLoggerService"/>
         <property name="configuration" ref="configuration.PromotionService"/>
     </bean>
 

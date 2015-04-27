@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepositor
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
@@ -592,7 +593,7 @@ public class PaymentPolicyServiceIT {
                                .withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS).withTariff(_3G).withMediaType(AUDIO)
                                .withDefault(false)).withOnline(true);
         paymentPolicyRepository.save(paymentPolicy2);
-        PaymentPolicy resultPolicy = paymentPolicyService.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAY_PAL);
+        PaymentPolicy resultPolicy = getPaymentPolicy(o2Community, GOOGLE_PLUS, PAY_PAL);
         assertEquals(resultPolicy, paymentPolicy2);
     }
 
@@ -604,7 +605,7 @@ public class PaymentPolicyServiceIT {
                                .withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS).withTariff(_3G).withMediaType(AUDIO)
                                .withDefault(false)).withOnline(true);
         paymentPolicyRepository.save(paymentPolicy1);
-        PaymentPolicy resultPolicy = paymentPolicyService.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAY_PAL);
+        PaymentPolicy resultPolicy = getPaymentPolicy(o2Community, GOOGLE_PLUS, PAY_PAL);
         assertEquals(resultPolicy, paymentPolicy1);
     }
 
@@ -653,5 +654,9 @@ public class PaymentPolicyServiceIT {
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         BeanUtils.copyProperties(targetPaymentPolicy, paymentPolicy);
         return paymentPolicyRepository.save(paymentPolicy.withContract(contract).withOnline(true).withId(null));
+    }
+
+    private PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType) {
+        return paymentPolicyRepository.findPaymentPolicy(community, providerType, paymentType);
     }
 }

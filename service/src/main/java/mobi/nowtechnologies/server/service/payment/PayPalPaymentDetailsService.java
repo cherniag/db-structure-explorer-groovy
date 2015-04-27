@@ -8,11 +8,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
@@ -37,17 +34,9 @@ public class PayPalPaymentDetailsService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    MigPaymentDetailsInfoService migPaymentDetailsInfoService;
-    @Resource
-    PaymentDetailsService paymentDetailsService;
-    @Resource
     UserNotificationService userNotificationService;
     @Resource
     UserRepository userRepository;
-    @Resource
-    PaymentDetailsRepository paymentDetailsRepository;
-    @Resource
-    PromotionPaymentPolicyRepository promotionPaymentPolicyRepository;
     @Resource
     PaymentPolicyRepository paymentPolicyRepository;
     @Resource
@@ -84,7 +73,7 @@ public class PayPalPaymentDetailsService {
         return redirectUrl;
     }
 
-    public PayPalPaymentDetails commitPaymentDetails(String token, int paymentPolicyId, int userId) {
+    public PayPalPaymentDetails createPaymentDetails(int userId, int paymentPolicyId, String token) {
         User user = userRepository.findOne(userId);
 
         PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(paymentPolicyId);
@@ -98,7 +87,7 @@ public class PayPalPaymentDetailsService {
             throw new ServiceException("pay.paypal.error.external", response.getDescriptionError());
         }
 
-        PayPalPaymentDetails newPaymentDetails = payPalPaymentDetailsInfoService.commitPaymentDetails(user, paymentPolicy, response);
+        PayPalPaymentDetails newPaymentDetails = payPalPaymentDetailsInfoService.createPaymentDetailsInfo(user, paymentPolicy, response);
 
         logger.info("Done creation of PayPal payment details for user:{}, payment details:{}", user.getId(), newPaymentDetails.getI());
 

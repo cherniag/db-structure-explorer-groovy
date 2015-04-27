@@ -530,50 +530,5 @@ public class O2PaymentServiceImplTest {
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
 
     }
-/*
-    @Test
-    public void testCommitPaymentDetails_Success() throws Exception {
-        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-        final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
-
-        final long currentTimeMillis = Long.MAX_VALUE;
-
-        mockStatic(Utils.class);
-        when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
-
-        when(mockPaymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details")).thenReturn(user);
-
-        final int retriesOnError = Integer.MIN_VALUE;
-        when(o2PaymentServiceImplSpy.getRetriesOnError()).thenReturn(retriesOnError);
-
-        when(mockPaymentDetailsRepository.save(any(O2PSMSPaymentDetails.class))).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
-
-            @Override
-            public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
-                final O2PSMSPaymentDetails actualO2PSMSPaymentDetails = (O2PSMSPaymentDetails) invocation.getArguments()[0];
-
-                assertEquals(0, actualO2PSMSPaymentDetails.getMadeRetries());
-                assertEquals(null, actualO2PSMSPaymentDetails.getDescriptionError());
-                assertEquals(0, actualO2PSMSPaymentDetails.getDisableTimestampMillis());
-                assertEquals(PaymentDetailsStatus.NONE, actualO2PSMSPaymentDetails.getLastPaymentStatus());
-                assertEquals(retriesOnError, actualO2PSMSPaymentDetails.getRetriesOnError());
-                assertEquals(currentTimeMillis, actualO2PSMSPaymentDetails.getCreationTimestampMillis());
-                assertEquals(true, actualO2PSMSPaymentDetails.isActivated());
-                assertEquals(user, actualO2PSMSPaymentDetails.getOwner());
-
-                return actualO2PSMSPaymentDetails;
-            }
-        });
-
-        O2PSMSPaymentDetails actualO2PSMSPaymentDetails = o2PaymentServiceImplSpy.commitPaymentDetails(user, paymentPolicy);
-
-        assertNotNull(actualO2PSMSPaymentDetails);
-
-        assertEquals(actualO2PSMSPaymentDetails, user.getCurrentPaymentDetails());
-
-        verify(mockPaymentDetailsService, times(1)).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-        verify(o2PaymentServiceImplSpy, times(1)).getRetriesOnError();
-        verify(mockPaymentDetailsRepository, times(1)).save(any(O2PSMSPaymentDetails.class));
-    }*/
 }

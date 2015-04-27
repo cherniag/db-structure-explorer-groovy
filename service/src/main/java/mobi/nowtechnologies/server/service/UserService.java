@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.common.util.ServerMessage;
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
@@ -25,7 +26,6 @@ import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRe
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
@@ -35,6 +35,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
+import mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -121,8 +122,6 @@ public class UserService {
     @Resource
     ReactivationUserInfoRepository reactivationUserInfoRepository;
     @Resource
-    UserTransactionRepository userTransactionRepository;
-    @Resource
     OperatorRepository operatorRepository;
     @Resource
     PromotionRepository promotionRepository;
@@ -137,6 +136,7 @@ public class UserService {
     private CountryService countryService;
     private PromotionService promotionService;
     private PaymentDetailsService paymentDetailsService;
+    private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
     private CommunityService communityService;
@@ -152,6 +152,7 @@ public class UserService {
     private AppsFlyerDataService appsFlyerDataService;
     private UrbanAirshipTokenService urbanAirshipTokenService;
     private UserActivationStatusService userActivationStatusService;
+    private TimeService timeService;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -360,7 +361,6 @@ public class UserService {
 
         deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(tempUser);
-        userTransactionRepository.deleteByUser(tempUser);
 
         appsFlyerDataService.mergeAppsFlyerData(tempUser, oldUser);
 
@@ -653,13 +653,12 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User updateLastWebLogin(User user) {
-        LOGGER.debug("input parameters user: [{}]", user);
+    public User updateLastWebLogin(int userId) {
+        LOGGER.info("Attempt to update user last web login time");
 
-        user.setLastWebLogin(getEpochSeconds());
-        updateUser(user);
+        User user = userRepository.findOne(userId);
+        user.setLastWebLogin(timeService.nowSeconds());
 
-        LOGGER.debug("Output parameter user=[{}]", user);
         return user;
     }
 
@@ -1085,7 +1084,7 @@ public class UserService {
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
 
-        PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+        PaymentDetails paymentDetails = o2PSMSPaymentDetailsService.createPaymentDetails(user);
         user = paymentDetails.getOwner();
         if (resultObject != null) {
             return new MergeResult(resultObject.isMergeDone(), user);
@@ -1099,7 +1098,7 @@ public class UserService {
         boolean subjectToAutoOptIn = autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user);
         user = promotionService.activateVideoAudioFreeTrial(user);
         if (subjectToAutoOptIn) {
-            paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+            o2PSMSPaymentDetailsService.createPaymentDetails(user);
         }
     }
 
@@ -1185,6 +1184,10 @@ public class UserService {
         this.migHttpService = migHttpService;
     }
 
+    public void setO2PSMSPaymentDetailsService(O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService) {
+        this.o2PSMSPaymentDetailsService = o2PSMSPaymentDetailsService;
+    }
+
     public void setCountryByIpService(CountryByIpService countryByIpService) {
         this.countryByIpService = countryByIpService;
     }
@@ -1255,5 +1258,9 @@ public class UserService {
             return DeviceTypeCache.getNoneDeviceType();
         }
         return deviceType;
+    }
+
+    public void setTimeService(TimeService timeService) {
+        this.timeService = timeService;
     }
 }

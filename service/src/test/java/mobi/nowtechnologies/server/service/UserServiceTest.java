@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
@@ -32,7 +33,6 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -40,6 +40,7 @@ import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
+import mobi.nowtechnologies.server.service.payment.O2PSMSPaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
@@ -156,8 +157,6 @@ public class UserServiceTest {
     @Mock
     AppsFlyerDataService appsFlyerDataService;
     @Mock
-    UserTransactionRepository userTransactionRepository;
-    @Mock
     UserActivationStatusService userActivationStatusService;
     @Mock
     OperatorRepository operatorRepository;
@@ -171,12 +170,15 @@ public class UserServiceTest {
     UserStatusRepository userStatusRepository;
     @Mock
     PaymentDetailsRepository paymentDetailsRepository;
+    @Mock
+    TimeService timeServiceMock;
 
     private UserService userServiceSpy;
     private AccountLogService accountLogServiceMock;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
     private MigHttpService migHttpServiceMock;
     private PaymentDetailsService paymentDetailsServiceMock;
+    private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
     private CommunityService communityServiceMock;
     private CountryService countryServiceMock;
     private O2ProviderService o2ClientServiceMock;
@@ -207,6 +209,7 @@ public class UserServiceTest {
     public void setUp() throws Exception {
         userServiceSpy = Mockito.spy(new UserService());
 
+        o2PSMSPaymentDetailsService = Mockito.mock(O2PSMSPaymentDetailsService.class);
         countryServiceMock = PowerMockito.mock(CountryService.class);
         communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
         CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
@@ -219,7 +222,6 @@ public class UserServiceTest {
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
         accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
         o2ClientServiceMock = PowerMockito.mock(O2ProviderService.class);
-        MailService mailServiceMock = PowerMockito.mock(MailService.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
         otacValidationServiceMock = PowerMockito.mock(OtacValidationService.class);
@@ -240,7 +242,7 @@ public class UserServiceTest {
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);
         userServiceSpy.setAccountLogService(accountLogServiceMock);
-
+        userServiceSpy.setO2PSMSPaymentDetailsService(o2PSMSPaymentDetailsService);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
@@ -257,10 +259,10 @@ public class UserServiceTest {
 
         userServiceSpy.userGroupRepository = userGroupRepository;
         userServiceSpy.promotionRepository = promotionRepository;
-        userServiceSpy.userTransactionRepository = userTransactionRepository;
         userServiceSpy.operatorRepository = operatorRepository;
         userServiceSpy.userRepository = userRepository;
         userServiceSpy.userStatusRepository = userStatusRepository;
+        userServiceSpy.setTimeService(timeServiceMock);
 
         userWithPromoAnswer = new Answer() {
             @Override
@@ -2893,7 +2895,7 @@ public class UserServiceTest {
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
-        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedPaymentDetails).when(o2PSMSPaymentDetailsService).createPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(expectedUser).when(userRepository).findOne(expectedUser.getId());
@@ -2910,7 +2912,7 @@ public class UserServiceTest {
         verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
         verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, expectedUser.getCommunityRewriteUrl());
         verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
-        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+        verify(o2PSMSPaymentDetailsService, times(1)).createPaymentDetails(expectedUser);
         verify(otacValidationServiceMock, times(1)).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         verify(userRepository, times(1)).save(expectedUser);
     }
@@ -2937,7 +2939,7 @@ public class UserServiceTest {
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
-        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedPaymentDetails).when(o2PSMSPaymentDetailsService).createPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(expectedUser).when(userRepository).findOne(expectedUser.getId());
@@ -2954,7 +2956,7 @@ public class UserServiceTest {
         verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
         verify(userServiceSpy, times(0)).checkCredentials(userName, userToken, timestamp, expectedUser.getCommunityRewriteUrl(), expectedUser.getDeviceUID());
         verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
-        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+        verify(o2PSMSPaymentDetailsService, times(1)).createPaymentDetails(expectedUser);
         verify(o2ClientServiceMock, times(0)).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
     }
 
@@ -2979,7 +2981,7 @@ public class UserServiceTest {
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
         doAnswer(userWithoutPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
-        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedPaymentDetails).when(o2PSMSPaymentDetailsService).createPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
 
@@ -3001,7 +3003,7 @@ public class UserServiceTest {
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
-        Mockito.doThrow(new RuntimeException()).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        Mockito.doThrow(new RuntimeException()).when(o2PSMSPaymentDetailsService).createPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
 
@@ -3024,7 +3026,7 @@ public class UserServiceTest {
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
-        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedPaymentDetails).when(o2PSMSPaymentDetailsService).createPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
 
@@ -3071,7 +3073,7 @@ public class UserServiceTest {
         doReturn(mobileUser).when(userRepository).findOne(mobileUser.getId());
 
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(mobileUser);
-        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(mobileUser);
+        doReturn(expectedPaymentDetails).when(o2PSMSPaymentDetailsService).createPaymentDetails(mobileUser);
         doReturn(mobileUser).when(userRepository).save(mobileUser);
 
         Promotion promotion = new Promotion();
@@ -3090,7 +3092,7 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, deviceUIdUser.getCommunityRewriteUrl());
         verify(otacValidationServiceMock, times(1)).validate(otac, deviceUIdUser.getMobile(), deviceUIdUser.getUserGroup().getCommunity());
         verify(promotionServiceMock, times(1)).applyPromotionByPromoCode(mobileUser, promotion);
-        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(mobileUser);
+        verify(o2PSMSPaymentDetailsService, times(1)).createPaymentDetails(mobileUser);
         verify(userRepository, times(2)).save(mobileUser);
         verify(appsFlyerDataService, times(1)).mergeAppsFlyerData(deviceUIdUser, mobileUser);
     }
@@ -3259,6 +3261,27 @@ public class UserServiceTest {
         assertThat(actualUser.getProvider(), is(VF));
         assertThat(actualUser.getUserName(), is(user.getMobile()));
         assertThat(actualUser.isHasPromo(), is(true));
+    }
+
+    @Test
+    public void shouldUpdateLastWebLogin() {
+        //given
+        int userId = Integer.MAX_VALUE;
+
+        User user = new User();
+        when(userRepository.findOne(userId)).thenReturn(user);
+        final int nowSeconds = Integer.MAX_VALUE;
+        when(timeServiceMock.nowSeconds()).thenReturn(nowSeconds);
+
+        //when
+        final User actualUser = userServiceSpy.updateLastWebLogin(userId);
+
+        //then
+        assertThat(actualUser, is(user));
+        assertThat(actualUser.getLastWebLogin(), is(nowSeconds));
+
+        verify(userRepository).findOne(userId);
+        verify(timeServiceMock).nowSeconds();
     }
 
 
