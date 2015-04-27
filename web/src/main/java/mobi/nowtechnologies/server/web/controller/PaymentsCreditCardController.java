@@ -3,10 +3,10 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.service.CountryService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto.Action;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -49,7 +49,7 @@ public class PaymentsCreditCardController extends CommonController {
 
     private CountryService countryService;
     private PaymentPolicyService paymentPolicyService;
-    private PaymentDetailsService paymentDetailsService;
+    private SagePayPaymentDetailsService sagePayPaymentDetailsService;
 
     @InitBinder(CreditCardDto.NAME)
     public void initBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -113,7 +113,7 @@ public class PaymentsCreditCardController extends CommonController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             modelAndView.setViewName(scopePrefix + VIEW_CREATE_PAYMENT_DETAIL_FAIL);
         } else {
-            paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, getUserId());
+            sagePayPaymentDetailsService.createPaymentDetails(creditCardDto, getUserId());
             modelAndView.setViewName(scopePrefix + VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
         }
 
@@ -153,8 +153,8 @@ public class PaymentsCreditCardController extends CommonController {
         this.countryService = countryService;
     }
 
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
+    public void setSagePayPaymentDetailsService(SagePayPaymentDetailsService sagePayPaymentDetailsService) {
+        this.sagePayPaymentDetailsService = sagePayPaymentDetailsService;
     }
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {

@@ -12,7 +12,6 @@ import java.util.Set;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,25 +98,6 @@ public class SMSNotification {
         return object;
     }
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPaymentDetails(..))")
-    protected void createdCreditCardPaymentDetails() {
-    }
-
-     /**
-     * Sending sms after user was subscribed with some payment details
-     */
-    @Around("createdCreditCardPaymentDetails()")
-    public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object object = joinPoint.proceed();
-        Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
-        try {
-            User user = userRepository.findOne(userId);
-            userNotificationService.sendSubscriptionChangedSMS(user);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return object;
-    }
 
     @Around("execution(* mobi.nowtechnologies.server.service.UserServiceNotification.sendSmsFor4GDowngradeForSubscribed(*))")
     public Object sendSmsFor4GDowngradeForSubscribed(ProceedingJoinPoint joinPoint) throws Throwable {

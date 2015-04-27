@@ -16,8 +16,8 @@ import mobi.nowtechnologies.server.persistence.repository.PendingPaymentReposito
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
+import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
-import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -46,7 +46,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 public class PaymentSystemServiceIT {
 
     @Resource(name = "service.sagePayPaymentService")
-    private SagePayPaymentService paymentService;
+    PaymentSystemService paymentService;
 
     @Resource
     UserStatusRepository userStatusRepository;
