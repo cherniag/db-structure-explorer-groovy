@@ -170,7 +170,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 
 	<bean id="service.DevicePromotionsService" class="mobi.nowtechnologies.server.service.DevicePromotionsService">

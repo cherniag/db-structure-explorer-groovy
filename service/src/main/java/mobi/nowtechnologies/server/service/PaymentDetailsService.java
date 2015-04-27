@@ -7,14 +7,12 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionPaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.payment.PinMigService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -44,7 +42,6 @@ public class PaymentDetailsService {
     private SagePayPaymentService sagePayPaymentService;
     private PromotionService promotionService;
     private UserService userService;
-    private UserNotificationService userNotificationService;
 
     @Resource
     UserRepository userRepository;
@@ -52,10 +49,6 @@ public class PaymentDetailsService {
     PaymentDetailsRepository paymentDetailsRepository;
     @Resource
     PromotionPaymentPolicyRepository promotionPaymentPolicyRepository;
-    @Resource
-    OperatorRepository operatorRepository;
-    @Resource
-    PinMigService pinMigService;
     @Resource
     PaymentPolicyRepository paymentPolicyRepository;
 
@@ -127,15 +120,11 @@ public class PaymentDetailsService {
             }
             currentPaymentDetails.disable(reason, new Date());
             paymentDetailsRepository.save(currentPaymentDetails);
-            user = userService.updateUser(user);
+            user = userRepository.save(user);
         }
 
         LOGGER.info("Current payment details were deactivated for user {}", user.shortInfo());
         return user;
-    }
-
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
     }
 
     public void setSagePayPaymentService(SagePayPaymentService sagePayPaymentService) {
