@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.web.validator;
 
 import mobi.nowtechnologies.server.service.util.BaseValidator;
-import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
+import mobi.nowtechnologies.server.web.controller.CreditCardDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

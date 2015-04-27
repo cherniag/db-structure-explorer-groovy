@@ -126,9 +126,10 @@
 		<property name="userService" ref="service.UserService"/>
 	</bean>
 
-    <bean id="sagePayPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsService">
+    <bean class="mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsInfoService">
         <property name="retriesOnError" value="${vf.retriesOnError}" />
     </bean>
+    <bean id="sagePayPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsService"/>
 
     <bean class="mobi.nowtechnologies.server.service.payment.VFPSMSPaymentDetailsInfoService">
         <property name="retriesOnError" value="${vf.retriesOnError}" />
