@@ -5,8 +5,10 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.ResponseWrapper;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -22,7 +24,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
     //
     // API
     //
-    public AccountCheckDto accountCheck(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format) {
+    public ResponseWrapper<AccountCheckDto> accountCheck(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format) {
         Assert.hasText(userName);
         Assert.hasText(storedUserToken);
 
@@ -31,7 +33,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return execute(parameters, deviceData, format);
     }
 
-    public AccountCheckDto accountCheckFromIOS(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String iTunesReceipt) {
+    public ResponseWrapper<AccountCheckDto> accountCheckFromIOS(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String iTunesReceipt) {
         Assert.hasText(userName);
         Assert.hasText(storedUserToken);
 
@@ -41,7 +43,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return execute(parameters, deviceData, format);
     }
 
-    public AccountCheckDto accountCheckWithUrbanAirshipToken(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String urbanAirshipToken) {
+    public ResponseWrapper<AccountCheckDto> accountCheckWithUrbanAirshipToken(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String urbanAirshipToken) {
         Assert.hasText(userName);
         Assert.hasText(storedUserToken);
 
@@ -64,7 +66,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return request;
     }
 
-    private AccountCheckDto execute(MultiValueMap<String, String> parameters, UserDeviceData deviceData, RequestFormat format) {
+    private ResponseWrapper<AccountCheckDto> execute(MultiValueMap<String, String> parameters, UserDeviceData deviceData, RequestFormat format) {
         String uri = getUri(deviceData, "ACC_CHECK", format);
 
         logger.info("\nSending for for [{}] to [{}] parameters [{}]", deviceData, uri, parameters);
@@ -72,7 +74,9 @@ public class AccountCheckHttpService extends AbstractHttpService {
         String body = entity.getBody();
         logger.info("Response body [{}]\n", body);
 
-        return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
+        AccountCheckDto accountCheckDto = jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
+        ResponseWrapper<AccountCheckDto> accountCheckDtoResponseWrapper = new ResponseWrapper<>(entity.getStatusCode().value(), entity.getHeaders(), accountCheckDto);
+        return accountCheckDtoResponseWrapper;
     }
 
 

@@ -103,43 +103,6 @@ public class ITunesPaymentSystemServiceHelperTest {
     }
 
     @Test
-    public void confirmPaymentForAbsentPaymentPolicy() throws Exception {
-        PaymentPolicy storedPaymentPolicy = mock(PaymentPolicy.class);
-
-        when(storedPaymentPolicy.getCurrencyISO()).thenReturn(currency);
-        when(storedPaymentPolicy.getSubcost()).thenReturn(amount);
-        when(paymentDetails.getPaymentPolicy())
-            .thenReturn(null)  // payment policy is null for first payment
-            .thenReturn(storedPaymentPolicy);
-        when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, actualProductId)).thenReturn(storedPaymentPolicy);
-
-        helper.confirmPayment(pendingPayment, iTunesResult);
-
-        verify(paymentPolicyService).findByCommunityAndAppStoreProductId(community, actualProductId);
-        verify(paymentDetails).setPaymentPolicy(storedPaymentPolicy);
-        verify(paymentDetails).completeSuccessful();
-        verify(paymentDetailsRepository).save(paymentDetails);
-        verify(submittedPaymentService).save(submittedPaymentArgumentCaptor.capture());
-        verify(applicationEventPublisher).publishEvent(paymentEventArgumentCaptor.capture());
-        verify(pendingPaymentRepository).delete(pendingPayment);
-
-        SubmittedPayment submittedPayment = submittedPaymentArgumentCaptor.getValue();
-        assertEquals(originalTransactionId, submittedPayment.getAppStoreOriginalTransactionId());
-        assertEquals(PaymentDetailsStatus.SUCCESSFUL, submittedPayment.getStatus());
-        assertEquals(actualReceipt, submittedPayment.getBase64EncodedAppStoreReceipt());
-        assertEquals(originalTransactionId, submittedPayment.getExternalTxId());
-        assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, submittedPayment.getPaymentSystem());
-        assertEquals(amount, submittedPayment.getAmount());
-        assertEquals(currency, submittedPayment.getCurrencyISO());
-        assertEquals(now.getTime(), submittedPayment.getTimestamp());
-        assertEquals(expire.getTime() / 1000, submittedPayment.getNextSubPayment());
-        assertNull(submittedPayment.getDescriptionError());
-
-        PaymentEvent paymentEvent = paymentEventArgumentCaptor.getValue();
-        assertEquals(paymentEvent.getPayment(), submittedPayment);
-    }
-
-    @Test
     public void confirmPaymentWithTheSameProductIdAsStoredPaymentPolicy() throws Exception {
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, actualProductId)).thenReturn(paymentPolicy);
 
@@ -213,9 +176,8 @@ public class ITunesPaymentSystemServiceHelperTest {
 
         helper.confirmPayment(pendingPayment, iTunesResult);
 
-        verify(paymentPolicyService).findByCommunityAndAppStoreProductId(community, actualProductId);
         verify(paymentDetails, never()).setPaymentPolicy(any(PaymentPolicy.class));
-        verify(iTunesPaymentDetailsService).createPaymentDetails(user, actualPaymentPolicy, actualReceipt);
+        verify(iTunesPaymentDetailsService).createNewPaymentDetails(user, actualProductId, actualReceipt);
         verify(paymentDetails).completeSuccessful();
         verify(paymentDetailsRepository).save(paymentDetails);
         verify(submittedPaymentService).save(submittedPaymentArgumentCaptor.capture());
@@ -250,22 +212,6 @@ public class ITunesPaymentSystemServiceHelperTest {
         paymentDetailsRepository.save(paymentDetails);
         userService.unsubscribeUser(user, descriptionError);
         pendingPaymentRepository.delete(pendingPayment);
-    }
-
-    @Test
-    public void failAttemptForAbsentPaymentPolicyAndNotLastAttempt() throws Exception {
-        final String descriptionError = "Error";
-
-        when(paymentDetails.getPaymentPolicy()).thenReturn(null);
-        when(paymentDetails.shouldBeUnSubscribed()).thenReturn(false);
-
-        helper.failAttempt(pendingPayment, descriptionError);
-
-        verify(paymentDetails).completedWithError(descriptionError);
-        verify(paymentDetailsRepository).save(paymentDetails);
-        verify(submittedPaymentService, never()).save(submittedPaymentArgumentCaptor.capture());
-        verify(userService, never()).unsubscribeUser(user, descriptionError);
-        verify(pendingPaymentRepository).delete(pendingPayment);
     }
 
     @Test

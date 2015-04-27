@@ -5,6 +5,7 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
+import mobi.nowtechnologies.applicationtests.services.http.ResponseWrapper;
 import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartResponse;
@@ -53,7 +54,7 @@ public abstract class ClientDevicesSet {
     public void accountCheck(UserDeviceData userDeviceData) {
         final PhoneStateImpl state = states.get(userDeviceData);
         state.accountCheck =
-            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
+            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat()).getEntity();
     }
 
     public void accountCheckWithUrbanAirshipToken(UserDeviceData userDeviceData, String urbanAirshipToken) {
@@ -61,13 +62,18 @@ public abstract class ClientDevicesSet {
 
         state.accountCheck = accountCheckHttpService
             .accountCheckWithUrbanAirshipToken(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(),
-                                               urbanAirshipToken);
+                                               urbanAirshipToken).getEntity();
     }
 
-    public void accountCheckFromIOS(UserDeviceData userDeviceData, String iTunesReceipt) {
+    public ResponseWrapper<AccountCheckDto> accountCheckFromIOS(UserDeviceData userDeviceData, String iTunesReceipt) {
         final PhoneStateImpl state = states.get(userDeviceData);
-        state.accountCheck = accountCheckHttpService
-            .accountCheckFromIOS(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(), iTunesReceipt);
+        ResponseWrapper<AccountCheckDto> responseWrapper = accountCheckHttpService.accountCheckFromIOS(userDeviceData,
+                                                                                                      state.getLastAccountCheckResponse().userName,
+                                                                                                      state.getLastAccountCheckResponse().userToken,
+                                                                                                      userDeviceData.getFormat(),
+                                                                                                      iTunesReceipt);
+        state.accountCheck = responseWrapper.getEntity();
+        return responseWrapper;
     }
 
 

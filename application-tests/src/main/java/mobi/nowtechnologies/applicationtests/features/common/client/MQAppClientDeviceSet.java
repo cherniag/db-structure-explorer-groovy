@@ -61,7 +61,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingFacebookWithProfile(UserDeviceData deviceData, String facebookAccessToken, String facebookUserId) {
@@ -69,7 +69,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookAccessToken = facebookAccessToken;
         state.facebookUserId = facebookUserId;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), facebookAccessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingFacebookWithCityOnly(UserDeviceData deviceData) {
@@ -80,7 +80,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingFacebookWithDefinedEmail(UserDeviceData deviceData, String email) {
@@ -92,7 +92,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookUserId = facebookUserId;
         state.email = email;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingFacebookWithDefinedAccountIdAndEmail(UserDeviceData deviceData, String email, String facebookUserId) {
@@ -102,7 +102,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookUserId = facebookUserId;
         state.email = email;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingFacebookWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
@@ -114,7 +114,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
         state.lastFacebookInfo = facebookHttpService.login(userData, otherState.getDeviceUID(), state.getLastAccountCheckResponse(), userData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(userData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), userData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(userData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), userData.getFormat()).getEntity();
     }
 
     public void loginUsingGooglePlus(UserDeviceData deviceData) {
@@ -127,7 +127,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastGooglePlusUserInfo = googlePlusHttpService
             .login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken)
             .getUser();
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingGooglePlusWithProfile(UserDeviceData deviceData, String accessToken, String googlePlusUserId) {
@@ -138,7 +138,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastGooglePlusUserInfo = googlePlusHttpService
             .login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken)
             .getUser();
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingGooglePlusWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
@@ -152,7 +152,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastGooglePlusUserInfo = googlePlusHttpService
             .login(userData, otherState.getDeviceUID(), userData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName,
                    state.getLastAccountCheckResponse().userToken).getUser();
-        state.accountCheck = accountCheckHttpService.accountCheck(userData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), userData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(userData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), userData.getFormat()).getEntity();
     }
 
     public void loginUsingGooglePlusWithUpdatedDetails(UserDeviceData deviceData) {
@@ -165,7 +165,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastGooglePlusUserInfo = googlePlusHttpService
             .login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken)
             .getUser();
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingGooglePlusWithExactEmailAndGooglePlusId(UserDeviceData deviceData, String email, String googlePlusUserId) {
@@ -178,7 +178,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastGooglePlusUserInfo = googlePlusHttpService
             .login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken)
             .getUser();
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     public void loginUsingGooglePlusWithExactEmail(UserDeviceData deviceData, String email) {
@@ -192,7 +192,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastGooglePlusUserInfo = googlePlusHttpService
             .login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, state.googlePlusUserId, state.getLastAccountCheckResponse().userName,
                    state.getLastAccountCheckResponse().userToken).getUser();
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat()).getEntity();
     }
 
     //
