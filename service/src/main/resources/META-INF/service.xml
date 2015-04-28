@@ -555,6 +555,8 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService"/>
 
+    <bean id="accCheckService" class="mobi.nowtechnologies.server.service.AccCheckService"/>
+
 	<import resource="payment.xml" />
 
 	<import resource="service-application-tests.xml" />

@@ -105,13 +105,6 @@ public class UserServiceTIT {
     }
 
     @Test
-    public void testProceessAccountCheckCommand() {
-        int userId = 1;
-        User user = userService.processAccountCheckCommandForAuthorizedUser(userId);
-        assertNotNull(user);
-    }
-
-    @Test
     public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveMigPaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsNull_Success() {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(1);

@@ -120,13 +120,11 @@ import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -1007,7 +1005,6 @@ public class UserServiceTest {
         Mockito.when(operatorRepository.findFirst()).thenReturn(new Operator());
         Mockito.doAnswer(returnFirsParamAnswer).when(userRepository).save(any(User.class));
         Mockito.doAnswer(returnFirsParamAnswer).when(userRepository).saveAndFlush(any(User.class));
-        doReturn(expectedUser).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(any(int.class));
         PowerMockito.mockStatic(Utils.class);
         PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
         UserGroup userGroup = new UserGroup();
@@ -1054,7 +1051,6 @@ public class UserServiceTest {
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
         verify(countryRepositoryMock, times(1)).findByName(anyString());
         verify(userRepository, times(1)).saveAndFlush(any(User.class));
-        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(1));
         createStoredToken(anyString(), anyString());
         verifyStatic(times(1));
@@ -1104,7 +1100,6 @@ public class UserServiceTest {
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
         verify(countryRepositoryMock, times(0)).findByName(anyString());
         verify(userRepository, times(0)).save(any(User.class));
-        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(0));
         createStoredToken(anyString(), anyString());
         verifyStatic(times(0));
@@ -2146,8 +2141,6 @@ public class UserServiceTest {
         Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(providerUserDetails);
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
-
         //when
         MergeResult resultOfOperation = userServiceSpy.applyInitPromo(user, otac, false, false, false);
         User result = resultOfOperation.getResultOfOperation();
@@ -2164,7 +2157,6 @@ public class UserServiceTest {
         verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
         verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
         verify(userRepository, times(1)).save(user);
-        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(user.getId());
     }
 
     @Test
@@ -2183,8 +2175,6 @@ public class UserServiceTest {
         Mockito.when(userRepository.save(user)).thenReturn(user);
         Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(userWithPromoAnswer);
 
-        doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
-
         //when
         MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, false, false, false);
         User result = opResult.getResultOfOperation();
@@ -2201,7 +2191,6 @@ public class UserServiceTest {
         verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
         verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
         verify(userRepository, times(1)).save(user);
-        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(user.getId());
     }
 
     @Test
@@ -2218,8 +2207,6 @@ public class UserServiceTest {
         Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(o2UserDetails);
         Mockito.when(userRepository.save(user)).thenReturn(user);
         Mockito.when(communityServiceMock.getCommunityByName(community.getName())).thenReturn(community);
-
-        doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
 
         MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
         User result = opResult.getResultOfOperation();
@@ -2255,8 +2242,6 @@ public class UserServiceTest {
         boolean hasPromo = false;
         Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(userWithoutPromoAnswer);
 
-        doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
-
         MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
 
         User result = opResult.getResultOfOperation();
@@ -2273,7 +2258,6 @@ public class UserServiceTest {
         verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
         verify(userRepository, times(1)).save(user);
         verify(promotionServiceMock, times(1)).applyPotentialPromo(user);
-        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(user.getId());
     }
 
     private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
@@ -3097,59 +3081,6 @@ public class UserServiceTest {
         verify(userRepository, times(2)).save(mobileUser);
         verify(appsFlyerDataService, times(1)).mergeAppsFlyerData(deviceUIdUser, mobileUser);
     }
-
-    @Test
-    public void shouldFindUserTree() {
-        //given
-        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
-        doReturn(expectedUser).when(userRepository).findUserTree(expectedUser.getId());
-        doReturn(expectedUser.getOldUser()).when(userRepository)
-                                           .findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
-
-        //when
-        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
-
-        //then
-        assertThat(actualUser, is(expectedUser));
-        assertThat(actualUser.getOldUser(), is(expectedUser.getOldUser()));
-
-        verify(userRepository, times(1)).findUserTree(expectedUser.getId());
-        verify(userRepository, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
-    }
-
-    @Test
-    public void shouldFindUserTreeWithOutOldUser() {
-        //given
-        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
-        doReturn(expectedUser).when(userRepository).findUserTree(expectedUser.getId());
-        doReturn(null).when(userRepository).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
-
-        //when
-        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
-
-        //then
-        assertThat(actualUser, is(expectedUser));
-        assertThat(actualUser.getOldUser(), is(nullValue()));
-
-        verify(userRepository, times(1)).findUserTree(expectedUser.getId());
-        verify(userRepository, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
-    }
-
-    @Test
-    public void shouldNotFindUserTree() {
-        //given
-        int userId = Integer.MAX_VALUE;
-        doReturn(null).when(userRepository).findUserTree(userId);
-
-        //when
-        User actualUser = userServiceSpy.findUserTree(userId);
-
-        //then
-        assertThat(actualUser, is((User) null));
-
-        verify(userRepository, times(1)).findUserTree(userId);
-    }
-
 
     @Test
     public void shouldReturnTrue_OnIsTempUserName_WhenEqualUsernameAndDeviceUID() {

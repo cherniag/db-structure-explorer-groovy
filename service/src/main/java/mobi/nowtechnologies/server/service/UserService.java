@@ -527,42 +527,6 @@ public class UserService {
         LOGGER.info("Finish processing sub balance command for user {}", user.shortInfo());
     }
 
-    @Transactional(propagation = REQUIRED)
-    public User processAccountCheckCommandForAuthorizedUser(int userId) {
-        LOGGER.info("input parameters userId: [{}]", userId);
-
-        User user = userRepository.findOne(userId);
-
-        user.setLastDeviceLogin(getEpochSeconds());
-        updateUser(user);
-
-        user = prepareUserConversionToAccountCheckDto(user);
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    private User prepareUserConversionToAccountCheckDto(User user) {
-        Community community = user.getUserGroup().getCommunity();
-        boolean isAutoOptInEnabled = messageSource.readBoolean(community.getRewriteUrlParameter(), "auto.opt.in.enabled", true);
-        user = findUserTree(user.getId());
-        return user.withAutoOptInEnabled(isAutoOptInEnabled);
-    }
-
-    @Transactional(readOnly = true)
-    public User findUserTree(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-        User user = userRepository.findUserTree(userId);
-
-        if (isNotNull(user)) {
-            User oldUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
-            user.withOldUser(oldUser);
-        }
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
     public void saveAccountDetails(AccountDto accountDto, int userId) {
         LOGGER.debug("input parameters accountDto: [{}]", accountDto);
 
@@ -824,12 +788,6 @@ public class UserService {
             user.setPin(result.getPin());
         }
         userRepository.save(user);
-        sendActivationPin(user);
-        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
-        return user;
-    }
-
-    private void sendActivationPin(User user) {
         if (sendActivationSMS) {
             try {
                 userNotificationService.sendActivationPinSMS(user);
@@ -837,6 +795,8 @@ public class UserService {
                 LOGGER.error(e.getMessage(), e);
             }
         }
+        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
+        return user;
     }
 
     public void populateSubscriberData(final User user) {

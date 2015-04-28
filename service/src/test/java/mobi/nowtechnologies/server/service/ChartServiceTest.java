@@ -114,10 +114,6 @@ public class ChartServiceTest {
         drmPolicy.setDrmType(drmType);
         testUser.getUserGroup().setDrmPolicy(drmPolicy);
 
-        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
-
-        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
-
         PowerMockito.mockStatic(UserAsm.class);
 
         chartServiceFixture = spy(new ChartService());

@@ -496,19 +496,6 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldFindUserTree() {
-        //given
-        User user = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("1").withMobile("2").withUserGroup(findUserGroupForO2Community()));
-
-        //when
-        User actualUser = userRepository.findUserTree(user.getId());
-
-        //then
-        assertNotNull(actualUser);
-        assertThat(actualUser.getId(), is(user.getId()));
-    }
-
-    @Test
     public void shouldFindByUserNameAndCommunityAndOtherThanPassedId() {
         //given
         User user = userRepository.save(UserFactory.createUser(ACTIVATED)
