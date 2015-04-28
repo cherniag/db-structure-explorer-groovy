@@ -16,6 +16,8 @@ import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,9 +42,9 @@ public class XPlayCapController extends CommonController {
         try {
             userService.authorize(user, false, ActivationStatus.ACTIVATED);
 
-            int playCapValue = iTunesService.processXPlayCapSubscription(user, receipt);
+            Map<String, ?> playCapValue = iTunesService.processXPlayCapSubscription(user, receipt);
 
-            return new ModelAndView("default", "playCap", playCapValue);
+            return new ModelAndView("default", playCapValue);
         } finally {
             LOGGER.info("command processing finished");
         }

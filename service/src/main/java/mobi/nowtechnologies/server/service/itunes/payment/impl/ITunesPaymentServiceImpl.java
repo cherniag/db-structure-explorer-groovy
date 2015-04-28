@@ -25,6 +25,8 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
 
+import java.util.Date;
+
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,10 +80,15 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
     }
 
     @Override
-    public void createXPlayCapPayment(User user, String receipt, ITunesResult response, int playCapValue) {
+    public long createXPlayCapPayment(User user, String receipt, ITunesResult response, int playCapValue) {
         PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getCommunity(), response.getProductId());
         Preconditions.checkState(paymentPolicy != null, String.format("No PaymentPolicy.appStoreProductId=%s configured in Community.id=%s", response.getProductId(), user.getCommunityId()));
         // for experimental feature do not created SubmittedPayment - log as much as we can about TX is enough
+
+        Period period = paymentPolicy.getPeriod();
+        Date playCapExpiryDate = DateTimeUtils.moveDate(timeService.now(), DateTimeUtils.UTC_TIME_ZONE_ID, period.getDuration(), period.getDurationUnit());
+        long playCapExpiry = playCapExpiryDate.getTime();
+
         eventLoggerService.logXPlayCapReceiptVerified(user.getId(),
                                                       user.getUuid(),
                                                       receipt,
@@ -90,7 +97,9 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
                                                       playCapValue,
                                                       response.getOriginalTransactionId(),
                                                       response.getPurchaseTime(),
-                                                      response.getExpireTime());
+                                                      playCapExpiry);
+
+        return playCapExpiry;
     }
 
     @Transactional

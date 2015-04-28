@@ -12,6 +12,8 @@ import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ public class ITunesServiceImpl implements ITunesService {
     private EventLoggerService eventLoggerService;
 
     @Override
-    public int processXPlayCapSubscription(User user, String receipt) throws ITunesXPlayCapSubscriptionException {
+    public Map<String, ?> processXPlayCapSubscription(User user, String receipt) throws ITunesXPlayCapSubscriptionException {
         logger.info("Start processXPlayCapSubscription for user [{}], receipt [{}]", user.shortInfo(), receipt);
 
         final String community = user.getCommunityRewriteUrl();
@@ -55,10 +57,14 @@ public class ITunesServiceImpl implements ITunesService {
             Preconditions.checkState(strPlayCapValue != null, String.format("Missing '%s' configuration in services_%s.properties", appStoreProduceId, community));
 
             int playCapValue = Integer.valueOf(strPlayCapValue);
-            iTunesPaymentService.createXPlayCapPayment(user, receipt, response, playCapValue);
+            long playCapExpiry = iTunesPaymentService.createXPlayCapPayment(user, receipt, response, playCapValue);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("playCap", playCapValue);
+            data.put("playCapExpiry", playCapExpiry);
 
             logger.info("Finish processXPlayCapSubscription");
-            return playCapValue;
+            return data;
         } else {
             logger.warn("ITunes rejected encoded receipt [{}], response: [{}]", receipt, response);
 
