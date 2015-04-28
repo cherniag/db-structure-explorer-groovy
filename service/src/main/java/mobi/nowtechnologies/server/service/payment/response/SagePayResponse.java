@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
 import mobi.nowtechnologies.server.support.http.BasicResponse;
 
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.util.StringUtils;
 
-public class SagePayResponse extends PaymentSystemResponse {
+public class SagePayResponse extends PaymentSystemResponse implements SagePayCreditCardPaymentDetails.DetailsInfo {
 
     public static final String RESPONSE_MATCHED_VALUE = "MATCHED";
     public static final String RESPONSE_ALL_MATCHED_VALUE = "ALL MATCH";

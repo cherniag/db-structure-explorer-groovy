@@ -24,7 +24,6 @@ import mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImp
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
-import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.support.http.BasicResponse;
@@ -252,34 +251,5 @@ public class SMSNotificationIT {
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
     }
 
-    @Test
-    public void testSendUnsubscribePotentialSMS_afterCreatedCreditCardPaymentDetails_Success() throws Exception {
-        CreditCardDto creditCardDto = new CreditCardDto();
-        User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
-        user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
-
-        Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPaymentDetails(any(CreditCardDto.class), anyInt());
-        Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
-
-        paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, user.getId());
-
-        verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
-    }
-
-/*    @Test
-    public void testSendUnsubscribePotentialSMS_afterCreatedPayPalPaymentDetails_Success() throws Exception {
-        User user = UserFactory.createUser(new PayPalPaymentDetails(), null);
-        user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
-        int paymentPolicyId = 1;
-
-        Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyInt(), anyInt());
-        Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
-        Mockito.doReturn(user).when(userRepository).findOne(anyInt());
-
-        paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, user.getId());
-
-        verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
-    }*/
 
 }

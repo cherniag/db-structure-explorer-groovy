@@ -1,6 +1,10 @@
-package mobi.nowtechnologies.server.shared.dto.web.payment;
+package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardType;
+import mobi.nowtechnologies.server.shared.dto.web.payment.Title;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -67,7 +72,9 @@ public class CreditCardDto {
         staticData.put("titles", Title.values());
     }
 
-    public static PaymentDetailsDto toPaymentDetails(CreditCardDto dto) {
+    public static PaymentDetailsDto toPaymentDetails(CreditCardDto dto, User user, PaymentPolicy paymentPolicy) {
+        final String vendorTxCode = UUID.randomUUID().toString();
+
         PaymentDetailsDto result = new PaymentDetailsDto();
         result.setBillingAddress(dto.getHolderAddress() + dto.getHolderAddress2());
         result.setBillingCity(dto.getHolderCity());
@@ -82,8 +89,11 @@ public class CreditCardDto {
         result.setCardStartDate(toMMYY(dto.getStartDateMonth(), dto.getStartDateYear()));
         result.setCardType(dto.getCardType().toString());
         result.setPaymentPolicyId(dto.getPaymentPolicyId());
-        result.setDescription("Subcription via Credt Card");
         result.setPaymentType("creditCard");
+        result.setCurrency(paymentPolicy.getCurrencyISO());
+        result.setAmount(paymentPolicy.getSubcost().toString());
+        result.setVendorTxCode(vendorTxCode);
+        result.setDescription("Creating payment details for user " + user.getUserName());
         return result;
     }
 

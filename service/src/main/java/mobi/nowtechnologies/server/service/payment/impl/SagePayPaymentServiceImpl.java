@@ -1,18 +1,14 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
-import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
+import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.support.http.BasicResponse;
 
@@ -27,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService implements SagePayPaymentService {
+public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService implements PaymentSystemService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SagePayPaymentServiceImpl.class);
 
@@ -83,44 +79,6 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
         }
 
         return super.commitPayment(pendingPayment, response);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public SagePayCreditCardPaymentDetails createPaymentDetails(PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy) throws ServiceException {
-        LOGGER.info("Creating sagepay payment details...");
-
-        SagePayResponse response = httpService.makeDeferRequest(paymentDto);
-        if (!response.isSagePaySuccessful()) {
-            LOGGER.error("Error while trying to get sagepay payment details. (httpStatus: {}, description: {})", response.getHttpStatus(), response.getDescriptionError());
-            throw new ServiceException("External error while trying to get sagepay payment details");
-        }
-
-        return commitPaymentDetails(response, paymentDto, user, paymentPolicy);
-    }
-
-    private SagePayCreditCardPaymentDetails commitPaymentDetails(SagePayResponse response, PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy)
-        throws ServiceException {
-        SagePayCreditCardPaymentDetails newPaymentDetails = createPaymentDetailsFromResponse(response);
-
-        newPaymentDetails.setVendorTxCode(paymentDto.getVendorTxCode());
-        newPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
-        newPaymentDetails.setPaymentPolicy(paymentPolicy);
-
-        newPaymentDetails = (SagePayCreditCardPaymentDetails) super.commitPaymentDetails(user, newPaymentDetails);
-
-        LOGGER.info("Credit card payment details was created");
-        return newPaymentDetails;
-    }
-
-    protected SagePayCreditCardPaymentDetails createPaymentDetailsFromResponse(SagePayResponse response) {
-        SagePayCreditCardPaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
-        paymentDetails.setReleased(false);
-        paymentDetails.setActivated(true);
-        paymentDetails.setSecurityKey(response.getSecurityKey());
-        paymentDetails.setTxAuthNo(response.getTxAuthNo());
-        paymentDetails.setVPSTxId(response.getVPSTxId());
-        return paymentDetails;
     }
 
     public void setHttpService(SagePayHttpService httpService) {

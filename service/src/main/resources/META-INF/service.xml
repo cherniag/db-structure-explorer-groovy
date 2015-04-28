@@ -167,8 +167,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     </bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
-		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
-		<property name="promotionService" ref="service.PromotionService" />
 		<property name="userService" ref="service.UserService" />
 	</bean>
 

@@ -32,20 +32,19 @@
 	</bean>
 	
 	<!-- SagePay Service -->
+    <bean id="sagePayHttpService" class="mobi.nowtechnologies.server.service.payment.http.SagePayHttpService">
+        <property name="deferUrl" value="${sagepay.deferUrl}" />
+        <property name="releaseUrl" value="${sagepay.releaseUrl}" />
+        <property name="repeatUrl" value="${sagepay.repeatUrl}" />
+        <property name="postService" ref="shared.PostService" />
+        <property name="request">
+            <bean class="mobi.nowtechnologies.server.service.payment.request.SagePayRequest" />
+        </property>
+    </bean>
+
 	<bean id="service.sagePayPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
-		<property name="httpService">
-			<bean class="mobi.nowtechnologies.server.service.payment.http.SagePayHttpService">
-				<property name="deferUrl" value="${sagepay.deferUrl}" />
-				<property name="releaseUrl" value="${sagepay.releaseUrl}" />
-				<property name="repeatUrl" value="${sagepay.repeatUrl}" />
-				<property name="postService" ref="shared.PostService" />
-				<property name="request">
-					<bean class="mobi.nowtechnologies.server.service.payment.request.SagePayRequest" />
-				</property>
-			</bean>
-		</property>
-		
-		<property name="retriesOnError" value="${sagepay.retriesOnError}" />
+		<property name="httpService" ref="sagePayHttpService"/>
+        <property name="retriesOnError" value="${sagepay.retriesOnError}" />
 		<property name="expireMillis" value="${sagepay.pendingExpireMillis}" />
 	</bean>
 	
@@ -125,6 +124,11 @@
 		<property name="timeService" ref="timeService"/>
 		<property name="userService" ref="service.UserService"/>
 	</bean>
+
+    <bean class="mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsInfoService">
+        <property name="retriesOnError" value="${vf.retriesOnError}" />
+    </bean>
+    <bean id="sagePayPaymentDetailsService" class="mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsService"/>
 
     <bean class="mobi.nowtechnologies.server.service.payment.VFPSMSPaymentDetailsInfoService">
         <property name="retriesOnError" value="${vf.retriesOnError}" />
