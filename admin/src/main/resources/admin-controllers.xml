@@ -95,6 +95,8 @@
         <entry key="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
         <entry key="HL_UK_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
         <entry key="HL_UK_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
+        <entry key="PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
+        <entry key="PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
     </utils:map>
 
     <utils:map id="chartItemsViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
@@ -106,6 +108,8 @@
         <entry key="VIDEO_CHART" value="chartItems/hotTracks"/>
         <entry key="HL_UK_PLAYLIST_1" value="chartItems/hotTracks"/>
         <entry key="HL_UK_PLAYLIST_2" value="chartItems/hotTracks"/>
+        <entry key="PLAYLIST_1" value="chartItems/hotTracks"/>
+        <entry key="PLAYLIST_2" value="chartItems/hotTracks"/>
     </utils:map>
 
 </beans>

@@ -33,6 +33,7 @@ import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -148,6 +149,8 @@ public class PayPalPaymentServiceImpIT {
         paymentPolicy.setPaymentPolicyType(paymentPolicyType);
         paymentPolicy.setTariff(Tariff._3G);
         paymentPolicy.setCommunity(communityRepository.findByRewriteUrlParameter(communityRewriteUrl));
+        paymentPolicy.setStartDateTime(new Date(0L));
+        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
         return paymentPolicyRepository.saveAndFlush(paymentPolicy);
     }
 }

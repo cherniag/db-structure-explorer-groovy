@@ -9,13 +9,13 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
 import mobi.nowtechnologies.server.social.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
@@ -29,6 +29,7 @@ import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Joiner;
@@ -97,9 +98,9 @@ public class AccountCheckDTOAsm {
         return null;
     }
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation,
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<PaymentPolicy> iTunesPaymentPolicies, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation,
                                              boolean withUuid, boolean withOneTimePayment) {
-        LOGGER.debug("user=[{}], appStoreProductIds=[{}], canActivateVideoTrial={}, withUserDetails={}, firstActivation={}", user, appStoreProductIds, canActivateVideoTrial, withUserDetails,
+        LOGGER.debug("user=[{}], iTunesPaymentPolicies=[{}], canActivateVideoTrial={}, withUserDetails={}, firstActivation={}", user, iTunesPaymentPolicies, canActivateVideoTrial, withUserDetails,
                      firstActivation);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
@@ -177,7 +178,11 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.user = user;
         accountCheckDTO.firstActivation = firstActivation;
 
-        if (isNotEmpty(appStoreProductIds)) {
+        if (isNotEmpty(iTunesPaymentPolicies)) {
+            List<String> appStoreProductIds = new ArrayList<>();
+            for (PaymentPolicy iTunesPaymentPolicy : iTunesPaymentPolicies) {
+                appStoreProductIds.add(iTunesPaymentPolicy.getAppStoreProductId());
+            }
             accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
         }
         if (withUserDetails) {
