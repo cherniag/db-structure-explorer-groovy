@@ -240,7 +240,7 @@ public class AccCheckController extends CommonController {
     private void processITunesSubscription(User user, HttpServletResponse response, String transactionReceipt, boolean createITunesPaymentDetails) {
         try {
             if (createITunesPaymentDetails) {
-                if(StringUtils.isNotEmpty(transactionReceipt)) {
+                if (StringUtils.isNotEmpty(transactionReceipt)) {
                     iTunesPaymentDetailsService.assignAppStoreReceipt(user, transactionReceipt);
                     handleExpires(user, response);
                 } else {
