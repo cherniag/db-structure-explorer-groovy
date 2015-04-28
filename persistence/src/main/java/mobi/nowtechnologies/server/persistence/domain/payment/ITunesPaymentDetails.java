@@ -25,7 +25,7 @@ public class ITunesPaymentDetails extends PaymentDetails {
     @Column(name = "app_strore_receipt")
     private String appStroreReceipt;
 
-    protected ITunesPaymentDetails() {
+    public ITunesPaymentDetails() {
     }
 
     public ITunesPaymentDetails(User user, PaymentPolicy paymentPolicy, String appStroreReceipt, int retriesOnError) {

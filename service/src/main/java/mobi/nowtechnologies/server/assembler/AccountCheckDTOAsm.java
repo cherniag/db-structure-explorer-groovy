@@ -18,7 +18,6 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
 import mobi.nowtechnologies.server.social.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.MIG_SMS_TYPE;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.SAGEPAY_CREDITCARD_TYPE;
@@ -112,10 +111,10 @@ public class AccountCheckDTOAsm {
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
-        boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && user.isSubscribedStatus();
+        boolean hasITunesSubscription = user.hasITunesSubscription();
         boolean hasPaidByPaymentDetails = !user.isOnFreeTrial() && user.isSubscribedStatus() && user.getCurrentPaymentDetails() != null && user.isNextSubPaymentInTheFuture();
 
-        String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
+        String oldPaymentType = UserAsm.getPaymentType(user);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
@@ -214,7 +213,7 @@ public class AccountCheckDTOAsm {
 
     private boolean isPaymentEnabled(User user) {
         boolean hasActiveNewOrSuccessfulPaymentDetails = user.hasActivePaymentDetails() && (user.getLastPaymentStatus() == NONE || user.getLastPaymentStatus() == SUCCESSFUL);
-        boolean hasITunesSubscription = user.isSubscribedByITunes() && user.isSubscribedStatus();
+        boolean hasITunesSubscription = user.hasITunesSubscription();
 
         boolean forLegacyCommunities = user.isO2CommunityUser() || user.isVFNZCommunityUser();
         if(forLegacyCommunities) {

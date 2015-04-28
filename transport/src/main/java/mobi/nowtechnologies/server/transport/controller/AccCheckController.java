@@ -4,7 +4,6 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
@@ -266,7 +265,7 @@ public class AccCheckController extends CommonController {
     }
 
     private void migrateITunesSubscriberToPaymentDetailsModel(User user) {
-        boolean hasActiveITunesSubscription = user.isNextSubPaymentInTheFuture() && !user.isOnFreeTrial() && user.isSubscribedStatus() && user.isSubscribedByITunes();
+        boolean hasActiveITunesSubscription = !user.isOnFreeTrial() && user.hasITunesSubscription();
         boolean hasNotEmptyReceipt = StringUtils.isNotEmpty(user.getBase64EncodedAppStoreReceipt());
 
         if(hasNotEmptyReceipt && hasActiveITunesSubscription && !user.hasActiveITunesPaymentDetails()) {

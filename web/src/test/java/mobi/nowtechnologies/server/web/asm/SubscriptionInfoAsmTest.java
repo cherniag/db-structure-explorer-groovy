@@ -207,8 +207,7 @@ public class SubscriptionInfoAsmTest {
 
         when(user.getNextSubPaymentAsDate()).thenReturn(DateUtils.addDays(now, 1));
         when(user.getCurrentPaymentDetails()).thenReturn(null);
-        when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
-        when(user.isSubscribedStatus()).thenReturn(true);
+        when(user.hasITunesSubscription()).thenReturn(true);
         when(user.isPremium(now)).thenReturn(true);
 
         return user;

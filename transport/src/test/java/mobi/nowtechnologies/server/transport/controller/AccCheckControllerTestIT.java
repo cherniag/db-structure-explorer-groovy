@@ -154,7 +154,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
                                                                                        .param("TRANSACTION_RECEIPT", appStoreReceipt))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
-               .andExpect(jsonPath("$.response.data[0].user.paymentType").value("iTunesSubscription"))
+               .andExpect(jsonPath("$.response.data[0].user.paymentType").value("ITUNES_SUBSCRIPTION"))
                .andExpect(jsonPath("$.response.data[0].user.lastPaymentStatus").value("NONE"))
                .andExpect(header().string("Expires", getStartsWithMatcher(roundedExpectedExpiresTime)));
 

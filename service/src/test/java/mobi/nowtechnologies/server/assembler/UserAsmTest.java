@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -21,18 +22,34 @@ import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 
 public class UserAsmTest {
+    User user = new User();
 
     @Test
     public void shouldReturnPAY_PALPaymentTypeWhenCurrentPaymentDetailsIsPayPal() {
         //given
         PaymentDetails paymentDetails = new PayPalPaymentDetails();
         String lastSubscribedPaymentSystem = ITUNES_SUBSCRIPTION;
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertThat(paymentType, is("PAY_PAL"));
+    }
+
+    @Test
+    public void shouldReturnITUNES_SUBSCRIPTIONPaymentTypeWhenCurrentPaymentDetailsIsITunes() {
+        //given
+        PaymentDetails paymentDetails = new ITunesPaymentDetails();
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        //when
+        String paymentType = UserAsm.getPaymentType(user);
+
+        //then
+        assertThat(paymentType, is("ITUNES_SUBSCRIPTION"));
     }
 
     @Test
@@ -40,9 +57,11 @@ public class UserAsmTest {
         //given
         PaymentDetails paymentDetails = null;
         String lastSubscribedPaymentSystem = ITUNES_SUBSCRIPTION;
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertThat(paymentType, is("ITUNES_SUBSCRIPTION"));
@@ -53,9 +72,11 @@ public class UserAsmTest {
         //given
         PaymentDetails paymentDetails = null;
         String lastSubscribedPaymentSystem = null;
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertThat(paymentType, is("UNKNOWN"));
@@ -66,9 +87,11 @@ public class UserAsmTest {
         //given
         String lastSubscribedPaymentSystem = ITUNES_SUBSCRIPTION;
         PaymentDetails paymentDetails = new VFPSMSPaymentDetails();
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertEquals(VF_PSMS_TYPE, paymentType);
@@ -79,9 +102,11 @@ public class UserAsmTest {
         //given
         String lastSubscribedPaymentSystem = ITUNES_SUBSCRIPTION;
         PaymentDetails paymentDetails = new MigPaymentDetails();
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertEquals("PSMS", paymentType);
@@ -92,9 +117,11 @@ public class UserAsmTest {
         //given
         String lastSubscribedPaymentSystem = ITUNES_SUBSCRIPTION;
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertEquals("creditCard", paymentType);
@@ -105,9 +132,11 @@ public class UserAsmTest {
         //given
         String lastSubscribedPaymentSystem = null;
         PaymentDetails paymentDetails = new PayPalPaymentDetails();
+        user.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        user.setCurrentPaymentDetails(paymentDetails);
 
         //when
-        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem);
+        String paymentType = UserAsm.getPaymentType(user);
 
         //then
         assertEquals("PAY_PAL", paymentType);

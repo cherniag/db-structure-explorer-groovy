@@ -173,8 +173,10 @@ public class UserAsm {
         return user;
     }
 
-    static String getPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem) {
-        if (isNull(paymentDetails) && ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem)) {
+    static String getPaymentType(User user) {
+        PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
+
+        if (isNull(paymentDetails) && user.lastSubscribedSystemIsITunes()) {
             return "ITUNES_SUBSCRIPTION";
         } else if (isNull(paymentDetails)) {
             return "UNKNOWN";
@@ -187,6 +189,8 @@ public class UserAsm {
             return "PSMS";
         } else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "O2_PSMS";
+        } else if (ITUNES_SUBSCRIPTION.equals(paymentDetails.getPaymentType())) {
+            return "ITUNES_SUBSCRIPTION";
         }
         return paymentDetails.getPaymentType();
     }

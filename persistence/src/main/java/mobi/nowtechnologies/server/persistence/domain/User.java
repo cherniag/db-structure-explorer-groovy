@@ -286,14 +286,13 @@ public class User implements Serializable {
         final boolean isIos = DeviceType.IOS.equals(getDeviceType().getName());
 
         if (isIos) {
-            boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(getLastSubscribedPaymentSystem()) &&
+            boolean hasITunesSubscription = lastSubscribedSystemIsITunes() &&
                                             (getCurrentPaymentDetails() == null || getCurrentPaymentDetails().isDeactivated()) &&
                                             getNextSubPaymentAsDate().after(time);
-            boolean hasAnotherCurrentPaymentDetails = getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated();
 
-            return hasITunesSubscription || hasAnotherCurrentPaymentDetails;
+            return hasITunesSubscription || hasActivePaymentDetails();
         } else {
-            return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated();
+            return hasActivePaymentDetails();
         }
     }
 
@@ -334,11 +333,15 @@ public class User implements Serializable {
     }
 
     public boolean isIOsNonO2ITunesSubscribedUser() {
-        return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribedStatus();
+        return isIOSDevice() && isNonO2User() && hasITunesSubscription();
     }
 
-    public boolean isSubscribedByITunes() {
+    public boolean lastSubscribedSystemIsITunes() {
         return ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem);
+    }
+
+    public boolean hasITunesSubscription () {
+        return lastSubscribedSystemIsITunes() && isSubscribedStatus();
     }
 
     public boolean isIOSDevice() {
@@ -1162,7 +1165,7 @@ public class User implements Serializable {
     }
 
     public boolean isOnBoughtPeriod() {
-        return isNextSubPaymentInTheFuture() && (isNotNull(lastSuccessfulPaymentDetails) || isSubscribedByITunes());
+        return isNextSubPaymentInTheFuture() && (isNotNull(lastSuccessfulPaymentDetails) || lastSubscribedSystemIsITunes());
     }
 
     public boolean isNextSubPaymentInTheFuture() {

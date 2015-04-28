@@ -162,7 +162,7 @@ public class AccountCheckDTOAsmTest {
         userIsNotEligibleForPromo();
 
         when(user.hasActivePaymentDetails()).thenReturn(false);
-        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isO2CommunityUser()).thenReturn(true);
 
         AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
@@ -176,7 +176,7 @@ public class AccountCheckDTOAsmTest {
 
         when(user.hasActivePaymentDetails()).thenReturn(true);
         when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.SUCCESSFUL);
-        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isO2CommunityUser()).thenReturn(true);
 
         AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
@@ -190,7 +190,7 @@ public class AccountCheckDTOAsmTest {
 
         when(user.hasActivePaymentDetails()).thenReturn(true);
         when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.ERROR);
-        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isO2CommunityUser()).thenReturn(true);
 
         AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
@@ -204,7 +204,7 @@ public class AccountCheckDTOAsmTest {
 
         when(user.hasActivePaymentDetails()).thenReturn(true);
         when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.SUCCESSFUL);
-        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isO2CommunityUser()).thenReturn(false);
         when(user.isVFNZCommunityUser()).thenReturn(false);
 
@@ -219,7 +219,7 @@ public class AccountCheckDTOAsmTest {
 
         when(user.hasActivePaymentDetails()).thenReturn(true);
         when(user.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.ERROR);
-        when(user.isSubscribedByITunes()).thenReturn(false);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isO2CommunityUser()).thenReturn(false);
         when(user.isVFNZCommunityUser()).thenReturn(false);
 

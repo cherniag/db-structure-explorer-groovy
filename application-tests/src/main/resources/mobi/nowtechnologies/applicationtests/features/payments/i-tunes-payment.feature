@@ -22,5 +22,5 @@ Feature: Process iTunes subscription
     And Client should have 'LIMITED' status
     And Next sub payment should be in the past
     And User should have active current payment details
-    And Payment type of current payment details should be 'iTunesSubscription'
+    And Payment type of current payment details should be 'ITUNES_SUBSCRIPTION'
     And Payment policy of current payment details should be the same as subscribed

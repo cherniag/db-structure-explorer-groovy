@@ -109,7 +109,7 @@ public class AccountCheckDTOAsmOneTimeFlagTest {
         when(deviceType.getName()).thenReturn(DeviceType.IOS);
         when(user.isSubscribedStatus()).thenReturn(true);
         when(user.isOnFreeTrial()).thenReturn(false);
-        when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
+        when(user.hasITunesSubscription()).thenReturn(true);
         when(user.isNextSubPaymentInTheFuture()).thenReturn(true);
         when(iTunesPaymentService.hasOneTimeSubscription(user)).thenReturn(true);
 
@@ -123,7 +123,7 @@ public class AccountCheckDTOAsmOneTimeFlagTest {
         when(deviceType.getName()).thenReturn(DeviceType.IOS);
         when(user.isSubscribedStatus()).thenReturn(true);
         when(user.isOnFreeTrial()).thenReturn(false);
-        when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
+        when(user.hasITunesSubscription()).thenReturn(true);
         when(user.isNextSubPaymentInTheFuture()).thenReturn(true);
         when(iTunesPaymentService.hasOneTimeSubscription(user)).thenReturn(false);
 
@@ -199,7 +199,7 @@ public class AccountCheckDTOAsmOneTimeFlagTest {
         when(deviceType.getName()).thenReturn(DeviceType.IOS);
         when(user.isSubscribedStatus()).thenReturn(false);
         when(user.isOnFreeTrial()).thenReturn(false);
-        when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isNextSubPaymentInTheFuture()).thenReturn(false);
         when(iTunesPaymentService.hasOneTimeSubscription(user)).thenReturn(true);
 
@@ -213,7 +213,7 @@ public class AccountCheckDTOAsmOneTimeFlagTest {
         when(deviceType.getName()).thenReturn(DeviceType.IOS);
         when(user.isSubscribedStatus()).thenReturn(false);
         when(user.isOnFreeTrial()).thenReturn(false);
-        when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
+        when(user.hasITunesSubscription()).thenReturn(false);
         when(user.isNextSubPaymentInTheFuture()).thenReturn(false);
         when(iTunesPaymentService.hasOneTimeSubscription(user)).thenReturn(false);
 
