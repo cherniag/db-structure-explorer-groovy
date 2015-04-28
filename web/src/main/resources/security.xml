@@ -73,7 +73,8 @@
         <property name="alwaysRemember" value="true"/>
         <property name="successfulHander">
             <bean class="mobi.nowtechnologies.server.web.service.impl.NowTechBasedRememberMeSuccessfulHandler">
-                <property name="userService" ref="service.UserService" />
+                <property name="timeService" ref="timeService" />
+                <property name="userRepository" ref="userRepository" />
             </bean>
         </property>
     </bean>

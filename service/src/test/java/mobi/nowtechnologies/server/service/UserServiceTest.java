@@ -3195,28 +3195,6 @@ public class UserServiceTest {
         assertThat(actualUser.isHasPromo(), is(true));
     }
 
-    @Test
-    public void shouldUpdateLastWebLogin() {
-        //given
-        int userId = Integer.MAX_VALUE;
-
-        User user = new User();
-        when(userRepository.findOne(userId)).thenReturn(user);
-        final int nowSeconds = Integer.MAX_VALUE;
-        when(timeServiceMock.nowSeconds()).thenReturn(nowSeconds);
-
-        //when
-        final User actualUser = userServiceSpy.updateLastWebLogin(userId);
-
-        //then
-        assertThat(actualUser, is(user));
-        assertThat(actualUser.getLastWebLogin(), is(nowSeconds));
-
-        verify(userRepository).findOne(userId);
-        verify(timeServiceMock).nowSeconds();
-    }
-
-
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
         paymentPolicyTariff = _4G;
         mediaType = VIDEO_AND_AUDIO;

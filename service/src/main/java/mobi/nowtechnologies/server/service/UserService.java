@@ -618,16 +618,6 @@ public class UserService {
         return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
     }
 
-    @Transactional(propagation = REQUIRED)
-    public User updateLastWebLogin(int userId) {
-        LOGGER.info("Attempt to update user last web login time");
-
-        User user = userRepository.findOne(userId);
-        user.setLastWebLogin(timeService.nowSeconds());
-
-        return user;
-    }
-
     @Transactional(readOnly = true)
     public Collection<User> findUsers(String searchWords, String communityURL) {
         LOGGER.debug("input parameters searchWords, communityURL: [{}], [{}]", searchWords, communityURL);
