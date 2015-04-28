@@ -46,6 +46,8 @@ public class ITunesPaymentDetailsServiceTest {
     Community community;
     @Mock
     ITunesPaymentDetails currentPaymentDetails;
+    @Mock
+    PaymentPolicy currentPaymentPolicy;
     @Captor
     ArgumentCaptor<ITunesPaymentDetails> paymentDetailsCaptor;
     int retriesOnError = 3;
@@ -55,17 +57,24 @@ public class ITunesPaymentDetailsServiceTest {
         iTunesPaymentDetailsService.setRetriesOnError(retriesOnError);
         when(user.getCurrentPaymentDetails()).thenReturn(currentPaymentDetails);
         when(user.getCommunity()).thenReturn(community);
+        when(currentPaymentDetails.getPaymentPolicy()).thenReturn(currentPaymentPolicy);
     }
 
+
     @Test
-    public void assignReceiptToUserWithActiveITunesPaymentDetailsWithTheSameReceipt() throws Exception {
+    public void assignReceiptToUserWithActiveITunesPaymentDetailsWithTheSameReceiptAndSameProductId() throws Exception {
         final String appStoreReceipt = "SOME RECEIPT";
+        final String appStoreProductId = "PRODUCT ID";
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(true);
         when(currentPaymentDetails.getAppStroreReceipt()).thenReturn(appStoreReceipt);
+        when(appStoreReceiptParser.getProductId(appStoreReceipt)).thenReturn(appStoreProductId);
+        when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(appStoreProductId);
 
         iTunesPaymentDetailsService.assignAppStoreReceipt(user, appStoreReceipt);
 
+        verify(appStoreReceiptParser).getProductId(appStoreReceipt);
+        verify(currentPaymentDetails, never()).updateAppStroreReceipt(anyString());
         verify(paymentDetailsRepository, never()).save(any(PaymentDetails.class));
         verify(userService, never()).updateUser(any(User.class));
         verify(paymentDetailsService, never()).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -73,17 +82,26 @@ public class ITunesPaymentDetailsServiceTest {
     }
 
     @Test
-    public void assignReceiptToUserWithActiveITunesPaymentDetailsWithDifferentReceipt() throws Exception {
+    public void assignReceiptToUserWithActiveITunesPaymentDetailsWithDifferentReceiptAndSameProductId() throws Exception {
         final String newReceipt = "NEW RECEIPT";
         final String storedReceipt = "STORED RECEIPT";
+        final String appStoreProductId = "PRODUCT ID";
+        final long currentPaymentDetailsId = 100L;
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(true);
         when(currentPaymentDetails.getAppStroreReceipt()).thenReturn(storedReceipt);
+        when(appStoreReceiptParser.getProductId(newReceipt)).thenReturn(appStoreProductId);
+        when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(appStoreProductId);
+        ITunesPaymentDetails updated = mock(ITunesPaymentDetails.class);
+        when(currentPaymentDetails.getI()).thenReturn(currentPaymentDetailsId);
+        when(paymentDetailsRepository.findOne(currentPaymentDetailsId)).thenReturn(updated);
 
         iTunesPaymentDetailsService.assignAppStoreReceipt(user, newReceipt);
 
-        verify(paymentDetailsRepository).save(currentPaymentDetails);
-        verify(currentPaymentDetails).updateAppStroreReceipt(newReceipt);
+        verify(appStoreReceiptParser).getProductId(newReceipt);
+        verify(paymentDetailsRepository).findOne(currentPaymentDetailsId);
+        verify(updated).updateAppStroreReceipt(newReceipt);
+        verify(paymentDetailsRepository).save(updated);
 
         verify(userService, never()).updateUser(any(User.class));
         verify(paymentDetailsService, never()).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -91,9 +109,48 @@ public class ITunesPaymentDetailsServiceTest {
     }
 
     @Test
+    public void assignReceiptToUserWithActiveITunesPaymentDetailsWithDifferentReceiptAndDifferentProductId() throws Exception {
+        final String newReceipt = "NEW RECEIPT";
+        final String storedReceipt = "STORED RECEIPT";
+        final String newAppStoreProductId = "NEW PRODUCT ID";
+        final String storedAppStoreProductId = "STORED PRODUCT ID";
+
+        when(user.hasActiveITunesPaymentDetails()).thenReturn(true);
+        when(user.isOnFreeTrial()).thenReturn(false);
+        when(currentPaymentDetails.getAppStroreReceipt()).thenReturn(storedReceipt);
+        when(appStoreReceiptParser.getProductId(newReceipt)).thenReturn(newAppStoreProductId);
+        when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(storedAppStoreProductId);
+        doReturn(null).when(paymentDetailsRepository).save(paymentDetailsCaptor.capture());
+        PaymentPolicy newPaymentPolicy = mock(PaymentPolicy.class);
+        when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, newAppStoreProductId)).thenReturn(newPaymentPolicy);
+
+        iTunesPaymentDetailsService.assignAppStoreReceipt(user, newReceipt);
+
+        ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
+        verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+        verify(userService, never()).skipFreeTrial(user);
+        verify(paymentDetailsRepository).save(created);
+        verify(userService).updateUser(user);
+        verify(paymentPolicyService).findByCommunityAndAppStoreProductId(community, newAppStoreProductId);
+        verify(appStoreReceiptParser).getProductId(newReceipt);
+
+        assertEquals(newReceipt, created.getAppStroreReceipt());
+        assertEquals(user, created.getOwner());
+        assertEquals(retriesOnError, created.getRetriesOnError());
+        assertEquals(newPaymentPolicy, created.getPaymentPolicy());
+
+        assertEquals(NONE, created.getLastPaymentStatus());
+        assertTrue(0 < created.getCreationTimestampMillis());
+        assertTrue(created.isActivated());
+
+        assertEquals(0, created.getMadeAttempts());
+        assertEquals(0, created.getMadeRetries());;
+    }
+
+    @Test
     public void assignReceiptToFreeTrialUserWithoutActiveITunesPaymentDetails() throws Exception {
         final String newReceipt = "NEW RECEIPT";
-        final String productId = "productId";
+        final String productId = "PRODUCT ID";
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(false);
         when(user.isOnFreeTrial()).thenReturn(true);
@@ -128,7 +185,7 @@ public class ITunesPaymentDetailsServiceTest {
     @Test
     public void assignReceiptToNotFreeTrialUserWithoutActiveITunesPaymentDetails() throws Exception {
         final String newReceipt = "NEW RECEIPT";
-        final String productId = "productId";
+        final String productId = "PRODUCT ID";
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(false);
         when(user.isOnFreeTrial()).thenReturn(false);

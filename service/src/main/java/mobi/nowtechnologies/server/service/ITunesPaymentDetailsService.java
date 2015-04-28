@@ -2,11 +2,13 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.itunes.AppStoreReceiptParser;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,19 +29,13 @@ public class ITunesPaymentDetailsService {
 
     @Transactional
     public void assignAppStoreReceipt(User user, String appStoreReceipt) {
-        logger.info("Assign app store receipt [{}] to user {}", appStoreReceipt, user.getId());
-        if(user.hasActiveITunesPaymentDetails()) {
-            ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
-            // Need to check productId ?
-            if(!appStoreReceipt.equals(currentDetails.getAppStroreReceipt())) {
-                logger.info("Update payment details {} with new receipt", currentDetails.getI());
-                // ADD REFRESH ITunesPaymentDetails
-                currentDetails.updateAppStroreReceipt(appStoreReceipt);
-                paymentDetailsRepository.save(currentDetails);
-            }
+        Preconditions.checkArgument(StringUtils.isNotEmpty(appStoreReceipt));
+        logger.info("Assign app store receipt [{}] to user [{}]", appStoreReceipt, user.getId());
+        String actualProductId = appStoreReceiptParser.getProductId(appStoreReceipt);
+        if (user.hasActiveITunesPaymentDetails()) {
+            checkReceiptAndProductId(user, appStoreReceipt, actualProductId);
         } else {
-            String productId = appStoreReceiptParser.getProductId(appStoreReceipt);
-            createNewPaymentDetails(user, appStoreReceipt, productId);
+            createNewPaymentDetails(user, appStoreReceipt, actualProductId);
         }
     }
 
@@ -49,7 +45,7 @@ public class ITunesPaymentDetailsService {
 
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 
-        if(user.isOnFreeTrial()) {
+        if (user.isOnFreeTrial()) {
             userService.skipFreeTrial(user);
         }
 
@@ -63,6 +59,21 @@ public class ITunesPaymentDetailsService {
         user.setCurrentPaymentDetails(iTunesPaymentDetails);
         userService.updateUser(user);
         logger.info("ITunes payment details {} were created for user {}", iTunesPaymentDetails.getI(), user.getId());
+    }
+
+    private void checkReceiptAndProductId(User user, String appStoreReceipt, String actualProductId) {
+        ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
+        PaymentPolicy paymentPolicy = currentDetails.getPaymentPolicy();
+
+        if (!actualProductId.equals(paymentPolicy.getAppStoreProductId())) {
+            logger.info("Product id [{}] of new receipt is not the same as subscribed payment policy's product id [{}]", actualProductId, paymentPolicy.getAppStoreProductId());
+            createNewPaymentDetails(user, appStoreReceipt, actualProductId);
+        } else if(!appStoreReceipt.equals(currentDetails.getAppStroreReceipt())) {
+            logger.info("Update payment details [{}] with new receipt", currentDetails.getI());
+            ITunesPaymentDetails updated = (ITunesPaymentDetails) paymentDetailsRepository.findOne(currentDetails.getI());
+            updated.updateAppStroreReceipt(appStoreReceipt);
+            paymentDetailsRepository.save(updated);
+        }
     }
 
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
