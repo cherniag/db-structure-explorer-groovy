@@ -15,7 +15,6 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 
 import javax.annotation.Resource;
 
@@ -45,7 +44,7 @@ public class SagePayPaymentDetailsInfoService {
     }
 
     @Transactional
-    public SagePayCreditCardPaymentDetails createPaymentDetailsInfo(User user, PaymentPolicy paymentPolicy, SagePayResponse response, String vendorTxCode) throws ServiceException {
+    public SagePayCreditCardPaymentDetails createPaymentDetailsInfo(User user, PaymentPolicy paymentPolicy, SagePayCreditCardPaymentDetails.DetailsInfo response, String vendorTxCode) throws ServiceException {
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 
         SagePayCreditCardPaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails(response, user, paymentPolicy, retriesOnError, vendorTxCode);
