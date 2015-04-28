@@ -7,8 +7,8 @@
      onclick="goTo('${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentPolicyDto.appStoreProductId}');">
     <span>
         <c:choose>
-            <c:when test="${payAsYouGoIOSProductIds.contains(paymentPolicyDto.appStoreProductId)}">
-                <s:message code='subscribe.button.pass.payg' arguments="${paymentPolicyDto.subcost},${paymentPolicyDto.duration}"/>
+            <c:when test="${payAsYouGoIOSProductIds.containsKey(paymentPolicyDto.appStoreProductId)}">
+                <s:message code='subscribe.button.pass.payg' arguments="${paymentPolicyDto.subcost},${payAsYouGoIOSProductIds[paymentPolicyDto.appStoreProductId]}"/>
             </c:when>
             <c:otherwise>
                 <s:message code='subscribe.button.pass.${paymentPolicyDto.durationUnit}' arguments="${paymentPolicyDto.subcost},${paymentPolicyDto.duration}"/>

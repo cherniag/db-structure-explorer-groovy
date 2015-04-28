@@ -24,10 +24,10 @@ import mobi.nowtechnologies.server.web.subscription.SubscriptionTexts;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
 import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -303,13 +303,19 @@ public class PaymentsController extends CommonController {
         return false;
     }
 
-    private List<String> getProductIds(String communityName) {
+    private Map<String, String> getProductIds(String communityName) {
         String iosProductIds = communityResourceBundleMessageSource.getMessage(communityName, "pay.go.ios.product.ids", null, null);
         String[] ids = StringUtils.split(iosProductIds, ",");
+
+        Map<String, String> result = new HashMap<>();
+
         if(ids != null){
-            return Arrays.asList(ids);
+            for(String productId : ids){
+                result.put(productId, communityResourceBundleMessageSource.getMessage(communityName, productId, null, null));
+            }
         }
-        return Collections.emptyList();
+
+        return result;
     }
 
 }
