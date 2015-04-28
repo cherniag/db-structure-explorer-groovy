@@ -34,7 +34,6 @@ import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PREMIUM_USER;
 import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import javax.annotation.Resource;
 
@@ -195,16 +194,16 @@ public class PaymentDetailsService {
     @Transactional(propagation = Propagation.REQUIRED)
     public O2PSMSPaymentDetails createDefaultO2PsmsPaymentDetails(User user) throws ServiceException {
 
-        PaymentPolicy defaultPaymentPolicy = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
+        List<PaymentPolicy> defaultPaymentPolicies = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
 
-        if (isNull(defaultPaymentPolicy)) {
+        if (defaultPaymentPolicies.isEmpty()) {
             throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
         }
 
         Community community = user.getUserGroup().getCommunity();
         PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
         paymentDetailsDto.setPaymentType(O2_PSMS);
-        paymentDetailsDto.setPaymentPolicyId(defaultPaymentPolicy.getId());
+        paymentDetailsDto.setPaymentPolicyId(defaultPaymentPolicies.get(0).getId());
 
         return (O2PSMSPaymentDetails) createPaymentDetails(paymentDetailsDto, user, community);
     }

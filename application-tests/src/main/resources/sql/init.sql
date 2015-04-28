@@ -713,12 +713,12 @@ INSERT INTO qrtz_simple_triggers (TRIGGER_NAME, TRIGGER_GROUP, REPEAT_COUNT, REP
 
 INSERT INTO qrtz_cron_triggers (TRIGGER_NAME, TRIGGER_GROUP, CRON_EXPRESSION, TIME_ZONE_ID) VALUES ('jobTrigger.ForkO2UsersForUpdateJob', 'DEFAULT', '0/1 * * * * ?', 'Europe/Helsinki');
 
-INSERT INTO `tb_paymentpolicy` (`communityID`,`subWeeks`,`subCost`,`paymentType`,`operator`,`shortCode`,`currencyISO`,`availableInStore`,`app_store_product_id`,`contract`,`segment`,`content_category`,`content_type`,`content_description`,`sub_merchant_id`,`provider`,`tariff`,`media_type`,`is_default`,`advanced_payment_seconds`,`after_next_sub_payment_seconds`,`online`, `duration`, `duration_unit`)
-values
-(10,2,'2','o2Psms',NULL,'3107055','GBP',1,NULL,'PAYG','CONSUMER','other','mqbed_tracks_3107055','Description of content','O2 Tracks','O2','_3G','AUDIO',1,86400,172800,1,2,'WEEKS'),
-(10,2,'2','o2Psms',NULL,'3107055','GBP',1,NULL,'PAYM','CONSUMER','other','mqbed_tracks_3107055','Description of content','O2 Tracks','O2','_3G','AUDIO',1,86400,0,1,2,'WEEKS'),
-(10,1,'1.5','o2Psms',NULL,'3107057','GBP',1,NULL,'PAYG','CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','O2','_4G','VIDEO_AND_AUDIO',1,86400,172800,1,1,'WEEKS'),
-(10,1,'1.5','o2Psms',NULL,'3107057','GBP',1,NULL,'PAYM','CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','O2','_4G','VIDEO_AND_AUDIO',1,86400,0,1,1,'WEEKS');
+INSERT INTO tb_paymentpolicy
+(communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyISO,availableInStore,app_store_product_id,contract,segment   ,content_category,content_type          ,content_description     ,sub_merchant_id,provider,tariff,media_type       ,is_default,advanced_payment_seconds,after_next_sub_payment_seconds,online, start_date_time     , end_date_time        , duration, duration_unit) values
+(10         ,2       ,'2'    ,'o2Psms'   ,NULL    ,'3107055','GBP'      ,1               ,NULL                ,'PAYG'  ,'CONSUMER','other'         ,'mqbed_tracks_3107055','Description of content','O2 Tracks'    ,'O2'    ,'_3G' ,'AUDIO'          ,1         ,86400                   ,172800                        ,1     ,'1970-01-01 00:00:01', '9999-12-31 23:59:59',2        ,'WEEKS'),
+(10         ,2       ,'2'    ,'o2Psms'   ,NULL    ,'3107055','GBP'      ,1               ,NULL                ,'PAYM'  ,'CONSUMER','other'         ,'mqbed_tracks_3107055','Description of content','O2 Tracks'    ,'O2'    ,'_3G' ,'AUDIO'          ,1         ,86400                   ,0                             ,1     ,'1970-01-01 00:00:01', '9999-12-31 23:59:59',2        ,'WEEKS'),
+(10         ,1       ,'1.5'  ,'o2Psms'   ,NULL    ,'3107057','GBP'      ,1               ,NULL                ,'PAYG'  ,'CONSUMER','other'         ,'mqbed_tracks_3107057','Description of content','O2 Tracks'    ,'O2'    ,'_4G' ,'VIDEO_AND_AUDIO',1         ,86400                   ,172800                        ,1     ,'1970-01-01 00:00:01', '9999-12-31 23:59:59',1        ,'WEEKS'),
+(10         ,1       ,'1.5'  ,'o2Psms'   ,NULL    ,'3107057','GBP'      ,1               ,NULL                ,'PAYM'  ,'CONSUMER','other'         ,'mqbed_tracks_3107057','Description of content','O2 Tracks'    ,'O2'    ,'_4G' ,'VIDEO_AND_AUDIO',1         ,86400                   ,0                             ,1     ,'1970-01-01 00:00:01', '9999-12-31 23:59:59',1        ,'WEEKS');
 
 --
 -- Medias and Charts

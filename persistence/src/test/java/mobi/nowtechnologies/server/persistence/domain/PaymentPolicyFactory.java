@@ -10,6 +10,7 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import static java.math.BigDecimal.ONE;
 
 import static org.mockito.Mockito.mock;
@@ -59,7 +60,11 @@ public class PaymentPolicyFactory {
     }
 
     public static PaymentPolicy paymentPolicyWithDefaultNotNullFields() {
-        return new PaymentPolicy().withPeriod(new Period().withDuration(1).withDurationUnit(WEEKS)).withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true)
-                                  .withCommunity(new Community()).withOnline(true);
+        final PaymentPolicy paymentPolicy =
+            new PaymentPolicy().withPeriod(new Period().withDuration(1).withDurationUnit(WEEKS)).withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true).withCommunity(new Community())
+                               .withOnline(true);
+        paymentPolicy.setStartDateTime(new Date(0L));
+        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
+        return paymentPolicy;
     }
 }
