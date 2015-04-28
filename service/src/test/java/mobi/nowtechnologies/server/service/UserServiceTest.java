@@ -27,6 +27,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.CountryRepository;
 import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
@@ -180,7 +181,7 @@ public class UserServiceTest {
     private PaymentDetailsService paymentDetailsServiceMock;
     private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
     private CommunityService communityServiceMock;
-    private CountryService countryServiceMock;
+    private CountryRepository countryRepositoryMock;
     private O2ProviderService o2ClientServiceMock;
     private DevicePromotionsService deviceServiceMock;
     private RefundService refundServiceMock;
@@ -210,7 +211,7 @@ public class UserServiceTest {
         userServiceSpy = Mockito.spy(new UserService());
 
         o2PSMSPaymentDetailsService = Mockito.mock(O2PSMSPaymentDetailsService.class);
-        countryServiceMock = PowerMockito.mock(CountryService.class);
+        countryRepositoryMock = Mockito.mock(CountryRepository.class);
         communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
         CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
         paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
@@ -231,7 +232,7 @@ public class UserServiceTest {
         deviceUserDataService = PowerMockito.mock(DeviceUserDataService.class);
         taskService = PowerMockito.mock(TaskService.class);
 
-        userServiceSpy.setCountryService(countryServiceMock);
+        userServiceSpy.countryRepository = countryRepositoryMock;
         userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
         userServiceSpy.setCountryByIpService(countryByIpServiceMock);
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
@@ -959,7 +960,7 @@ public class UserServiceTest {
         Mockito.when(userGroupRepository.findByCommunity(community)).thenReturn(userGroup);
         Mockito.when(userStatusRepository.findByName(UserStatusType.LIMITED.name())).thenReturn(userStatus);
         Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
-        Mockito.when(countryServiceMock.findIdByName(anyString())).thenReturn(country);
+        Mockito.when(countryRepositoryMock.findByName(anyString())).thenReturn(country);
         PowerMockito.doReturn(notExistUser ? null : user).when(userRepository).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
         whenNew(User.class).withNoArguments().thenReturn(user);
         PowerMockito.doAnswer(new Answer<Object>() {
@@ -980,7 +981,7 @@ public class UserServiceTest {
         User userAccountWithSameDevice = new User().withDeviceUID(deviceUID);
 
         final Country country = mock(Country.class);
-        Mockito.when(countryServiceMock.findIdByName(anyString())).thenReturn(country);
+        Mockito.when(countryRepositoryMock.findByName(anyString())).thenReturn(country);
 
         Community community = new Community();
         User expectedUser = new User();
@@ -1051,7 +1052,7 @@ public class UserServiceTest {
         assertEquals(user.getActivationStatus(), ActivationStatus.REGISTERED);
 
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
-        verify(countryServiceMock, times(1)).findIdByName(anyString());
+        verify(countryRepositoryMock, times(1)).findByName(anyString());
         verify(userRepository, times(1)).saveAndFlush(any(User.class));
         verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(1));
@@ -1101,7 +1102,7 @@ public class UserServiceTest {
         assertEquals(result.getUserName(), user.getUserName());
 
         verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
-        verify(countryServiceMock, times(0)).findIdByName(anyString());
+        verify(countryRepositoryMock, times(0)).findByName(anyString());
         verify(userRepository, times(0)).save(any(User.class));
         verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
         verifyStatic(times(0));

@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.repository.CountryRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
@@ -40,11 +41,10 @@ public class UserServiceActivationTest {
     private MigHttpService migHttpServiceMock;
     private PaymentDetailsService paymentDetailsServiceMock;
     private CommunityService communityServiceMock;
-    private CountryService countryServiceMock;
     private O2ProviderService o2ClientServiceMock;
     private DevicePromotionsService deviceServiceMock;
     private RefundService refundServiceMock;
-
+    private CountryRepository countryRepositoryMock;
     private PromotionService promotionServiceMock;
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
 
@@ -52,7 +52,6 @@ public class UserServiceActivationTest {
     public void setUp() throws Exception {
         userServiceSpy = Mockito.spy(new UserService());
 
-        countryServiceMock = PowerMockito.mock(CountryService.class);
         communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
         userRepositoryMock = PowerMockito.mock(UserRepository.class);
         CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
@@ -69,7 +68,7 @@ public class UserServiceActivationTest {
         refundServiceMock = PowerMockito.mock(RefundService.class);
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
 
-        userServiceSpy.setCountryService(countryServiceMock);
+        userServiceSpy.countryRepository = countryRepositoryMock;
         userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
         userServiceSpy.setCountryByIpService(countryByIpServiceMock);
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);

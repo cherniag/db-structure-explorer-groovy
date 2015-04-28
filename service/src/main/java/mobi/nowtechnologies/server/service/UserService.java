@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.CountryRepository;
 import mobi.nowtechnologies.server.persistence.repository.OperatorRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
@@ -114,6 +115,8 @@ public class UserService {
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
     private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
     @Resource
+    CountryRepository countryRepository;
+    @Resource
     UserGroupRepository userGroupRepository;
     @Resource
     PaymentDetailsRepository paymentDetailsRepository;
@@ -133,7 +136,6 @@ public class UserService {
     private UserServiceNotification userServiceNotification;
     private CommunityResourceBundleMessageSource messageSource;
     private CountryAppVersionService countryAppVersionService;
-    private CountryService countryService;
     private PromotionService promotionService;
     private PaymentDetailsService paymentDetailsService;
     private O2PSMSPaymentDetailsService o2PSMSPaymentDetailsService;
@@ -631,7 +633,7 @@ public class UserService {
         DeviceType deviceType = getDeviceType(userDeviceRegDetailsDto.getDeviceType());
         user.setDeviceType(deviceType);
         user.setUserGroup(getUserGroup(community));
-        user.setCountry(countryService.findIdByName("GB").getI());
+        user.setCountry(countryRepository.findByName("GB").getI());
         user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
         user.setOperator(getOperator());
         user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
@@ -1162,10 +1164,6 @@ public class UserService {
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
         this.paymentDetailsService = paymentDetailsService;
-    }
-
-    public void setCountryService(CountryService countryService) {
-        this.countryService = countryService;
     }
 
     public void setCountryAppVersionService(CountryAppVersionService countryAppVersionService) {

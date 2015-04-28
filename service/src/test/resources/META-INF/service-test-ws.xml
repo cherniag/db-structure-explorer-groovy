@@ -22,7 +22,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springfr
     <bean id="service.MediaService" class="java.lang.Object" />
     <bean id="service.FileService" class="java.lang.Object" />
     <bean id="service.CountryAppVersionService" class="java.lang.Object" />
-    <bean id="service.CountryService" class="java.lang.Object" />
     <bean id="service.PaymentPolicyService" class="java.lang.Object" />
     <bean id="service.PaymentService" class="java.lang.Object" />
     <bean id="service.FacebookService" class="java.lang.Object" />

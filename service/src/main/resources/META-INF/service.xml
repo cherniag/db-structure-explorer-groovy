@@ -105,7 +105,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
-		<property name="countryService" ref="service.CountryService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 		<property name="migHttpService" ref="service.migHttpService" />
@@ -254,8 +253,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	</bean>
 
 	<bean id="service.CountryAppVersionService" class="mobi.nowtechnologies.server.service.CountryAppVersionService"/>
-
-	<bean id="service.CountryService" class="mobi.nowtechnologies.server.service.CountryService"/>
 
 	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
 		<property name="paymentPolicyRepository" ref="paymentPolicyRepository" />

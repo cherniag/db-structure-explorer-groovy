@@ -5,9 +5,9 @@ import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.CountryRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.CountryService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -54,7 +54,6 @@ public class PaymentsCreditCardController extends CommonController {
     public static final String PAGE_PAYMENTS_CREDITCARD = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_CREDITCARD + PAGE_EXT;
     public static final String PAGE_CREATE_PAYMENT_DETAILS = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_CREDITCARD_DETAILS + PAGE_EXT;
 
-    private CountryService countryService;
     private PaymentPolicyService paymentPolicyService;
     private SagePayPaymentDetailsService sagePayPaymentDetailsService;
 
@@ -62,6 +61,8 @@ public class PaymentsCreditCardController extends CommonController {
     PaymentPolicyRepository paymentPolicyRepository;
     @Resource
     UserRepository userRepository;
+    @Resource
+    CountryRepository countryRepository;
 
     @InitBinder(CreditCardDto.NAME)
     public void initBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -76,7 +77,7 @@ public class PaymentsCreditCardController extends CommonController {
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_CREDITCARD);
         modelAndView.addObject(CreditCardDto.NAME, new CreditCardDto());
         modelAndView.addAllObjects(CreditCardDto.staticData);
-        List<Country> countries = countryService.getAllCountries();
+        List<Country> countries = countryRepository.findAll();
         modelAndView.addObject("countries", countries);
         modelAndView.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
 
@@ -96,7 +97,7 @@ public class PaymentsCreditCardController extends CommonController {
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addAllObjects(CreditCardDto.staticData);
-        List<Country> countries = countryService.getAllCountries();
+        List<Country> countries = countryRepository.findAll();
         modelAndView.addObject("countries", countries);
         modelAndView.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
 
@@ -164,10 +165,6 @@ public class PaymentsCreditCardController extends CommonController {
     private boolean ignoreAddressFields(Locale locale) {
         String val = messageSource.getMessage("pay.cc.form.ignoreAddressFields", null, locale);
         return val != null && val.trim().toLowerCase().equals("true");
-    }
-
-    public void setCountryService(CountryService countryService) {
-        this.countryService = countryService;
     }
 
     public void setSagePayPaymentDetailsService(SagePayPaymentDetailsService sagePayPaymentDetailsService) {
