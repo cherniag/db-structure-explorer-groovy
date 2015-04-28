@@ -721,7 +721,7 @@ public class PromotionServiceTest {
                                                                             eq(user.getUuid()),
                                                                             eq(promotion.getI()),
                                                                             eq(freeTrialStartedTimestampSeconds * 1000L),
-                                                                            eq(promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds) * 1000L));
+                                                                            eq(promotion.getEndSeconds(freeTrialStartedTimestampSeconds) * 1000L));
     }
 
     @Test
