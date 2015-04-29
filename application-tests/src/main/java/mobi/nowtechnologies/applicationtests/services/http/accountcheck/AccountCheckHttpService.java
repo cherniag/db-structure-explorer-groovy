@@ -69,10 +69,10 @@ public class AccountCheckHttpService extends AbstractHttpService {
     private ResponseWrapper<AccountCheckDto> execute(MultiValueMap<String, String> parameters, UserDeviceData deviceData, RequestFormat format) {
         String uri = getUri(deviceData, "ACC_CHECK", format);
 
-        logger.info("\nSending for for [{}] to [{}] parameters [{}]", deviceData, uri, parameters);
+        logger.info("Sending for [{}] to [{}] parameters [{}]", deviceData, uri, parameters);
         ResponseEntity<String> entity = restTemplate.postForEntity(uri, parameters, String.class);
         String body = entity.getBody();
-        logger.info("Response body [{}]\n", body);
+        logger.info("Response [{}]", entity);
 
         AccountCheckDto accountCheckDto = jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
         ResponseWrapper<AccountCheckDto> accountCheckDtoResponseWrapper = new ResponseWrapper<>(entity.getStatusCode().value(), entity.getHeaders(), accountCheckDto);

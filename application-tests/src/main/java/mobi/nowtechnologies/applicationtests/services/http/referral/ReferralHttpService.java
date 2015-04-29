@@ -39,10 +39,10 @@ public class ReferralHttpService extends AbstractHttpService {
 
         HttpEntity<String> requestEntity = new HttpEntity<String>(toJson(referrals), headers);
 
-        logger.info("\nSending for for [{}] to [{}] headers : [{}]", deviceData, requestUri, headers);
+        logger.info("Sending for [{}] to [{}] headers : [{}]", deviceData, requestUri, headers);
         ResponseEntity<T> entity = restTemplate.exchange(requestUri, HttpMethod.POST, requestEntity, responseType);
 
-        logger.info("Response: [{}]\n", entity);
+        logger.info("Response: [{}]", entity);
         return entity;
     }
 

@@ -34,7 +34,7 @@ public class ChartHttpService extends AbstractHttpService {
         String uri = builder.build().toUriString();
         logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, httpEntity.getBody());
         ResponseEntity<ChartResponse> body = restTemplate.exchange(uri, httpMethod, httpEntity, ChartResponse.class);
-        logger.info("Response body [{}]", body);
+        logger.info("Response [{}]", body);
 
         return body;
     }

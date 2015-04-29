@@ -41,9 +41,9 @@ public class GetStreamzineHttpService extends AbstractHttpService {
 
         UriComponents build = builder.build();
 
-        logger.info("\nSending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
+        logger.info("Sending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
         ResponseEntity<T> entity = restTemplate.exchange(build.toUri(), method, httpEntity, type);
-        logger.info("Response entity [{}]\n", entity);
+        logger.info("Response [{}]", entity);
 
         return entity;
     }

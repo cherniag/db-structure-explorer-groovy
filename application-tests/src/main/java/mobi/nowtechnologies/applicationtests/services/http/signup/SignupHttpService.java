@@ -28,10 +28,9 @@ public class SignupHttpService extends AbstractHttpService {
             // empty are allowed
             request.add("APPSFLYER_UID", appsFlyerUid);
         }
-
-        logger.info("\nSending for to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
+        logger.info("Sending for [{}] to [{}] request [{}]", deviceData, uri, request);
         String body = restTemplate.postForEntity(uri, request, String.class).getBody();
-        logger.info("Response body [{}]\n", body);
+        logger.info("Response [{}]", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
     }

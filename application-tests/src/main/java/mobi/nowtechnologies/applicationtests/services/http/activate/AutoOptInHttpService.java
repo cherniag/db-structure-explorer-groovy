@@ -36,10 +36,10 @@ public class AutoOptInHttpService extends AbstractHttpService {
             parameters.add("OTAC_TOKEN", otac);
         }
 
-        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
         ResponseEntity<String> entity = restTemplate.postForEntity(uri, parameters, String.class);
         String body = entity.getBody();
-        logger.info("Response body [{}]\n", body);
+        logger.info("Response body [{}]", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
     }

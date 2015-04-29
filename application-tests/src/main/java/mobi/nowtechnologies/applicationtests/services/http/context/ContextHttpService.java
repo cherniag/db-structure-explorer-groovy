@@ -36,9 +36,9 @@ public class ContextHttpService extends AbstractHttpService {
 
         UriComponents build = builder.build();
 
-        logger.info("\nSending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
+        logger.info("Sending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
         ResponseEntity<String> entity = restTemplate.exchange(build.toUri(), HttpMethod.GET, httpEntity, String.class);
-        logger.info("Response entity [{}]\n", entity);
+        logger.info("Response [{}]", entity);
 
         return entity;
     }

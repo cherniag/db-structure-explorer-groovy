@@ -49,6 +49,9 @@ public class UserInResponse {
     private Boolean subjectToAutoOptIn;
     private String firstActivation;
     private String appStoreProductId;
+    private String lastPaymentStatus;
+    private String lastSubscribedPaymentSystem;
+    private Boolean oneTimePayment;
 
     public String getAppStoreProductId() {
         return appStoreProductId;
@@ -378,5 +381,29 @@ public class UserInResponse {
 
     public void setSubjectToAutoOptIn(Boolean subjectToAutoOptIn) {
         this.subjectToAutoOptIn = subjectToAutoOptIn;
+    }
+
+    public String getLastPaymentStatus() {
+        return lastPaymentStatus;
+    }
+
+    public void setLastPaymentStatus(String lastPaymentStatus) {
+        this.lastPaymentStatus = lastPaymentStatus;
+    }
+
+    public String getLastSubscribedPaymentSystem() {
+        return lastSubscribedPaymentSystem;
+    }
+
+    public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
+        this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
+    }
+
+    public Boolean getOneTimePayment() {
+        return oneTimePayment;
+    }
+
+    public void setOneTimePayment(Boolean oneTimePayment) {
+        this.oneTimePayment = oneTimePayment;
     }
 }

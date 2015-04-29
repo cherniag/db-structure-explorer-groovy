@@ -28,9 +28,9 @@ public class PayPalHttpService extends AbstractHttpService {
         URI uri = getUri(parameters);
         HttpHeaders headers = createAndroidDeviceHeaders();
 
-        logger.info("\nSending for to {}, parameters {}, headers", uri, parameters, headers);
+        logger.info("Sending for to {}, parameters {}, headers", uri, parameters, headers);
         String body = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<String>(headers), String.class).getBody();
-        logger.info("Response body {}\n", body);
+        logger.info("Response {}", body);
     }
 
     private URI getUri(MultiValueMap<String, String> parameters) {

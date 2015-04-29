@@ -24,9 +24,9 @@ public class EmailHttpService extends AbstractHttpService {
         parameters.add("USER_NAME", userName);
         parameters.add("DEVICE_UID", deviceUID);
 
-        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        logger.info("Sending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
         ResponseEntity<String> response = restTemplate.postForEntity(uri, parameters, String.class);
-        logger.info("Response body [{}]\n", response.getBody());
+        logger.info("Response [{}]", response.getBody());
 
         // avoiding bad format: {Long:123} ... in response
         Map<String, Object> values = jsonHelper.extractObjectMapByPath(response.getBody(), JsonHelper.EMAIL_ACTIVATION_PATH);
@@ -47,8 +47,8 @@ public class EmailHttpService extends AbstractHttpService {
         parameters.add("TIMESTAMP", token.getTimestamp());
         parameters.add("DEVICE_UID", deviceUID);
 
-        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
         ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(uri, parameters, String.class);
-        logger.info("Response body [{}]\n", stringResponseEntity.getBody());
+        logger.info("Response [{}]", stringResponseEntity.getBody());
     }
 }

@@ -2,13 +2,19 @@ package mobi.nowtechnologies.applicationtests.services.helper;
 
 import mobi.nowtechnologies.server.shared.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserDataCreator {
+    private Random random = new Random(System.currentTimeMillis());
 
     public String generateDeviceUID() {
         String deviceUID = "DEVICE_UID_" + UUID.randomUUID().toString();
@@ -16,7 +22,7 @@ public class UserDataCreator {
     }
 
     public String generateEmail() {
-        return System.nanoTime() + ".email.user@ussr.net";
+        return Math.abs(random.nextLong()) + ".email.user@ussr.net";
     }
 
     public TimestampTokenData createUserToken(String userToken) {

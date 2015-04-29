@@ -34,7 +34,7 @@ public class ServiceConfigHttpService extends AbstractHttpService {
         String uri = builder.build().toUriString();
         logger.info("Sending for [{}] to [{}] parameters: [{}], headers: [{}]", deviceData, uri, httpEntity.getBody(), httpEntity.getHeaders());
         ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
-        logger.info("Response body [{}]", responseEntity);
+        logger.info("Response [{}]", responseEntity);
         return responseEntity;
     }
 

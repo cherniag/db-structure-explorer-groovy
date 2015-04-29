@@ -51,10 +51,14 @@ public abstract class ClientDevicesSet {
     //
     // Flow operations
     //
-    public void accountCheck(UserDeviceData userDeviceData) {
+    public ResponseWrapper<AccountCheckDto> accountCheck(UserDeviceData userDeviceData) {
         final PhoneStateImpl state = states.get(userDeviceData);
-        state.accountCheck =
-            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat()).getEntity();
+        ResponseWrapper<AccountCheckDto> responseWrapper = accountCheckHttpService.accountCheck(userDeviceData,
+                                                                                                state.getLastAccountCheckResponse().userName,
+                                                                                                state.getLastAccountCheckResponse().userToken,
+                                                                                                userDeviceData.getFormat());
+        state.accountCheck = responseWrapper.getEntity();
+        return responseWrapper;
     }
 
     public void accountCheckWithUrbanAirshipToken(UserDeviceData userDeviceData, String urbanAirshipToken) {
@@ -68,10 +72,10 @@ public abstract class ClientDevicesSet {
     public ResponseWrapper<AccountCheckDto> accountCheckFromIOS(UserDeviceData userDeviceData, String iTunesReceipt) {
         final PhoneStateImpl state = states.get(userDeviceData);
         ResponseWrapper<AccountCheckDto> responseWrapper = accountCheckHttpService.accountCheckFromIOS(userDeviceData,
-                                                                                                      state.getLastAccountCheckResponse().userName,
-                                                                                                      state.getLastAccountCheckResponse().userToken,
-                                                                                                      userDeviceData.getFormat(),
-                                                                                                      iTunesReceipt);
+                                                                                                       state.getLastAccountCheckResponse().userName,
+                                                                                                       state.getLastAccountCheckResponse().userToken,
+                                                                                                       userDeviceData.getFormat(),
+                                                                                                       iTunesReceipt);
         state.accountCheck = responseWrapper.getEntity();
         return responseWrapper;
     }

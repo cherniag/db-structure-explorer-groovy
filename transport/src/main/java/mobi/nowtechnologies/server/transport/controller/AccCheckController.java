@@ -255,7 +255,7 @@ public class AccCheckController extends CommonController {
     }
 
     private void handleExpires(User user, HttpServletResponse response) {
-        if(user.hasActiveITunesPaymentDetails() && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.NONE) {
+        if(user.hasActiveITunesPaymentDetails() && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.NONE && user.isLimited()) {
             LOGGER.info("Handle expires date for iTunes payment for user {}", user.getId());
             Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
             if (nextRetryTimeForITunesPayment != null && response != null) {

@@ -12,6 +12,7 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPortalService;
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -168,6 +169,27 @@ public class SubscriptionService {
             submittedPaymentRepository.save(pendingPayment);
         }
     }
+
+    public void subscribeOnITunesWithoutPaymentDetails(User user, int nextSubPayment, String appStoreReceipt) {
+        long now = new Date().getTime();
+        user.setLastSubscribedPaymentSystem("iTunesSubscription");
+        user.setNextSubPayment(nextSubPayment);
+        user.setStatus(userStatusRepository.findByName(UserStatus.SUBSCRIBED));
+        user.setFreeTrialExpiredMillis(now);
+        user.setLastSuccessfulPaymentTimeMillis(now);
+        user.setBase64EncodedAppStoreReceipt(appStoreReceipt);
+        userRepository.save(user);
+    }
+
+    public void subscribeOnITunesWithPaymentDetails(User user, PaymentPolicy paymentPolicy, int nextSubPayment, String appStoreReceipt) {
+        subscribeOnITunesWithoutPaymentDetails(user, nextSubPayment, appStoreReceipt);
+
+        ITunesPaymentDetails iTunesPaymentDetails = new ITunesPaymentDetails(user, paymentPolicy, appStoreReceipt, 3);
+        paymentDetailsRepository.save(iTunesPaymentDetails);
+        user.setCurrentPaymentDetails(iTunesPaymentDetails);
+        userRepository.save(user);
+    }
+
 
     private PendingPayment createPendingPayment(User user, PaymentDetailsType type, PaymentPolicy paymentPolicy) {
         final Date now = new Date();

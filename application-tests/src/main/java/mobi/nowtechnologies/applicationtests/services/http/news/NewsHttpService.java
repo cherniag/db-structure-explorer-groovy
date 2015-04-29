@@ -37,7 +37,7 @@ public class NewsHttpService extends AbstractHttpService {
         String uri = builder.build().toUriString();
         logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, httpEntity.getBody());
         ResponseEntity<T> body = restTemplate.exchange(uri, HttpMethod.GET, httpEntity, responseType);
-        logger.info("Response body [{}]", body);
+        logger.info("Response [{}]", body);
 
         return body;
     }
@@ -48,7 +48,7 @@ public class NewsHttpService extends AbstractHttpService {
 
         logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, httpEntity.getBody());
         ResponseEntity<T> body = restTemplate.postForEntity(uri, httpEntity, responseType);
-        logger.info("Response body [{}]", body);
+        logger.info("Response [{}]", body);
 
         return body;
     }
