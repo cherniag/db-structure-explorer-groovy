@@ -103,8 +103,6 @@ public class PayPalPaymentServiceImplTest {
     @Before
     public void setUp() {
         // payPalPaymentService.setRedirectURL(REDIRECT_URL);
-        payPalPaymentService.setRetriesOnError(RETRIES_ON_ERROR);
-
         when(submittedPaymentRepository.save(any(SubmittedPayment.class))).thenAnswer(new Answer<SubmittedPayment>() {
             @Override
             public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {

@@ -58,7 +58,6 @@ public class SagePayPaymentServiceImplTest {
     @Before
     public void before() {
         service = new SagePayPaymentServiceImpl();
-        service.setRetriesOnError(3);
         httpService = Mockito.mock(SagePayHttpService.class);
         service.setHttpService(httpService);
         paymentDetailsService = Mockito.mock(PaymentDetailsService.class);
