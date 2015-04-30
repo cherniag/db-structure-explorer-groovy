@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
 import mobi.nowtechnologies.server.service.vodafone.VFNZProviderService;
-import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +23,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
     private VFNZSMSGatewayServiceImpl gatewayService;
     private DevicePromotionsService deviceService;
+    private VFNZUserDetailsUpdater userDetailsUpdater;
     private Community vfnzCommunity = new Community().withRewriteUrl("vf_nz");
 
     @Override
@@ -54,10 +54,10 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     }
 
     @Override
-    public void getSubscriberData(String phoneNumber, final Processor<VFNZSubscriberData> processor) {
+    public void getSubscriberData(String phoneNumber) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
-        processor.process(new VFNZSubscriberData().withPhoneNumber(phoneNumber));
+        userDetailsUpdater.process(new VFNZSubscriberData().withPhoneNumber(phoneNumber));
 
         gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber);
 
@@ -78,5 +78,9 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
+    }
+
+    public void setUserDetailsUpdater(VFNZUserDetailsUpdater userDetailsUpdater) {
+        this.userDetailsUpdater = userDetailsUpdater;
     }
 }

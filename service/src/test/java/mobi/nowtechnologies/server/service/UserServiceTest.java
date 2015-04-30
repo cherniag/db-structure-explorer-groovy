@@ -2696,7 +2696,7 @@ public class UserServiceTest {
                 processor.process(subscriberData);
                 return null;
             }
-        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
+        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber));
 
         //when
         userServiceSpy.populateSubscriberData(user);
@@ -2706,7 +2706,7 @@ public class UserServiceTest {
         verify(deviceServiceMock, times(1)).isPromotedDevicePhone(eq(community), eq(phoneNumber), anyString());
         verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
         verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData) null));
-        verify(o2ClientServiceMock, times(0)).getSubscriberData(eq(phoneNumber), eq(o2UserDetailsUpdaterMock));
+        verify(o2ClientServiceMock, times(0)).getSubscriberData(eq(phoneNumber));
     }
 
     @Test
@@ -2734,17 +2734,13 @@ public class UserServiceTest {
                 processor.process(subscriberData);
                 return null;
             }
-        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), eq(o2UserDetailsUpdaterMock));
+        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber));
 
         //when
         userServiceSpy.populateSubscriberData(user);
 
         //then
-        verify(userRepository, times(1)).save(eq(user));
-        verify(deviceServiceMock, times(1)).isPromotedDevicePhone(eq(community), eq(phoneNumber), anyString());
-        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
-        verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData) null));
-        verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), eq(o2UserDetailsUpdaterMock));
+        verify(o2ClientServiceMock).getSubscriberData(phoneNumber);
     }
 
     @Test

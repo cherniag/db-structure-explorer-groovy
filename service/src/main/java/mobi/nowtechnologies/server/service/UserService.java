@@ -764,7 +764,7 @@ public class UserService {
             populateSubscriberData(user, null);
         } else {
             try {
-                mobileProviderService.getSubscriberData(phoneNumber, userDetailsUpdater);
+                mobileProviderService.getSubscriberData(phoneNumber);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=[{}]", phoneNumber, ex);

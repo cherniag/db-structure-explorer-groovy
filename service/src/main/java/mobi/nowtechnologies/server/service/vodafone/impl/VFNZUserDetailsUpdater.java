@@ -40,12 +40,11 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
 
     public User setUserFieldsFromSubscriberData(User user, VFNZSubscriberData subsriberData) {
         LOGGER.info("Attempt to set user fields from subscriber data [{}], [{}]", user, subsriberData);
-        VFNZSubscriberData data = (VFNZSubscriberData) subsriberData;
 
-        if (isNull(data)) {
+        if (isNull(subsriberData)) {
             user.setProvider(ProviderType.VF);
         } else {
-            user.setProvider(data.getProvider());
+            user.setProvider(subsriberData.getProvider());
         }
 
         return user;

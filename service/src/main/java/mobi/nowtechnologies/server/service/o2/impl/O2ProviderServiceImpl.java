@@ -15,7 +15,6 @@ import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationE
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.service.validator.GBCellNumberValidator;
-import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
@@ -45,6 +44,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     private String subscriberEndpoint;
     private String chargeCustomerEndpoint;
     private String sendMessageEndpoint;
+    private O2UserDetailsUpdater userDetailsUpdater;
 
     private String serverO2Url;
 
@@ -146,6 +146,10 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         this.redeemPromotedServerO2Url = redeemPromotedServerO2Url;
     }
 
+    public void setUserDetailsUpdater(O2UserDetailsUpdater userDetailsUpdater) {
+        this.userDetailsUpdater = userDetailsUpdater;
+    }
+
     @Override
     public PhoneNumberValidationData validatePhoneNumber(String phoneNumber) {
         String serverO2Url = getServerO2Url(phoneNumber);
@@ -157,11 +161,11 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     }
 
     @Override
-    public void getSubscriberData(String phoneNumber, Processor<O2SubscriberData> processor) {
+    public void getSubscriberData(String phoneNumber) {
         O2SubscriberData data = o2Service.getSubscriberData(phoneNumber);
         data.setPhoneNumber(phoneNumber);
 
-        processor.process(data);
+        userDetailsUpdater.process(data);
     }
 
     private String handleValidatePhoneNumber(String phoneNumber, String url) {

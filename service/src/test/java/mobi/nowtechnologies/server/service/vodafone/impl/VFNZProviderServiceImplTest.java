@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
-import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Utils.class})
 public class VFNZProviderServiceImplTest {
-
+    @InjectMocks
     private VFNZProviderServiceImpl fixture;
 
     @Mock
@@ -40,34 +39,32 @@ public class VFNZProviderServiceImplTest {
     @Mock
     private DevicePromotionsService mockDeviceService;
 
+    @Mock
+    private VFNZUserDetailsUpdater userDetailsUpdater;
+
     @Before
     public void setUp() throws Exception {
-        fixture = new VFNZProviderServiceImpl();
-        fixture.setPhoneValidator(mockNzCellNumberValidator);
-        fixture.setGatewayService(gatewayService);
-        fixture.setDeviceService(mockDeviceService);
         fixture.setProviderNumber("5803");
     }
 
     @Test
     public void testValidatePhoneNumber_Success() throws Exception {
-        String phoneNumber = "2111111111";
+        String pin = "1000";
+        String entryPhoneNumber = "2111111111";
+        String normalizedPhoneNumber = "+642111111111";
 
-        Mockito.when(mockNzCellNumberValidator.validateAndNormalize(eq(phoneNumber))).thenReturn("+642111111111");
-        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null))).thenReturn(false);
+        Mockito.when(mockNzCellNumberValidator.validateAndNormalize(eq(entryPhoneNumber))).thenReturn(normalizedPhoneNumber);
+        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(entryPhoneNumber), eq((String) null))).thenReturn(false);
         PowerMockito.mockStatic(Utils.class);
+        Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn(pin);
 
-        Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn("1000");
+        PhoneNumberValidationData result = fixture.validatePhoneNumber(entryPhoneNumber);
 
-        PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
+        Assert.assertEquals(normalizedPhoneNumber, result.getPhoneNumber());
+        Assert.assertEquals(pin, result.getPin());
 
-        Assert.assertEquals("+642111111111", result.getPhoneNumber());
-        Assert.assertEquals("1000", result.getPin());
-
-        Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validateAndNormalize(eq(phoneNumber));
-        verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null));
-        PowerMockito.verifyStatic(times(1));
-        Utils.generateRandom4DigitsPIN();
+        Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validateAndNormalize(entryPhoneNumber);
+        verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(entryPhoneNumber), eq((String) null));
     }
 
     @Test
@@ -80,36 +77,22 @@ public class VFNZProviderServiceImplTest {
 
         Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn("1000");
 
-        PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
+        fixture.validatePhoneNumber(phoneNumber);
 
-        Assert.assertEquals("2111111111", result.getPhoneNumber());
-        Assert.assertEquals("1000", result.getPin());
-
-        Mockito.verify(mockNzCellNumberValidator, Mockito.times(0)).validateAndNormalize(eq(phoneNumber));
+        verifyNoMoreInteractions(mockNzCellNumberValidator);
         verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null));
-        PowerMockito.verifyStatic(times(1));
-        Utils.generateRandom4DigitsPIN();
     }
 
     @Test
     public void testGetSubscriberData_Success() throws Exception {
         final String phoneNumber = "+642111111111";
-        final Processor processor = spy(new Processor() {
-            @Override
-            public void process(Object data) {
-                VFNZSubscriberData subscriberData = (VFNZSubscriberData) data;
-                Assert.assertEquals(null, subscriberData.getProvider());
-                Assert.assertEquals(phoneNumber, subscriberData.getPhoneNumber());
-                fixture.LOGGER.info("process msg");
-            }
-        });
 
         Mockito.doReturn(null).when(gatewayService).send(eq(fixture.providerNumber), eq(phoneNumber), eq("GET_PROVIDER"));
 
-        fixture.getSubscriberData(phoneNumber, processor);
+        fixture.getSubscriberData(phoneNumber);
 
         Mockito.verify(gatewayService, Mockito.times(1)).send(eq(phoneNumber), eq("GET_PROVIDER"), eq(fixture.providerNumber));
-        Mockito.verify(processor, Mockito.times(1)).process(any(VFNZSubscriberData.class));
+        Mockito.verify(userDetailsUpdater, Mockito.times(1)).process(any(VFNZSubscriberData.class));
     }
 
     @Test
