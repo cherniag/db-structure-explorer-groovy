@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.AccountDtoValidator;
@@ -109,12 +110,25 @@ public class AccountController extends CommonController {
         } else {
             int userId = getUserId();
 
-            userService.saveAccountDetails(accountDto, userId);
+            doSaveAccountDetails(accountDto, userId);
 
             modelAndView = new ModelAndView("redirect:account.html");
         }
         logger.debug("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
+    }
+
+    private void doSaveAccountDetails(AccountDto accountDto, int userId) {
+        logger.debug("input parameters accountDto: [{}]", accountDto);
+
+        User user = userRepository.findOne(userId);
+
+        String localStoredToken = Utils.createStoredToken(user.getUserName(), accountDto.getNewPassword());
+
+        user.setToken(localStoredToken);
+        user.setMobile(accountDto.getPhoneNumber());
+
+        userRepository.save(user);
     }
 
     private ModelAndView getAccountPageModelView(Locale locale, AccountDto accountDto, String communityUrl) {

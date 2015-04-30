@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.common.util.ServerMessage;
-import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
@@ -41,7 +40,6 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActionReason;
@@ -87,7 +85,6 @@ import javax.annotation.Resource;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -154,7 +151,6 @@ public class UserService {
     private AppsFlyerDataService appsFlyerDataService;
     private UrbanAirshipTokenService urbanAirshipTokenService;
     private UserActivationStatusService userActivationStatusService;
-    private TimeService timeService;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -527,19 +523,6 @@ public class UserService {
         LOGGER.info("Finish processing sub balance command for user {}", user.shortInfo());
     }
 
-    public void saveAccountDetails(AccountDto accountDto, int userId) {
-        LOGGER.debug("input parameters accountDto: [{}]", accountDto);
-
-        User user = userRepository.findOne(userId);
-
-        String localStoredToken = Utils.createStoredToken(user.getUserName(), accountDto.getNewPassword());
-
-        user.setToken(localStoredToken);
-        user.setMobile(accountDto.getPhoneNumber());
-
-        userRepository.save(user);
-    }
-
     @Transactional(propagation = REQUIRED)
     public User registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo, boolean updateUserPendingActivation) {
         LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
@@ -616,23 +599,6 @@ public class UserService {
         boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
         boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
         return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
-    }
-
-    @Transactional(readOnly = true)
-    public Collection<User> findUsers(String searchWords, String communityURL) {
-        LOGGER.debug("input parameters searchWords, communityURL: [{}], [{}]", searchWords, communityURL);
-
-        if (searchWords == null) {
-            throw new NullPointerException("The parameter searchWords is null");
-        }
-        if (communityURL == null) {
-            throw new NullPointerException("The parameter communityURL is null");
-        }
-
-        Collection<User> users = userRepository.findUser(communityURL, "%" + searchWords + "%");
-
-        LOGGER.info("Output parameter users=[{}]", users);
-        return users;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1206,9 +1172,5 @@ public class UserService {
             return DeviceTypeCache.getNoneDeviceType();
         }
         return deviceType;
-    }
-
-    public void setTimeService(TimeService timeService) {
-        this.timeService = timeService;
     }
 }

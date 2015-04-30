@@ -88,7 +88,7 @@ public class UserController extends AbstractCommonController {
         if (searchWords != null) {
             String communityURL = RequestUtils.getCommunityURL();
 
-            Collection<User> users = userService.findUsers(searchWords, communityURL);
+            Collection<User> users = doFindUsers(searchWords, communityURL);
             Collection<UserDto> userDtos = UserAsm.toUserDtos(users);
 
             modelAndView.addObject(UserDto.USER_DTO_LIST, userDtos);
@@ -121,7 +121,7 @@ public class UserController extends AbstractCommonController {
         return modelAndView;
     }
 
-    public UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
+    private UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
         Date oldNextSubPayment = user.getNextSubPaymentAsDate();
         Date newNextSubPayment = userDto.getNextSubPayment();
 
@@ -140,5 +140,9 @@ public class UserController extends AbstractCommonController {
 
         LOGGER.info("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
+    }
+
+    private Collection<User> doFindUsers(String searchWords, String communityURL) {
+        return userRepository.findUser(communityURL, "%" + searchWords + "%");
     }
 }

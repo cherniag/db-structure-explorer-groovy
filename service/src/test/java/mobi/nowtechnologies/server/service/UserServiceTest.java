@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
@@ -98,7 +97,6 @@ import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.Au
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -169,8 +167,6 @@ public class UserServiceTest {
     UserStatusRepository userStatusRepository;
     @Mock
     PaymentDetailsRepository paymentDetailsRepository;
-    @Mock
-    TimeService timeServiceMock;
 
     private UserService userServiceSpy;
     private AccountLogService accountLogServiceMock;
@@ -261,7 +257,6 @@ public class UserServiceTest {
         userServiceSpy.operatorRepository = operatorRepository;
         userServiceSpy.userRepository = userRepository;
         userServiceSpy.userStatusRepository = userStatusRepository;
-        userServiceSpy.setTimeService(timeServiceMock);
 
         userWithPromoAnswer = new Answer() {
             @Override
@@ -308,52 +303,6 @@ public class UserServiceTest {
         PowerMockito.when(userRepository.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenThrow(new Exception());
 
         userServiceSpy.changePassword(user.getId(), password);
-    }
-
-    @Test
-    public void testFindUsers_Success() throws Exception {
-        String searchWords = "Led Zeppelin";
-        String communityURL = "nowtop40";
-
-        List<User> mockedUserCollection = UserFactory.getUserUnmodifableList();
-
-        PowerMockito.when(userRepository.findUser(Mockito.eq(communityURL), Mockito.eq("%" + searchWords + "%"))).thenReturn(mockedUserCollection);
-
-        Collection<User> result = userServiceSpy.findUsers(searchWords, communityURL);
-
-        assertNotNull(result);
-        assertEquals(mockedUserCollection, result);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testFindUsers_searchWordsIsNull_Failure() throws Exception {
-        String searchWords = null;
-        String communityURL = "nowtop40";
-
-        userServiceSpy.findUsers(searchWords, communityURL);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testFindUsers_communityURLIsNull_Failure() throws Exception {
-        String searchWords = "Led Zeppelin";
-        String communityURL = null;
-
-        userServiceSpy.findUsers(searchWords, communityURL);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testFindUsers_UserRepository_findUser_RuntimeException_Failure() throws Exception {
-        String searchWords = "Led Zeppelin";
-        String communityURL = "nowtop40";
-
-        List<User> mockedUserCollection = UserFactory.getUserUnmodifableList();
-
-        PowerMockito.when(userRepository.findUser(Mockito.eq(communityURL), Mockito.eq("%" + searchWords + "%"))).thenThrow(new RuntimeException());
-
-        Collection<User> result = userServiceSpy.findUsers(searchWords, communityURL);
-
-        assertNotNull(result);
-        assertEquals(mockedUserCollection, result);
     }
 
     @Test
