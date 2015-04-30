@@ -135,7 +135,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
         String apiVersion = "6.12";
 
         String communityUrl = "hl_uk";
-        String userName = "zam1@ukr.net";
+        String userName = "zam2@ukr.net";
         Date now = new Date();
         String timestamp = "" + now.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
