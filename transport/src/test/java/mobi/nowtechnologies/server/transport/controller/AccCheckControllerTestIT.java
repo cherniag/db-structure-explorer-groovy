@@ -43,7 +43,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
-import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -131,6 +130,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
+    @Ignore
     public void testAccCheck_CreateITunesPaymentDetails() throws Exception {
         String apiVersion = "6.12";
 

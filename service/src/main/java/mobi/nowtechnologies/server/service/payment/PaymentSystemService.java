@@ -10,8 +10,6 @@ public interface PaymentSystemService {
 
     SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response);
 
-    int getRetriesOnError();
-
     long getExpireMillis();
 
     PaymentSystemResponse getExpiredResponse();

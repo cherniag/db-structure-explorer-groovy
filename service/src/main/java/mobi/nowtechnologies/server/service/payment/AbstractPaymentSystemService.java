@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
@@ -13,7 +12,6 @@ import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -29,9 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class AbstractPaymentSystemService implements PaymentSystemService, ApplicationEventPublisherAware {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPaymentSystemService.class);
-	
-	private int retriesOnError;
-	private long expireMillis;
+
+    private long expireMillis;
 	private ApplicationEventPublisher applicationEventPublisher;
 	protected PaymentDetailsService paymentDetailsService;
 	protected UserService userService;
@@ -101,29 +98,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
             userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
             paymentEventNotifier.onUnsubscribe(paymentDetails.getOwner());
         }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    protected PaymentDetails commitPaymentDetails(User user, PaymentDetails newPaymentDetails) {
-
-        paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-
-        user.setCurrentPaymentDetails(newPaymentDetails);
-        newPaymentDetails.setOwner(user);
-        newPaymentDetails.setActivated(true);
-        newPaymentDetails.setLastPaymentStatus(NONE);
-        newPaymentDetails.setRetriesOnError(getRetriesOnError());
-        newPaymentDetails.resetMadeAttempts();
-
-        return paymentDetailsRepository.save(newPaymentDetails);
-    }
-
-    public int getRetriesOnError() {
-        return retriesOnError;
-    }
-
-    public void setRetriesOnError(int retriesOnError) {
-        this.retriesOnError = retriesOnError;
     }
 
     public long getExpireMillis() {
