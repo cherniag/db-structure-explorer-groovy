@@ -130,7 +130,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
-    @Ignore
     public void testAccCheck_CreateITunesPaymentDetails() throws Exception {
         String apiVersion = "6.12";
 
