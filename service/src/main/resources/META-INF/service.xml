@@ -103,6 +103,15 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="communityRepository" ref="communityRepository" />
     </bean>
 
+    <bean class="mobi.nowtechnologies.server.service.PhoneNumberCommandService">
+        <property name="communityUserServices">
+            <map>
+                <entry key="o2" value-ref="service.UserService" />
+                <entry key="vf_nz" value-ref="vf_nz.service.UserService"/>
+            </map>
+        </property>
+    </bean>
+
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
 		<property name="promotionService" ref="service.PromotionService" />

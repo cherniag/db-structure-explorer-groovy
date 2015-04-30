@@ -113,13 +113,6 @@ public abstract class CommonController extends ProfileController {
         return new ModelAndView("default", MODEL_NAME, new Response(objs));
     }
 
-
-    protected UserService getUserService(String communityUrl) {
-        String userServiceBeanName = messageSource.getMessage(communityUrl, "service.bean.userService", null, null);
-
-        return (UserService) applicationContext.getBean(userServiceBeanName);
-    }
-
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception exception, HttpServletResponse response) {
         return sendResponse(exception, response, INTERNAL_SERVER_ERROR, true);
