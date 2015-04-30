@@ -121,7 +121,7 @@ public class UserController extends AbstractCommonController {
         return modelAndView;
     }
 
-    private UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
+    UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
         Date oldNextSubPayment = user.getNextSubPaymentAsDate();
         Date newNextSubPayment = userDto.getNextSubPayment();
 

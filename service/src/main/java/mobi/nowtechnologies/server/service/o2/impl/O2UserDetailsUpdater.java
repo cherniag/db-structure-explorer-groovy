@@ -16,23 +16,15 @@ import com.google.common.collect.Lists;
  * updates user with O2 subscriber information (segment/contract/provider/4G/directChannel)
  */
 public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberData> {
-
-    private static final O2SubscriberData DEFAULT_SUBSCRIBER_DATA = new O2SubscriberData().
-                                                                                              withTariff4G(false).
-                                                                                              withProviderO2(true).
-                                                                                              withContractPostPayOrPrePay(true).
-                                                                                              withBusinessOrConsumerSegment(false).
-                                                                                              withDirectOrIndirect4GChannel(false);
-
     /**
      * Updates given user
      */
     @Override
     public User setUserFieldsFromSubscriberData(User user, O2SubscriberData o2SubscriberData) {
-        O2SubscriberData data = (O2SubscriberData) o2SubscriberData;
+        O2SubscriberData data = o2SubscriberData;
 
         if (data == null) {
-            data = DEFAULT_SUBSCRIBER_DATA;
+            data = O2SubscriberData.DEFAULT_SUBSCRIBER_DATA;
         }
 
         user.setProvider(data.isProviderO2() ?
@@ -51,10 +43,6 @@ public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberDa
                                 ContractChannel.DIRECT :
                                 ContractChannel.INDIRECT);
         return user;
-    }
-
-    public O2SubscriberData getDefaultSubscriberData() {
-        return DEFAULT_SUBSCRIBER_DATA;
     }
 
     /**

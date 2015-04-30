@@ -6,6 +6,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /** Represents O2 mobile network subscriber information */
 public class O2SubscriberData extends SubscriberData {
+    public static final O2SubscriberData DEFAULT_SUBSCRIBER_DATA = new O2SubscriberData().
+                                                                                              withTariff4G(false).
+                                                                                              withProviderO2(true).
+                                                                                              withContractPostPayOrPrePay(true).
+                                                                                              withBusinessOrConsumerSegment(false).
+                                                                                              withDirectOrIndirect4GChannel(false);
 
     private boolean providerO2;
 
