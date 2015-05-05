@@ -21,6 +21,8 @@
 			<mvc:mapping path="/**/CONTEXT.json"/>
 			<mvc:mapping path="/**/REFERRALS"/>
 			<mvc:mapping path="/**/REFERRALS.json"/>
+            <mvc:mapping path="/**/X_PLAY_CAP"/>
+            <mvc:mapping path="/**/X_PLAY_CAP.json"/>
 			<bean class="mobi.nowtechnologies.server.security.impl.spring.handler.AuthenticatingInterceptor">
 				<property name="authenticationService">
 					<bean class="mobi.nowtechnologies.server.security.impl.AuthenticationServiceImpl">
