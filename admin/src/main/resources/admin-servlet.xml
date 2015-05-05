@@ -31,15 +31,6 @@
 	
 	<mvc:resources mapping="/assets/**" location="/assets/**" />
     <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
-	
-	<!-- Application Message Bundle -->
-	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames" value="file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/i18n/admin/messages, /i18n/messages" />
-		<property name="defaultEncoding" value="UTF-8" />
-		<property name="fileEncodings" value="UTF-8" />
-		<property name="cacheSeconds" value="180" />
-		<property name="useCodeAsDefaultMessage" value="true" />
-	</bean>
 
     <bean id="admin.TaskExecuter" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="${trackRepo.executor.corePoolSize}" />
