@@ -111,13 +111,13 @@ insert into content_user_status_behavior (behavior_config_id, user_status_type, 
 set @chartbehaviourtemplateid = 1 + (select coalesce(max(id), 0) from chart_behavior);
 insert into chart_behavior (id, behavior_config_id, type) values (@chartbehaviourtemplateid, @freeModelid, 'NORMAL');
 insert into chart_user_status_behavior (chart_id, chart_behavior_id, user_status_type)
-  (select chart_id, @chartbehaviourtemplateid, 'SUBSCRIBED' from community_charts where community_id=@communityid)
-  union (select chart_id, @chartbehaviourtemplateid, 'FREE_TRIAL' from community_charts where community_id=@communityid);
+  (select chart_id, @chartbehaviourtemplateid, 'SUBSCRIBED' from community_charts where community_id=@new_community_id)
+  union (select chart_id, @chartbehaviourtemplateid, 'FREE_TRIAL' from community_charts where community_id=@new_community_id);
 
 set @chartbehaviourtemplateid = 1 +  @chartbehaviourtemplateid;
 insert into chart_behavior (id, behavior_config_id, type, play_tracks_seconds, is_offline) values (@chartbehaviourtemplateid, @freeModelid, 'PREVIEW', 30, 0);
 insert into chart_user_status_behavior (chart_id, chart_behavior_id, user_status_type)
-  (select chart_id, @chartbehaviourtemplateid, 'LIMITED' from community_charts where community_id=@communityid);
+  (select chart_id, @chartbehaviourtemplateid, 'LIMITED' from community_charts where community_id=@new_community_id);
 
 set @chartbehaviourtemplateid = 1 +  @chartbehaviourtemplateid;
 insert into chart_behavior (id, behavior_config_id, type, is_offline) values (@chartbehaviourtemplateid, @freeModelid, 'SHUFFLED', 0);
