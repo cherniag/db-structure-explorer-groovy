@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
+import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
@@ -12,7 +13,6 @@ import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -24,7 +24,6 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -105,7 +104,7 @@ public class PromotionServiceTest {
     @Mock
     UserBannedRepository userBannedRepositoryMock;
     @Mock
-    UserTransactionRepository userTransactionRepository;
+    EventLoggerService eventLoggerService;
     @Mock
     UserStatusRepository userStatusRepository;
     @Mock
@@ -152,10 +151,10 @@ public class PromotionServiceTest {
         promotionServiceSpy.setDeviceService(deviceServiceMock);
         promotionServiceSpy.promotionRepository = promotionRepositoryMock;
         promotionServiceSpy.userBannedRepository = userBannedRepositoryMock;
-        promotionServiceSpy.userTransactionRepository = userTransactionRepository;
         promotionServiceSpy.userStatusRepository = userStatusRepository;
         promotionServiceSpy.userRepository = userRepository;
         promotionServiceSpy.paymentDetailsRepository = paymentDetailsRepository;
+        promotionServiceSpy.setEventLoggerService(eventLoggerService);
     }
 
     @Test
@@ -670,6 +669,7 @@ public class PromotionServiceTest {
         final Promotion promotion = new Promotion().withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
         promotion.setPeriod(new Period(DurationUnit.WEEKS, 3));
         promotion.getPromoCode().withPromotion(promotion);
+        promotion.setI(1);
 
         int freeTrialStartedTimestampSeconds = 1;
 
@@ -717,7 +717,11 @@ public class PromotionServiceTest {
         verify(userBannedRepositoryMock, times(1)).findOne(user.getId());
         verify(userRepository, times(1)).save(user);
         verify(promotionServiceSpy, times(1)).updatePromotionNumUsers(promotion);
-        verify(userTransactionRepository, times(1)).save(any(UserTransaction.class));
+        verify(eventLoggerService, times(1)).logPromotionByPromoCodeApplied(eq(user.getId()),
+                                                                            eq(user.getUuid()),
+                                                                            eq(promotion.getI()),
+                                                                            eq(freeTrialStartedTimestampSeconds * 1000L),
+                                                                            eq(promotion.getEndSeconds(freeTrialStartedTimestampSeconds) * 1000L));
     }
 
     @Test
@@ -736,6 +740,7 @@ public class PromotionServiceTest {
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
         promotion.setEndDate((int) (calendar.getTimeInMillis() / 1000));
+        promotion.setI(1);
 
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
         Mockito.when(userRepository.save(eq(user))).thenAnswer(new Answer<User>() {
@@ -776,6 +781,7 @@ public class PromotionServiceTest {
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
         promotion.setPeriod(new Period(DurationUnit.WEEKS, 52));
+        promotion.setI(1);
 
         Mockito.when(userRepository.save(eq(user))).thenAnswer(new Answer<User>() {
             @Override

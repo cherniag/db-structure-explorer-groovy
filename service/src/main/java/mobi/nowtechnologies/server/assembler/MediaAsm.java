@@ -7,10 +7,7 @@ import static mobi.nowtechnologies.server.assembler.ArtistAsm.toArtistDto;
 import static mobi.nowtechnologies.server.assembler.MediaFileAsm.toMediaFileDto;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,26 +45,6 @@ public class MediaAsm {
 
         LOGGER.info("Output parameter mediaDto=[{}]", mediaDto);
         return mediaDto;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<MediaDto> toMediaDtos(List<Media> medias) {
-        LOGGER.debug("input parameters medias: [{}]", medias);
-
-        List<MediaDto> mediaDtos;
-        if (medias.isEmpty()) {
-            mediaDtos = Collections.EMPTY_LIST;
-        } else {
-            mediaDtos = new LinkedList<MediaDto>();
-
-            for (Media media : medias) {
-                mediaDtos.add(toMediaDto(media));
-            }
-        }
-
-        LOGGER.info("Output parameter mediaDtos=[{}]", mediaDtos);
-        return mediaDtos;
-
     }
 
 }

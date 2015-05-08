@@ -17,7 +17,7 @@ $(function() {
     $("#lockAllTracks").data('options', {onChange : function(element, active, e){
             $("#chartItemsSortable").find("> li").each(function (index) {
                 $(this).find("div[class~=locked_chartItem]").toggleButtons('setState', active, false);
-            });
+});
         }
     });
 });

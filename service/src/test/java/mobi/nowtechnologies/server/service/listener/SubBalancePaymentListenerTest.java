@@ -69,7 +69,6 @@ public class SubBalancePaymentListenerTest {
 
         Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment);
 
-        Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
         Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
 
         Future<Boolean> futureResponse = new AsyncResult<Boolean>(Boolean.TRUE);
@@ -84,10 +83,7 @@ public class SubBalancePaymentListenerTest {
         Mockito.verify(mockUserService, times(0)).findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString());
     }
 
-    /**
-     *
-     * @throws Exception
-     */
+
     @Test
     public void testOnApplicationEvent_failureMigResponse_Success() throws Exception {
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
@@ -109,7 +105,6 @@ public class SubBalancePaymentListenerTest {
 
         Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment);
 
-        Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
         Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
 
         Future<Boolean> futurResponse = new AsyncResult<Boolean>(Boolean.FALSE);
@@ -150,7 +145,6 @@ public class SubBalancePaymentListenerTest {
 
         Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment);
 
-        Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
         Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.eq(user), Mockito.eq(nextSubPayment), Mockito.eq(appStoreOriginalTransactionId))).thenReturn(users);
 
         Future<Boolean> futureResponse = new AsyncResult<Boolean>(Boolean.TRUE);
@@ -166,11 +160,6 @@ public class SubBalancePaymentListenerTest {
         Mockito.verify(mockUserService, times(1)).findUsersForItunesInAppSubscription(Mockito.eq(user), Mockito.eq(nextSubPayment), Mockito.eq(appStoreOriginalTransactionId));
     }
 
-    /**
-     * Perform pre-test initialization.
-     *
-     * @throws Exception if the initialization fails for some reason
-     */
     @Before
     public void setUp() throws Exception {
 

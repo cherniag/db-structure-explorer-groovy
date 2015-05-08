@@ -149,7 +149,7 @@
 	    font-weight: bold;
 	    width: 9%;
 	}
-	
+
 	#chartItemsTable li div.image_chartItem {
 	    font-size: 10px;
 	    width: 9%;
@@ -308,9 +308,6 @@
 					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
                     <div class="publishDate_chartItem" style="margin-left: 20px;" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
                     <div class="iTunesUrl_chartItem" style="height: 35px!important;" th:text="#{chartItems.page.mediasTable.head.iTunesUrl}">ITunes Url</div>
-                    <div  id="lockAllTracks" style="margin-left: 507px;" class="locked_chartItem toggleButton" >
-                        <input type="checkbox"/>
-                    </div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -745,7 +742,7 @@
 				transitionspeed: "500%"
 			});
 		}
-		
+
 		updateListPosition($( "#chartItemsSortable" ));
 		
 		enableChartItemHandlers(item, true);
@@ -1072,7 +1069,7 @@
 			"style":"display:none; margin: 0 2px"
 		}).appendTo(li);
 		$('<span>').css("word-wrap","break-word").text(chartItem.info).appendTo(infoDiv);
-
+		
 		var lockedDiv = $('<div>').attr({
 			"class":"locked_chartItem toggleButton",
 			"style":"display:none; margin: 0 2px"
@@ -1082,7 +1079,7 @@
 		}).appendTo(lockedDiv);
 		if(chartItem.locked)
 			lockedInput.attr("checked", "checked");
-		
+
 		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
         var changeITunesButtonLabel = /*[[#{chartItems.page.button.changeITunesUrl}]]*/ "Change url";
 		var publishDateDiv = $('<div>').attr({

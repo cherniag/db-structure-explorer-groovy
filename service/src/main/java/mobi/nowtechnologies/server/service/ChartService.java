@@ -97,9 +97,7 @@ public class ChartService implements ApplicationContextAware {
                 List<ChartDetail> chartDetailTree = chartDetailService.findChartDetailTree(chartUpdateMarker.getChart().getI(), new Date(), fetchLocked);
                 chartDetails.addAll(chartDetailTree);
 
-                boolean areAllTracksLocked = areAllTracksLocked(chartDetailTree);
-                PlaylistDto playlistDto = chartDetailsConverter.toPlaylistDto(chartUpdateMarker, resolution, community, result.isSwitchable(), isPlayListLockSupported, areAllTracksLocked,
-                                                                              withChartUpdateId);
+                PlaylistDto playlistDto = chartDetailsConverter.toPlaylistDto(chartUpdateMarker, resolution, community, result.isSwitchable(), withChartUpdateId);
 
                 playlistDtos.add(playlistDto);
             }
@@ -121,15 +119,6 @@ public class ChartService implements ApplicationContextAware {
 
         LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
         return chartDto;
-    }
-
-    private boolean areAllTracksLocked(List<ChartDetail> chartDetailTree) {
-        for (ChartDetail chartDetail : chartDetailTree) {
-            if (chartDetail.getLocked() == null || !chartDetail.getLocked()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private GetChartContentManager resolveChartSupporter(String communityName) {
