@@ -19,6 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
@@ -105,12 +106,11 @@ public class TaskService {
     @Transactional(propagation = Propagation.REQUIRED)
     public List<Task> getTasksForExecution(long executionTime, Collection<String> supportedTypes, int maxTaskCount) {
         Pageable pageable = new PageRequest(0, maxTaskCount);
-        return taskRepository.findTasksToExecute(executionTime, supportedTypes, pageable);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public long countTasksToExecute(long executionTime) {
-        return taskRepository.countTasksToExecute(executionTime);
+        Page<Task> tasksToExecute = taskRepository.findTasksToExecute(executionTime, supportedTypes, pageable);
+        if(tasksToExecute.hasNextPage()) {
+            LOGGER.warn("Fetched for execution {} tasks, but total count is {}", tasksToExecute.getNumberOfElements(), tasksToExecute.getTotalElements());
+        }
+        return tasksToExecute.getContent();
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -128,11 +128,6 @@ public class TaskService {
         } catch (Exception e) {
             LOGGER.error(String.format("Can't reschedule task [%s], communityRewriteUrl is %s", existing, communityRewriteUrl), e);
         }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void removeTask(Task task){
-        taskRepository.delete(task);
     }
 
     private long getNextExecInterval(String communityRewriteUrl, Task task) {

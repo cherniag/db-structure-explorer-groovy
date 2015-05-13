@@ -19,6 +19,7 @@ import static java.lang.System.currentTimeMillis;
 
 import com.google.common.collect.Iterables;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -141,34 +142,24 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
 
     @Test
     public void checkFetchingActiveTasksForExecution() {
+        final long now = currentTimeMillis();
         User user1 = createAndSaveUser();
-        SendChargeNotificationTask task1 = createAndSaveSendChargeNotificationTask(user1, currentTimeMillis() - 1L);
+        SendChargeNotificationTask task1 = createAndSaveSendChargeNotificationTask(user1, now);
         User user2 = createAndSaveUser();
-        SendChargeNotificationTask task2 = createAndSaveSendChargeNotificationTask(user2, currentTimeMillis() - 1L);
-        SendChargeNotificationTask task3 = createAndSaveSendChargeNotificationTask(user2, currentTimeMillis() + 100 * 1000L);
-        long totalCount = taskRepository.count();
-        assertThat(totalCount, is(3l));
-        Pageable pageable = new PageRequest(0, 5);
-        List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), supportedTypes, pageable);
+        SendChargeNotificationTask task2 = createAndSaveSendChargeNotificationTask(user2, now - 1L);
+        SendChargeNotificationTask task3 = createAndSaveSendChargeNotificationTask(user2, now);
+        SendChargeNotificationTask task4 = createAndSaveSendChargeNotificationTask(user2, now + 100 * 1000L);
+        Pageable pageable = new PageRequest(0, 2);
+        Page<Task> taskPage = taskRepository.findTasksToExecute(now, supportedTypes, pageable);
+        assertThat(taskPage.hasNextPage(), is(true));
+        assertThat(taskPage.getTotalElements(), is(3L));
+        assertThat(taskPage.getNumberOfElements(), is(2));
+        List<Task> taskList = taskPage.getContent();
         assertThat(taskList.size(), is(2));
         assertThat(taskList, hasItem(task1));
         assertThat(taskList, hasItem(task2));
         assertThat(taskList, not(hasItem(task3)));
-    }
-
-    @Test
-    @Ignore
-    public void checkFetchingActiveTasksForExecutionWithLimit() {
-        User user1 = createAndSaveUser();
-        for (int i = 0; i < 20; i++) {
-            createAndSaveSendChargeNotificationTask(user1, currentTimeMillis() - 1L);
-        }
-        Pageable pageable = new PageRequest(0, 8);
-        List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), supportedTypes, pageable);
-        assertThat(taskList.size(), is(8));
-        pageable = new PageRequest(0, 30);
-        taskList = taskRepository.findTasksToExecute(currentTimeMillis(), supportedTypes, pageable);
-        assertThat(taskList.size(), is(20));
+        assertThat(taskList, not(hasItem(task4)));
     }
 
     @Test
@@ -182,19 +173,6 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
         entityManager.clear();
         SendChargeNotificationTask savedTask = (SendChargeNotificationTask) taskRepository.findOne(taskId);
         assertEquals(newExecutionTimestamp, savedTask.getExecutionTimestamp());
-    }
-
-    @Test
-    public void checkTaskCountToExecute() throws Exception {
-        long executionTimestamp = currentTimeMillis() - 1000L;
-        createAndSaveSendChargeNotificationTask(null, executionTimestamp);
-        createAndSaveSendChargeNotificationTask(null, executionTimestamp);
-        long count = taskRepository.countTasksToExecute(currentTimeMillis());
-        assertThat(count, is(2L));
-        createAndSaveSendChargeNotificationTask(null, executionTimestamp);
-        count = taskRepository.countTasksToExecute(currentTimeMillis());
-        assertThat(count, is(3L));
-
     }
 
     private User createAndSaveUser() {
