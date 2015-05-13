@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.transport.serviceconfig;
 
-import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
+import mobi.nowtechnologies.server.transport.controller.core.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;

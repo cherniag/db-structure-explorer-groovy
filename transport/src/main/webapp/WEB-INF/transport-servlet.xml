@@ -77,7 +77,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.ChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.Response</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.ErrorMessage</value>
+				<value>mobi.nowtechnologies.server.transport.controller.core.ErrorMessage</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
 				<value>mobi.nowtechnologies.server.transport.phonenumber.dto.PhoneActivationDto</value>
