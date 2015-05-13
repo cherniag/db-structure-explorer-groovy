@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.social.SocialException;
 import org.springframework.social.facebook.api.AgeRange;
-import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.Reference;
+import org.springframework.social.facebook.api.User;
 
 /**
  * Created by oar on 3/14/14.
@@ -40,7 +40,7 @@ public class FacebookClientImpl implements FacebookClient {
     @Override
     public SocialNetworkInfo getProfileUserInfo(String accessToken, String userId) {
         log.debug("requesting FacebookProfile by userId: [{}]", userId);
-        FacebookProfile profile;
+        User profile;
         try {
             profile = facebookOperationsAdaptor.getFacebookProfile(accessToken, userId);
         } catch (SocialException se) {
@@ -72,7 +72,7 @@ public class FacebookClientImpl implements FacebookClient {
         return facebookOperationsAdaptor.getFacebookProfileImage(accessToken, userId);
     }
 
-    String getEmail(FacebookProfile profile) {
+    String getEmail(User profile) {
         String email = profile.getEmail();
         if (Strings.isNullOrEmpty(email)) {
             String id = profile.getId();
@@ -82,7 +82,7 @@ public class FacebookClientImpl implements FacebookClient {
         return email;
     }
 
-    Date getBirthdayDate(FacebookProfile profile) {
+    Date getBirthdayDate(User profile) {
         String birthday = profile.getBirthday();
         if (!Strings.isNullOrEmpty(birthday)) {
             try {
@@ -94,7 +94,7 @@ public class FacebookClientImpl implements FacebookClient {
         return null;
     }
 
-    void assignCityAndCountry(FacebookProfile profile, SocialNetworkInfo details) {
+    void assignCityAndCountry(User profile, SocialNetworkInfo details) {
         Reference loc = profile.getLocation();
         if (loc != null) {
             String cityWithCountry = loc.getName();

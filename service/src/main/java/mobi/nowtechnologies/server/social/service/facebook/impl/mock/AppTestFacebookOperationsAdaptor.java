@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.social.service.facebook.impl.FacebookOperatio
 
 import javax.annotation.Resource;
 
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.User;
 
 public class AppTestFacebookOperationsAdaptor extends FacebookOperationsAdaptor {
 
@@ -19,7 +19,7 @@ public class AppTestFacebookOperationsAdaptor extends FacebookOperationsAdaptor 
     private AppTestFacebookTokenService appTestFacebookTokenService;
 
     @Override
-    public FacebookProfile getFacebookProfile(String accessToken, String userId) {
+    public User getFacebookProfile(String accessToken, String userId) {
         return appTestFacebookTokenService.parseToken(accessToken);
     }
 
