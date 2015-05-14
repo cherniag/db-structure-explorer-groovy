@@ -116,6 +116,17 @@
                     <version>2.6</version>
                     <configuration>
                         <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                        <overlays>
+                            <overlay>
+                                <groupId>mobi.nowtechnologies.java.server</groupId>
+                                <artifactId>shared-web</artifactId>
+                                <type>jar</type>
+                                <includes>
+                                    <include>admin/properties.jsp</include>
+                                </includes>
+                                <targetPath>WEB-INF/views</targetPath>
+                            </overlay>
+                        </overlays>
                     </configuration>
                 </plugin>
                 <plugin>
