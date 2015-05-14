@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import static mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails.O2_PSMS_TYPE;
@@ -16,15 +15,11 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 import javax.annotation.Resource;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-
-import static org.hamcrest.core.Is.is;
 
 /**
  * User: Titov Mykhaylo (titov) 12.07.13 10:08
@@ -66,11 +61,11 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
             .save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(O2).withMediaType(AUDIO).withContract(PAYG).withSegment(BUSINESS).withTariff(_3G).withDefault(true));
 
         //when
-        List<PaymentPolicy> actualPaymentPolicies = paymentPolicyRepository.getPaymentPolicies(o2Community, O2, BUSINESS, PAYG, _3G, Arrays.asList(MediaType.values()), PaymentPolicy.PAYMENT_TYPES, true);
+        PaymentPolicy actualPaymentPolicy = paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
-        assertFalse(actualPaymentPolicies.isEmpty());
-        assertEquals(paymentPolicy.getId(), actualPaymentPolicies.get(0).getId());
+        assertNotNull(actualPaymentPolicy);
+        assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
     }
 
     @Test
@@ -80,11 +75,11 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
             .save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(null).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true));
 
         //when
-        List<PaymentPolicy> actualPaymentPolicies = paymentPolicyRepository.getPaymentPolicies(o2Community, O2, BUSINESS, PAYG, _3G, Arrays.asList(MediaType.values()), PaymentPolicy.PAYMENT_TYPES, true);
+        PaymentPolicy actualPaymentPolicy = paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
-        assertFalse(actualPaymentPolicies.isEmpty());
-        assertEquals(paymentPolicy.getId(), actualPaymentPolicies.get(0).getId());
+        assertNotNull(actualPaymentPolicy);
+        assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
     }
 
     @Test
@@ -93,13 +88,8 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         paymentPolicy = paymentPolicyRepository
             .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
             .withOnline(true);
-
-        //when
-        final List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(o2Community, GOOGLE_PLUS, null, null, null, Arrays.asList(MediaType.values()), Collections.singletonList(
-            PAYPAL_TYPE), null);
-
-        //then
-        assertTrue(paymentPolicies.contains(paymentPolicy));
+        PaymentPolicy result = paymentPolicyRepository.findPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        assertEquals(result, paymentPolicy);
     }
 
     @Test
@@ -108,14 +98,29 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         paymentPolicy = paymentPolicyRepository
             .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
             .withOnline(false);
-
-        //when
-        final List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(o2Community, GOOGLE_PLUS, null, null, null, null, Collections.singletonList(PAYPAL_TYPE), null);
-
-        //then
-        assertTrue(paymentPolicies.isEmpty());
+        PaymentPolicy result = paymentPolicyRepository.findPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        assertNull(result);
     }
 
+    @Test
+    public void shouldNotFindAppStoreProductIdWithStartDateInTheFutureByCommunityAndAppStoreProductIdIsNotNull() {
+        //given
+        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
+        paymentPolicy.setAppStoreProductId("appStoreProductId");
+        paymentPolicy.setStartDateTime(new Date(Long.MAX_VALUE));
+        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
+
+        paymentPolicyRepository.save(paymentPolicy);
+
+        //when
+        List<String> appStoreProductIds = paymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(paymentPolicy.getCommunity());
+
+        //then
+        for (String appStoreProductId : appStoreProductIds) {
+            assertFalse(paymentPolicy.getAppStoreProductId().equals(appStoreProductId));
+        }
+
+    }
 
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");
@@ -149,58 +154,5 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         Community actualCommunity = actualPaymentPolicy.getCommunity();
         assertNotNull(actualCommunity);
         assertEquals(paymentPolicy.getCommunity().getId(), actualCommunity.getId());
-    }
-
-    @Test
-    public void shouldNotFindAppStoreProductIdWithStartDateInTheFutureByCommunityAndAppStoreProductIdIsNotNull() {
-        //given
-        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
-        paymentPolicy.setAppStoreProductId("appStoreProductId");
-        paymentPolicy.setStartDateTime(new Date(Long.MAX_VALUE));
-        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
-
-        paymentPolicyRepository.save(paymentPolicy);
-
-        //when
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(paymentPolicy.getCommunity(),
-                                                                                         null,
-                                                                                         null,
-                                                                                         null,
-                                                                                         null,
-                                                                                         null,
-                                                                                         Collections.singletonList(PaymentDetails.ITUNES_SUBSCRIPTION),
-                                                                                         null);
-
-        //then
-        for (PaymentPolicy pPolicy : paymentPolicies) {
-            assertFalse(paymentPolicy.getAppStoreProductId().equals(pPolicy.getAppStoreProductId()));
-        }
-
-    }
-
-    @Test
-    public void shouldFindAppStoreProductIdWithStartDateInThePastByCommunityAndAppStoreProductIdIsNotNull() {
-        //given
-        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
-        paymentPolicy.setAppStoreProductId("appStoreProductId");
-        paymentPolicy.setStartDateTime(new Date(0L));
-        paymentPolicy.setPaymentType(PaymentDetails.ITUNES_SUBSCRIPTION);
-        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
-
-        paymentPolicyRepository.save(paymentPolicy);
-
-        //when
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(paymentPolicy.getCommunity(), null, null, null, null, Arrays.asList(MediaType.values()), Collections.singletonList(
-            PaymentDetails.ITUNES_SUBSCRIPTION), null);
-
-        //then
-        PaymentPolicy actualPaymentPolicy = null;
-        for (PaymentPolicy pPolicy : paymentPolicies) {
-            if(paymentPolicy.getAppStoreProductId().equals(pPolicy.getAppStoreProductId())){
-                actualPaymentPolicy = pPolicy;
-            }
-        }
-        assertNotNull(actualPaymentPolicy);
-        assertThat(actualPaymentPolicy.getId(), is(paymentPolicy.getId()));
     }
 }

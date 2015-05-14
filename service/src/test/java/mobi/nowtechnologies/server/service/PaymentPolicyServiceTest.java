@@ -8,13 +8,11 @@ import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -22,8 +20,6 @@ import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.*;
@@ -139,19 +135,6 @@ public class PaymentPolicyServiceTest {
     }
 
     @Test
-    public void testFindAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull_Success() {
-        Community community = CommunityFactory.createCommunity();
-
-        Mockito.when(paymentPolicyRepositoryMock.getPaymentPolicies(community, null, null, null, null, null, Collections.singletonList(PaymentDetails.ITUNES_SUBSCRIPTION), null)).thenReturn(
-            Collections.<PaymentPolicy>emptyList());
-
-        final List<PaymentPolicy> iTunesPaymentPolicies = paymentPolicyServiceFixture.getITunesPaymentPolicies(community);
-
-        assertTrue(iTunesPaymentPolicies.isEmpty());
-        Mockito.verify(paymentPolicyRepositoryMock, times(1)).getPaymentPolicies(community, null, null, null, null, Arrays.asList(MediaType.values()), Collections.singletonList(PaymentDetails.ITUNES_SUBSCRIPTION), null);
-    }
-
-    @Test
     public void testFindByCommunityAndAppStoreProductId_Success() {
 
         final Community community = CommunityFactory.createCommunity();
@@ -188,7 +171,7 @@ public class PaymentPolicyServiceTest {
 
         User user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
 
-        Mockito.when(paymentPolicyRepositoryMock.getPaymentPolicies(any(Community.class), any(ProviderType.class), any(SegmentType.class), any(Contract.class), any(Tariff.class), anyList(), anyList(), anyBoolean()))
+        Mockito.when(paymentPolicyRepositoryMock.findPaymentPolicies(any(Community.class), any(ProviderType.class), any(SegmentType.class), any(Contract.class), any(Tariff.class), anyList()))
                .thenReturn(paymentPolicies);
 
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyServiceFixture.getPaymentPolicyDtos(user);
