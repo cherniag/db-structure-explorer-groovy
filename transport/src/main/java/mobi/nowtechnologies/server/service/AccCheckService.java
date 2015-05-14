@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 
@@ -24,7 +24,7 @@ public class AccCheckService {
     @Resource(name = "service.UserService")
     private UserService userService;
     @Resource
-    private PaymentPolicyService paymentPolicyService;
+    private PaymentPolicyRepository paymentPolicyService;
     @Resource
     private AccountCheckDTOAsm accountCheckDTOAsm;
     @Resource
@@ -50,9 +50,9 @@ public class AccCheckService {
 
         Community community = user.getUserGroup().getCommunity();
 
-        List<PaymentPolicy> iTunesPaymentPolicies = paymentPolicyService.getITunesPaymentPolicies(community);
+        List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
         Boolean canActivateVideoTrial = userService.canActivateVideoTrial(user);
-        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, iTunesPaymentPolicies, canActivateVideoTrial, withUserDetails, firstActivation, withUuid, withOneTimePayment);
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation, withUuid, withOneTimePayment);
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;

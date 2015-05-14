@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
@@ -21,7 +20,6 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import static java.util.Collections.sort;
@@ -73,20 +71,13 @@ public class PaymentPolicyService {
     }
 
     @Transactional(readOnly = true)
-    public List<PaymentPolicy> findDefaultO2PsmsPaymentPolicy(User user) {
+    public PaymentPolicy findDefaultO2PsmsPaymentPolicy(User user) {
         Contract contract = user.getContract();
         if (isNull(contract)) {
             contract = Contract.PAYM;
         }
         Community community = user.getUserGroup().getCommunity();
-        return paymentPolicyRepository.getPaymentPolicies(community,
-                                                          user.getProvider(),
-                                                          user.getSegment(),
-                                                          contract,
-                                                          user.getTariff(),
-                                                          Arrays.asList(MediaType.values()),
-                                                          Collections.singletonList(O2PSMSPaymentDetails.O2_PSMS_TYPE),
-                                                          true);
+        return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(community, user.getProvider(), user.getSegment(), contract, user.getTariff());
     }
 
     @Transactional(readOnly = true)
@@ -107,7 +98,7 @@ public class PaymentPolicyService {
         List<MediaType> mediaTypes = getMediaTypes(user);
         Community community = user.getUserGroup().getCommunity();
 
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes, PaymentPolicy.PAYMENT_TYPES, null);
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.findPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes);
 
         List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(user, paymentPolicies);
         sort(paymentPolicyDtos, new PaymentPolicyDto.ByOrderAscAndDurationDesc());
@@ -180,11 +171,8 @@ public class PaymentPolicyService {
     }
 
     @Transactional(readOnly = true)
-    public List<PaymentPolicy> getPaymentPolicy(Community community, ProviderType providerType, String paymentType) {
-        return paymentPolicyRepository.getPaymentPolicies(community, providerType, null, null, null, Arrays.asList(MediaType.values()), Collections.singletonList(paymentType), null);
+    public PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType) {
+        return paymentPolicyRepository.findPaymentPolicy(community, providerType, paymentType);
     }
 
-    public List<PaymentPolicy> getITunesPaymentPolicies(Community community) {
-        return paymentPolicyRepository.getPaymentPolicies(community, null, null, null, null, Arrays.asList(MediaType.values()), Collections.singletonList(PaymentDetails.ITUNES_SUBSCRIPTION), null);
-    }
 }
