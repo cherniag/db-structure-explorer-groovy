@@ -28,7 +28,7 @@ public final class LocaleUtils {
 
     public static Locale buildLocale(String community, String language, String country) {
         if (language == null) {
-            return buildLocale(community, DEFAULT_LOCALE);
+            return buildLocale(community, null);
         }
 
         Locale locale;

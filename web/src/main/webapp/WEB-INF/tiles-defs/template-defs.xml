@@ -200,6 +200,4 @@
       <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_coming_soon/content.jsp"/>
   </definition>
 
-	<definition name="prop" template="/WEB-INF/views/www/default/admin/prop/prop.jsp"/>
-
 </tiles-definitions>

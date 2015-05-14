@@ -1,22 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:sec="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   xmlns:sec="http://www.springframework.org/schema/security"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
+	<sec:http pattern="/admin/*" security="none"/>
 	<sec:http pattern="/file**" security="none" />
-    <sec:http pattern="/MANIFEST.MF" security="none" />
+	<sec:http pattern="/version" security="none" />
 
-	<import resource="classpath:admin-security.xml"/>
+	<sec:http create-session="stateless" use-expressions="true">
+		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="afterRememberMeFilter" />
 
-	<sec:http authentication-manager-ref="adminAuthenticationManager" create-session="stateless" use-expressions="true">
 		<sec:intercept-url pattern="/**" access="authenticated" />
-
-		<sec:intercept-url pattern="/admin/messageProps.*" access="denyAll" />
-		<sec:intercept-url pattern="/admin/serviceProps.*" access="denyAll" />
 
 		<sec:http-basic />
 
 		<sec:logout logout-url="/signout" delete-cookies="AuthToken"  />
+
+		<sec:remember-me key="track-repo" services-ref="nowTechBasedRememberMeServices" use-secure-cookie="true" />
 	</sec:http>
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider user-service-ref="userDetailsServiceInMemory">
+			<sec:password-encoder hash="md5">
+				<sec:salt-source user-property="username" />
+			</sec:password-encoder>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+
+	<sec:user-service id="userDetailsServiceInMemory">
+		<sec:user name="admin" password="ceb4f32325eda6142bd65215f4c0f371" authorities="ROLE_USER, ROLE_ADMIN" />
+		<sec:user name="album" password="dd0d117d91ac00d7f6e83852ac454669" authorities="ROLE_USER" />
+	</sec:user-service>
+
+	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
+		<constructor-arg>
+			<value>track-repo</value>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="userDetailsServiceInMemory" />
+		</constructor-arg>
+		<property name="cookieName" value="AuthToken"/>
+		<property name="alwaysRemember" value="true"/>
+	</bean>
+
+	<bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
+		<property name="nowTechTokenBasedRememberMeServices" ref="nowTechBasedRememberMeServices" />
+	</bean>
 </beans>

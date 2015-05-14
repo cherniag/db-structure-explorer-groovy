@@ -62,22 +62,6 @@
     	<property name="cdnProperties" ref="cdnProperties" />
     </bean>
 
-    <!-- Application Message Bundle -->
-    <bean id="messageSource"
-          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames" value="file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/i18n/web/messages, /i18n/messages" />
-        <property name="defaultEncoding" value="UTF-8" />
-        <property name="fileEncodings" value="UTF-8" />
-        <property name="cacheSeconds" value="180" />
-        <property name="useCodeAsDefaultMessage" value="true" />
-    </bean>
-
-    <bean id="localeResolver"
-          class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-        <property name="defaultLocale" value="en" />
-        <property name="cookieName" value="_LOCALE" />
-    </bean>
-
     <mvc:interceptors>
         <!-- Community Change Interceptor and Resolver definition -->
         <bean id="communityChangeInterceptor" class="mobi.nowtechnologies.server.web.security.CommunityChangeInterceptor"/>
