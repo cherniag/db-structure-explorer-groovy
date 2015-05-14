@@ -199,8 +199,6 @@ public class User implements Serializable {
     private String conformStoredToken;
     private int paymentStatus;
     private long lastSuccessfulPaymentTimeMillis;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Drm> drms;
     private String facebookId;
     @Column(nullable = true)
     private String deviceUID;
@@ -882,14 +880,6 @@ public class User implements Serializable {
 
     public void setLastSuccessfulPaymentTimeMillis(long lastSuccessfulPaymentTimeMillis) {
         this.lastSuccessfulPaymentTimeMillis = lastSuccessfulPaymentTimeMillis;
-    }
-
-    public List<Drm> getDrms() {
-        return drms;
-    }
-
-    public void setDrms(List<Drm> drms) {
-        this.drms = drms;
     }
 
     public int getSubBalance() {

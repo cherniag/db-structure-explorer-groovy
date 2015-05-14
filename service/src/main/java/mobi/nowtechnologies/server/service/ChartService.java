@@ -3,9 +3,6 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Drm;
-import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
@@ -14,7 +11,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
@@ -56,7 +52,6 @@ public class ChartService implements ApplicationContextAware {
     private UserService userService;
     private ChartDetailService chartDetailService;
     private ChartRepository chartRepository;
-    private DrmService drmService;
     private ChartDetailRepository chartDetailRepository;
     private CommunityResourceBundleMessageSource messageSource;
     private CloudFileService cloudFileService;
@@ -71,11 +66,6 @@ public class ChartService implements ApplicationContextAware {
         user = userService.getUserWithSelectedCharts(user.getId());
         Community community = user.getUserGroup().getCommunity();
         String rewriteUrlParameter = community.getRewriteUrlParameter();
-        DrmPolicy drmPolicy = user.getUserGroup().getDrmPolicy();
-        DrmType drmType = drmPolicy.getDrmType();
-        if (drmType == null) {
-            throw new ServiceException("The parameter drmType is null");
-        }
 
         List<ChartDetail> charts = getChartsByCommunity(null, rewriteUrlParameter, null);
 
@@ -101,14 +91,6 @@ public class ChartService implements ApplicationContextAware {
 
                 playlistDtos.add(playlistDto);
             }
-        }
-
-        for (ChartDetail chartDetail : chartDetails) {
-            Media media = chartDetail.getMedia();
-
-            Drm drmForCurrentUser = drmService.findDrmByUserAndMedia(user, media, drmPolicy, createDrmIfNotExists);
-
-            media.setDrms(Collections.singletonList(drmForCurrentUser));
         }
 
         List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, community);
@@ -340,10 +322,6 @@ public class ChartService implements ApplicationContextAware {
 
     public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
         this.chartDetailsConverter = chartDetailsConverter;
-    }
-
-    public void setDrmService(DrmService drmService) {
-        this.drmService = drmService;
     }
 
     public void setCloudFileService(CloudFileService cloudFileService) {

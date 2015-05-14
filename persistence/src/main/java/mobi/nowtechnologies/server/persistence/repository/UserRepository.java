@@ -199,9 +199,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                    "and u.userGroup=?2 ")
     int updateUserAccountWithSameDeviceAndDisableIt(String deviceUID, UserGroup userGroup);
 
-    @Query(value = "select user from User user " + "join FETCH user.deviceType deviceType " + "join FETCH user.userGroup userGroup " + "join FETCH userGroup.chart chart " +
-                   "join FETCH userGroup.drmPolicy drmPolicy " + "join FETCH drmPolicy.drmType drmType " + "join FETCH userGroup.community community " + "join FETCH community.appVersion appVersion " +
-                   "join FETCH user.status status " + "where " + "user.id=?1")
+    @Query(value = "select user from User user " +
+                   "join FETCH user.deviceType deviceType " +
+                   "join FETCH user.userGroup userGroup " +
+                   "join FETCH userGroup.chart chart " +
+                   "join FETCH userGroup.community community " +
+                   "join FETCH community.appVersion appVersion " +
+                   "join FETCH user.status status " +
+                   "where " + "user.id=?1")
     User findUserTree(int userId);
 
     @Query(value = "select user from User user " + "join user.userGroup userGroup " + "join userGroup.community community " + "where " + "user.userName=?1 " + "and community=?2 " + "and user.id<>?3")

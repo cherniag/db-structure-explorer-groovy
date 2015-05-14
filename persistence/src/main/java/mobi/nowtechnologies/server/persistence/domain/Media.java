@@ -56,8 +56,6 @@ public class Media extends Item implements Serializable {
     private MediaFile imageFileSmall;
     @Column(name = "imageFileSmall", insertable = false, updatable = false)
     private Integer imageFileSmallId;
-    @OneToMany(mappedBy = "media")
-    private List<Drm> drms;
     @Column(name = "isrc", columnDefinition = "char(15)")
     private String isrc;
     @ManyToOne(fetch = EAGER)
@@ -203,14 +201,6 @@ public class Media extends Item implements Serializable {
 
     public int getImageSmallSize() {
         return imageFileSmall.getSize();
-    }
-
-    public List<Drm> getDrms() {
-        return drms;
-    }
-
-    public void setDrms(List<Drm> drms) {
-        this.drms = drms;
     }
 
     public int getHeaderSize() {
@@ -369,11 +359,6 @@ public class Media extends Item implements Serializable {
 
     public String getIsrcTrackId() {
         return buildUniqueTrackId(isrc, trackId);
-    }
-
-    public Media withDrms(List<Drm> drms) {
-        setDrms(drms);
-        return this;
     }
 
     public Media withIsrc(String isrc) {

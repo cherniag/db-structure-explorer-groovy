@@ -5,8 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Drm;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.Genre;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
@@ -20,9 +18,7 @@ import static mobi.nowtechnologies.common.util.TrackIdGenerator.ISRC_TRACK_ID_DE
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.UNCHANGED;
 
-import java.util.Arrays;
 import java.util.Locale;
-import static java.util.Collections.singletonList;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -152,8 +148,7 @@ public class ChartDetailsConverterTest {
         //given
         String iTunesUrl = "http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=https://itunes.apple.com/gb/album/inhaler/id573269843?i=573269988%26uo=4%26partnerId=2003";
         chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(
-            new Media().withITunesUrl(iTunesUrl).withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist())
-                       .withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
+            new Media().withITunesUrl(iTunesUrl).withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()));
         Community community = new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL);
 
         //when
@@ -240,9 +235,6 @@ public class ChartDetailsConverterTest {
         Media media = chartDetail.getMedia();
         assertThat(chartDetailDto.getArtist(), Is.is(media.getArtistName()));
         assertThat(chartDetailDto.getAudioSize(), Is.is(media.getAudioSize()));
-        Drm drm = media.getDrms().get(0);
-        assertThat(chartDetailDto.getDrmType(), Is.is(drm.getDrmType().getName()));
-        assertThat(chartDetailDto.getDrmValue(), Is.is(drm.getDrmValue()));
         assertThat(chartDetailDto.getGenre1(), Is.is(chartDetail.getChart().getGenre().getName()));
         assertThat(chartDetailDto.getGenre2(), Is.is(media.getGenre().getName()));
 
@@ -277,14 +269,11 @@ public class ChartDetailsConverterTest {
         Genre genre = new Genre();
         chart.setGenre(genre);
         ChartDetail chartDetail = new ChartDetail();
-        Drm drm = new Drm();
-        drm.setDrmType(new DrmType());
         Media media = new Media();
         media.setArtist(new Artist());
         media.setiTunesUrl("");
         MediaFile mediaFile = new MediaFile();
         media.setAudioFile(mediaFile);
-        media.setDrms(Arrays.<Drm>asList(drm));
         media.setGenre(genre);
         media.setImageFIleLarge(mediaFile);
         media.setImageFileSmall(mediaFile);

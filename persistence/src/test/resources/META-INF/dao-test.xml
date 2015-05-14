@@ -30,8 +30,7 @@ http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
         <property name="mappingResources">
             <list>
                 <value>META-INF/jpql/paymentPolicy.xml</value>
-                <value>META-INF/jpql/drm.xml</value>
-            </list>
+             </list>
         </property>
         <property name="packagesToScan" ref="listOfPackagesToScan" />
     </bean>
@@ -54,7 +53,6 @@ http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
     <bean id="persistence.SQLTestInitializer" class="mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer">
         <property name="sqlUtils" ref="persistence.SQLUtils" />
         <property name="userRepository" ref="userRepository" />
-        <property name="drmRepository" ref="drmRepository" />
         <property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
         <property name="chartRepository" ref="chartRepository" />
         <property name="chartDetailRepository" ref="chartDetailRepository" />

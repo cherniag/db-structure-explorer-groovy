@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.AutoOptInExemptPhoneNumber;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -111,7 +110,6 @@ public class AccountCheckDTOAsm {
 
         UserGroup userGroup = user.getUserGroup();
         Chart chart = userGroup.getChart();
-        DrmPolicy drmPolicy = userGroup.getDrmPolicy();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
         boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && user.isSubscribedStatus();
@@ -129,8 +127,8 @@ public class AccountCheckDTOAsm {
             accountCheckDTO.lastPaymentStatus = currentPaymentDetails.getLastPaymentStatus();
         }
 
-        accountCheckDTO.drmType = drmPolicy.getDrmType().getName();
-        accountCheckDTO.drmValue = drmPolicy.getDrmValue();
+        accountCheckDTO.drmType = "PLAYS";
+        accountCheckDTO.drmValue = 100;
         accountCheckDTO.status = status.getName();
         accountCheckDTO.displayName = user.getDisplayName();
         accountCheckDTO.subBalance = (byte) subBalance;

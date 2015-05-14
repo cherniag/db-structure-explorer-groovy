@@ -26,7 +26,6 @@
         <property name="mappingResources">
             <list>
                 <value>META-INF/jpql/paymentPolicy.xml</value>
-                <value>META-INF/jpql/drm.xml</value>
             </list>
         </property>
         <property name="packagesToScan" ref="listOfPackagesToScan" />
