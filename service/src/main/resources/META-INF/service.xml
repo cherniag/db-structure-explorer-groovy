@@ -450,7 +450,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
-		<property name="appStoreReceiptParser" ref="appStoreReceiptParser"/>
 		<property name="userService" ref="service.UserService"/>
 		<property name="retriesOnError" value="${iTunes.retriesOnError}"/>
 	</bean>

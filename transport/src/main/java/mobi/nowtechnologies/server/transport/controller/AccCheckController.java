@@ -4,13 +4,15 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.UrbanAirshipTokenService;
 import mobi.nowtechnologies.server.service.behavior.PaymentTimeService;
+import mobi.nowtechnologies.server.service.itunes.AppStoreReceiptParser;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
@@ -57,6 +59,12 @@ public class AccCheckController extends CommonController {
     @Resource
     private ITunesPaymentDetailsService iTunesPaymentDetailsService;
 
+    @Resource
+    AppStoreReceiptParser appStoreReceiptParser;
+
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
+
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.12}/ACC_CHECK"})
     public ModelAndView accountCheckWithITunesPaymentDetails(@RequestParam("USER_NAME") String userName,
                                                    @RequestParam("USER_TOKEN") String userToken,
@@ -81,9 +89,9 @@ public class AccCheckController extends CommonController {
                                                    @RequestParam(required = false, value = "UA_TOKEN") String uaToken,
                                                    @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                                    @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                                                   @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+                                                   @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, null, uaToken, xtifyToken, transactionReceipt, idfa, true, true, true, null, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, null, uaToken, xtifyToken, transactionReceipt, idfa, true, true, true, response, false);
     }
 
 
@@ -97,9 +105,9 @@ public class AccCheckController extends CommonController {
                                                                 @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
                                                                 @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                                                 @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                                                                @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+                                                                @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, true, null, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, true, response, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.7}/ACC_CHECK", "**/{community}/{apiVersion:6\\.6}/ACC_CHECK"})
@@ -112,9 +120,9 @@ public class AccCheckController extends CommonController {
                                              @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
                                              @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                              @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                                             @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+                                             @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, false, null, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true, false, response, false);
     }
 
     @RequestMapping(method = RequestMethod.POST,
@@ -133,9 +141,9 @@ public class AccCheckController extends CommonController {
                                                                   @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
                                                                   @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                                                   @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                                                                  @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+                                                                  @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, false, false, null, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, false, false, response, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3.9}/ACC_CHECK"})
@@ -148,7 +156,7 @@ public class AccCheckController extends CommonController {
                                                      @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
                                                      @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                                      @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                                                     @RequestParam(required = false, value = "IDFA") String idfa,
+                                                     @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response,
                                                      @PathVariable("community") String community) throws Exception {
 
         // hack for IOS7 users that needs to remove it soon
@@ -159,7 +167,7 @@ public class AccCheckController extends CommonController {
         }
         ///
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false, null, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false, response, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/ACC_CHECK"})
@@ -172,8 +180,8 @@ public class AccCheckController extends CommonController {
                                                 @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
                                                 @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
                                                 @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                                                @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false, null, false);
+                                                @RequestParam(required = false, value = "IDFA") String idfa, HttpServletResponse response) throws Exception {
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false, false, response, false);
     }
 
     private ModelAndView accCheckImpl(String userName,
@@ -222,7 +230,7 @@ public class AccCheckController extends CommonController {
                 urbanAirshipTokenService.saveToken(user, pushNotificationToken);
             }
 
-            processITunesSubscription(user, response, transactionReceipt, createITunesPaymentDetails);
+            processITunesSubscription(user, transactionReceipt, createITunesPaymentDetails, response);
 
             AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
 
@@ -236,40 +244,44 @@ public class AccCheckController extends CommonController {
         }
     }
 
-    private void processITunesSubscription(User user, HttpServletResponse response, String transactionReceipt, boolean createITunesPaymentDetails) {
+    private void processITunesSubscription(User user, String transactionReceipt, boolean createITunesPaymentDetails, HttpServletResponse response) {
         try {
             if (createITunesPaymentDetails) {
                 if (StringUtils.isNotEmpty(transactionReceipt)) {
-                    iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, transactionReceipt);
-                    handleExpires(user, response);
+                    String productId = appStoreReceiptParser.getProductId(transactionReceipt);
+
+                    LOGGER.info("Assign app store receipt [{}] to user [{}]", transactionReceipt, user.getId());
+
+                    if(!user.hasActiveITunesPaymentDetails() || !productId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
+                        LOGGER.info("Another product id [{}] or user does not have payment details", productId);
+                        iTunesPaymentDetailsService.createNewPaymentDetails(user, transactionReceipt, productId);
+                        Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
+                        if (nextRetryTimeForITunesPayment != null) {
+                            response.setDateHeader("Expires", nextRetryTimeForITunesPayment.getTime());
+                        }
+                    } else {
+                        ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
+                        boolean justNeedToUpdateTheReceipt = !transactionReceipt.equals(currentDetails.getAppStroreReceipt());
+                        if(justNeedToUpdateTheReceipt) {
+                            LOGGER.info("Update payment details [{}] with new receipt", currentDetails.getI());
+                            currentDetails.updateAppStroreReceipt(transactionReceipt);
+                            paymentDetailsRepository.save(currentDetails);
+                        }
+                    }
                 } else {
                     // temp fix for migration
-                    migrateITunesSubscriberToPaymentDetailsModel(user);
+                    final String appStoreReceipt = user.getBase64EncodedAppStoreReceipt();
+                    if(StringUtils.isNotEmpty(appStoreReceipt) && user.hasITunesSubscription() && !user.hasActiveITunesPaymentDetails()) {
+                        String productId = appStoreReceiptParser.getProductId(user.getBase64EncodedAppStoreReceipt());
+                        LOGGER.info("Another product id [{}] or user does not have payment details", productId);
+                        iTunesPaymentDetailsService.createNewPaymentDetails(user, appStoreReceipt, productId);
+                    }
                 }
             } else {
                 iTunesService.processInAppSubscription(user, transactionReceipt);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    private void handleExpires(User user, HttpServletResponse response) {
-        if(user.hasActiveITunesPaymentDetails() && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.NONE && user.isLimited()) {
-            LOGGER.info("Handle expires date for iTunes payment for user {}", user.getId());
-            Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
-            if (nextRetryTimeForITunesPayment != null && response != null) {
-                response.setDateHeader("Expires", nextRetryTimeForITunesPayment.getTime());
-            }
-        }
-    }
-
-    private void migrateITunesSubscriberToPaymentDetailsModel(User user) {
-        boolean hasActiveITunesSubscription = !user.isOnFreeTrial() && user.hasITunesSubscription();
-        boolean hasNotEmptyReceipt = StringUtils.isNotEmpty(user.getBase64EncodedAppStoreReceipt());
-
-        if(hasNotEmptyReceipt && hasActiveITunesSubscription && !user.hasActiveITunesPaymentDetails()) {
-            iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, user.getBase64EncodedAppStoreReceipt());
         }
     }
 }

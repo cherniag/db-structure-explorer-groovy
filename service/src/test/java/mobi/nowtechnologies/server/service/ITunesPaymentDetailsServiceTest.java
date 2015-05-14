@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.itunes.AppStoreReceiptParser;
-
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 
 import org.junit.*;
@@ -17,12 +16,7 @@ import org.mockito.runners.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 /**
  * Author: Gennadii Cherniaiev Date: 4/15/2015
  */
@@ -71,7 +65,7 @@ public class ITunesPaymentDetailsServiceTest {
         when(appStoreReceiptParser.getProductId(appStoreReceipt)).thenReturn(appStoreProductId);
         when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(appStoreProductId);
 
-        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, appStoreReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, appStoreReceipt, appStoreReceiptParser.getProductId(appStoreReceipt));
 
         verify(appStoreReceiptParser).getProductId(appStoreReceipt);
         verify(currentPaymentDetails, never()).updateAppStroreReceipt(anyString());
@@ -96,7 +90,7 @@ public class ITunesPaymentDetailsServiceTest {
         when(currentPaymentDetails.getI()).thenReturn(currentPaymentDetailsId);
         when(paymentDetailsRepository.findOne(currentPaymentDetailsId)).thenReturn(updated);
 
-        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt, appStoreReceiptParser.getProductId(newReceipt));
 
         verify(appStoreReceiptParser).getProductId(newReceipt);
         verify(paymentDetailsRepository).findOne(currentPaymentDetailsId);
@@ -124,7 +118,7 @@ public class ITunesPaymentDetailsServiceTest {
         PaymentPolicy newPaymentPolicy = mock(PaymentPolicy.class);
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, newAppStoreProductId)).thenReturn(newPaymentPolicy);
 
-        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt, appStoreReceiptParser.getProductId(newReceipt));
 
         ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
         verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -159,7 +153,7 @@ public class ITunesPaymentDetailsServiceTest {
         PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, productId)).thenReturn(paymentPolicy);
 
-        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt, appStoreReceiptParser.getProductId(newReceipt));
 
         ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
         verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -194,7 +188,7 @@ public class ITunesPaymentDetailsServiceTest {
         PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, productId)).thenReturn(paymentPolicy);
 
-        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt, appStoreReceiptParser.getProductId(newReceipt));
 
         ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
         verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");

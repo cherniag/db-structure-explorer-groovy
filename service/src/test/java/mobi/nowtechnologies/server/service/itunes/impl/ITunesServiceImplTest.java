@@ -164,7 +164,6 @@ public class ITunesServiceImplTest {
 
         iTunesService.processInAppSubscription(user, receipt);
 
-        verify(iTunesPaymentDetailsService, never()).createNewOrUpdatePaymentDetails(eq(user), anyString());
         ITunesConnectionConfig connectionConfig = configArgumentCaptor.getValue();
         verify(iTunesClient, times(1)).verifyReceipt(connectionConfig, receipt);
     }
@@ -178,7 +177,6 @@ public class ITunesServiceImplTest {
 
         iTunesService.processInAppSubscription(user, receipt);
 
-        verify(iTunesPaymentDetailsService, never()).createNewOrUpdatePaymentDetails(eq(user), anyString());
         verify(iTunesClient, never()).verifyReceipt(configArgumentCaptor.capture(), anyString());
     }
 
@@ -192,7 +190,6 @@ public class ITunesServiceImplTest {
 
         iTunesService.processInAppSubscription(user, null);
 
-        verify(iTunesPaymentDetailsService, never()).createNewOrUpdatePaymentDetails(eq(user), anyString());
         verify(iTunesClient, never()).verifyReceipt(configArgumentCaptor.capture(), anyString());
     }
 
@@ -209,7 +206,6 @@ public class ITunesServiceImplTest {
 
         iTunesService.processInAppSubscription(user, null);
 
-        verify(iTunesPaymentDetailsService, never()).createNewOrUpdatePaymentDetails(eq(user), anyString());
         ITunesConnectionConfig connectionConfig = configArgumentCaptor.getValue();
         verify(iTunesClient, times(1)).verifyReceipt(connectionConfig, receipt);
     }

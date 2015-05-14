@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.itunes.AppStoreReceiptParser;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
@@ -23,26 +22,18 @@ public class ITunesPaymentDetailsService {
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
     private UserService userService;
-    private AppStoreReceiptParser appStoreReceiptParser;
     private int retriesOnError;
 
     @Transactional
-    public void createNewOrUpdatePaymentDetails(User user, String appStoreReceipt) {
+    public void createNewOrUpdatePaymentDetails(User user, String appStoreReceipt, String productId) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(appStoreReceipt));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(productId));
+
         logger.info("Assign app store receipt [{}] to user [{}]", appStoreReceipt, user.getId());
-        String actualProductId = appStoreReceiptParser.getProductId(appStoreReceipt);
 
-        if (user.hasActiveITunesPaymentDetails()) {
-            ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
-            PaymentPolicy paymentPolicy = currentDetails.getPaymentPolicy();
-
-            if(!paymentPolicy.getAppStoreProductId().equals(actualProductId)) {
-                logger.info("Product id [{}] of new receipt is not the same as subscribed payment policy's product id [{}]", actualProductId, paymentPolicy.getAppStoreProductId());
-            }
-        }
-
-        if(!user.hasActiveITunesPaymentDetails() || !actualProductId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
-            createNewPaymentDetails(user, appStoreReceipt, actualProductId);
+        if(!user.hasActiveITunesPaymentDetails() || !productId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
+            logger.info("Another product id [{}] or user does not have payment details", productId);
+            createNewPaymentDetails(user, appStoreReceipt, productId);
         } else {
             ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
             if(!appStoreReceipt.equals(currentDetails.getAppStroreReceipt())) {
@@ -56,6 +47,9 @@ public class ITunesPaymentDetailsService {
 
     @Transactional
     public void createNewPaymentDetails(User user, String appStoreReceipt, String productId) {
+        Preconditions.checkArgument(StringUtils.isNotEmpty(appStoreReceipt));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(productId));
+
         logger.info("Create new payment details for user {} and productId {}", user.getId(), productId);
 
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -86,10 +80,6 @@ public class ITunesPaymentDetailsService {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    public void setAppStoreReceiptParser(AppStoreReceiptParser appStoreReceiptParser) {
-        this.appStoreReceiptParser = appStoreReceiptParser;
     }
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
