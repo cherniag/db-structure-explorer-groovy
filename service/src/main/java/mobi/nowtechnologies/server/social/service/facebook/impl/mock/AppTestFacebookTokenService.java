@@ -11,7 +11,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 
 import org.springframework.social.MissingAuthorizationException;
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.User;
 
 public class AppTestFacebookTokenService {
 
@@ -59,14 +59,14 @@ public class AppTestFacebookTokenService {
         return buildToken(info) + "#" + ERROR_TOKEN_MARKER;   // 9
     }
 
-    public FacebookProfile parseToken(String token) {
+    public User parseToken(String token) {
         final String[] split = token.split("#");
 
         // take a look on the error marker in the tail: on 10th position there is a error marker
         if (split.length == 10) {
             // reassign the id to simulate the wrong ID
             if (split[9].equals(ERROR_ID_MARKER)) {
-                SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile("_broken_different_id_", split[5], "", split[2], split[3], split[7]);
+                SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile("_broken_different_id_", "", split[2], split[3], split[7]);
                 profile.addOtherInfo(split[1], split[6], split[4], split[8]);
                 return profile;
             }
@@ -80,7 +80,7 @@ public class AppTestFacebookTokenService {
             throw new IllegalArgumentException();
         } else {
             // no error markers:
-            SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], split[5], "", split[2], split[3], split[7]);
+            SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], "", split[2], split[3], split[7]);
             profile.addOtherInfo(split[1], split[6], split[4], split[8]);
             return profile;
         }
