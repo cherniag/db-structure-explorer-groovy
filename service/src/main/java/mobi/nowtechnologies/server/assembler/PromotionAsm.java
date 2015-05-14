@@ -4,11 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.PromotionDto;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,26 +13,6 @@ import org.slf4j.LoggerFactory;
 public class PromotionAsm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PromotionAsm.class);
-
-
-    @SuppressWarnings("unchecked")
-    public static List<PromotionDto> toPromotionDtos(Collection<Promotion> promotions) {
-        LOGGER.debug("input parameters promotions: [{}]", promotions);
-
-        final List<PromotionDto> promotionDtos;
-        if (promotions.isEmpty()) {
-            promotionDtos = Collections.EMPTY_LIST;
-        } else {
-            promotionDtos = new ArrayList<PromotionDto>(promotions.size());
-            for (Promotion promotion : promotions) {
-                promotionDtos.add(toPromotionDto(promotion));
-            }
-        }
-
-        LOGGER.info("Output parameter promotionDtos=[{}]", promotionDtos);
-        return promotionDtos;
-
-    }
 
 
     public static PromotionDto toPromotionDto(Promotion promotion) {

@@ -1,18 +1,18 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.web.service.impl.UserDetailsImpl;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.GOOGLE_PLUS;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -21,8 +21,6 @@ import static mobi.nowtechnologies.server.web.controller.PaymentsPayPalControlle
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
-
-import java.math.BigDecimal;
 
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,53 +38,71 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Oleg Artomov on 8/18/2014.
  */
 public class PaymentsPayPalControllerIT extends AbstractWebControllerIT {
-
     @Resource
     private UserRepository userRepository;
-
     @Resource
     private PaymentPolicyRepository paymentPolicyRepository;
-
     @Resource
     private UserGroupRepository userGroupRepository;
 
     @Test
     public void testStartPaypalForUnsubscribedUser() throws Exception {
         String communityUrl = "o2";
-        SecurityContextHolder.setContext(createSecurityContext(101));
-        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        Community o2Community = o2UserGroup.getCommunity();
+        User user = findUser(101);
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(
-            new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")).withPaymentType(PAY_PAL)
-                               .withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract(null).withSegment(null)
-                               .withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS).withTariff(_3G).withMediaType(AUDIO)
-                               .withDefault(false)).withOnline(true);
-        paymentPolicyRepository.save(paymentPolicy);
-        mockMvc.perform(get("/payments_inapp/startPayPal.html").cookie(new Cookie[] {new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).andExpect(status().isMovedTemporarily())
+        SecurityContextHolder.setContext(createSecurityContext(user));
+
+        PaymentPolicy payPalPolicy = createPayPalPolicy(user);
+        paymentPolicyRepository.save(payPalPolicy);
+
+        mockMvc.perform(get("/payments_inapp/startPayPal.html").cookie(new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl))).andExpect(status().isMovedTemporarily())
                .andExpect(redirectedUrl("/payments_inapp/paypal.html?" +
-                                        REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId()));
+                                        REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + payPalPolicy.getId()));
+    }
+
+    private PaymentPolicy createPayPalPolicy(User user) {
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields();
+        paymentPolicy.setTariff(_3G);
+        paymentPolicy.setProvider(user.getProvider());
+        paymentPolicy.setPaymentType(PAY_PAL);
+        paymentPolicy.setCommunity(user.getCommunity());
+        paymentPolicy.setMediaType(MediaType.AUDIO);
+        return paymentPolicy;
     }
 
     @Test
     public void testStartPaypalWhenNoPaypalPolicy() throws Exception {
-        String communityUrl = "o2";
-        SecurityContextHolder.setContext(createSecurityContext(101));
-        mockMvc.perform(get("/payments_inapp/startPayPal.html").cookie(new Cookie[] {new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).andExpect(status().isInternalServerError())
+        String communityUrl = "hl_uk";
+
+        final UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityUrl);
+
+        final User user = UserFactory.createUser(ACTIVATED);
+        user.setUserName("145645");
+        user.setMobile("+447766666667");
+        user.setUserGroup(userGroup);
+        user.setDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
+
+        userRepository.save(user);
+
+        SecurityContextHolder.setContext(createSecurityContext(findUser(user.getId())));
+        mockMvc.perform(get("/payments_inapp/startPayPal.html").cookie(new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl))).andExpect(status().isInternalServerError())
                .andExpect(view().name("errors/500"));
     }
 
-
-    private SecurityContext createSecurityContext(int userId) {
-        User user = userRepository.findOne(userId);
-        user.setProvider(GOOGLE_PLUS);
-        user.setContract(PAYM);
-        user.setSegment(CONSUMER);
-        user.setFreeTrialExpiredMillis(System.currentTimeMillis());
+    private SecurityContext createSecurityContext(User user) {
         Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);
         SecurityContext securityContext = new SecurityContextImpl();
         securityContext.setAuthentication(authentication);
 
         return securityContext;
+    }
+
+    private User findUser(int userId) {
+        User user = userRepository.findOne(userId);
+        user.setProvider(GOOGLE_PLUS);
+        user.setContract(PAYM);
+        user.setSegment(CONSUMER);
+        user.setFreeTrialExpiredMillis(System.currentTimeMillis());
+        return user;
     }
 }

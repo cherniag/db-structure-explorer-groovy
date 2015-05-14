@@ -15,7 +15,6 @@ import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
 import mobi.nowtechnologies.server.social.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;

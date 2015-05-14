@@ -92,12 +92,6 @@ public class PaymentPolicyService {
         return unmodifiableList(paymentPolicyDtos);
     }
 
-    @Transactional(readOnly = true)
-    public List<PaymentPolicy> findPaymentPolicies(User user) {
-        List<MediaType> mediaTypes = getMediaTypes(user);
-        return paymentPolicyRepository.findPaymentPolicies(user.getCommunity(), mediaTypes);
-    }
-
     private List<PaymentPolicyDto> getMergedPaymentPolicies(User user, SegmentType defaultSegment, ProviderType defaultProvider) {
         SegmentType segment = getSegmentType(user, defaultSegment);
         ProviderType provider = getProviderType(user, defaultProvider);

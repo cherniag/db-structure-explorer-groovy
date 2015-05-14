@@ -25,7 +25,8 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
                    "where " +
                    "paymentPolicy.community=?1 " +
                    "and paymentPolicy.appStoreProductId is not NULL " +
-                   "and paymentPolicy.online is true")
+                   "and paymentPolicy.online is true " +
+                   "and (CURRENT_TIMESTAMP between paymentPolicy.startDateTime and paymentPolicy.endDateTime)")
     List<String> findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(Community community);
 
     //TODO should be replaced by findPaymentPolicy()
@@ -44,8 +45,9 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
                    "and (paymentPolicy.segment=?3 or paymentPolicy.segment is null)" +
                    "and (paymentPolicy.contract=?4 or paymentPolicy.contract is null)" +
                    "and paymentPolicy.tariff=?5 " +
-                   "and paymentPolicy.isDefault=true " +
-                   "and paymentPolicy.online is true")
+                   "and paymentPolicy.isDefault is true " +
+                   "and paymentPolicy.online is true " +
+                   "and (CURRENT_TIMESTAMP between paymentPolicy.startDateTime and paymentPolicy.endDateTime)")
     PaymentPolicy findDefaultO2PsmsPaymentPolicy(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff);
 
     @Query(value = "select paymentPolicy " +
@@ -57,24 +59,17 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
                    "and (paymentPolicy.contract=?4 or paymentPolicy.contract is null)" +
                    "and paymentPolicy.tariff=?5 " +
                    "and paymentPolicy.mediaType in ?6 " +
-                   "and paymentPolicy.online is true ")
+                   "and paymentPolicy.online is true " +
+                   "and (CURRENT_TIMESTAMP between paymentPolicy.startDateTime and paymentPolicy.endDateTime)")
     List<PaymentPolicy> findPaymentPolicies(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff, List<MediaType> mediaTypes);
-
-    @Query(value="select paymentPolicy " +
-            "from PaymentPolicy paymentPolicy "+
-            "where " +
-            "paymentPolicy.community=?1 " +
-            "and paymentPolicy.mediaType in ?2 " +
-            "and paymentPolicy.online is true ")
-    List<PaymentPolicy> findPaymentPolicies(Community community, List<MediaType> mediaTypes);
-
 
     @Query(value = "select paymentPolicy " +
                    "from PaymentPolicy paymentPolicy " +
                    "where paymentPolicy.community=?1 " +
                    "and paymentPolicy.provider=?2 " +
                    "and paymentPolicy.paymentType=?3 " +
-                   "and paymentPolicy.online is true ")
+                   "and paymentPolicy.online is true " +
+                   "and (CURRENT_TIMESTAMP between paymentPolicy.startDateTime and paymentPolicy.endDateTime)")
     PaymentPolicy findPaymentPolicy(Community community, ProviderType providerType, String paymentType);
 
 }

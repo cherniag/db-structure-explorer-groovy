@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeFactory;
@@ -32,7 +33,6 @@ import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -156,8 +156,6 @@ public class UserServiceTest {
     @Mock
     AppsFlyerDataService appsFlyerDataService;
     @Mock
-    UserTransactionRepository userTransactionRepository;
-    @Mock
     UserActivationStatusService userActivationStatusService;
     @Mock
     OperatorRepository operatorRepository;
@@ -171,6 +169,8 @@ public class UserServiceTest {
     UserStatusRepository userStatusRepository;
     @Mock
     PaymentDetailsRepository paymentDetailsRepository;
+    @Mock
+    TimeService timeServiceMock;
 
     private UserService userServiceSpy;
     private AccountLogService accountLogServiceMock;
@@ -257,10 +257,10 @@ public class UserServiceTest {
 
         userServiceSpy.userGroupRepository = userGroupRepository;
         userServiceSpy.promotionRepository = promotionRepository;
-        userServiceSpy.userTransactionRepository = userTransactionRepository;
         userServiceSpy.operatorRepository = operatorRepository;
         userServiceSpy.userRepository = userRepository;
         userServiceSpy.userStatusRepository = userStatusRepository;
+        userServiceSpy.setTimeService(timeServiceMock);
 
         userWithPromoAnswer = new Answer() {
             @Override
@@ -3374,6 +3374,27 @@ public class UserServiceTest {
         assertThat(actualUser.getProvider(), is(VF));
         assertThat(actualUser.getUserName(), is(user.getMobile()));
         assertThat(actualUser.isHasPromo(), is(true));
+    }
+
+    @Test
+    public void shouldUpdateLastWebLogin() {
+        //given
+        int userId = Integer.MAX_VALUE;
+
+        User user = new User();
+        when(userRepository.findOne(userId)).thenReturn(user);
+        final int nowSeconds = Integer.MAX_VALUE;
+        when(timeServiceMock.nowSeconds()).thenReturn(nowSeconds);
+
+        //when
+        final User actualUser = userServiceSpy.updateLastWebLogin(userId);
+
+        //then
+        assertThat(actualUser, is(user));
+        assertThat(actualUser.getLastWebLogin(), is(nowSeconds));
+
+        verify(userRepository).findOne(userId);
+        verify(timeServiceMock).nowSeconds();
     }
 
 

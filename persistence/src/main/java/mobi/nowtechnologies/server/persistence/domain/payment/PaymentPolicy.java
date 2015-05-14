@@ -26,9 +26,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -36,6 +42,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Table(name = "tb_paymentPolicy")
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
+
+    public static final List<String> PAYMENT_TYPES = Arrays.asList("creditCard", "iTunesSubscription", "o2Psms", "PAY_PAL", "PSMS", "vfPsms");
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -98,6 +106,17 @@ public class PaymentPolicy {
     private PaymentPolicyType paymentPolicyType;
     @Column(name = "payment_order", nullable = false, columnDefinition = "int default 0")
     private int order;
+
+    @Column(name = "start_date_time", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDateTime;
+
+    @Column(name = "end_date_time", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endDateTime;
+
+    @Column(name = "message_key")
+    private String messageKey;
 
     public Integer getId() {
         return id;
@@ -324,6 +343,22 @@ public class PaymentPolicy {
         isDefault = aDefault;
     }
 
+    public Date getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(Date startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public Date getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(Date endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
     public PaymentPolicy withId(Integer id) {
         setId(id);
         return this;
@@ -439,6 +474,14 @@ public class PaymentPolicy {
         return this;
     }
 
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("communityId", communityId).append("subcost", subcost).append("period", period).append("operatorId", operatorId)
@@ -447,7 +490,7 @@ public class PaymentPolicy {
                                         .append("segment", segment).append("contract", contract).append("contentCategory", contentCategory).append("contentType", contentType)
                                         .append("subMerchantId", subMerchantId).append("contentDescription", contentDescription).append("tariff", tariff).append("mediaType", mediaType)
                                         .append("advancedPaymentSeconds", advancedPaymentSeconds).append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds).append("isDefault", isDefault)
-                                        .append("online", online).append("order", order).toString();
+                                        .append("online", online).append("order", order).append("startDateTime", startDateTime).append("endDateTime", endDateTime).append("messageKey", messageKey)
+                                        .toString();
     }
-
 }

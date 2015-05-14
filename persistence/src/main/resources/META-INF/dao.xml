@@ -33,10 +33,7 @@
 	</bean>
 
     <utils:list id="listOfPackagesToScan">
-        <value>mobi.nowtechnologies.server.social.domain</value>
-        <value>mobi.nowtechnologies.server.device.domain</value>
-        <value>mobi.nowtechnologies.server.versioncheck.domain</value>
-        <value>mobi.nowtechnologies.server.persistence.domain</value>
+        <value>mobi.nowtechnologies.server.*.domain</value>
     </utils:list>
 
     <utils:properties id="jpaProperties">
@@ -61,9 +58,7 @@
 
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
     <jpa:repositories base-package="mobi.nowtechnologies.server" entity-manager-factory-ref="persistence.EntityManagerFactory" transaction-manager-ref="persistence.TransactionManager">
-		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.social.domain.*Repository"/>
-		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.device.domain.*Repository"/>
-        <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.versioncheck.domain.*Repository"/>
+		<repository:include-filter type="regex" expression="mobi.nowtechnologies.server.*.domain.*Repository"/>
         <repository:include-filter type="regex" expression="mobi.nowtechnologies.server.persistence.repository.*Repository"/>
     </jpa:repositories>
 

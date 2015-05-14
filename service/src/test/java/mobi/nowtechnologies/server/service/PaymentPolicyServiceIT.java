@@ -580,11 +580,10 @@ public class PaymentPolicyServiceIT {
 
     @Test(expected = IncorrectResultSizeDataAccessException.class)
     public void testGetPaymentPolicyFor2SamePolicies() {
-        PaymentPolicy paymentPolicy1 = paymentPolicyRepository.save(
-            new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")).withPaymentType(PAY_PAL)
-                               .withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract(null).withSegment(null)
-                               .withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS).withTariff(_3G).withMediaType(AUDIO)
-                               .withDefault(false)).withOnline(true);
+        PaymentPolicy paymentPolicy1 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")).withPaymentType(PAY_PAL)
+                                                                                       .withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract(null).withSegment(null)
+                                                                                       .withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS).withTariff(_3G).withMediaType(AUDIO)
+                                                                                       .withDefault(false)).withOnline(true);
         paymentPolicyRepository.save(paymentPolicy1);
         PaymentPolicy paymentPolicy2 = paymentPolicyRepository.save(
             new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")).withPaymentType(PAY_PAL)

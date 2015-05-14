@@ -254,9 +254,6 @@
                 <div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
                 <div class="publishDate_chartItem" style="margin-left: 20px;" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
                 <div class="iTunesUrl_chartItem" style="height: 35px!important;" th:text="#{chartItems.page.mediasTable.head.iTunesUrl}">ITunes Url</div>
-                <div  id="lockAllTracks" style="margin-left: 486px;" class="locked_chartItem toggleButton" >
-                    <input type="checkbox"/>
-                </div>
             </li>
         </ul>
         <ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -1003,35 +1000,6 @@ function chartItemsFromUl(ul){
         }
     });
     json.push("]");
-
-    return json.join("");
-}
-
-function chartItemFromLi(li){
-    var json = [];
-    var id = li.find("div.id_chartItem").text();
-    var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
-    var channel = li.find("div.channel_chartItem span").text().replace(/\'/g, "&apos;");
-    var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
-    var mediaId = li.find("div.mediaId_chartItem").text();
-    var iTunesUrl = escape(li.children('.iTunesSpan').text().trim());
-    var label = escape(li.children('.labelSpan').text().trim());
-    var artistName = escape(li.children('.ArtistTitle_chartItem').text().trim());
-    var fileType = escape(li.children('.fileTypeSpan').text().trim());
-    json.push(
-            "{'id':",id != null && id != '' ? id : 'null',",",
-            "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" +
-                    iTunesUrl + "', 'label':'" +label +  "', 'artistDto': { 'name': '" + artistName + "'}, " +
-                    "'audioFileDto': {'fileType': '" + fileType + "'} },",
-            "'position':",li.find("div.position_chartItem").text(),",",
-            "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
-            "'chgPosition':'",li.find("div.change_position_chartItem").text(),"',",
-            "'locked':",locked,",",
-            "'channel':'",channel,"',",
-            "'info':'",info,"',",
-            "'publishTime':'",$selectedPublishDateTime,"',",
-            "'chartId':",$chartId,"}"
-    );
 
     return json.join("");
 }

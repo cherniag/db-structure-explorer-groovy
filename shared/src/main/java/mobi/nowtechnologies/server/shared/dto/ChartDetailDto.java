@@ -18,8 +18,6 @@ public class ChartDetailDto {
     private String genre2;
     private String drmType;
     private byte drmValue;
-    private int trackSize;
-    private int headerSize;
     private int audioSize;
     private int imageLargeSize;
     private int imageSmallSize;
@@ -29,10 +27,6 @@ public class ChartDetailDto {
     private String changePosition;
     private String channel;
     private int chartDetailVersion;
-    private int headerVersion;
-    private int audioVersion;
-    private int imageLargeVersion;
-    private int imageSmallVersion;
     private boolean isArtistUrl;
     private Integer duration;
     private Integer playlistId;
@@ -47,8 +41,6 @@ public class ChartDetailDto {
         this.genre2 = chartDetailDto.genre2;
         this.drmType = chartDetailDto.drmType;
         this.drmValue = chartDetailDto.drmValue;
-        this.trackSize = chartDetailDto.trackSize;
-        this.headerSize = chartDetailDto.headerSize;
         this.audioSize = chartDetailDto.audioSize;
         this.imageLargeSize = chartDetailDto.imageLargeSize;
         this.imageSmallSize = chartDetailDto.imageSmallSize;
@@ -58,10 +50,6 @@ public class ChartDetailDto {
         this.changePosition = chartDetailDto.changePosition;
         this.channel = chartDetailDto.channel;
         this.chartDetailVersion = chartDetailDto.chartDetailVersion;
-        this.headerVersion = chartDetailDto.headerVersion;
-        this.audioVersion = chartDetailDto.audioVersion;
-        this.imageLargeVersion = chartDetailDto.imageLargeVersion;
-        this.imageSmallVersion = chartDetailDto.imageSmallVersion;
         this.isArtistUrl = chartDetailDto.isArtistUrl;
         this.playlistId = chartDetailDto.playlistId;
     }
@@ -141,22 +129,6 @@ public class ChartDetailDto {
         this.drmValue = drmValue;
     }
 
-    public int getTrackSize() {
-        return trackSize;
-    }
-
-    public void setTrackSize(int trackSize) {
-        this.trackSize = trackSize;
-    }
-
-    public int getHeaderSize() {
-        return headerSize;
-    }
-
-    public void setHeaderSize(int headerSize) {
-        this.headerSize = headerSize;
-    }
-
     public int getAudioSize() {
         return audioSize;
     }
@@ -229,38 +201,6 @@ public class ChartDetailDto {
         this.chartDetailVersion = chartDetailVersion;
     }
 
-    public int getHeaderVersion() {
-        return headerVersion;
-    }
-
-    public void setHeaderVersion(int headerVersion) {
-        this.headerVersion = headerVersion;
-    }
-
-    public int getAudioVersion() {
-        return audioVersion;
-    }
-
-    public void setAudioVersion(int audioVersion) {
-        this.audioVersion = audioVersion;
-    }
-
-    public int getImageLargeVersion() {
-        return imageLargeVersion;
-    }
-
-    public void setImageLargeVersion(int imageLargeVersion) {
-        this.imageLargeVersion = imageLargeVersion;
-    }
-
-    public int getImageSmallVersion() {
-        return imageSmallVersion;
-    }
-
-    public void setImageSmallVersion(int imageSmallVersion) {
-        this.imageSmallVersion = imageSmallVersion;
-    }
-
     public boolean isIsArtistUrl() {
         return isArtistUrl;
     }
@@ -298,11 +238,9 @@ public class ChartDetailDto {
     public String toString() {
         return new ToStringBuilder(this, SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("position", position).append("media", media).append("title", title).append("artist", artist)
                                                             .append("info", info).append("genre1", genre1).append("genre2", genre2).append("drmType", drmType).append("drmValue", drmValue)
-                                                            .append("trackSize", trackSize).append("headerSize", headerSize).append("audioSize", audioSize).append("imageLargeSize", imageLargeSize)
-                                                            .append("imageSmallSize", imageSmallSize).append("iTunesUrl", iTunesUrl).append("amazonUrl", amazonUrl)
-                                                            .append("previousPosition", previousPosition).append("changePosition", changePosition).append("channel", channel)
-                                                            .append("chartDetailVersion", chartDetailVersion).append("headerVersion", headerVersion).append("audioVersion", audioVersion)
-                                                            .append("imageLargeVersion", imageLargeVersion).append("imageSmallVersion", imageSmallVersion).append("isArtistUrl", isArtistUrl)
-                                                            .append("duration", duration).append("playlistId", playlistId).toString();
+                                                            .append("audioSize", audioSize).append("imageLargeSize", imageLargeSize).append("imageSmallSize", imageSmallSize)
+                                                            .append("iTunesUrl", iTunesUrl).append("amazonUrl", amazonUrl).append("previousPosition", previousPosition)
+                                                            .append("changePosition", changePosition).append("channel", channel).append("chartDetailVersion", chartDetailVersion)
+                                                            .append("isArtistUrl", isArtistUrl).append("duration", duration).append("playlistId", playlistId).toString();
     }
 }

@@ -16,6 +16,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <import resource="task.xml"/>
     <import resource="classpath:META-INF/service-details-extractors.xml"/>
     <import resource="classpath:META-INF/service-chart-supporter.xml"/>
+    <import resource="classpath:event-logger.xml"/>
     <import resource="streamzine-service.xml"/>
     <import resource="classpath:META-INF/smpp.xml"/>
 
@@ -66,42 +67,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.UrbanAirshipTokenService" class="mobi.nowtechnologies.server.service.UrbanAirshipTokenService"/>
 
-    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
-        <property name="mediaRepository" ref="mediaRepository" />
-        <property name="messageRepository" ref="messageRepository"/>
-    </bean>
-
-	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory">
-        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
-	</bean>
-
-    <bean name="cloudFileImagesService" class="mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService">
-        <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-
-    <bean name="badgesService" class="mobi.nowtechnologies.server.service.streamzine.BadgesService">
-        <property name="filenameAliasRepository" ref="filenameAliasRepository" />
-        <property name="cloudFileImagesService" ref="cloudFileImagesService" />
-        <property name="resolutionRepository" ref="resolutionRepository" />
-        <property name="badgeMappingRepository" ref="badgeMappingRepository" />
-        <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-
-    <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
-        <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
-        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
-        <property name="communityRepository" ref="communityRepository" />
-        <property name="badgesService" ref="badgesService" />
-    </bean>
-
-    <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">
-        <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
-        <property name="availableCommunites" value="${streamzine.available.communities}" />
-        <property name="communityRepository" ref="communityRepository" />
-    </bean>
-
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
 		<property name="countryService" ref="service.CountryService" />
@@ -128,6 +93,8 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="deviceUserDataService" ref="service.DeviceUserDataService"/>
         <property name="appsFlyerDataService" ref="service.AppsFlyerDataService"/>
         <property name="userActivationStatusService" ref="userActivationStatusService"/>
+
+		<property name="timeService" ref="timeService"/>
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">
@@ -193,6 +160,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="deviceService" ref="service.DevicePromotionsService" />
+		<property name="eventLoggerService" ref="eventLoggerService"/>
         <property name="configuration" ref="configuration.PromotionService"/>
     </bean>
 

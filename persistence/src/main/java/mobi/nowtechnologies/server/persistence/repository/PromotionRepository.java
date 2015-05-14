@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,16 +39,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                    "p=?1 " +
                    "and (p.maxUsers=0 or p.numUsers<p.maxUsers) ")
     int updatePromotionNumUsers(Promotion promotion);
-
-
-    @Query("select distinct p from Promotion p " +
-           "join p.filters " +
-           "where p.isActive = true " +
-           "and (p.numUsers < p.maxUsers or p.maxUsers = 0) " +
-           "and p.endDate > :timestamp " +
-           "and p.startDate < :timestamp  " +
-           "and p.userGroup = :userGroup")
-    List<Promotion> findPromotionWithFilters(@Param("userGroup") UserGroup userGroup, @Param("timestamp") int timestamp);
 
     @Query("select p from Promotion p " +
            "where (p.numUsers < p.maxUsers or p.maxUsers = 0) " +

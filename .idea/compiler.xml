@@ -40,7 +40,7 @@
       <module name="env" target="1.7" />
       <module name="parent-pom" target="1.7" />
       <module name="persistence" target="1.7" />
-      <module name="server" target="1.7" />
+      <module name="server" target="1.5" />
       <module name="service" target="1.7" />
       <module name="shared" target="1.7" />
       <module name="shared-web" target="1.7" />

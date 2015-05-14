@@ -1,20 +1,15 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.filter.PUserStateFilter;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_SUBBALANCE_PROMOTION;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
 import javax.annotation.Resource;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -238,24 +233,6 @@ public class PromotionRepositoryIT extends AbstractRepositoryIT {
 
         //then
         assertThat(updatedRowsCount, is(0));
-    }
-
-    @Test
-    public void testFindPromotionWithFilters() {
-        //given
-        AbstractFilter filter = new PUserStateFilter();
-        filter.setId((byte) 1);
-
-        Promotion promo = new Promotion().withStartDate(0).withEndDate(Integer.MAX_VALUE).withIsActive(true).withUserGroup(o2UserGroup).withType(ADD_FREE_WEEKS_PROMOTION);
-        promo.setFilters(Arrays.asList(filter));
-        promo = saved(promo);
-
-        // when
-        List<Promotion> promotionWithFilters = promotionRepository.findPromotionWithFilters(o2UserGroup, DateTimeUtils.getEpochSeconds());
-
-        //then
-        assertThat(promotionWithFilters.size(), is(1));
-        assertEquals(promo.getI(), promotionWithFilters.get(0).getI());
     }
 
     @Test
