@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.itunes;
+package mobi.nowtechnologies.server.service.itunes.impl;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
@@ -8,22 +8,13 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
  */
 public class ITunesResult {
 
-    private int result;
-    private String productId;
-    private String originalTransactionId;
-    private Long expireTime;
-    private Long purchaseTime;
+    int result;
+    String productId;
+    String originalTransactionId;
+    Long expireTime;
+    Long purchaseTime;
 
-    public ITunesResult(int result) {
-        this(result, null, null, null, null);
-    }
-
-    public ITunesResult(int result, String productId, String originalTransactionId, Long expireTime, Long purchaseTime) {
-        this.result = result;
-        this.productId = productId;
-        this.originalTransactionId = originalTransactionId;
-        this.expireTime = expireTime;
-        this.purchaseTime = purchaseTime;
+    ITunesResult() {
     }
 
     public boolean isSuccessful() {

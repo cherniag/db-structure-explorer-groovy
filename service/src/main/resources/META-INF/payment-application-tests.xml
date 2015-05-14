@@ -30,7 +30,7 @@
         <property name="iTunesResponseParser" ref="iTunesResponseParser"/>
      </bean>
 
-    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesServiceImpl">
+    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesService">
         <property name="iTunesClient" ref="service.ITunesClient"/>
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
         <property name="messageSource" ref="serviceMessageSource"/>

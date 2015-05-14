@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 
 import javax.annotation.PostConstruct;
@@ -27,18 +26,20 @@ public class JPathReceiptParser implements ITunesResponseParser {
     @Override
     public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseFormatException {
         try {
-            int result = statusPath.<Integer>read(response);
+            ITunesResult parseResult = new ITunesResult();
+
+            final int result = statusPath.<Integer>read(response);
 
             if (result != 0) {
-                return new ITunesResult(result);
+                parseResult.result = result;
+            } else {
+                parseResult.productId = productIdPath.read(response);
+                parseResult.originalTransactionId = originalTransactionIdPath.read(response);
+                parseResult.expireTime = safeReadTime(expireTimestampPath, response);
+                parseResult.purchaseTime = safeReadTime(purchaseTimestampPath, response);
             }
 
-            String productId = productIdPath.read(response);
-            String originalTransactionId = originalTransactionIdPath.read(response);
-            Long expireTime = safeReadTime(expireTimestampPath, response);
-            Long purchaseTime = safeReadTime(purchaseTimestampPath, response);
-
-            return new ITunesResult(result, productId, originalTransactionId, expireTime, purchaseTime);
+            return parseResult;
         } catch (InvalidPathException e) {
             throw new ITunesResponseFormatException(e);
         }

@@ -432,11 +432,14 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="iTunesResponseParser" ref="iTunesResponseParser"/>
 	</bean>
 
-	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesServiceImpl">
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesService">
 		<property name="iTunesClient" ref="service.ITunesClient"/>
 		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
 		<property name="messageSource" ref="serviceMessageSource"/>
 	</bean>
+
+	<bean class="mobi.nowtechnologies.server.service.itunes.impl.ITunesPaymentDetailsManager"/>
+
 	<bean id="service.iTunesPaymentService" class="mobi.nowtechnologies.server.service.itunes.payment.impl.ITunesPaymentServiceImpl">
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
 		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>

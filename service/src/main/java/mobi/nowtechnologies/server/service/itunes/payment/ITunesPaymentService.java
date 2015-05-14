@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service.itunes.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesResult;
 
 /**
  * Created by zam on 1/16/2015.

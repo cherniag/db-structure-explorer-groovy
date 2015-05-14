@@ -16,9 +16,8 @@ import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesResult;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
 
@@ -161,8 +160,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         String actualProductId = result.getProductId();
 
         PaymentPolicy storedPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        boolean userResubscribedOnNewPaymentPolicy = !actualProductId.equals(storedPaymentPolicy.getAppStoreProductId());
-        if (userResubscribedOnNewPaymentPolicy) {
+        if (!actualProductId.equals(storedPaymentPolicy.getAppStoreProductId())) {
             logger.info("Stored payment policy product id {} doesn't match actual product id {}", storedPaymentPolicy.getAppStoreProductId(), actualProductId);
             iTunesPaymentDetailsService.createNewPaymentDetails(user, actualProductId, currentPaymentDetails.getAppStroreReceipt());
         }

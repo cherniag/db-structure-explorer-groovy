@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 
 import java.io.InputStream;

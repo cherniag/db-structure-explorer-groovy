@@ -7,7 +7,6 @@ package mobi.nowtechnologies.server.service.itunes.impl;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.support.http.BasicResponse;
 import mobi.nowtechnologies.server.support.http.PostService;
 

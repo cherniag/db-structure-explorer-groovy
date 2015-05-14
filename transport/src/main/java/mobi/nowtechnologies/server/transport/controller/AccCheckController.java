@@ -4,15 +4,10 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
-import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
-import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.UrbanAirshipTokenService;
-import mobi.nowtechnologies.server.service.behavior.PaymentTimeService;
-import mobi.nowtechnologies.server.service.itunes.AppStoreReceiptParser;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesPaymentDetailsManager;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
@@ -20,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -45,25 +39,13 @@ public class AccCheckController extends CommonController {
     private DeviceUserDataService deviceUserDataService;
 
     @Resource
-    private ITunesService iTunesService;
+    private ITunesPaymentDetailsManager iTunesPaymentDetailsManager;
 
     @Resource
     private UserRepository userRepository;
 
-    @Resource
-    private PaymentTimeService paymentTimeService;
-
     @Resource(name = "service.UrbanAirshipTokenService")
     private UrbanAirshipTokenService urbanAirshipTokenService;
-
-    @Resource
-    private ITunesPaymentDetailsService iTunesPaymentDetailsService;
-
-    @Resource
-    AppStoreReceiptParser appStoreReceiptParser;
-
-    @Resource
-    PaymentDetailsRepository paymentDetailsRepository;
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.12}/ACC_CHECK"})
     public ModelAndView accountCheckWithITunesPaymentDetails(@RequestParam("USER_NAME") String userName,
@@ -197,7 +179,7 @@ public class AccCheckController extends CommonController {
                                       boolean checkReactivation,
                                       boolean withUuid,
                                       boolean withOneTimePayment,
-                                      HttpServletResponse response,
+                                      final HttpServletResponse response,
                                       boolean createITunesPaymentDetails) throws Exception {
         LOGGER.info("command processing started");
         User user = null;
@@ -230,7 +212,12 @@ public class AccCheckController extends CommonController {
                 urbanAirshipTokenService.saveToken(user, pushNotificationToken);
             }
 
-            processITunesSubscription(user, transactionReceipt, createITunesPaymentDetails, response);
+            iTunesPaymentDetailsManager.processITunesSubscription(user, transactionReceipt, createITunesPaymentDetails, new ITunesPaymentDetailsManager.NextRetryInfo() {
+                @Override
+                public void setNextRetry(Date next) {
+                    response.setDateHeader("Expires", next.getTime());
+                }
+            });
 
             AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
 
@@ -241,47 +228,6 @@ public class AccCheckController extends CommonController {
         } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
-        }
-    }
-
-    private void processITunesSubscription(User user, String transactionReceipt, boolean createITunesPaymentDetails, HttpServletResponse response) {
-        try {
-            if (createITunesPaymentDetails) {
-                if (StringUtils.isNotEmpty(transactionReceipt)) {
-                    String productId = appStoreReceiptParser.getProductId(transactionReceipt);
-
-                    LOGGER.info("Assign app store receipt [{}] to user [{}]", transactionReceipt, user.getId());
-
-                    if(!user.hasActiveITunesPaymentDetails() || !productId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
-                        LOGGER.info("Another product id [{}] or user does not have payment details", productId);
-                        iTunesPaymentDetailsService.createNewPaymentDetails(user, transactionReceipt, productId);
-                        Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
-                        if (nextRetryTimeForITunesPayment != null) {
-                            response.setDateHeader("Expires", nextRetryTimeForITunesPayment.getTime());
-                        }
-                    } else {
-                        ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
-                        boolean justNeedToUpdateTheReceipt = !transactionReceipt.equals(currentDetails.getAppStroreReceipt());
-                        if(justNeedToUpdateTheReceipt) {
-                            LOGGER.info("Update payment details [{}] with new receipt", currentDetails.getI());
-                            currentDetails.updateAppStroreReceipt(transactionReceipt);
-                            paymentDetailsRepository.save(currentDetails);
-                        }
-                    }
-                } else {
-                    // temp fix for migration
-                    final String appStoreReceipt = user.getBase64EncodedAppStoreReceipt();
-                    if(StringUtils.isNotEmpty(appStoreReceipt) && user.hasITunesSubscription() && !user.hasActiveITunesPaymentDetails()) {
-                        String productId = appStoreReceiptParser.getProductId(user.getBase64EncodedAppStoreReceipt());
-                        LOGGER.info("Another product id [{}] or user does not have payment details", productId);
-                        iTunesPaymentDetailsService.createNewPaymentDetails(user, appStoreReceipt, productId);
-                    }
-                }
-            } else {
-                iTunesService.processInAppSubscription(user, transactionReceipt);
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
         }
     }
 }

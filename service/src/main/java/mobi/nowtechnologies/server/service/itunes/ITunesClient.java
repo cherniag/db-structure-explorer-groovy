@@ -4,6 +4,7 @@
 
 package mobi.nowtechnologies.server.service.itunes;
 
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesResult;
 /**
  * Created by zam on 1/26/2015.
  */

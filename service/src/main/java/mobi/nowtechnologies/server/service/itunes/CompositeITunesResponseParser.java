@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.itunes;
 
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesResult;
+
 import javax.annotation.Resource;
 
 import java.util.ArrayList;

@@ -7,12 +7,10 @@ import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesResult;
 import mobi.nowtechnologies.server.service.payment.ITunesPaymentSystemServiceHelper;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
-import org.apache.commons.lang3.StringUtils;
 
 import org.junit.*;
 import org.junit.runner.*;

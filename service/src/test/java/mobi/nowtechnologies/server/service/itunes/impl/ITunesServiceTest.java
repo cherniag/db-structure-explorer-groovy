@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class ITunesServiceImplTest {
+public class ITunesServiceTest {
 
     @Mock
     ITunesClient iTunesClient;
@@ -35,7 +34,7 @@ public class ITunesServiceImplTest {
     @Mock
     ITunesPaymentDetailsService iTunesPaymentDetailsService;
     @InjectMocks
-    ITunesServiceImpl iTunesService;
+    ITunesService iTunesService;
     @Captor
     ArgumentCaptor<ITunesConnectionConfig> configArgumentCaptor;
 

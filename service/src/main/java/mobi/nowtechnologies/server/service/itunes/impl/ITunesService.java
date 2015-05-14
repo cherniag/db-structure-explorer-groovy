@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.service.itunes.impl;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -16,7 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class ITunesServiceImpl implements ITunesService {
+public class ITunesService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,8 +22,7 @@ public class ITunesServiceImpl implements ITunesService {
     private ITunesPaymentService iTunesPaymentService;
     private CommunityResourceBundleMessageSource messageSource;
 
-    @Override
-    public void processInAppSubscription(User user, String transactionReceipt) throws Exception {
+    void processInAppSubscription(User user, String transactionReceipt) throws Exception {
         logger.info("Start processing ITunes subscription for user [{}], receipt [{}]", user.shortInfo(), transactionReceipt);
         if (!isEligibleForPayment(user, transactionReceipt)) {
             return;

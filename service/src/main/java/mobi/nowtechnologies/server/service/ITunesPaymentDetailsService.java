@@ -25,27 +25,6 @@ public class ITunesPaymentDetailsService {
     private int retriesOnError;
 
     @Transactional
-    public void createNewOrUpdatePaymentDetails(User user, String appStoreReceipt, String productId) {
-        Preconditions.checkArgument(StringUtils.isNotEmpty(appStoreReceipt));
-        Preconditions.checkArgument(StringUtils.isNotEmpty(productId));
-
-        logger.info("Assign app store receipt [{}] to user [{}]", appStoreReceipt, user.getId());
-
-        if(!user.hasActiveITunesPaymentDetails() || !productId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
-            logger.info("Another product id [{}] or user does not have payment details", productId);
-            createNewPaymentDetails(user, appStoreReceipt, productId);
-        } else {
-            ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
-            if(!appStoreReceipt.equals(currentDetails.getAppStroreReceipt())) {
-                logger.info("Update payment details [{}] with new receipt", currentDetails.getI());
-                ITunesPaymentDetails updated = (ITunesPaymentDetails) paymentDetailsRepository.findOne(currentDetails.getI());
-                updated.updateAppStroreReceipt(appStoreReceipt);
-                paymentDetailsRepository.save(updated);
-            }
-        }
-    }
-
-    @Transactional
     public void createNewPaymentDetails(User user, String appStoreReceipt, String productId) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(appStoreReceipt));
         Preconditions.checkArgument(StringUtils.isNotEmpty(productId));

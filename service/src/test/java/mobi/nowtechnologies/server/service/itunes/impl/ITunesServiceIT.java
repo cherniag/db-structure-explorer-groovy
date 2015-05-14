@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.impl;
+package mobi.nowtechnologies.server.service.itunes.impl;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentReposi
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
