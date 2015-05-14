@@ -71,7 +71,7 @@ public class ITunesPaymentDetailsServiceTest {
         when(appStoreReceiptParser.getProductId(appStoreReceipt)).thenReturn(appStoreProductId);
         when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(appStoreProductId);
 
-        iTunesPaymentDetailsService.assignAppStoreReceipt(user, appStoreReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, appStoreReceipt);
 
         verify(appStoreReceiptParser).getProductId(appStoreReceipt);
         verify(currentPaymentDetails, never()).updateAppStroreReceipt(anyString());
@@ -96,7 +96,7 @@ public class ITunesPaymentDetailsServiceTest {
         when(currentPaymentDetails.getI()).thenReturn(currentPaymentDetailsId);
         when(paymentDetailsRepository.findOne(currentPaymentDetailsId)).thenReturn(updated);
 
-        iTunesPaymentDetailsService.assignAppStoreReceipt(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
 
         verify(appStoreReceiptParser).getProductId(newReceipt);
         verify(paymentDetailsRepository).findOne(currentPaymentDetailsId);
@@ -124,7 +124,7 @@ public class ITunesPaymentDetailsServiceTest {
         PaymentPolicy newPaymentPolicy = mock(PaymentPolicy.class);
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, newAppStoreProductId)).thenReturn(newPaymentPolicy);
 
-        iTunesPaymentDetailsService.assignAppStoreReceipt(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
 
         ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
         verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -159,7 +159,7 @@ public class ITunesPaymentDetailsServiceTest {
         PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, productId)).thenReturn(paymentPolicy);
 
-        iTunesPaymentDetailsService.assignAppStoreReceipt(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
 
         ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
         verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
@@ -194,7 +194,7 @@ public class ITunesPaymentDetailsServiceTest {
         PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(community, productId)).thenReturn(paymentPolicy);
 
-        iTunesPaymentDetailsService.assignAppStoreReceipt(user, newReceipt);
+        iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, newReceipt);
 
         ITunesPaymentDetails created = paymentDetailsCaptor.getValue();
         verify(paymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");

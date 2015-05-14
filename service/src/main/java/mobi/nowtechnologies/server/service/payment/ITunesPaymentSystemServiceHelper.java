@@ -161,7 +161,8 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         String actualProductId = result.getProductId();
 
         PaymentPolicy storedPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        if (!actualProductId.equals(storedPaymentPolicy.getAppStoreProductId())) {
+        boolean userResubscribedOnNewPaymentPolicy = !actualProductId.equals(storedPaymentPolicy.getAppStoreProductId());
+        if (userResubscribedOnNewPaymentPolicy) {
             logger.info("Stored payment policy product id {} doesn't match actual product id {}", storedPaymentPolicy.getAppStoreProductId(), actualProductId);
             iTunesPaymentDetailsService.createNewPaymentDetails(user, actualProductId, currentPaymentDetails.getAppStroreReceipt());
         }

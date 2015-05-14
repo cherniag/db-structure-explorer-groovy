@@ -240,7 +240,7 @@ public class AccCheckController extends CommonController {
         try {
             if (createITunesPaymentDetails) {
                 if (StringUtils.isNotEmpty(transactionReceipt)) {
-                    iTunesPaymentDetailsService.assignAppStoreReceipt(user, transactionReceipt);
+                    iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, transactionReceipt);
                     handleExpires(user, response);
                 } else {
                     // temp fix for migration
@@ -269,7 +269,7 @@ public class AccCheckController extends CommonController {
         boolean hasNotEmptyReceipt = StringUtils.isNotEmpty(user.getBase64EncodedAppStoreReceipt());
 
         if(hasNotEmptyReceipt && hasActiveITunesSubscription && !user.hasActiveITunesPaymentDetails()) {
-            iTunesPaymentDetailsService.assignAppStoreReceipt(user, user.getBase64EncodedAppStoreReceipt());
+            iTunesPaymentDetailsService.createNewOrUpdatePaymentDetails(user, user.getBase64EncodedAppStoreReceipt());
         }
     }
 }
