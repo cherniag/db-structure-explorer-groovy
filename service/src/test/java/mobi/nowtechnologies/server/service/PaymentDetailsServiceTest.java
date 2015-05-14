@@ -13,7 +13,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 
-import java.util.Collections;
 import java.util.Date;
 
 import org.junit.*;
@@ -133,7 +132,7 @@ public class PaymentDetailsServiceTest {
         defaultPaymentPolicy = new PaymentPolicy().withId(Integer.MAX_VALUE);
         expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
 
-        doReturn(Collections.singletonList(defaultPaymentPolicy)).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
+        doReturn(defaultPaymentPolicy).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
         doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user), eq(user.getUserGroup().getCommunity()));
 
         //when
@@ -150,9 +149,10 @@ public class PaymentDetailsServiceTest {
     @Test(expected = ServiceException.class)
     public void shouldDoNotCreateDefaultO2PsmsPaymentDetails() throws ServiceException {
         //given
+        defaultPaymentPolicy = null;
         expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
 
-        doReturn(Collections.emptyList()).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
+        doReturn(defaultPaymentPolicy).when(paymentPolicyServiceMock).findDefaultO2PsmsPaymentPolicy(user);
         doReturn(expectedO2PSMSPaymentDetails).when(paymentDetailsServiceSpy).createPaymentDetails(argThat(o2PsmsPaymentDetailsDtoMatcher), eq(user), eq(user.getUserGroup().getCommunity()));
 
         //when
