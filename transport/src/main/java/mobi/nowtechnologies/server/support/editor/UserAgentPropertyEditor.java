@@ -82,6 +82,6 @@ public class UserAgentPropertyEditor extends PropertyEditorSupport {
     }
 
     Community toCommunity(String name) {
-        return communityRepository.findByName(name);
+        return communityRepository.findByRewriteUrlParameter(name);
     }
 }

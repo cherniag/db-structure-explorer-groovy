@@ -69,7 +69,7 @@ public class StreamzineUpdateAsm {
     }
 
     private BaseContentItemDto convertToContentItemDto(Block block, String community, Resolution resolution, boolean includePlayer) {
-        Community c = communityRepository.findByName(community);
+        Community c = communityRepository.findByRewriteUrlParameter(community);
 
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         DeeplinkType deeplinkType = getDeeplinkType(block);

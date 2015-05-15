@@ -106,7 +106,7 @@ public class StreamzineUpdateAdminAsm {
 
     @Transactional
     public Update fromIncomingDto(UpdateIncomingDto dto, String community) {
-        Community c = communityRepository.findByName(community);
+        Community c = communityRepository.findByRewriteUrlParameter(community);
 
         Update u = new Update(new Date(dto.getTimestamp()), c);
 

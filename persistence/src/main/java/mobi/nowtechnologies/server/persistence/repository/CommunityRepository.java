@@ -9,12 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 
 // @author Titov Mykhaylo (titov)
 public interface CommunityRepository extends JpaRepository<Community, Integer> {
-
     @Query("select community from Community community where LOWER(community.rewriteUrlParameter)=LOWER(?1)")
     Community findByRewriteUrlParameter(String rewriteUrlParameter);
-
-    @Query("select community from Community community where LOWER(community.name)=LOWER(?1)")
-    Community findByName(String name);
 
     List<Community> findByLive(boolean live);
 }

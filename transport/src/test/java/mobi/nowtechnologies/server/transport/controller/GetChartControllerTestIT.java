@@ -407,13 +407,13 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     }
 
     private void prepareDefaultBadge(String communityUrl, FilenameAlias originalUploadedFile) {
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         BadgeMapping mapping = BadgeMapping.general(community, originalUploadedFile);
         badgeMappingRepository.saveAndFlush(mapping);
     }
 
     private FilenameAlias prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, int iconWidth, int iconHeight, FilenameAlias originalUploadedFile) {
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
         BadgeMapping mapping = BadgeMapping.specific(resolution, community, originalUploadedFile);

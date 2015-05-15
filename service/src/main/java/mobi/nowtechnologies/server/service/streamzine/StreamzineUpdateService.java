@@ -139,7 +139,7 @@ public class StreamzineUpdateService {
 
     @Transactional(readOnly = true)
     public Update getUpdate(Date date, User user, String community) {
-        Community c = communityRepository.findByName(community);
+        Community c = communityRepository.findByRewriteUrlParameter(community);
 
         Assert.notNull(date);
         Assert.notNull(user);

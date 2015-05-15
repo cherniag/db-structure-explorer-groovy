@@ -27,7 +27,7 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Community getCommunityByName(String communityName) {
         LOGGER.debug("input parameters communityName: [{}]", communityName);
-        Community community = communityRepository.findByName(communityName);
+        Community community = communityRepository.findByRewriteUrlParameter(communityName);
         LOGGER.debug("Output parameter community=[{}]", community);
         return community;
     }

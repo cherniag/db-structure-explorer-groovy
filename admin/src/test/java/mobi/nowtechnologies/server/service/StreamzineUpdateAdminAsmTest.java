@@ -61,7 +61,7 @@ public class StreamzineUpdateAdminAsmTest {
     @Before
     public void setUp() throws Exception {
         Community community = mock(Community.class);
-        when(communityRepository.findByName(COMMUNITY)).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter(COMMUNITY)).thenReturn(community);
         when(community.getRewriteUrlParameter()).thenReturn(COMMUNITY);
     }
 

@@ -141,6 +141,6 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT {
     }
 
     private Community findHlUkCommunity() {
-        return communityRepository.findByName("hl_uk");
+        return communityRepository.findByRewriteUrlParameter("hl_uk");
     }
 }

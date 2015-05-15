@@ -489,7 +489,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
                                  .withDeviceUID("b88106713409e92822461a876abcd74c")
                                  .withDeviceUID("d")
                                  .withMobile("+447111111118")
-                                 .withUserGroup(userGroupRepository.findByCommunity(communityRepository.findByName("o2")));
+                                 .withUserGroup(userGroupRepository.findByCommunity(communityRepository.findByRewriteUrlParameter("o2")));
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
         entity.setStatus(userStatus);
         entity.setDevice("");

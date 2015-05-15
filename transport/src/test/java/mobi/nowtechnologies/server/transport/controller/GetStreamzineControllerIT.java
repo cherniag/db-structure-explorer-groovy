@@ -106,7 +106,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
         FilenameAlias filenameAlias1 = prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
 
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
         Thread.sleep(2500L);
@@ -224,7 +224,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         FilenameAlias filenameAlias1 = prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
         FilenameAlias filenameAlias2 = prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
 
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
         Thread.sleep(2500L);
@@ -308,7 +308,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         FilenameAlias filenameAlias1 = prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
         FilenameAlias filenameAlias2 = prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
 
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
         Thread.sleep(2500L);
@@ -386,7 +386,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
 
         prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
         prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
@@ -437,7 +437,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
-        Community community = communityRepository.findByName(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
 
         prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
         prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
@@ -485,13 +485,13 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
 
     private void prepareDefaultBadge(String communityUrl, FilenameAlias originalUploadedFile) {
-        Community commmunity = communityRepository.findByName(communityUrl);
+        Community commmunity = communityRepository.findByRewriteUrlParameter(communityUrl);
         BadgeMapping mapping = BadgeMapping.general(commmunity, originalUploadedFile);
         badgeMappingRepository.saveAndFlush(mapping);
     }
 
     private FilenameAlias prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, FilenameAlias originalUploadedFile) {
-        Community commmunity = communityRepository.findByName(communityUrl);
+        Community commmunity = communityRepository.findByRewriteUrlParameter(communityUrl);
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
         BadgeMapping mapping = BadgeMapping.specific(resolution, commmunity, originalUploadedFile);

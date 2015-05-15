@@ -159,7 +159,7 @@ public class StreamzineController {
     @RequestMapping(value = INDEX_PAGE, method = RequestMethod.GET)
     public ModelAndView index(@RequestParam(required = false, value = "selectedPublishDate", defaultValue = "") @DateTimeFormat(pattern = URL_DATE_FORMAT) Date selectedPublishDate,
                               @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl) {
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
 
         Assert.notNull(community);
 
@@ -177,7 +177,7 @@ public class StreamzineController {
     @RequestMapping(value = "/streamzine/add/{publishDate}", method = RequestMethod.GET)
     public ModelAndView addUpdate(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl,
                                   @PathVariable(value = "publishDate") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date publishDate, RedirectAttributes redirectAttributes) {
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
 
         if (publishDate.before(new Date()) || streamzineUpdateService.get(publishDate, community) != null) {
             redirectAttributes.addFlashAttribute("notValidDate", publishDate);
@@ -196,7 +196,7 @@ public class StreamzineController {
             throw new ResourceNotFoundException("Not found streamzine update by id: " + id);
         }
 
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
         Assert.notNull(community, "Community not found for: " + communityRewriteUrl);
 
         ModelAndView modelAndView = putCommon(new ModelAndView("streamzine/streamzine"), update.getDate(), community);

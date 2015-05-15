@@ -91,7 +91,7 @@ public class UserAgentPropertyEditorTest {
         final String userAgentHeaderValue = "musicqubed/3.1.1 (Android; MTV)";
 
         // when
-        when(communityRepository.findByName("MTV")).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter("MTV")).thenReturn(community);
         editor.setAsText(userAgentHeaderValue);
 
         // then
@@ -104,7 +104,7 @@ public class UserAgentPropertyEditorTest {
         assertEquals(DeviceType.ANDROID, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
-        verify(communityRepository).findByName("MTV");
+        verify(communityRepository).findByRewriteUrlParameter("MTV");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class UserAgentPropertyEditorTest {
         final String userAgentHeaderValue = "musicqubed/3.1 (IOS; MTV)";
 
         // when
-        when(communityRepository.findByName("MTV")).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter("MTV")).thenReturn(community);
         editor.setAsText(userAgentHeaderValue);
 
         // then
@@ -128,7 +128,7 @@ public class UserAgentPropertyEditorTest {
         assertEquals(DeviceType.IOS, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
-        verify(communityRepository).findByName("MTV");
+        verify(communityRepository).findByRewriteUrlParameter("MTV");
     }
 
     @Test
@@ -139,7 +139,7 @@ public class UserAgentPropertyEditorTest {
         final String userAgentHeaderValue = "musicqubed/3.1-SNAPSHOT (IOS; MTV)";
 
         // when
-        when(communityRepository.findByName("MTV")).thenReturn(community);
+        when(communityRepository.findByRewriteUrlParameter("MTV")).thenReturn(community);
         editor.setAsText(userAgentHeaderValue);
 
         // then
@@ -152,6 +152,6 @@ public class UserAgentPropertyEditorTest {
         assertEquals(DeviceType.IOS, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
-        verify(communityRepository).findByName("MTV");
+        verify(communityRepository).findByRewriteUrlParameter("MTV");
     }
 }

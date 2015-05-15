@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.service.impl.details.NullProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.impl.details.ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.impl.details.VfNzProviderDetailsExtractor;
@@ -42,19 +41,14 @@ public class OtacValidationServiceImplIT {
     @Resource
     private VfNzProviderDetailsExtractor vfnzProviderDetailsExtractor;
 
-
-    @Resource
-    private NullProviderDetailsExtractor alwaysNullDetailsExtractor;
-
-
     private void resolveExtractorForCommunity(Community community, ProviderDetailsExtractor detailsExtractor) {
         assertTrue(detailsExtractor == otacValidationService.resolveDetailsExtractorForCommunity(community));
     }
 
     @Test
     public void checkResolvingForCommunity() {
-        resolveExtractorForCommunity(communityRepository.findByName("o2"), o2ProviderDetailsExtractor);
-        resolveExtractorForCommunity(communityRepository.findByName("vf_nz"), vfnzProviderDetailsExtractor);
+        resolveExtractorForCommunity(communityRepository.findByRewriteUrlParameter("o2"), o2ProviderDetailsExtractor);
+        resolveExtractorForCommunity(communityRepository.findByRewriteUrlParameter("vf_nz"), vfnzProviderDetailsExtractor);
         resolveExtractorForCommunity(new Community().withName("ANYTHING"), null);
     }
 

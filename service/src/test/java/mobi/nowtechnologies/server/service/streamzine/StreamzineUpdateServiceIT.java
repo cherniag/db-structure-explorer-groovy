@@ -200,6 +200,6 @@ public class StreamzineUpdateServiceIT {
     }
 
     private Community findCommunity(String name) {
-        return communityRepository.findByName(name);
+        return communityRepository.findByRewriteUrlParameter(name);
     }
 }

@@ -32,7 +32,7 @@ public class MessageRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void findMaxPosition() {
-        Community community = communityRepository.findByName("Now Music");
+        Community community = communityRepository.findByRewriteUrlParameter("nowtop40");
         Integer position = messageRepository.findMaxPosition(community, MessageType.NEWS, 1315686788000L);
         assertNotNull(position);
     }

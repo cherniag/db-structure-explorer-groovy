@@ -367,7 +367,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT {
     }
 
     public PaymentPolicy paymentPolicyWithDefaultNotNullFieldsAndO2Community() {
-        Community o2Community = communityRepository.findByName("o2");
+        Community o2Community = communityRepository.findByRewriteUrlParameter("o2");
         return paymentPolicyWithDefaultNotNullFields().withCommunity(o2Community);
     }
 }

@@ -92,7 +92,7 @@ class ITunesPaymentFeature {
             deviceSet.loginUsingFacebook(it)
         }
 
-        community = communityRepository.findByName(communityUrl)
+        community = communityRepository.findByRewriteUrlParameter(communityUrl)
     }
 
     @And('^User is on LIMITED state$')
@@ -188,7 +188,7 @@ class ITunesPaymentFeature {
             deviceSet.loginUsingFacebook(it)
         }
 
-        community = communityRepository.findByName(communityUrl)
+        community = communityRepository.findByRewriteUrlParameter(communityUrl)
     }
 
     //

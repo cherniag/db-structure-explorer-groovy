@@ -113,7 +113,7 @@ public class BadgeController {
     public ModelAndView removeBadge(@PathVariable("id") long id, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) {
         logger().info("removing badge community: {} by id: {}", communityRewriteUrl, id);
 
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
 
         badgesService.hideBadge(community, id);
 
@@ -136,7 +136,7 @@ public class BadgeController {
     public ModelAndView badgesList(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) {
         logger().info("get badges list for community: {}", communityRewriteUrl);
 
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
 
         ModelAndView modelAndView = new ModelAndView("badges/badges");
         modelAndView.addObject("allResolutions", badgesDtoAsm.toResolutionDtos(resolutionRepository.findAllSorted()));
@@ -151,7 +151,7 @@ public class BadgeController {
     @ResponseBody
     public void resolution(@RequestBody @Valid ResolutionDto dto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
         throws MethodArgumentNotValidException {
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
 
         logger().info("Creating resolution for: {}", community);
 
@@ -165,7 +165,7 @@ public class BadgeController {
                                       @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
         logger().info("Assign resolution: {} and community {}", dto, communityRewriteUrl);
 
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
         Resolution resolution = resolutionRepository.findOne(dto.getResolutionId());
         FilenameAlias original = filenameAliasRepository.findOne(dto.getAliasId());
 
@@ -177,7 +177,7 @@ public class BadgeController {
 
     @RequestMapping(value = "/badges/image/preview", method = RequestMethod.POST)
     public ModelAndView uploadImage(MultipartFile file, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
 
         Assert.notNull(community);
 
@@ -198,7 +198,7 @@ public class BadgeController {
         throws IOException {
         logger().info("Adding placeholder, info: {} for community: {}", badgeInfoDto, communityRewriteUrl);
 
-        Community community = communityRepository.findByName(communityRewriteUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityRewriteUrl);
         Dimensions dim = new Dimensions(badgeInfoDto.getWidth(), badgeInfoDto.getHeight());
         badgesService.uploadBadge(community, badgeInfoDto.getTitle(), badgeInfoDto.getFile(), dim);
     }
