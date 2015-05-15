@@ -35,25 +35,18 @@ public class PhoneNumberController extends CommonController {
                                                  @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
 
         String community = getCurrentCommunityUri();
+
         LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 
-        Exception ex = null;
-        User user = null;
-        try {
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 
-            user = phoneNumberCommandService.activateAndPopulate(user, phone);
+        user = phoneNumberCommandService.activateAndPopulate(user, phone);
 
-            String redeemServerO2Url = o2ClientService.getRedeemServerO2Url(user.getMobile());
+        String redeemServerO2Url = o2ClientService.getRedeemServerO2Url(user.getMobile());
 
-            return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(null, community, null, phone, user, ex);
-            LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
-        }
+        LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
+
+        return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3\\.[6-9]}/PHONE_NUMBER"})
@@ -64,47 +57,33 @@ public class PhoneNumberController extends CommonController {
                                                  @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
 
         String community = getCurrentCommunityUri();
+
         LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 
-        Exception ex = null;
-        User user = null;
-        try {
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 
-            user = phoneNumberCommandService.activate(user, phone);
+        user = phoneNumberCommandService.activate(user, phone);
 
-            String redeemServerO2Url = o2ClientService.getRedeemServerO2Url(user.getMobile());
+        String redeemServerO2Url = o2ClientService.getRedeemServerO2Url(user.getMobile());
 
-            return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(null, community, null, phone, user, ex);
-            LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
-        }
+        LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
+
+        return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:^(?!o2$).*}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/PHONE_NUMBER"})
     public ModelAndView activatePhoneNumber(@RequestParam(value = "PHONE", required = false) String phone, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
                                             @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName);
-
-        Exception ex = null;
-        User user = null;
         String community = getCurrentCommunityUri();
-        try {
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 
-            user = phoneNumberCommandService.activateAndPopulate(user, phone);
+        LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 
-            return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null));
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(null, community, null, phone, user, ex);
-            LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
-        }
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
+
+        user = phoneNumberCommandService.activateAndPopulate(user, phone);
+
+        LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
+
+        return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null));
     }
 }
