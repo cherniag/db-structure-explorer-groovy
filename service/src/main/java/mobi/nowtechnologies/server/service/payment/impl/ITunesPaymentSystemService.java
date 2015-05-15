@@ -32,12 +32,11 @@ public class ITunesPaymentSystemService extends AbstractPaymentSystemService {
     public void startPayment(PendingPayment pendingPayment) throws Exception {
         logger.info("Start processing PendingPayment [{}]", pendingPayment);
         final ITunesPaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-        final String actualReceipt = paymentDetails.getAppStroreReceipt();
 
         final User owner = paymentDetails.getOwner();
 
         try {
-            ITunesResult result = iTunesClient.verifyReceipt(getConnectionConfig(owner.getCommunityRewriteUrl()), actualReceipt);
+            ITunesResult result = iTunesClient.verifyReceipt(getConnectionConfig(owner.getCommunityRewriteUrl()), paymentDetails.getAppStoreReceipt());
             if(result.isSuccessful()) {
                 helper.confirmPayment(pendingPayment, result);
             } else {
@@ -57,7 +56,7 @@ public class ITunesPaymentSystemService extends AbstractPaymentSystemService {
 
     @Override
     public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
-        logger.info("Start commiting PendingPayment [{}], with response {}", pendingPayment, getShortInfo(response));
+        logger.info("Start committing PendingPayment [{}], with response {}", pendingPayment, getShortInfo(response));
         helper.failAttempt(pendingPayment, response.getDescriptionError());
         return null;
     }

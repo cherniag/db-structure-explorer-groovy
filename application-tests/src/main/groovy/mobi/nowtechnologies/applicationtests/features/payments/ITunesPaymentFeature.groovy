@@ -233,7 +233,7 @@ class ITunesPaymentFeature {
             Assert.assertEquals(iTunesPaymentPolicy.appStoreProductId, actualCurrentPaymentDetails.paymentPolicy.appStoreProductId)
             Assert.assertEquals(iTunesPaymentPolicy.period.duration, actualCurrentPaymentDetails.paymentPolicy.period.duration)
             Assert.assertEquals(iTunesPaymentPolicy.period.durationUnit, actualCurrentPaymentDetails.paymentPolicy.period.durationUnit)
-            Assert.assertEquals(iTunesPaymentPolicy.subcost, actualCurrentPaymentDetails.paymentPolicy.subcost)
+            Assert.assertTrue(iTunesPaymentPolicy.subcost.equals(actualCurrentPaymentDetails.paymentPolicy.subcost))
             Assert.assertEquals(iTunesPaymentPolicy.paymentType, actualCurrentPaymentDetails.paymentPolicy.paymentType)
         }
     }
@@ -316,7 +316,7 @@ class ITunesPaymentFeature {
             User updatedUser = findUserInDatabase(it, deviceSet.getPhoneState(it))
             ITunesPaymentDetails details = updatedUser.getCurrentPaymentDetails()
 
-            Assert.assertEquals(newAppStoreReceipt, details.appStroreReceipt)
+            Assert.assertEquals(newAppStoreReceipt, details.appStoreReceipt)
         }
     }
 
@@ -344,7 +344,7 @@ class ITunesPaymentFeature {
 
             ITunesPaymentDetails actualITunesPaymentDetails = updatedUser.getCurrentPaymentDetails()
             Assert.assertNotEquals(originalUser.getCurrentPaymentDetails().i, actualITunesPaymentDetails.i)
-            Assert.assertEquals(newAppStoreReceipt, actualITunesPaymentDetails.appStroreReceipt)
+            Assert.assertEquals(newAppStoreReceipt, actualITunesPaymentDetails.appStoreReceipt)
             Assert.assertEquals(newITunesPaymentPolicy.appStoreProductId, actualITunesPaymentDetails.paymentPolicy.appStoreProductId)
         }
     }

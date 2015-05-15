@@ -1,1 +1,1 @@
-ALTER TABLE tb_paymentDetails ADD COLUMN app_strore_receipt LONGTEXT DEFAULT NULL;
+ALTER TABLE tb_paymentDetails ADD COLUMN app_store_receipt LONGTEXT DEFAULT NULL;

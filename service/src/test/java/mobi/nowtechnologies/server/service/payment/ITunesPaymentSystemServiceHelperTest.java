@@ -92,7 +92,7 @@ public class ITunesPaymentSystemServiceHelperTest {
         when(user.getCurrentPaymentDetails()).thenReturn(paymentDetails);
         when(user.getCommunity()).thenReturn(community);
         when(paymentDetails.getPaymentPolicy()).thenReturn(paymentPolicy);
-        when(paymentDetails.getAppStroreReceipt()).thenReturn(actualReceipt);
+        when(paymentDetails.getAppStoreReceipt()).thenReturn(actualReceipt);
         when(iTunesResult.getExpireTime()).thenReturn(expire.getTime());
         when(iTunesResult.getProductId()).thenReturn(actualProductId);
         when(iTunesResult.getOriginalTransactionId()).thenReturn(originalTransactionId);

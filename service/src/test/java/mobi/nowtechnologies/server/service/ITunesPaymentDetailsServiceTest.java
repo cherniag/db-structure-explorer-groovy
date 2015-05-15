@@ -62,7 +62,7 @@ public class ITunesPaymentDetailsServiceTest {
         final String appStoreProductId = "PRODUCT ID";
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(true);
-        when(currentPaymentDetails.getAppStroreReceipt()).thenReturn(appStoreReceipt);
+        when(currentPaymentDetails.getAppStoreReceipt()).thenReturn(appStoreReceipt);
         when(appStoreReceiptParser.getProductId(appStoreReceipt)).thenReturn(appStoreProductId);
         when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(appStoreProductId);
 
@@ -84,7 +84,7 @@ public class ITunesPaymentDetailsServiceTest {
         final long currentPaymentDetailsId = 100L;
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(true);
-        when(currentPaymentDetails.getAppStroreReceipt()).thenReturn(storedReceipt);
+        when(currentPaymentDetails.getAppStoreReceipt()).thenReturn(storedReceipt);
         when(appStoreReceiptParser.getProductId(newReceipt)).thenReturn(appStoreProductId);
         when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(appStoreProductId);
         ITunesPaymentDetails updated = mock(ITunesPaymentDetails.class);
@@ -112,7 +112,7 @@ public class ITunesPaymentDetailsServiceTest {
 
         when(user.hasActiveITunesPaymentDetails()).thenReturn(true);
         when(user.isOnFreeTrial()).thenReturn(false);
-        when(currentPaymentDetails.getAppStroreReceipt()).thenReturn(storedReceipt);
+        when(currentPaymentDetails.getAppStoreReceipt()).thenReturn(storedReceipt);
         when(appStoreReceiptParser.getProductId(newReceipt)).thenReturn(newAppStoreProductId);
         when(currentPaymentPolicy.getAppStoreProductId()).thenReturn(storedAppStoreProductId);
         doReturn(null).when(paymentDetailsRepository).save(paymentDetailsCaptor.capture());
@@ -129,7 +129,7 @@ public class ITunesPaymentDetailsServiceTest {
         verify(paymentPolicyService).findByCommunityAndAppStoreProductId(community, newAppStoreProductId);
         verify(appStoreReceiptParser).getProductId(newReceipt);
 
-        assertEquals(newReceipt, created.getAppStroreReceipt());
+        assertEquals(newReceipt, created.getAppStoreReceipt());
         assertEquals(user, created.getOwner());
         assertEquals(retriesOnError, created.getRetriesOnError());
         assertEquals(newPaymentPolicy, created.getPaymentPolicy());
@@ -164,7 +164,7 @@ public class ITunesPaymentDetailsServiceTest {
         verify(paymentPolicyService).findByCommunityAndAppStoreProductId(community, productId);
         verify(appStoreReceiptParser).getProductId(newReceipt);
 
-        assertEquals(newReceipt, created.getAppStroreReceipt());
+        assertEquals(newReceipt, created.getAppStoreReceipt());
         assertEquals(user, created.getOwner());
         assertEquals(retriesOnError, created.getRetriesOnError());
         assertEquals(paymentPolicy, created.getPaymentPolicy());

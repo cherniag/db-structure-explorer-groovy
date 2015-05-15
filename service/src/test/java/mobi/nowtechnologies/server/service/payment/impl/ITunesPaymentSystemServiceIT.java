@@ -52,7 +52,7 @@ public class ITunesPaymentSystemServiceIT {
     private static final int APP_STORE_OK_RESPONSE_CODE = 0;
     private static final int APP_STORE_NOT_VALID_RESPONSE_CODE = 210006;
     private String communityRewriteUrl = "mtv1";
-    private String productId = "com.musicqubed.ios.mp.subscription.weekly.1";
+    private String productId = "com.musicqubed.ios.mp.subscription.weekly.2";
     @Resource
     private ITunesPaymentSystemService iTunesPaymentSystemService;
     @Resource
@@ -101,7 +101,7 @@ public class ITunesPaymentSystemServiceIT {
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, foundPaymentDetails.getLastPaymentStatus());
         assertTrue(foundPaymentDetails.getDisableTimestampMillis() == 0);
         assertEquals(paymentPolicy.getId(), foundPaymentDetails.getPaymentPolicy().getId());
-        assertEquals(appStoreTransactionReceipt, foundPaymentDetails.getAppStroreReceipt());
+        assertEquals(appStoreTransactionReceipt, foundPaymentDetails.getAppStoreReceipt());
 
         List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.values()));
         assertEquals(1, submittedPayments.size());
@@ -206,8 +206,8 @@ public class ITunesPaymentSystemServiceIT {
         paymentPolicy.setTariff(Tariff._3G);
         paymentPolicy.setAppStoreProductId(appStoreProductId);
         paymentPolicy.setCommunity(communityRepository.findByRewriteUrlParameter(this.communityRewriteUrl));
-        paymentPolicy.setStartDateTime(DateUtils.addDays(new Date(), -10));
-        paymentPolicy.setEndDateTime(DateUtils.addDays(new Date(), 10));
+        paymentPolicy.setStartDateTime(DateUtils.addDays(new Date(), -11));
+        paymentPolicy.setEndDateTime(DateUtils.addDays(new Date(), 11));
         return paymentPolicyRepository.saveAndFlush(paymentPolicy);
     }
 }

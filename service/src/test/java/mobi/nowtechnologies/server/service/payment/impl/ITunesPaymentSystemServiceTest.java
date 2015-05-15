@@ -57,7 +57,7 @@ public class ITunesPaymentSystemServiceTest {
         when(pendingPayment.getPaymentDetails()).thenReturn(paymentDetails);
         when(paymentDetails.getOwner()).thenReturn(user);
         when(user.getCommunityRewriteUrl()).thenReturn(communityRewriteUrl);
-        when(paymentDetails.getAppStroreReceipt()).thenReturn(actualReceipt);
+        when(paymentDetails.getAppStoreReceipt()).thenReturn(actualReceipt);
         when(messageSource.getMessage(communityRewriteUrl, APPLE_IN_APP_I_TUNES_URL, null, null)).thenReturn(url);
         when(messageSource.getDecryptedMessage(communityRewriteUrl, APPLE_IN_APP_PASSWORD, null, null)).thenReturn(password);
     }

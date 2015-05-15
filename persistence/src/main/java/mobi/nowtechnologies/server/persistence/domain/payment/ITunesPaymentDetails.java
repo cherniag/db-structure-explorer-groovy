@@ -22,16 +22,16 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class ITunesPaymentDetails extends PaymentDetails {
 
     @Lob
-    @Column(name = "app_strore_receipt")
-    private String appStroreReceipt;
+    @Column(name = "app_store_receipt")
+    private String appStoreReceipt;
 
     public ITunesPaymentDetails() {
     }
 
-    public ITunesPaymentDetails(User user, PaymentPolicy paymentPolicy, String appStroreReceipt, int retriesOnError) {
+    public ITunesPaymentDetails(User user, PaymentPolicy paymentPolicy, String appStoreReceipt, int retriesOnError) {
         setOwner(user);
         setPaymentPolicy(paymentPolicy);
-        updateAppStroreReceipt(appStroreReceipt);
+        updateAppStroreReceipt(appStoreReceipt);
         setRetriesOnError(retriesOnError);
 
         setActivated(true);
@@ -46,20 +46,20 @@ public class ITunesPaymentDetails extends PaymentDetails {
         return PaymentDetails.ITUNES_SUBSCRIPTION;
     }
 
-    public String getAppStroreReceipt() {
-        return appStroreReceipt;
+    public String getAppStoreReceipt() {
+        return appStoreReceipt;
     }
 
     public void updateAppStroreReceipt(String appStroreReceipt) {
         Preconditions.checkArgument(appStroreReceipt != null && !appStroreReceipt.isEmpty());
-        this.appStroreReceipt = appStroreReceipt;
+        this.appStoreReceipt = appStroreReceipt;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .appendSuper(super.toString())
-            .append("appStroreReceipt", appStroreReceipt)
+            .append("appStoreReceipt", appStoreReceipt)
             .toString();
     }
 }

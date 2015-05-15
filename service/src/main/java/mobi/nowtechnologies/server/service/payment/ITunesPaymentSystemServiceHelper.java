@@ -56,7 +56,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
 
         logger.info("Create submitted payment for user {} and transaction {} and publish payment event", user.getId(), pendingPayment.getInternalTxId());
         PaymentPolicy actualPaymentPolicy = updatedPaymentDetails.getPaymentPolicy();
-        String actualReceipt = updatedPaymentDetails.getAppStroreReceipt();
+        String actualReceipt = updatedPaymentDetails.getAppStoreReceipt();
         SubmittedPayment submittedPayment = createSuccessfulSubmittedPayment(user, result, actualPaymentPolicy, actualReceipt);
         submittedPaymentService.save(submittedPayment);
 
@@ -89,7 +89,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
 
         logger.info("Create error submitted payment for user {} transaction {}", user.getId(), pendingPayment.getInternalTxId());
         PaymentPolicy storedPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
-        SubmittedPayment submittedPayment = createFailedSubmittedPayment(user, storedPaymentPolicy, currentPaymentDetails.getAppStroreReceipt());
+        SubmittedPayment submittedPayment = createFailedSubmittedPayment(user, storedPaymentPolicy, currentPaymentDetails.getAppStoreReceipt());
         submittedPaymentService.save(submittedPayment);
 
         if (currentPaymentDetails.shouldBeUnSubscribed()) {
@@ -162,7 +162,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         PaymentPolicy storedPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
         if (!actualProductId.equals(storedPaymentPolicy.getAppStoreProductId())) {
             logger.info("Stored payment policy product id {} doesn't match actual product id {}", storedPaymentPolicy.getAppStoreProductId(), actualProductId);
-            iTunesPaymentDetailsService.createNewPaymentDetails(user, actualProductId, currentPaymentDetails.getAppStroreReceipt());
+            iTunesPaymentDetailsService.createNewPaymentDetails(user, actualProductId, currentPaymentDetails.getAppStoreReceipt());
         }
     }
 

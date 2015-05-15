@@ -37,41 +37,45 @@ public class ITunesPaymentDetailsManager {
     @Resource
     ITunesService iTunesService;
 
-    public void processITunesSubscription(User user, String transactionReceipt, boolean createITunesPaymentDetails, NextRetryInfo response) {
+    public void processITunesSubscription(User user, String appStoreReceipt, boolean createITunesPaymentDetails, NextRetryInfo response) {
         try {
             if (createITunesPaymentDetails) {
-                if (StringUtils.isNotEmpty(transactionReceipt)) {
-                    String productId = appStoreReceiptParser.getProductId(transactionReceipt);
+                if (StringUtils.isNotEmpty(appStoreReceipt)) {
+                    String productId = appStoreReceiptParser.getProductId(appStoreReceipt);
 
-                    logger.info("Assign app store receipt [{}] to user [{}]", transactionReceipt, user.getId());
+                    logger.info("Assign app store receipt [{}] to user [{}]", appStoreReceipt, user.getId());
 
                     if(!user.hasActiveITunesPaymentDetails() || !productId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
                         logger.info("Another product id [{}] or user does not have payment details", productId);
-                        iTunesPaymentDetailsService.createNewPaymentDetails(user, transactionReceipt, productId);
-                        Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
-                        if (nextRetryTimeForITunesPayment != null) {
-                            response.setNextRetry(nextRetryTimeForITunesPayment);
+                        iTunesPaymentDetailsService.createNewPaymentDetails(user, appStoreReceipt, productId);
+
+                        if(user.isLimited()) {
+                            Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
+                            if (nextRetryTimeForITunesPayment != null) {
+                                response.setNextRetry(nextRetryTimeForITunesPayment);
+                            }
                         }
                     } else {
                         ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
-                        boolean justNeedToUpdateTheReceipt = !transactionReceipt.equals(currentDetails.getAppStroreReceipt());
+                        boolean justNeedToUpdateTheReceipt = !appStoreReceipt.equals(currentDetails.getAppStoreReceipt());
                         if(justNeedToUpdateTheReceipt) {
                             logger.info("Update payment details [{}] with new receipt", currentDetails.getI());
-                            currentDetails.updateAppStroreReceipt(transactionReceipt);
+                            currentDetails.updateAppStroreReceipt(appStoreReceipt);
                             paymentDetailsRepository.save(currentDetails);
                         }
                     }
                 } else {
                     // temp fix for migration
-                    final String appStoreReceipt = user.getBase64EncodedAppStoreReceipt();
-                    if(StringUtils.isNotEmpty(appStoreReceipt) && user.hasITunesSubscription() && !user.hasActiveITunesPaymentDetails()) {
+                    final String existingAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
+                    if(StringUtils.isNotEmpty(existingAppStoreReceipt) && user.hasITunesSubscription() && !user.hasActiveITunesPaymentDetails()) {
                         String productId = appStoreReceiptParser.getProductId(user.getBase64EncodedAppStoreReceipt());
                         logger.info("Another product id [{}] or user does not have payment details", productId);
-                        iTunesPaymentDetailsService.createNewPaymentDetails(user, appStoreReceipt, productId);
+                        iTunesPaymentDetailsService.createNewPaymentDetails(user, existingAppStoreReceipt, productId);
                     }
                 }
             } else {
-                iTunesService.processInAppSubscription(user, transactionReceipt);
+                // legacy
+                iTunesService.processInAppSubscription(user, appStoreReceipt);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

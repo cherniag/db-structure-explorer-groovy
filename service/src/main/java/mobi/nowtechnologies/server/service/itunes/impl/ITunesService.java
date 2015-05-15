@@ -14,7 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class ITunesService {
+class ITunesService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
