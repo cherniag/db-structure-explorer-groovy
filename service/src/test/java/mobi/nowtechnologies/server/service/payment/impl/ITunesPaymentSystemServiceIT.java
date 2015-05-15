@@ -32,16 +32,17 @@ import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.DateUtils;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 /**
  * Author: Gennadii Cherniaiev Date: 4/17/2015
  */
@@ -205,6 +206,8 @@ public class ITunesPaymentSystemServiceIT {
         paymentPolicy.setTariff(Tariff._3G);
         paymentPolicy.setAppStoreProductId(appStoreProductId);
         paymentPolicy.setCommunity(communityRepository.findByRewriteUrlParameter(this.communityRewriteUrl));
+        paymentPolicy.setStartDateTime(DateUtils.addDays(new Date(), -10));
+        paymentPolicy.setEndDateTime(DateUtils.addDays(new Date(), 10));
         return paymentPolicyRepository.saveAndFlush(paymentPolicy);
     }
 }

@@ -7,8 +7,9 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
  * Author: Gennadii Cherniaiev Date: 1/6/2015
  */
 public class ITunesResult {
+    private static final int OK = 0;
 
-    int result;
+    int result = OK;
     String productId;
     String originalTransactionId;
     Long expireTime;
@@ -18,7 +19,7 @@ public class ITunesResult {
     }
 
     public boolean isSuccessful() {
-        return result == 0;
+        return result == OK;
     }
 
     public String getProductId() {
