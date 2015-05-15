@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
@@ -37,22 +36,9 @@ public class AutoOptInController extends CommonController {
     }
 
     private ModelAndView autoOptInCheckImpl(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) throws Exception {
-        User user = null;
-        Exception ex = null;
-        try {
-            LOGGER.info("command processing started");
+        MergeResult mergeResult = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
+        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false, false).withHasPotentialPromoCodePromotion(true);
 
-            MergeResult mergeResult = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
-            user = mergeResult.getResultOfOperation();
-            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false, false).withHasPotentialPromoCodePromotion(true);
-
-            return buildModelAndView(accountCheckDTO);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, getCurrentCommunityUri(), null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return buildModelAndView(accountCheckDTO);
     }
 }

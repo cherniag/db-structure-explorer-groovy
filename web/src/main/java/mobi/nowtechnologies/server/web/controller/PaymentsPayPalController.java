@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Locale;
 
-import com.google.common.base.Preconditions;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -42,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import static org.springframework.util.Assert.notNull;
 
 @Controller
 public class PaymentsPayPalController extends CommonController {
@@ -110,9 +109,9 @@ public class PaymentsPayPalController extends CommonController {
         if (user.isSubscribedUserByPaymentType(PAYPAL_TYPE)) {
             return REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
         }
-        List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPolicy(user.getCommunity(), user.getProvider(), PAY_PAL);
-        Preconditions.checkArgument(paymentPolicies.size()<2);
-        return "redirect:/payments_inapp/paypal.html?" + REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicies.get(0).getId();
+        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getCommunity(), user.getProvider(), PAY_PAL);
+        notNull(paymentPolicy);
+        return "redirect:/payments_inapp/paypal.html?" + REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId();
     }
 
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)

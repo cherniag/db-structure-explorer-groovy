@@ -41,30 +41,17 @@ public class FileController extends CommonController {
     public View getFile(@RequestParam("ID") final String mediaId, @RequestParam("TYPE") String fileTypeName, @RequestParam("USER_NAME") final String userName,
                         @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp, @RequestParam(value = "DEVICE_UID", required = false) String deviceUID,
                         @RequestParam(value = "RESOLUTION", required = false) String resolution, final HttpServletRequest request) throws Exception {
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        try {
-            LOGGER.info("command processing started");
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
-
-            FileType fileType = FileType.valueOf(fileTypeName);
-            if (fileType == FileType.VIDEO) {
-                final String videoURL = fileService.getVideoURL(user, mediaId);
+        FileType fileType = FileType.valueOf(fileTypeName);
+        if (fileType == FileType.VIDEO) {
+            final String videoURL = fileService.getVideoURL(user, mediaId);
                 final String textValue = StringUtils.isEmpty(videoURL) ?
                                          "" :
                                          videoURL;
-                return new PlainTextView(textValue);
-            } else {
-                return processGetFile(user, mediaId, fileType, resolution, request);
-            }
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
+            return new PlainTextView(textValue);
+        } else {
+            return processGetFile(user, mediaId, fileType, resolution, request);
         }
     }
 

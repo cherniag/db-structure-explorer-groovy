@@ -49,7 +49,7 @@ import static org.springframework.http.HttpStatus.OK;
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
-public abstract class CommonController extends ProfileController {
+public abstract class CommonController {
 
     public static final String MODEL_NAME = "response";
     public static final int VERSION_4 = 4;

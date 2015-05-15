@@ -45,8 +45,6 @@ public class ApplyInitPromoController extends CommonController {
     }
 
     private ModelAndView applyInitPromoImpl(String userName, String userToken, String timestamp, String token, String deviceUID, boolean checkReactivation) {
-        Exception ex = null;
-        User user = null;
         String community = getCurrentCommunityUri();
         String apiVersion = getCurrentApiVersion();
         try {
@@ -54,7 +52,7 @@ public class ApplyInitPromoController extends CommonController {
 
             boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER);
+            User user = checkUser(userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER);
 
             MergeResult mergeResult = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false, checkReactivation);
 
@@ -66,16 +64,11 @@ public class ApplyInitPromoController extends CommonController {
 
             return buildModelAndView(accountCheckDTO);
         } catch (UserCredentialsException ce) {
-            ex = ce;
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);
             throw ce;
         } catch (RuntimeException re) {
-            ex = re;
             LOGGER.error("APPLY_INIT_PROMO error [{}] for user[{}] in community[{}] otac_token[{}]", re.getMessage(), userName, community, token);
             throw re;
-        } finally {
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
         }
     }
 

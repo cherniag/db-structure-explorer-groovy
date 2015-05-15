@@ -47,7 +47,7 @@
             </c:forEach>
             <div class="subscribe_option_holder subscribe_option_holder_device">
                 <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
-                    <span><s:message code='button.back.to.the.app.title' /></span>
+                    <span><s:message code='button.cancel.title' /></span>
                 </a>
             </div>
         </div>

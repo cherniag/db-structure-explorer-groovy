@@ -163,55 +163,42 @@ public class AccCheckController extends CommonController {
                                       boolean checkReactivation,
                                       boolean withUuid,
                                       boolean withOneTimePayment) throws Exception {
-        LOGGER.info("command processing started");
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        try {
-
-            if (iphoneToken != null) {
-                pushNotificationToken = iphoneToken;
-            }
-
-            LOGGER.info("input parameters userName [{}],  deviceType [{}], pushToken [{}], transactionReceipt [{}], idfa [{}]", userName, deviceType, pushNotificationToken, transactionReceipt, idfa);
-            user = checkUser(userName, userToken, timestamp, deviceUID, checkReactivation);
-
-            SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
-
-            userService.updateIdfaToken(user, idfa);
-
-            if (isNotBlank(xtifyToken)) {
-                try {
-                    deviceUserDataService.saveXtifyToken(user, xtifyToken);
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-
-            // SRV-628. We are not storing a token if it's a string literal with '(null)' value.
-            // Some IOS clients send this value because of bugs in them.
-            if (isNotBlank(pushNotificationToken) && !pushNotificationToken.equals("(null)")) {
-                urbanAirshipTokenService.saveToken(user, pushNotificationToken);
-            }
-
-            if (!user.hasActivePaymentDetails() && (transactionReceipt != null || user.hasAppReceiptInLimitedState())) {
-                try {
-                    iTunesService.processInAppSubscription(user, transactionReceipt);
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-
-            AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
-
-            return buildModelAndView(accountCheck);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
+        if (iphoneToken != null) {
+            pushNotificationToken = iphoneToken;
         }
+
+        LOGGER.info("input parameters userName [{}],  deviceType [{}], pushToken [{}], transactionReceipt [{}], idfa [{}]", userName, deviceType, pushNotificationToken, transactionReceipt, idfa);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, checkReactivation);
+
+        SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
+
+        userService.updateIdfaToken(user, idfa);
+
+        if (isNotBlank(xtifyToken)) {
+            try {
+                deviceUserDataService.saveXtifyToken(user, xtifyToken);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+
+        // SRV-628. We are not storing a token if it's a string literal with '(null)' value.
+        // Some IOS clients send this value because of bugs in them.
+        if (isNotBlank(pushNotificationToken) && !pushNotificationToken.equals("(null)")) {
+            urbanAirshipTokenService.saveToken(user, pushNotificationToken);
+        }
+
+        if (!user.hasActivePaymentDetails() && (transactionReceipt != null || user.hasAppReceiptInLimitedState())) {
+            try {
+                iTunesService.processInAppSubscription(user, transactionReceipt);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+
+        AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid, withOneTimePayment);
+
+        return buildModelAndView(accountCheck);
     }
 
 
