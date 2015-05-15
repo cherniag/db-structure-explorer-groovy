@@ -27,24 +27,12 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
     @RequestMapping(method = RequestMethod.POST, value = {"**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})
     public ModelAndView activateVideo(@RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                       @RequestParam("DEVICE_UID") String deviceUID) throws Exception {
-        User user = null;
-        Exception ex = null;
-        try {
-            LOGGER.info("command processing started");
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
+        user = promotionService.activateVideoAudioFreeTrial(user);
 
-            user = promotionService.activateVideoAudioFreeTrial(user);
+        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false, false, false);
 
-            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false, false, false);
-
-            return buildModelAndView(accountCheckDTO);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, getCurrentCommunityUri(), null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return buildModelAndView(accountCheckDTO);
     }
 }

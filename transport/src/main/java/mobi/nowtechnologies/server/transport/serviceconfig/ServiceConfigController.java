@@ -74,23 +74,13 @@ public class ServiceConfigController extends CommonController {
 
 
     private ServiceConfigDto getServiceConfigInternal(UserAgent userAgent, String community, Set<VersionCheckStatus> includedStatuses) throws Exception {
-        LOGGER.info("SERVICE_CONFIG started: community [{}], userAgent [{}]", community, userAgent);
+        VersionCheckResponse check = versionCheckService.check(userAgent.getCommunity().getId(), userAgent.getPlatform(), userAgent.getApplicationName(), userAgent.getVersion(), includedStatuses);
 
-        Exception ex = null;
-        try {
-            VersionCheckResponse check = versionCheckService.check(userAgent.getCommunity().getId(), userAgent.getPlatform(), userAgent.getApplicationName(), userAgent.getVersion(), includedStatuses);
+        ServiceConfigDto dto = convert(check, userAgent.getCommunity().getRewriteUrlParameter());
 
-            ServiceConfigDto dto = convert(check, userAgent.getCommunity().getRewriteUrlParameter());
+        LOGGER.info("SERVICE_CONFIG response [{}]", dto);
+        return dto;
 
-            LOGGER.info("SERVICE_CONFIG response [{}]", dto);
-            return dto;
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(null, community, null, null, null, ex);
-            LOGGER.info("SERVICE_CONFIG finished");
-        }
     }
 
     @ExceptionHandler(ConversionNotSupportedException.class)
