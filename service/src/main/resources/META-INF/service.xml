@@ -67,51 +67,15 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="service.UrbanAirshipTokenService" class="mobi.nowtechnologies.server.service.UrbanAirshipTokenService"/>
 
-    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
-        <property name="mediaRepository" ref="mediaRepository" />
-        <property name="messageRepository" ref="messageRepository"/>
-    </bean>
-
-	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory">
-        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+	<bean class="mobi.nowtechnologies.server.service.PhoneNumberCommandService">
+		<property name="communityUserServices">
+			<map>
+				<entry key="o2" value-ref="service.UserService" />
+				<entry key="vf_nz" value-ref="vf_nz.service.UserService"/>
+			</map>
+		</property>
 	</bean>
-
-    <bean name="cloudFileImagesService" class="mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService">
-        <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-
-    <bean name="badgesService" class="mobi.nowtechnologies.server.service.streamzine.BadgesService">
-        <property name="filenameAliasRepository" ref="filenameAliasRepository" />
-        <property name="cloudFileImagesService" ref="cloudFileImagesService" />
-        <property name="resolutionRepository" ref="resolutionRepository" />
-        <property name="badgeMappingRepository" ref="badgeMappingRepository" />
-        <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-
-    <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
-        <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
-        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
-        <property name="communityRepository" ref="communityRepository" />
-        <property name="badgesService" ref="badgesService" />
-    </bean>
-
-    <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">
-        <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
-        <property name="availableCommunites" value="${streamzine.available.communities}" />
-        <property name="communityRepository" ref="communityRepository" />
-    </bean>
-
-    <bean class="mobi.nowtechnologies.server.service.PhoneNumberCommandService">
-        <property name="communityUserServices">
-            <map>
-                <entry key="o2" value-ref="service.UserService" />
-                <entry key="vf_nz" value-ref="vf_nz.service.UserService"/>
-            </map>
-        </property>
-    </bean>
-
+	
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
 		<property name="promotionService" ref="service.PromotionService" />
@@ -153,7 +117,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
         <property name="deviceService" ref="service.DevicePromotionsService" />
-        <property name="userDetailsUpdater" ref="vf_nz.service.UserDetailsUpdater" />
     </bean>
 
     <bean id="vf_nz.service.VFNZUnsubscribeProccessor" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor">

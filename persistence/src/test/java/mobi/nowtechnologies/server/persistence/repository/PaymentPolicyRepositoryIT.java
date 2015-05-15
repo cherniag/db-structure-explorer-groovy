@@ -15,6 +15,9 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 import javax.annotation.Resource;
 
+import java.util.Date;
+import java.util.List;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -99,6 +102,25 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         assertNull(result);
     }
 
+    @Test
+    public void shouldNotFindAppStoreProductIdWithStartDateInTheFutureByCommunityAndAppStoreProductIdIsNotNull() {
+        //given
+        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
+        paymentPolicy.setAppStoreProductId("appStoreProductId");
+        paymentPolicy.setStartDateTime(new Date(Long.MAX_VALUE));
+        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
+
+        paymentPolicyRepository.save(paymentPolicy);
+
+        //when
+        List<String> appStoreProductIds = paymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(paymentPolicy.getCommunity());
+
+        //then
+        for (String appStoreProductId : appStoreProductIds) {
+            assertFalse(paymentPolicy.getAppStoreProductId().equals(appStoreProductId));
+        }
+
+    }
 
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");

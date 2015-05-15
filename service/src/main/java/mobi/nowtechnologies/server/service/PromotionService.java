@@ -296,7 +296,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         }
 
         final PromoCode promoCode = promotion.getPromoCode();
-        int freeTrialEndSeconds = promotion.getFreeWeeksEndDate(freeTrialStartSeconds);
+        int freeTrialEndSeconds = promotion.getEndSeconds(freeTrialStartSeconds);
 
         user.setLastPromo(promoCode);
         user.setNextSubPayment(freeTrialEndSeconds);

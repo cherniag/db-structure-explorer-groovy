@@ -305,7 +305,7 @@ public class Promotion implements Serializable {
         return this;
     }
 
-    public int getFreeWeeksEndDate(int freeTrialStartSeconds) {
+    public int getEndSeconds(int freeTrialStartSeconds) {
         return period == null || period.getDuration() <= 0 ?
                endDate :
                period.toNextSubPaymentSeconds(freeTrialStartSeconds);

@@ -6,18 +6,18 @@ package mobi.nowtechnologies.server.social.service.facebook.impl.mock;
 
 import java.util.Locale;
 
-import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.Reference;
+import org.springframework.social.facebook.api.User;
 
-class SuccessfulFacebookProfile extends FacebookProfile {
+class SuccessfulFacebookProfile extends User {
 
     private String email;
     private String country;
     private String city;
     private String birthday;
 
-    public SuccessfulFacebookProfile(String id, String username, String name, String firstName, String lastName, String gender) {
-        super(id, username, name, firstName, lastName, gender, Locale.getDefault());
+    public SuccessfulFacebookProfile(String id, String name, String firstName, String lastName, String gender) {
+        super(id, name, firstName, lastName, gender, Locale.getDefault());
     }
 
     public void addOtherInfo(String email, String country, String city, String birthday) {
