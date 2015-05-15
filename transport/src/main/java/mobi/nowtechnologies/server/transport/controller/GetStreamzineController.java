@@ -70,33 +70,21 @@ public class GetStreamzineController extends CommonController {
     }
 
     private Response getResponse(String community, String userName, String userToken, String timestamp, Resolution resolution, String deviceUID, boolean includePlayer) throws Exception {
-        User user = null;
-        Exception ex = null;
-        try {
-            LOGGER.info("GET_STREAMZINE started: userName [{}], community [{}], resolution [{}], deviceUID [{}]", userName, community, deviceUID);
+        streamzineUpdateService.checkAvailability(community);
 
-            streamzineUpdateService.checkAvailability(community);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
+        Date date = new Date();
 
-            Date date = new Date();
+        Update update = streamzineUpdateService.getUpdate(date, user, community);
 
-            Update update = streamzineUpdateService.getUpdate(date, user, community);
+        LOGGER.debug("found update {} for {}", update, date);
 
-            LOGGER.debug("found update {} for {}", update, date);
+        StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community, resolution.withDeviceType(user.getDeviceType().getName()), includePlayer);
 
-            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community, resolution.withDeviceType(user.getDeviceType().getName()), includePlayer);
+        LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 
-            LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
-
-            return new Response(new Object[] {dto});
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("GET_STREAMZINE  finished");
-        }
+        return new Response(new Object[] {dto});
     }
 
     @ExceptionHandler(StreamzineNotAvailable.class)
