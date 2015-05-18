@@ -10,6 +10,7 @@
 
     <modules>
         <module>env</module>
+        <module>database</module>
         <module>mq-parent-pom</module>
         <module>shared</module>
         <module>persistence</module>
