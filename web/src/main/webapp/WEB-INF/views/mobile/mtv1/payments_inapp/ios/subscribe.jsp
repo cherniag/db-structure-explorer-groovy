@@ -4,7 +4,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <script type="text/javascript">
-    var USER_ID = '${userId}';
+    var USER_ID = '${userId}',
+        LEANPLUM_APP_ID = '<s:message code='leanplum.app.id'/>',
+        LEANPLUM_DEV_APP_KEY = '<s:message code='leanplum.app.dev.key'/>',
+        LEANPLUM_PROD_APP_KEY = '<s:message code='leanplum.app.prod.key'/>',
+        LEANPLUM_IS_DEVELOPMENT = <s:message code='leanplum.is.development.mode'/>;
 </script>
 <script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.js"></script>
 <script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.payg.ios.experiment.js"></script>

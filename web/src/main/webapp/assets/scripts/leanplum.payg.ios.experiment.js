@@ -1,5 +1,3 @@
-var isDevelopmentMode = false;
-
 //default values for variables
 var variables = {
     showPayAsYouGoPaymentOption: true,
@@ -12,6 +10,7 @@ var onLeanplumStart = function(success) {
     Leanplum.addVariablesChangedHandler(initPaymentOptions);
     initPaymentOptions();
 };
+
 
 var initPaymentOptions = function(){
     $('.subscribe_option_holder .go-premium-button span').each(function(){
@@ -31,6 +30,7 @@ var initPaymentOptions = function(){
     });
 };
 
+
 var Check = {
     showPayAsYouGo: function (type) {
         return type == 'payg' && Leanplum.getVariable('showPayAsYouGoPaymentOption');
@@ -43,11 +43,12 @@ var Check = {
     }
 };
 
+
 $(document).ready(function() {
-    if (isDevelopmentMode) {
-        Leanplum.setAppIdForDevelopmentMode("app_QCm3HNQk943wnoPoZs7MW6zKMChZ77QnI8xBgxdVq8Q", "dev_iDGyLDqDaHrz7bF37lpmI9ha7dD6xsrCa14QD0gLgz4");
+    if (LEANPLUM_IS_DEVELOPMENT) {
+        Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APP_ID, LEANPLUM_DEV_APP_KEY);
     } else {
-        Leanplum.setAppIdForProductionMode("app_QCm3HNQk943wnoPoZs7MW6zKMChZ77QnI8xBgxdVq8Q", "prod_9LPPveRR2hZx7B3zPKgV7SmYpBSPFIUaz77bXc3cTaA");
+        Leanplum.setAppIdForProductionMode(LEANPLUM_APP_ID, LEANPLUM_PROD_APP_KEY);
     }
 
     Leanplum.setVariables(variables);
