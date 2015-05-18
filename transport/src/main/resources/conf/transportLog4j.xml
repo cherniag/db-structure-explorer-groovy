@@ -4,49 +4,6 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <appender name="transportProfileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/profile-transport.csv"/>
-        <param name="encoding" value="UTF-8"/>
-        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/profile-transport_%d{yyyy-MM-dd}.gz"/>
-        </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern"
-                   value="time=[%-24d{ISO8601}]; commandName=[%X{command}]; USER_NAMEfromRequest=[%X{userName}]; communityName=[%X{community}]; remoteAddr=[%X{remoteAddr}]; %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="thridPartyRequestsProfileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/profile-transport-3rdPartyRequests.csv"/>
-        <param name="encoding" value="UTF-8"/>
-        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern"
-                   value="${catalina.base}/logs/profile-transport-3rdPartyRequests_%d{yyyy-MM-dd}.gz"/>
-        </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern"
-                   value="time=[%-24d{ISO8601}]; tPRExecutionDurationMillis=[%X{tPRExecutionDurationMillis}]; tPRUrl=[%X{tPRUrl}]; tPRUserId=[%X{tPRUserId}]; tPRUserName=[%X{tPRUserName}]; tPRUserMobile=[%X{tPRUserMobile}]; tPRBody=[%X{tPRBody}]; tPRNameValuePairs=[%X{tPRNameValuePairs}]; tPRResponse=[%X{tPRResponse}]; tPRResult=[%X{tPRResult}]; tPRErrorMessage=[%X{tPRErrorMessage}]%n"/>
-        </layout>
-    </appender>
-
-    <!-- Warning Transport Logs -->
-    <appender name="transportWarningAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/warning-transport.log"/>
-        <param name="encoding" value="UTF-8"/>
-        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/warning-transport_%d{yyyy-MM-dd}.gz"/>
-        </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %C{1}.%M() - %m%n"/>
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="LevelMin" value="WARN"/>
-            <param name="LevelMax" value="WARN"/>
-            <param name="AcceptOnMatch" value="FALSE"/>
-        </filter>
-    </appender>
-
     <!-- Errors Transport Logs -->
     <appender name="transportErrorsAppender" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/errors-transport.log"/>
@@ -503,16 +460,6 @@
     <logger name="org.springframework.web.client">
         <level value="WARN"/>
         <appender-ref ref="transportControllerAppender"/>
-    </logger>
-
-    <logger name="PROFILE_LOGGER">
-        <level value="DEBUG"/>
-        <appender-ref ref="transportProfileAppender"/>
-    </logger>
-
-    <logger name="THIRD_PARTY_REQUESTS_PROFILE_LOGGER">
-        <level value="DEBUG"/>
-        <appender-ref ref="thridPartyRequestsProfileAppender"/>
     </logger>
 
     <logger name="SUCCESS_ACC_CHECK_LOGGER">
