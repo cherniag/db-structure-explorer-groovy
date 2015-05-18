@@ -6,7 +6,7 @@
 
 	<sec:http pattern="/admin/*" security="none"/>
 	<sec:http pattern="/file**" security="none" />
-	<sec:http pattern="/version" security="none" />
+    <sec:http pattern="/MANIFEST.MF" security="none" />
 
 	<sec:http create-session="stateless" use-expressions="true">
 		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="afterRememberMeFilter" />
