@@ -122,6 +122,7 @@ public class ITunesPaymentSystemServiceIT {
         final int purchaseSeconds = 1523820502;
         final Period period = new Period(WEEKS, 1);
         final String transactionId = "555555555555";
+        final String productId = "com.musicqubed.ios.mp.subscription.onetime.1";
 
         User user = createUser();
         String appStoreTransactionReceipt = createAppStoreReceipt("onetime", APP_STORE_OK_RESPONSE_CODE, productId, transactionId, purchaseSeconds);
