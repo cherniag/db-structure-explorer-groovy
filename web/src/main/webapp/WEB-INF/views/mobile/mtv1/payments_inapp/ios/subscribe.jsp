@@ -3,6 +3,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<script type="text/javascript">
+    var USER_ID = '${userId}';
+</script>
+<script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.js"></script>
+<script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.payg.ios.experiment.js"></script>
+
 <div class="subscribe_root_container">
     <div class="subscribe_content_container subscribe_content_container_device">
         <div class="subscribe_header_block">
@@ -41,7 +47,7 @@
                         <%@include file="premium/subscribe_option.jsp"%>
                     </c:otherwise>
                 </c:choose>
-                <div class="subscribe_option_discount_text subscribe_option_discount_text_device">
+                <div class="subscribe_option_discount_text subscribe_option_discount_text_device" style="display:none;">
                     <s:message code="subscribe.option.discount.text.${optionNumber.index + 1}"/>
                 </div>
             </c:forEach>

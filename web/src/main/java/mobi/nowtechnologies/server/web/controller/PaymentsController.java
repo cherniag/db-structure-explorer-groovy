@@ -137,6 +137,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user));
         mav.addObject("paymentsPage", paymentsPage);
         mav.addObject("payAsYouGoIOSProductIds", getProductIds(user.getCommunity().getRewriteUrlParameter()));
+        mav.addObject("userId", user.getId());
 
         return mav;
     }
