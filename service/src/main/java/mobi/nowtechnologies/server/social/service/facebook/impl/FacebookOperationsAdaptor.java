@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.social.InvalidAuthorizationException;
 import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.UserOperations;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
@@ -21,7 +21,7 @@ public class FacebookOperationsAdaptor {
 
     private static Logger log = LoggerFactory.getLogger(FacebookOperationsAdaptor.class);
 
-    public FacebookProfile getFacebookProfile(String accessToken, String userId) {
+    public User getFacebookProfile(String accessToken, String userId) {
         UserOperations userOperations = new FacebookTemplate(accessToken).userOperations();
         return Strings.isNullOrEmpty(userId) ?
                userOperations.getUserProfile() :

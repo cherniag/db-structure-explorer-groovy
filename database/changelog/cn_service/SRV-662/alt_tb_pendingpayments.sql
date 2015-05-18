@@ -1,1 +1,1 @@
-alter table tb_pendingpayments drop column offerId;
+alter table tb_pendingPayments drop column offerId;

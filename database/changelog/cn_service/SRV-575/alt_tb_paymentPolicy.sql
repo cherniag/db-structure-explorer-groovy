@@ -1,3 +1,0 @@
-ALTER TABLE tb_paymentPolicy ADD COLUMN start_date_time DATETIME NOT NULL DEFAULT '1970-01-01 00:00:01';
-ALTER TABLE tb_paymentPolicy ADD COLUMN end_date_time DATETIME NOT NULL DEFAULT '9999-12-31 23:59:59';
-ALTER TABLE tb_paymentPolicy ADD COLUMN message_key VARCHAR(255);

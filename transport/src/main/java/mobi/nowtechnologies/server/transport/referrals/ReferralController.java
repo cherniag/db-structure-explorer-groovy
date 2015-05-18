@@ -44,7 +44,6 @@ public class ReferralController extends CommonController {
         userService.authorize(user, false, ActivationStatus.ACTIVATED);
         List<Referral> converted = referralAsm.fromDtos(referralDtos, user);
         referralService.refer(converted);
-        logger.info("REFERRALS finished");
     }
 
 }

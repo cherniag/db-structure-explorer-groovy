@@ -9,8 +9,8 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import org.springframework.social.MissingAuthorizationException;
 import org.springframework.social.facebook.api.AgeRange;
-import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.Reference;
+import org.springframework.social.facebook.api.User;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class FacebookClientImplTest {
 
     @Mock
-    FacebookProfile facebookProfile;
+    User facebookProfile;
     @Mock
     FacebookOperationsAdaptor facebookOperationsAdaptor;
     @InjectMocks

@@ -44,26 +44,19 @@ public class SignInEmailController extends CommonController {
     }
 
     private ModelAndView signInEmail(String userToken, String timestamp, Long activationEmailId, String email, String token, String deviceUID, String community, boolean withOneTimePayment) {
-        Exception ex = null;
-        User user = null;
         try {
             LOGGER.info("SIGN_IN_EMAIL Started for activationEmailId: [{}], email: [{}], deviceUID: [{}]", activationEmailId, email, deviceUID);
-            user = checkUser(deviceUID, userToken, timestamp, deviceUID, false, ActivationStatus.PENDING_ACTIVATION);
+            User user = checkUser(deviceUID, userToken, timestamp, deviceUID, false, ActivationStatus.PENDING_ACTIVATION);
 
             MergeResult mergeResult = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, false, withOneTimePayment));
         } catch (UserCredentialsException ce) {
-            ex = ce;
             LOGGER.error("SIGN_IN_EMAIL can not find deviceUID: [{}] in community: [{}]", deviceUID, community);
             throw ce;
         } catch (RuntimeException re) {
-            ex = re;
             LOGGER.error("SIGN_IN_EMAIL error: [{}] for user :[{}], community: [{}], activationEmailId: [{}]", re.getMessage(), deviceUID, community, activationEmailId);
             throw re;
-        } finally {
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("SIGN_IN_EMAIL error for user: [{}], community: [{}], activationEmailId: [{}]", deviceUID, community, activationEmailId);
         }
     }
 }
