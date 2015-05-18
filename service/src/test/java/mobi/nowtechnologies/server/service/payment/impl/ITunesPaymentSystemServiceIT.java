@@ -76,13 +76,13 @@ public class ITunesPaymentSystemServiceIT {
 
 
     @Test
-    public void startSuccessfulPayment() throws Exception {
+    public void startSuccessfulPaymentRecurrent() throws Exception {
         final int nextSubPayment = 1523820502;
         final String transactionId = "555555555555";
 
         User user = createUser();
-        String appStoreTransactionReceipt = createAppStoreReceipt(APP_STORE_OK_RESPONSE_CODE, productId, transactionId, nextSubPayment);
-        PaymentPolicy paymentPolicy = createPaymentPolicy(PaymentPolicyType.RECURRENT, productId);
+        String appStoreTransactionReceipt = createAppStoreReceipt("renewable", APP_STORE_OK_RESPONSE_CODE, productId, transactionId, nextSubPayment);
+        PaymentPolicy paymentPolicy = createPaymentPolicy(PaymentPolicyType.RECURRENT, productId, new Period(WEEKS, 1));
         PaymentDetails paymentDetails = createPaymentDetails(user, paymentPolicy, appStoreTransactionReceipt);
         PendingPayment pendingPayment = createPendingPayment(user, paymentDetails);
 
@@ -118,13 +118,57 @@ public class ITunesPaymentSystemServiceIT {
     }
 
     @Test
+    public void startSuccessfulPaymentOnetime() throws Exception {
+        final int purchaseSeconds = 1523820502;
+        final Period period = new Period(WEEKS, 1);
+        final String transactionId = "555555555555";
+
+        User user = createUser();
+        String appStoreTransactionReceipt = createAppStoreReceipt("onetime", APP_STORE_OK_RESPONSE_CODE, productId, transactionId, purchaseSeconds);
+        PaymentPolicy paymentPolicy = createPaymentPolicy(PaymentPolicyType.ONETIME, productId, period);
+        PaymentDetails paymentDetails = createPaymentDetails(user, paymentPolicy, appStoreTransactionReceipt);
+        PendingPayment pendingPayment = createPendingPayment(user, paymentDetails);
+
+        iTunesPaymentSystemService.startPayment(pendingPayment);
+
+        final int expectedNextSubPayment = period.toNextSubPaymentSeconds(purchaseSeconds);
+        User found = userRepository.findOne(user.getId());
+        assertTrue(found.isSubscribedStatus());
+        assertEquals(expectedNextSubPayment, found.getNextSubPayment());
+        assertEquals(transactionId, found.getAppStoreOriginalTransactionId());
+        assertEquals(appStoreTransactionReceipt, found.getBase64EncodedAppStoreReceipt());
+        assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, found.getLastSubscribedPaymentSystem());
+
+        ITunesPaymentDetails foundPaymentDetails = found.getCurrentPaymentDetails();
+        assertTrue(foundPaymentDetails.isActivated());
+        assertNull(foundPaymentDetails.getDescriptionError());
+        assertEquals(PaymentDetailsStatus.SUCCESSFUL, foundPaymentDetails.getLastPaymentStatus());
+        assertTrue(foundPaymentDetails.getDisableTimestampMillis() == 0);
+        assertEquals(paymentPolicy.getId(), foundPaymentDetails.getPaymentPolicy().getId());
+        assertEquals(appStoreTransactionReceipt, foundPaymentDetails.getAppStoreReceipt());
+
+        List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.values()));
+        assertEquals(1, submittedPayments.size());
+        SubmittedPayment submittedPayment = submittedPayments.get(0);
+        assertEquals(transactionId, submittedPayment.getExternalTxId());
+        assertEquals(appStoreTransactionReceipt, submittedPayment.getBase64EncodedAppStoreReceipt());
+        assertEquals(PaymentDetailsStatus.SUCCESSFUL, submittedPayment.getStatus());
+        assertEquals(expectedNextSubPayment, submittedPayment.getNextSubPayment());
+        assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, submittedPayment.getPaymentSystem());
+
+        List<AccountLog> accountLogs = accountLogRepository.findByUserId(user.getId());
+        Assert.assertEquals(1, accountLogs.size());
+        Assert.assertEquals(TransactionType.CARD_TOP_UP, accountLogs.get(0).getTransactionType());
+    }
+
+    @Test
     public void startPaymentWithNotValidReceipt() throws Exception {
         final int nextSubPayment = 1523820502;
         final String transactionId = "555555555555";
 
         User user = createUser();
-        String appStoreTransactionReceipt = createAppStoreReceipt(APP_STORE_NOT_VALID_RESPONSE_CODE, productId, transactionId, nextSubPayment);
-        PaymentPolicy paymentPolicy = createPaymentPolicy(PaymentPolicyType.RECURRENT, productId);
+        String appStoreTransactionReceipt = createAppStoreReceipt("renewable", APP_STORE_NOT_VALID_RESPONSE_CODE, productId, transactionId, nextSubPayment);
+        PaymentPolicy paymentPolicy = createPaymentPolicy(PaymentPolicyType.RECURRENT, productId, new Period(WEEKS, 1));
         PaymentDetails paymentDetails = createPaymentDetails(user, paymentPolicy, appStoreTransactionReceipt);
         PendingPayment pendingPayment = createPendingPayment(user, paymentDetails);
 
@@ -156,8 +200,8 @@ public class ITunesPaymentSystemServiceIT {
         submittedPaymentRepository.deleteAll();
     }
 
-    private String createAppStoreReceipt(int appStoreResponseCode, String productId, String transactionId, int nextSubPayment) {
-        return String.format("renewable:200:%s:%s:%s:%s000", appStoreResponseCode, productId, transactionId, nextSubPayment);
+    private String createAppStoreReceipt(String renewable, int appStoreResponseCode, String productId, String transactionId, int nextSubPayment) {
+        return String.format("%s:200:%s:%s:%s:%s000", renewable, appStoreResponseCode, productId, transactionId, nextSubPayment);
     }
 
     private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails) {
@@ -195,12 +239,12 @@ public class ITunesPaymentSystemServiceIT {
         return paymentDetails;
     }
 
-    private PaymentPolicy createPaymentPolicy(PaymentPolicyType paymentPolicyType, String appStoreProductId) {
+    private PaymentPolicy createPaymentPolicy(PaymentPolicyType paymentPolicyType, String appStoreProductId, Period period) {
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(PaymentDetails.ITUNES_SUBSCRIPTION);
         paymentPolicy.setSubcost(BigDecimal.valueOf(1.29));
-        paymentPolicy.setPeriod(new Period(WEEKS, 1));
+        paymentPolicy.setPeriod(period);
         paymentPolicy.setMediaType(MediaType.AUDIO);
         paymentPolicy.setPaymentPolicyType(paymentPolicyType);
         paymentPolicy.setTariff(Tariff._3G);

@@ -118,6 +118,7 @@
 		<property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
 		<property name="timeService" ref="timeService"/>
 		<property name="userService" ref="service.UserService"/>
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
 	</bean>
 
     <bean class="mobi.nowtechnologies.server.service.payment.SagePayPaymentDetailsInfoService">
