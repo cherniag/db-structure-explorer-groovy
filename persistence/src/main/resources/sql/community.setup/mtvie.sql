@@ -3,8 +3,8 @@ START TRANSACTION;
 
 USE cn_service;
 
-SET @new_community_name = 'mtvit';
-SET @new_community_full_name = 'mtvit';
+SET @new_community_name = 'mtvie';
+SET @new_community_full_name = 'mtvie';
 
 INSERT INTO cn_service_admin.users
 (username                     , communityURL       , password                          , enabled) VALUES
@@ -29,51 +29,51 @@ INSERT INTO tb_news
 
 INSERT INTO tb_charts
 (name                 , numTracks, genre, timestamp       , numBonusTracks, type) VALUES
-('HOT_TRACKS - MTVIT' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'HOT_TRACKS'),
-('FIFTH_CHART - MTVIT', 0        , 1    , UNIX_TIMESTAMP(), 0             , 'FIFTH_CHART'),
-('PLAYLIST_1 - MTVIT' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_1'),
-('PLAYLIST_2 - MTVIT' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2'),
-('PLAYLIST_3 - MTVIT' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2'),
-('OTHER_CHART - MTVIT', 0        , 1    , UNIX_TIMESTAMP(), 0             , 'OTHER_CHART'),
-('PLAYLIST_4 - MTVIT' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2'),
-('PLAYLIST_5 - MTVIT' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2');
+('HOT_TRACKS - MTVIE' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'HOT_TRACKS'),
+('FIFTH_CHART - MTVIE', 0        , 1    , UNIX_TIMESTAMP(), 0             , 'FIFTH_CHART'),
+('PLAYLIST_1 - MTVIE' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_1'),
+('PLAYLIST_2 - MTVIE' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2'),
+('PLAYLIST_3 - MTVIE' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2'),
+('OTHER_CHART - MTVIE', 0        , 1    , UNIX_TIMESTAMP(), 0             , 'OTHER_CHART'),
+('PLAYLIST_4 - MTVIE' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2'),
+('PLAYLIST_5 - MTVIE' , 0        , 1    , UNIX_TIMESTAMP(), 0             , 'PLAYLIST_2');
 
 INSERT INTO community_charts
 (chart_id                                                    , community_id) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTVIT') , @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTVIT'), @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_1 - MTVIT') , @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_2 - MTVIT') , @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_3 - MTVIT') , @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTVIT'), @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_4 - MTVIT') , @new_community_id),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_5 - MTVIT') , @new_community_id);
+((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTVIE') , @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTVIE'), @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_1 - MTVIE') , @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_2 - MTVIE') , @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_3 - MTVIE') , @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTVIE'), @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_4 - MTVIE') , @new_community_id),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_5 - MTVIE') , @new_community_id);
 
 INSERT INTO tb_userGroups
 (name                    , community        , chart                                                      , news                                                       , drmPolicy) VALUES
-(@new_community_full_name, @new_community_id, (SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTVIT'), (SELECT i FROM tb_news WHERE community = @new_community_id), (SELECT i FROM tb_drmPolicy WHERE community = @new_community_id));
+(@new_community_full_name, @new_community_id, (SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTVIE'), (SELECT i FROM tb_news WHERE community = @new_community_id), (SELECT i FROM tb_drmPolicy WHERE community = @new_community_id));
 
 
 set @userGroup = (SELECT ug.id FROM tb_userGroups ug WHERE ug.community=@new_community_id);
 INSERT INTO tb_promotions
 (description            , duration, duration_unit, numUsers, maxUsers, startDate       , endDate,                              isActive, freeWeeks, subWeeks, userGroup, type,       showPromotion, label            , is_white_listed)
 VALUES
-('mtvitPromo2weeksAudio', 2,        'WEEKS'      , 0       , 0       , UNIX_TIMESTAMP(), UNIX_TIMESTAMP('2020-12-01 02:00:00'),TRUE    , 2        , 0       , @userGroup,'PromoCode',FALSE,'mtvit.2weeks.promo.audio',FALSE);
+('mtviePromo2weeksAudio', 2,        'WEEKS'      , 0       , 0       , UNIX_TIMESTAMP(), UNIX_TIMESTAMP('2020-12-01 02:00:00'),TRUE    , 2        , 0       , @userGroup,'PromoCode',FALSE,'mtvie.2weeks.promo.audio',FALSE);
 
 INSERT INTO tb_promoCode
 (code                     , promotionId)  VALUES
-('mtvit.2weeks.promo.audio', (SELECT p.i FROM tb_promotions p WHERE p.label = 'mtvit.2weeks.promo.audio'));
+('mtvie.2weeks.promo.audio', (SELECT p.i FROM tb_promotions p WHERE p.label = 'mtvie.2weeks.promo.audio'));
 
 INSERT INTO tb_chartDetail
 (chart                                                       , position, media, prevPosition, chgPosition, channel, info, publishTimeMillis    , version, image_filename, image_title        , subtitle            , title                , locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTVIT') ,1       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'HOT_TRACKS - MTVIT', 'HOT_TRACKS - MTVIT', 'HOT_TRACKS - MTVIT' ,NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTVIT'),2       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'FIFTH_CHART - MTVIT','FIFTH_CHART - MTVIT','FIFTH_CHART - MTVIT',NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_1 - MTVIT'), 3       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_1 - MTVIT', 'PLAYLIST_1 - MTVIT', 'PLAYLIST_1 - MTVIT', NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_2 - MTVIT'), 4       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_2 - MTVIT', 'PLAYLIST_2 - MTVIT', 'PLAYLIST_2 - MTVIT', NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_3 - MTVIT'), 5       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_3 - MTVIT', 'PLAYLIST_3 - MTVIT', 'PLAYLIST_3 - MTVIT', NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTVIT'),6       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'OTHER_CHART - MTVIT','OTHER_CHART - MTVIT','OTHER_CHART - MTVIT',NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_4 - MTVIT'), 7       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_4 - MTVIT', 'PLAYLIST_4 - MTVIT', 'PLAYLIST_4 - MTVIT', NULL  , NULL),
-((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_5 - MTVIT'), 8       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_5 - MTVIT', 'PLAYLIST_5 - MTVIT', 'PLAYLIST_5 - MTVIT', NULL  , NULL);
+((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTVIE') ,1       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'HOT_TRACKS - MTVIE', 'HOT_TRACKS - MTVIE', 'HOT_TRACKS - MTVIE' ,NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTVIE'),2       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'FIFTH_CHART - MTVIE','FIFTH_CHART - MTVIE','FIFTH_CHART - MTVIE',NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_1 - MTVIE'), 3       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_1 - MTVIE', 'PLAYLIST_1 - MTVIE', 'PLAYLIST_1 - MTVIE', NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_2 - MTVIE'), 4       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_2 - MTVIE', 'PLAYLIST_2 - MTVIE', 'PLAYLIST_2 - MTVIE', NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_3 - MTVIE'), 5       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_3 - MTVIE', 'PLAYLIST_3 - MTVIE', 'PLAYLIST_3 - MTVIE', NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTVIE'),6       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'OTHER_CHART - MTVIE','OTHER_CHART - MTVIE','OTHER_CHART - MTVIE',NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_4 - MTVIE'), 7       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_4 - MTVIE', 'PLAYLIST_4 - MTVIE', 'PLAYLIST_4 - MTVIE', NULL  , NULL),
+((SELECT i FROM tb_charts WHERE name = 'PLAYLIST_5 - MTVIE'), 8       , NULL , NULL        , NULL       , NULL   , NULL, UNIX_TIMESTAMP()*1000, 1      , NULL          , 'PLAYLIST_5 - MTVIE', 'PLAYLIST_5 - MTVIE', 'PLAYLIST_5 - MTVIE', NULL  , NULL);
 
 
 --
