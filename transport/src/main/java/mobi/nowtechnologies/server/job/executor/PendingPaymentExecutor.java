@@ -71,7 +71,7 @@ public class PendingPaymentExecutor {
                 LOGGER.info("Transaction for pending payment with tx:{} has been sent to external payment system {}", pendingPayment.getInternalTxId(), pendingPayment.getPaymentSystem());
             } catch (Exception e) {
                 LOGGER.error("Error during pending payment transaction with tx:{}, payment system {}, caused by {}", pendingPayment.getInternalTxId(), pendingPayment.getPaymentSystem(),
-                             e.getMessage());
+                             e.getMessage(), e);
             } finally {
                 LOGGER.info("Payment transaction finished");
                 LogUtils.removePaymentMDC();

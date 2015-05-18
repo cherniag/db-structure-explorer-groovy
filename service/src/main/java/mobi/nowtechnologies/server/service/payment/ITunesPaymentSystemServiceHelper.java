@@ -59,11 +59,14 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         String actualReceipt = updatedPaymentDetails.getAppStoreReceipt();
         SubmittedPayment submittedPayment = createSuccessfulSubmittedPayment(user, result, actualPaymentPolicy, actualReceipt);
         submittedPaymentService.save(submittedPayment);
+        logger.info("Submitted payment {} has been saved", submittedPayment.getI());
 
         PaymentEvent paymentEvent = new PaymentEvent(submittedPayment);
         applicationEventPublisher.publishEvent(paymentEvent);
 
         pendingPaymentRepository.delete(pendingPayment);
+
+        logger.info("Payment for user {} was confirmed", user.getId());
 
         /*
 		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
@@ -98,6 +101,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
 
         pendingPaymentRepository.delete(pendingPayment);
 
+        logger.info("Attempt with internal tx is {} was failed", pendingPayment.getInternalTxId());
          /*
             PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
             paymentDetails.setDescriptionError(response.getDescriptionError());
@@ -133,6 +137,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
 
         pendingPaymentRepository.delete(pendingPayment);
 
+        logger.info("Subscription has been stopped fro user {}", user.getId());
          /*
         PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
         paymentDetails.setDescriptionError(response.getDescriptionError());
@@ -213,6 +218,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         if (inCaseOfOneTimePaymentPolicy) {
             logger.debug("Calculate expire timestamp for result {} and community id {}", result, community.getId());
             PaymentPolicy policy = getPaymentPolicy(community, result.getProductId());
+            logger.info("Found payment policy {} for product id {}", policy.getId(), result.getProductId());
             Period period = policy.getPeriod();
             int purchaseSeconds = DateTimeUtils.millisToIntSeconds(result.getPurchaseTime());
             int nextSubPaymentSeconds = period.toNextSubPaymentSeconds(purchaseSeconds);
