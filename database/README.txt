@@ -5,19 +5,19 @@ This snapshot is a file with change sets which are creating the empty database f
 
 For the first time when you want to prepare the database for liquibase run
 the following command:
-    mvn dependency:unpack resources:resources compile liquibase:changelogSync -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database.jasypt.DecryptableProperties -Dpwd=secret
+    mvn dependency:unpack resources:resources compile liquibase:changelogSync -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database.jasypt.DecryptableProperties -DjasyptPassword=secret
 
 Then, every time and again you want to update the database run
 the following command:
-    mvn dependency:unpack resources:resources compile liquibase:update -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database.jasypt.DecryptableProperties -Dpwd=secret
+    mvn dependency:unpack resources:resources compile liquibase:update -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database.jasypt.DecryptableProperties -DjasyptPassword=secret
 
 To run a specific liquibase migration run the following command:
-    mvn dependency:unpack resources:resources compile liquibase:update -Dliquibase.changeLogFile=[PATH_TO_CHANGELOG] -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database.jasypt.DecryptableProperties -Dpwd=secret
+    mvn dependency:unpack resources:resources compile liquibase:update -Dliquibase.changeLogFile=[PATH_TO_CHANGELOG] -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database.jasypt.DecryptableProperties -DjasyptPassword=secret
 Replace [PATH_TO_CHANGELOG] with the actual path.
 More on that, could be found in liquibase documentation: http://www.liquibase.org/documentation/maven/generated/update-mojo.html
 
 To rollback a apecific liquibase migration run the following command:
     mvn dependency:unpack resources:resources compile liquibase:rollback -Dliquibase.changeLogFile=[PATH_TO_CHANGELOG] -Denv=cucumber -Dliquibase.propertyProviderClass=mobi.nowtechnologies.database
-    .jasypt.DecryptableProperties -Dpwd=secret
+    .jasypt.DecryptableProperties -DjasyptPassword=secret
 Replace [PATH_TO_CHANGELOG] with the actual path.
 More on that, could be found in liquibase documentation: http://www.liquibase.org/documentation/maven/generated/rollback-mojo.html
