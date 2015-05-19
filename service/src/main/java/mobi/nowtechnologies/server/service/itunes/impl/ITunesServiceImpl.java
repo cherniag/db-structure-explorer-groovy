@@ -1,13 +1,21 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
+import mobi.nowtechnologies.common.util.ServerMessage;
+import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
+import mobi.nowtechnologies.server.service.itunes.ITunesXPlayCapSubscriptionException;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +29,56 @@ public class ITunesServiceImpl implements ITunesService {
     private ITunesClient iTunesClient;
     private ITunesPaymentService iTunesPaymentService;
     private CommunityResourceBundleMessageSource messageSource;
+    private EventLoggerService eventLoggerService;
+
+    @Override
+    public Map<String, ?> processXPlayCapSubscription(User user, String receipt) throws ITunesXPlayCapSubscriptionException {
+        logger.info("Start processXPlayCapSubscription for user [{}], receipt [{}]", user.shortInfo(), receipt);
+
+        final String community = user.getCommunityRewriteUrl();
+
+        final ITunesResult response = iTunesClient.verifyReceipt(new ITunesConnectionConfig() {
+            @Override
+            public String getUrl() {
+                return messageSource.getMessage(community, APPLE_IN_APP_I_TUNES_URL, null, null);
+            }
+
+            @Override
+            public String getPassword() {
+                return messageSource.getDecryptedMessage(community, APPLE_IN_APP_PASSWORD, null, null);
+            }
+        }, receipt);
+
+        if (response.isSuccessful()) {
+            logger.info("ITunes confirmed that playCap encoded receipt [{}] is valid by response [{}]", receipt, response);
+            String appStoreProduceId = response.getProductId();
+
+            String strPlayCapValue = messageSource.getMessage(community, appStoreProduceId, null, null);
+            Preconditions.checkState(strPlayCapValue != null, String.format("Missing '%s' configuration in services_%s.properties", appStoreProduceId, community));
+
+            int playCapValue = Integer.valueOf(strPlayCapValue);
+            long playCapExpiry = iTunesPaymentService.createXPlayCapPayment(user, receipt, response, playCapValue);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("playCap", playCapValue);
+            data.put("playCapExpiry", playCapExpiry);
+
+            logger.info("Finish processXPlayCapSubscription");
+            return data;
+        } else {
+            logger.warn("ITunes rejected encoded receipt [{}], response: [{}]", receipt, response);
+
+            int result = response.getResult();
+            eventLoggerService.logXPlayCapReceiptVerified(user.getId(), user.getUuid(), receipt, result);
+
+            ServerMessage serverMessage = new ServerMessage(result, Collections.EMPTY_MAP);
+            throw new ITunesXPlayCapSubscriptionException(serverMessage);
+        }
+    }
 
     @Override
     public void processInAppSubscription(final User user, String transactionReceipt) {
-        logger.info("Start processing ITunes subscription for user [{}], receipt [{}]", user, transactionReceipt);
+        logger.info("Start processing ITunes subscription for user [{}], receipt [{}]", user.shortInfo(), transactionReceipt);
 
         final String actualReceipt = decideAppReceipt(transactionReceipt, user);
         final String community = user.getCommunityRewriteUrl();
@@ -41,7 +95,7 @@ public class ITunesServiceImpl implements ITunesService {
             }
         }, actualReceipt);
 
-        if (result != null && result.isSuccessful()) {
+        if (result.isSuccessful()) {
             logger.info("ITunes confirmed that encoded receipt [{}] is valid by result [{}]", actualReceipt, result);
             iTunesPaymentService.createSubmittedPayment(user, actualReceipt, result, iTunesPaymentService);
             logger.info("Finish processing ITunes subscription");
@@ -71,4 +125,7 @@ public class ITunesServiceImpl implements ITunesService {
         this.messageSource = messageSource;
     }
 
+    public void setEventLoggerService(EventLoggerService eventLoggerService) {
+        this.eventLoggerService = eventLoggerService;
+    }
 }

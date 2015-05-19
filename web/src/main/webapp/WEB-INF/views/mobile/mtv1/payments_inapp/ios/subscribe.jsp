@@ -3,6 +3,16 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<script type="text/javascript">
+    var USER_UUID = '${userUuid}',
+            LEANPLUM_APP_ID = '<s:message code='leanplum.app.id'/>',
+            LEANPLUM_DEV_APP_KEY = '<s:message code='leanplum.app.dev.key'/>',
+            LEANPLUM_PROD_APP_KEY = '<s:message code='leanplum.app.prod.key'/>',
+            LEANPLUM_IS_DEVELOPMENT = <s:message code='leanplum.is.development.mode'/>;
+</script>
+<script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.js"></script>
+<script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.payg.ios.experiment.js"></script>
+
 <div class="subscribe_root_container_ios">
     <div class="subscribe_header_block_ios">
         <div class="subscribe_header_block_title_ios">
@@ -53,7 +63,7 @@
                     <%@include file="premium/subscribe_option.jsp"%>
                 </c:otherwise>
             </c:choose>
-            <div class="subscribe_option_discount_text subscribe_option_discount_text_device">
+            <div class="subscribe_option_discount_text subscribe_option_discount_text_device" style="display:none;>
                 <s:message code="subscribe.option.discount.text.${optionNumber.index + 1}"/>
             </div>
         </c:forEach>
