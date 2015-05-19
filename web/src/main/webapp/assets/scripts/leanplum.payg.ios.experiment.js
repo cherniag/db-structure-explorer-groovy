@@ -52,5 +52,5 @@ $(document).ready(function() {
     }
 
     Leanplum.setVariables(variables);
-    Leanplum.start(USER_ID, onLeanplumStart);
+    Leanplum.start(USER_UUID, onLeanplumStart);
 });
