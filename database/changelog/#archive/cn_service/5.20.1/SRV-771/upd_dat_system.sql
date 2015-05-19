@@ -1,0 +1,1 @@
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(), "5.20.1", "5.20.1");

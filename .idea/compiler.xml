@@ -87,10 +87,18 @@
         <processorPath useClasspath="true" />
         <module name="application-tests" />
       </profile>
+      <profile default="false" name="Annotation profile for database" enabled="true">
+        <sourceOutputDir name="target\generated-sources\annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="database" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="admin" target="1.7" />
       <module name="application-tests" target="1.7" />
+      <module name="database" target="1.7" />
       <module name="env" target="1.7" />
       <module name="parent-pom" target="1.7" />
       <module name="persistence" target="1.7" />
