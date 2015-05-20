@@ -9,7 +9,7 @@
         <s:message code="subscribe.button.premium.${paymentPolicyDto.durationUnit}" arguments="${paymentPolicyDto.subcost}"/>
     </span>
     </a>
-    <div class="subscribe_option_discount_text subscribe_option_discount_text_device" style="display:none;">
+    <div class="subscribe_option_discount_text subscribe_option_discount_text_device">
         <s:message code="subscribe.option.discount.text.${optionNumber.index + 1}"/>
     </div>
 </div>
