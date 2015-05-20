@@ -51,9 +51,6 @@
                         <%@include file="premium/subscribe_option.jsp"%>
                     </c:otherwise>
                 </c:choose>
-                <div class="subscribe_option_discount_text subscribe_option_discount_text_device" style="display:none;">
-                    <s:message code="subscribe.option.discount.text.${optionNumber.index + 1}"/>
-                </div>
             </c:forEach>
             <div class="subscribe_option_holder subscribe_option_holder_device">
                 <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
