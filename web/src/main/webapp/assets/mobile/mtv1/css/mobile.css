@@ -1744,10 +1744,14 @@ body {
 /**
 ** GO PREMIUM SECTION - IOS
 **/
+@media all and (max-width: 1080px) { .subscribe_root_container_ios { font-size: 46px } }
+@media all and (max-width: 800px) { .subscribe_root_container_ios { font-size: 36px } }
+@media all and (max-width: 420px) { .subscribe_root_container_ios { font-size: 20px } }
+@media all and (max-width: 320px) { .subscribe_root_container_ios { font-size: 16px } }
+
 .subscribe_root_container_ios {
     background-color: #FFF;
     position: absolute;
-    /*font-size: 16px;*/
     top: 0;
     right: 0;
     left: 0;
@@ -1764,15 +1768,17 @@ body {
     background-color: #000;
     color: #FFF;
     display: inline;
-    padding: 1% 0;
-    font-size: 6vw; /*font-size: 130%;  */
+    padding: 2% 0 1% 0;
+    font-size: 130%;
+    font-size: 6vw;
 }
 
 .subscribe_description_item_ios {
     padding: 3% 0 3% 9%;
     position: relative;
-    font-size: 4vw; /*font-size: 90%;*/
     color: #444;
+    font-size: 90%;
+    font-size: 4vw;
 }
 
 .subscribe_description_item_ios:first-child {
@@ -1812,10 +1818,11 @@ body {
     top: 2%;
     left: 2%;
     text-align: center;
-    font-size: 5vw; /*font-size: 100%;*/
     display: -webkit-box;
     -webkit-box-pack: center;
     -webkit-box-orient: vertical;
+    font-size: 100%;
+    font-size: 5vw;
 }
 
 .subscribe_option_info_ios {
@@ -1858,8 +1865,8 @@ body {
 }
 
 .subscribe_option_border_ios_3 {
-    top: 50%;
-    left: 20%;
+    top: 49%;
+    left: 22%;
 }
 
 .subscribe_option_border_ios_3 .subscribe_option_holder_ios {
@@ -1885,14 +1892,69 @@ body {
 
 .subscribe_option_price_ios {
     background-color: #FFF;
-    width: 50%;
+    width: 45%;
     margin: auto;
-    font-size: 6vw; /*font-size: 120%;*/
-    font-weight: bold;
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
     border-radius: 1000px;
-    padding: 2% 17%;
+    padding: 5% 17% 1% 17%;
+    font-size: 120%;
+    font-size: 6vw;
 }
 
 .subscribe_option_text_ios {
     margin-bottom: 5%;
+}
+
+.subscribe_option_text_ios label {
+    font-size: 80%;
+    font-size: 4vw;
+}
+
+/* POPUP */
+#simplemodal-overlay {
+    background-color:#000;
+}
+
+#simplemodal-container {
+    width:70%;
+    background-color:#FFF;
+    padding:4% 4% 4% 20%;
+    margin-top: -50%;
+}
+
+#simplemodal-container a.modalCloseImg {
+    background:url(../imgs/icon_close.png) no-repeat;
+    background-size: contain;
+    width: 11%;
+    height: 20%;
+    display:inline;
+    z-index:3200;
+    position:absolute;
+    top: 10%;
+    left: 4%;
+}
+
+#simplemodal-container h1 {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    background-color: #000;
+    color: #FFF;
+    display: inline-block;
+    padding: 3% 4% 2% 4%;
+    margin: 1% 0 4%;
+    font-size: 90%;
+    font-size: 4.3vw;
+}
+
+
+#simplemodal-container span {
+    display: block;
+    background:url(../imgs/subscribe_description_item_logo.png) no-repeat left top;
+    background-size: 12%;
+    padding: 1% 0 4% 15%;
+    font-size: 100%;
+    font-size: 5vw;
+}
+
+#simplemodal-container, #simplemodal-container .simplemodal-wrap {
+    height:auto !important;
 }

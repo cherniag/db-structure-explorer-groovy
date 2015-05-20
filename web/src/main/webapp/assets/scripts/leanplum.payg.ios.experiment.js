@@ -13,8 +13,8 @@ var onLeanplumStart = function(success) {
 
 
 var initPaymentOptions = function(){
-    $('.subscribe_option_holder .go-premium-button span').each(function(){
-        var button = $(this).closest('.subscribe_option_holder'),
+    $('.subscribe_option_border_ios .subscribe_option_text_ios span').each(function(){
+        var button = $(this).closest('.subscribe_option_border_ios'),
             type = $(this).attr('type'),
             productId = $(this).attr('productId');
 
@@ -33,13 +33,13 @@ var initPaymentOptions = function(){
 
 var Check = {
     showPayAsYouGo: function (type) {
-        return type == 'payg' && Leanplum.getVariable('showPayAsYouGoPaymentOption');
+        return type == 'PAYG' && Leanplum.getVariable('showPayAsYouGoPaymentOption');
     },
     showOneTime: function (type) {
-        return type == 'onetime' && Leanplum.getVariable('showOneTimePaymentOption');
+        return type == 'ONETIME' && Leanplum.getVariable('showOneTimePaymentOption');
     },
     showRecurrent: function (type) {
-        return type == 'recurrent' && Leanplum.getVariable('showRecurrentPaymentOption');
+        return type == 'RECURRENT' && Leanplum.getVariable('showRecurrentPaymentOption');
     }
 };
 

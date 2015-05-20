@@ -36,42 +36,38 @@
     </div>
     <div class="subscribe_payment_options_block_ios">
         <c:forEach var="paymentPolicyDto" items="${paymentsPage.subscriptionInfo.paymentPolicyDTOs}" varStatus="optionNumber">
-            <div class="subscribe_option_border_ios subscribe_option_border_ios_${optionNumber.index + 1}" onclick="alert('Option')">
-                <div class="subscribe_option_holder_ios">
+            <div class="subscribe_option_border_ios subscribe_option_border_ios_${optionNumber.index + 1}" style="display:none;">
+                <div class="subscribe_option_holder_ios" onclick="goTo('${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentPolicyDto.appStoreProductId}');">
                     <div class="subscribe_option_text_ios">
 
 
-                        <s:message code="subscribe.ios.button.${paymentPolicyDto.paymentPolicyType}.${paymentPolicyDto.durationUnit}" arguments="${paymentPolicyDto.duration}"/>
+                        <c:choose>
+                            <c:when test="${payAsYouGoIOSProductIds.containsKey(paymentPolicyDto.appStoreProductId)}">
+                                <span type="PAYG" productId="${paymentPolicyDto.appStoreProductId}">
+                                    <s:message code='subscribe.ios.button.pass.payg' arguments="${payAsYouGoIOSProductIds[paymentPolicyDto.appStoreProductId]}, ${paymentPolicyDto.duration}"/>
+                                </span>
+                            </c:when>
+                            <c:otherwise>
+                                <span type="${paymentPolicyDto.paymentPolicyType}" productId="${paymentPolicyDto.appStoreProductId}">
+                                    <s:message code="subscribe.ios.button.${paymentPolicyDto.paymentPolicyType}.${paymentPolicyDto.durationUnit}" arguments="${paymentPolicyDto.duration}"/>
+                                </span>
+                            </c:otherwise>
+                        </c:choose>
 
 
                     </div>
                     <div class="subscribe_option_price_ios">&#163;${paymentPolicyDto.subcost}</div>
                 </div>
             </div>
-            <div class="subscribe_option_info_ios subscribe_option_info_ios_${optionNumber.index + 1}" onclick="alert('Info')">
+            <div class="subscribe_option_info_ios subscribe_option_info_ios_${optionNumber.index + 1}" style="display:none;"
+                 onclick="$.modal('<s:message code='subscribe.ios.option.${optionNumber.index + 1}.info'/>', {overlayClose: true});">
                 <div class="subscribe_option_info_text_ios"></div>
             </div>
         </c:forEach>
     </div>
-<%--    <div>
-        <c:forEach var="paymentPolicyDto" items="${paymentsPage.subscriptionInfo.paymentPolicyDTOs}" varStatus="optionNumber">
-            <c:choose>
-                <c:when test="${paymentPolicyDto.paymentPolicyType == 'ONETIME'}">
-                    <%@include file="pass/subscribe_option.jsp"%>
-                </c:when>
-                <c:otherwise>
-                    <%@include file="premium/subscribe_option.jsp"%>
-                </c:otherwise>
-            </c:choose>
-            <div class="subscribe_option_discount_text subscribe_option_discount_text_device" style="display:none;>
-                <s:message code="subscribe.option.discount.text.${optionNumber.index + 1}"/>
-            </div>
-        </c:forEach>
-
-    </div>--%>
     <div class="subscribe_option_holder subscribe_option_holder_device">
         <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
-            <span>Maybe later</span>
+            <span><s:message code='button.cancel.ios'/></span>
         </a>
     </div>
 </div>
