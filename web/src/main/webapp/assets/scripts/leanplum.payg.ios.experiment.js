@@ -44,11 +44,14 @@ $(document).ready(function() {
             var type = $(this).attr('data-type') || '';
             var productId = $(this).attr('data-productId');
             var button = $('[data-button="' + dataId + '"]');
+            var infoButton = $('[data-info-button="' + dataId + '"]');
 
             if(!!Leanplum.getVariable(Check[type])) {
                 button.show();
+                infoButton.show();
             }else{
                 button.hide();
+                infoButton.hide();
             }
         });
     }
