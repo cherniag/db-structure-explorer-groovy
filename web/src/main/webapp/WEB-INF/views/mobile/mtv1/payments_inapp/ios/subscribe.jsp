@@ -13,7 +13,7 @@
 <script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.js"></script>
 <script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/leanplum.payg.ios.experiment.js"></script>
 
-<div class="subscribe_root_container_ios">
+<div id="subscribe_page" class="subscribe_root_container_ios">
     <div class="subscribe_header_block_ios">
         <div class="subscribe_header_block_title_ios">
             <s:message code='subscribe.ios.header.title'/>
@@ -63,9 +63,9 @@
             </div>
         </c:forEach>
     </div>
-    <div class="subscribe_option_holder subscribe_option_holder_device">
-        <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
-            <span><s:message code='button.cancel.ios'/></span>
-        </a>
+    <div class="button_cancel_ios" onclick="showIntersitialPage();">
+        <span><s:message code='button.cancel.ios'/></span>
     </div>
 </div>
+
+<%@include file="interstitial_page.jsp"%>

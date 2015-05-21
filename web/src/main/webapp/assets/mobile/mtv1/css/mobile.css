@@ -1776,7 +1776,7 @@ body {
 .subscribe_description_item_ios {
     padding: 3% 0 3% 9%;
     position: relative;
-    color: #444;
+    color: #2E2E2E;
     font-size: 90%;
     font-size: 4vw;
 }
@@ -1910,6 +1910,17 @@ body {
     font-size: 4vw;
 }
 
+.button_cancel_ios {
+    padding: 4%;
+    margin: 4% 0%;
+    border-radius: 1000px;
+    text-align: center;
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    font-size: 120%;
+    font-size: 5.8vw;
+    border: #000 1px solid;
+}
+
 /* POPUP */
 #simplemodal-overlay {
     background-color:#000;
@@ -1957,4 +1968,81 @@ body {
 
 #simplemodal-container, #simplemodal-container .simplemodal-wrap {
     height:auto !important;
+}
+
+
+/*interstitial screen*/
+.interstitial_page_ios {
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #FFF;
+    position: absolute;
+    z-index: 300;
+}
+
+.interstitial_page_ios .header_section_ios {
+    background:url(../imgs/texture.png) no-repeat;
+    background-size: 100% 100%;
+    padding: 23%;
+    position:relative;
+}
+
+.interstitial_page_ios .interstitial_page_title_ios {
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 13%;
+}
+
+.interstitial_page_ios .interstitial_page_title_ios span {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    color: #FFF;
+    font-size: 130%;
+    font-size: 6vw;
+    padding: 2% 0 1% 0;
+    background-color: #000;
+}
+
+.interstitial_page_ios .interstitial_page_close_icon_ios {
+    background:url(../imgs/icon_close.png) no-repeat;
+    background-size: contain;
+    position:absolute;
+    top: 24%;
+    left: 4%;
+    padding: 7%;
+}
+
+.interstitial_page_ios .description_section_ios {
+    text-align: center;
+    font-size: 95%;
+    font-size: 4.5vw;
+    padding: 0 5%;
+    line-height: 120%;
+}
+
+.interstitial_page_ios .poster_section_ios {
+    background:url(../imgs/img_interstitial_screen.png) no-repeat;
+    background-size: contain;
+    padding: 16% 20%;
+    margin: 5% 7%;
+}
+
+.interstitial_page_ios .button {
+    padding: 4%;
+    margin: 4%;
+    border-radius: 1000px;
+    text-align: center;
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    font-size: 120%;
+    font-size: 5.8vw;
+}
+
+.interstitial_page_ios .button_back {
+    background-color: #00F4CD;
+}
+
+.interstitial_page_ios .button_exit {
+    border: #000 1px solid;
 }
