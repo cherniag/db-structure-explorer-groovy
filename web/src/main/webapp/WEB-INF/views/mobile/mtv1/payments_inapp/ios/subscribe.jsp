@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="subscribe_option_info_ios subscribe_option_info_ios_${optionNumber.index + 1}" data-info-button="${paymentPolicyDto.id}" style="display:none;"
-                 onclick="$.modal('<s:message code='subscribe.ios.option.${optionNumber.index + 1}.info'/>', {overlayClose: true});">
+                 onclick="$.modal('<s:message code='subscribe.ios.option.${optionNumber.index + 1}.info'/>', {overlayClose: true, containerId:'info_popup', overlayId:'info_popup_overlay'});">
                 <div class="subscribe_option_info_text_ios"></div>
             </div>
         </c:forEach>
