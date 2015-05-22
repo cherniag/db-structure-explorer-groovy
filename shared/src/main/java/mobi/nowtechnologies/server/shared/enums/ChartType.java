@@ -8,5 +8,7 @@ public enum ChartType {
     FIFTH_CHART,
     VIDEO_CHART,
     HL_UK_PLAYLIST_1,
-    HL_UK_PLAYLIST_2
+    HL_UK_PLAYLIST_2,
+    PLAYLIST_1,
+    PLAYLIST_2
 }

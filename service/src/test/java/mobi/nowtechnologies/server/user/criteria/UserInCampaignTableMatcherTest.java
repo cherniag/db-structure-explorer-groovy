@@ -26,8 +26,8 @@ public class UserInCampaignTableMatcherTest {
 
     @Before
     public void setUp() throws Exception {
-        when(subscriptionCampaignRepository.getCountForMobile("+44123456789", "campaignId")).thenReturn(1L);
-        when(subscriptionCampaignRepository.getCountForMobile("+44000000000", "campaignId")).thenReturn(0L);
+        when(subscriptionCampaignRepository.countForMobile("+44123456789", "campaignId")).thenReturn(1L);
+        when(subscriptionCampaignRepository.countForMobile("+44000000000", "campaignId")).thenReturn(0L);
     }
 
     @Test

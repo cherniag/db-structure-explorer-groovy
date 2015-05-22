@@ -59,7 +59,7 @@ public class BehaviorInfoService {
 
     @Transactional(readOnly = true)
     public int getReferredAndConfirmedCount(User user, BehaviorConfig behaviorConfig) {
-        return referralRepository.getCountByCommunityIdUserIdAndStates(behaviorConfig.getCommunityId(), user.getId(), ReferralState.ACTIVATED);
+        return referralRepository.countByCommunityIdUserIdAndStates(behaviorConfig.getCommunityId(), user.getId(), ReferralState.ACTIVATED);
     }
 
     @Transactional(readOnly = true)

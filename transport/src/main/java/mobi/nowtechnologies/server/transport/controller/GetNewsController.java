@@ -27,7 +27,8 @@ public class GetNewsController extends CommonController {
     @Resource
     private MessageService messageService;
 
-    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.10}/GET_NEWS", "**/{community}/{apiVersion:6\\.9}/GET_NEWS", "**/{community}/{apiVersion:6\\.8}/GET_NEWS"})
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.11}/GET_NEWS", "**/{community}/{apiVersion:6\\.10}/GET_NEWS", "**/{community}/{apiVersion:6\\.9}/GET_NEWS",
+        "**/{community}/{apiVersion:6\\.8}/GET_NEWS"})
     public ModelAndView getNewsWithBannersWithOneTimeSubscription(@RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                   @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
                                                                   @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {
@@ -80,25 +81,12 @@ public class GetNewsController extends CommonController {
 
     private ModelAndView getNews(String userName, String userToken, String timestamp, Long lastUpdateNewsTimeMillis, String deviceUID, boolean withBanners, boolean withOneTimePayment,
                                  ActivationStatus... activationStatuses) throws Exception {
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        try {
-            LOGGER.info("command processing started");
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
+        NewsDto newsDto = messageService.processGetNewsCommand(user, getCurrentCommunityUri(), lastUpdateNewsTimeMillis, withBanners);
 
-            NewsDto newsDto = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, withBanners);
+        AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
-
-            return buildModelAndView(accountCheck, newsDto);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return buildModelAndView(accountCheck, newsDto);
     }
 }

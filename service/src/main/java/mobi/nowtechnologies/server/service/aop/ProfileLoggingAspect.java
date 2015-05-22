@@ -38,14 +38,36 @@ import org.springframework.util.MultiValueMap;
 public class ProfileLoggingAspect {
 
     public static final Logger THIRD_PARTY_REQUESTS_PROFILE_LOGGER = LoggerFactory.getLogger("THIRD_PARTY_REQUESTS_PROFILE_LOGGER");
-    private static final String[] logNameArrayForNameValuePair =
-        new String[] {SageRequestParam.TxType.name(), SageRequestParam.VendorTxCode.name(), SageRequestParam.Amount.name(), SageRequestParam.Currency.name(), SageRequestParam.Description
-            .name(), SageRequestParam.Vendor.name(), SageRequestParam.VPSProtocol.name(), SageRequestParam.VendorTxCode.name(), SageRequestParam.VPSTxId.name(), SageRequestParam.TxAuthNo
-            .name(), SageRequestParam.ReleaseAmount.name(), SageRequestParam.RelatedVPSTxId.name(), SageRequestParam.RelatedVendorTxCode.name(), SageRequestParam.RelatedTxAuthNo
-            .name(), PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0.name(), PayPalRequestParam.L_BILLINGTYPE0.name(), PayPalRequestParam.PAYMENTACTION.name(), PayPalRequestParam.CURRENCYCODE
-            .name(), PayPalRequestParam.RETURNURL.name(), PayPalRequestParam.CANCELURL.name(), PayPalRequestParam.TOKEN.name(), PayPalRequestParam.METHOD.name(), PayPalRequestParam.VERSION
-            .name(), PayPalRequestParam.REFERENCEID.name(), PayPalRequestParam.AMT.name(), MigRequestParam.OADC.name(), MigRequestParam.OADCTYPE.name(), MigRequestParam.MESSAGEID
-            .name(), MigRequestParam.BODY.name(), MigRequestParam.TIMETOLIVE.name()};
+    private static final String[] logNameArrayForNameValuePair = new String[] {SageRequestParam.TxType.name(),
+                                                                               SageRequestParam.VendorTxCode.name(),
+                                                                               SageRequestParam.Amount.name(),
+                                                                               SageRequestParam.Currency.name(),
+                                                                               SageRequestParam.Description.name(),
+                                                                               SageRequestParam.Vendor.name(),
+                                                                               SageRequestParam.VPSProtocol.name(),
+                                                                               SageRequestParam.VendorTxCode.name(),
+                                                                               SageRequestParam.VPSTxId.name(),
+                                                                               SageRequestParam.TxAuthNo.name(),
+                                                                               SageRequestParam.ReleaseAmount.name(),
+                                                                               SageRequestParam.RelatedVPSTxId.name(),
+                                                                               SageRequestParam.RelatedVendorTxCode.name(),
+                                                                               SageRequestParam.RelatedTxAuthNo.name(),
+                                                                               PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0.name(),
+                                                                               PayPalRequestParam.L_BILLINGTYPE0.name(),
+                                                                               PayPalRequestParam.PAYMENTACTION.name(),
+                                                                               PayPalRequestParam.CURRENCYCODE.name(),
+                                                                               PayPalRequestParam.RETURNURL.name(),
+                                                                               PayPalRequestParam.CANCELURL.name(),
+                                                                               PayPalRequestParam.TOKEN.name(),
+                                                                               PayPalRequestParam.METHOD.name(),
+                                                                               PayPalRequestParam.VERSION.name(),
+                                                                               PayPalRequestParam.REFERENCEID.name(),
+                                                                               PayPalRequestParam.AMT.name(),
+                                                                               MigRequestParam.OADC.name(),
+                                                                               MigRequestParam.OADCTYPE.name(),
+                                                                               MigRequestParam.MESSAGEID.name(),
+                                                                               MigRequestParam.BODY.name(),
+                                                                               MigRequestParam.TIMETOLIVE.name()};
     private static final Pattern RECEIPT_DATA_PATTERN = Pattern.compile("\"receipt-data\"\\s*:\\s*\"(.*?)\"");
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLoggingAspect.class);
 
@@ -77,7 +99,7 @@ public class ProfileLoggingAspect {
         this.communityResourceBundleMessageSource = communityResourceBundleMessageSource;
     }
 
-    @Around("execution(* mobi.nowtechnologies.server.shared.service.PostService.sendHttpPost(..))")
+    @Around("execution(* mobi.nowtechnologies.server.support.http.PostService.sendHttpPost(..))")
     public Object aroundPostService_sendHttpPost(ProceedingJoinPoint joinPoint) throws Throwable {
         Throwable throwable = null;
         Object[] args = null;

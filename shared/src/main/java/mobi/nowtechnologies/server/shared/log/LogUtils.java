@@ -19,7 +19,6 @@ public class LogUtils {
     public static final String LOG_USER_NAME = "userName";
     public static final String LOG_COMMAND = "command";
     public static final String LOG_CLASS = "class";
-    public static final String LOG_MESSAGEID = "MESSAGEID";
     public static final String LOG_COMMUNITY = "community";
     public static final String LOG_USER_ID = "userId";
     public static final String LOG_USER_MOBILE = "userMobile";

@@ -24,9 +24,11 @@
 	
 	<bean id="service.AbstractPaymentSystemService" abstract="true">
 		<property name="userService" ref="service.UserService" />
-		<property name="entityService" ref="service.EntityService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="submittedPaymentRepository" ref="submittedPaymentRepository" />
+		<property name="pendingPaymentRepository" ref="pendingPaymentRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+        <property name="paymentEventNotifier" ref="commonPaymentEventNotifier"/>
 	</bean>
 	
 	<!-- SagePay Service -->
@@ -70,7 +72,6 @@
 	<bean id="service.migHttpService" class="mobi.nowtechnologies.server.service.payment.http.MigHttpService">
 		<property name="freeSMSURL" value="${mig.freeSMSURL}" />
 		<property name="premiumSMSURL" value="${mig.premiumSMSURL}" />
-		<property name="otaUrl" value="${mig.otaUrl}" />
 		<property name="postService" ref="shared.PostService" />
 		<property name="request">
 			<bean class="mobi.nowtechnologies.server.service.payment.request.MigRequest" />
@@ -99,6 +100,7 @@
         <property name="userService" ref="vf_nz.service.UserService" />
         <property name="pendingPaymentService" ref="service.PendingPaymentService" />
         <property name="userRepository" ref="userRepository" />
+        <property name="paymentEventNotifier" ref="vfPaymentEventNotifier"/>
         <property name="paymentCodes">
             <set>
                 <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
@@ -106,6 +108,13 @@
             </set>
         </property>
     </bean>
+
+    <bean id="commonPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.CommonPaymentEventNotifier">
+        <property name="userNotificationService" ref="service.UserNotificationService" />
+    </bean>
+
+    <bean id="vfPaymentEventNotifier" class="mobi.nowtechnologies.server.service.payment.VFPaymentEventNotifier"/>
+
 
 	<util:map id="service.map.paymentSystems" key-type="java.lang.String" value-type="mobi.nowtechnologies.server.service.payment.PaymentSystemService">
 		<entry key="sagePayCreditCard" value-ref="service.sagePayPaymentService" />
@@ -120,8 +129,6 @@
 	<bean id="subBalancePaymentListener" class="mobi.nowtechnologies.server.service.listener.SubBalancePaymentListener">
 		<property name="userService" ref="service.UserService" />
 		<property name="promotionService" ref="service.PromotionService" />
-		<property name="migHttpService" ref="service.migHttpService" />
-		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 	

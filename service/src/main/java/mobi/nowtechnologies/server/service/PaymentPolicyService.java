@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
-import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -26,7 +25,6 @@ import java.util.List;
 import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +37,7 @@ public class PaymentPolicyService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicyService.class);
 
-    private PaymentPolicyDao paymentPolicyDao;
-
     private PaymentPolicyRepository paymentPolicyRepository;
-
-    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
-        this.paymentPolicyDao = paymentPolicyDao;
-    }
 
     public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
         this.paymentPolicyRepository = paymentPolicyRepository;
@@ -61,11 +53,6 @@ public class PaymentPolicyService {
 
     public PaymentPolicy getPaymentPolicy(Integer id) {
         return paymentPolicyRepository.findOne(id);
-    }
-
-    public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, int communityId) {
-        Validate.notNull(paymentType, "The parameter paymentType is null");
-        return paymentPolicyDao.getPaymentPolicy(operatorId, paymentType, communityId);
     }
 
     public PaymentPolicyDto getPaymentPolicy(PaymentPolicy paymentPolicy, PromotionPaymentPolicy promotionPaymentPolicy) {
@@ -111,7 +98,7 @@ public class PaymentPolicyService {
         List<MediaType> mediaTypes = getMediaTypes(user);
         Community community = user.getUserGroup().getCommunity();
 
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes);
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.findPaymentPolicies(community, provider, segment, user.getContract(), user.getTariff(), mediaTypes);
 
         List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(user, paymentPolicies);
         sort(paymentPolicyDtos, new PaymentPolicyDto.ByOrderAscAndDurationDesc());
@@ -185,7 +172,7 @@ public class PaymentPolicyService {
 
     @Transactional(readOnly = true)
     public PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType) {
-        return paymentPolicyRepository.getPaymentPolicy(community, providerType, paymentType);
+        return paymentPolicyRepository.findPaymentPolicy(community, providerType, paymentType);
     }
 
 }

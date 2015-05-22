@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
@@ -31,6 +33,8 @@ public class UserServiceRegistrationTest {
     private UserGroupRepository userGroupRepository;
     @Mock
     private CountryService countryService;
+    @Mock
+    UserStatusRepository userStatusRepository;
     @InjectMocks
     private UserService userService = new UserService() {
         @Override
@@ -61,6 +65,7 @@ public class UserServiceRegistrationTest {
     @Test
     public void registerNewUserWithoutPromotion() throws Exception {
         when(userRepository.findUserWithUserNameAsPassedDeviceUID("deviceUID".toLowerCase(), community)).thenReturn(null);
+        when(countryService.findIdByName("GB")).thenReturn(new Country("GB", "Great Britain"));
 
         User registerUser = userService.registerUser(userDeviceRegDetailsDto, false, false);
 

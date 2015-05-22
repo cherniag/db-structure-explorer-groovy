@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM
+        "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="web-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/web.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/web_%d{yyyy-MM-dd}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <!--The " ut " will be replace on current "unix time" value-->
+            <param name="ConversionPattern"
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="errors-web-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/errors-web.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/errors-web_%d{yyyy-MM-dd}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <!--The " ut " will be replace on current "unix time" value-->
+            <param name="ConversionPattern"
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="WARN"/>
+            <param name="LevelMax" value="FATAL"/>
+            <param name="AcceptOnMatch" value="FALSE"/>
+        </filter>
+    </appender>
+
+    <appender name="business-logic-web-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/business-logic-web.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/business-logic-web_%d{yyyy-MM-dd}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <!--The " ut " will be replace on current "unix time" value-->
+            <param name="ConversionPattern"
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="persistence-web-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/persistence-web.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/persistence-web_%d{yyyy-MM-dd}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <!--The " ut " will be replace on current "unix time" value-->
+            <param name="ConversionPattern"
+                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="slow-requests" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/slow-requests.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/slow-requests_%d{yyyy-ww}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <param name="ConversionPattern" value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="mobi.nowtechnologies.server.web.view.SlowRequestFilter">
+        <level value="WARN"></level>
+        <appender-ref ref="slow-requests"/>
+    </logger>
+
+    <logger name="org.springframework">
+        <level value="INFO"></level>
+        <appender-ref ref="business-logic-web-RollingFileAppender"/>
+    </logger>
+    <logger name="org.apache.commons">
+        <level value="INFO"></level>
+        <appender-ref ref="business-logic-web-RollingFileAppender"/>
+    </logger>
+    <logger name="net.sf.hibernate.cfg">
+        <level value="INFO"></level>
+        <appender-ref ref="persistence-web-RollingFileAppender"/>
+    </logger>
+    <logger name="org.hibernate.SQL">
+        <level value="INFO"></level>
+        <appender-ref ref="persistence-web-RollingFileAppender"/>
+    </logger>
+    <logger name="org.hibernate.type">
+        <level value="INFO"></level>
+        <appender-ref ref="persistence-web-RollingFileAppender"/>
+    </logger>
+    <logger name="org.hibernate.annotations.common.Version">
+        <level value="INFO"></level>
+        <appender-ref ref="business-logic-web-RollingFileAppender"/>
+    </logger>
+    <logger name="mobi.nowtechnologies.server.service">
+        <level value="INFO"></level>
+        <appender-ref ref="business-logic-web-RollingFileAppender"/>
+    </logger>
+    <logger name="mobi.nowtechnologies.server.persistence">
+        <level value="INFO"></level>
+        <appender-ref ref="persistence-web-RollingFileAppender"/>
+    </logger>
+    <logger name="mobi.nowtechnologies.server.web">
+        <level value="INFO"></level>
+        <appender-ref ref="web-RollingFileAppender"/>
+    </logger>
+
+    <logger name="org.apache.tiles">
+        <level value="INFO"></level>
+    </logger>
+
+    <root>
+        <level value="INFO"></level>
+        <appender-ref ref="errors-web-RollingFileAppender"/>
+    </root>
+
+</log4j:configuration>

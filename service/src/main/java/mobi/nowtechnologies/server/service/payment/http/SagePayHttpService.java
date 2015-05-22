@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.service.payment.http;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import java.math.BigDecimal;
 import java.util.List;

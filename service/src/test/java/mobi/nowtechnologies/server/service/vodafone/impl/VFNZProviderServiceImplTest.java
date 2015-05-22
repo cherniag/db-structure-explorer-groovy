@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
 import mobi.nowtechnologies.server.shared.Processor;
@@ -38,7 +38,7 @@ public class VFNZProviderServiceImplTest {
     private NZCellNumberValidator mockNzCellNumberValidator;
 
     @Mock
-    private DeviceService mockDeviceService;
+    private DevicePromotionsService mockDeviceService;
 
     @Before
     public void setUp() throws Exception {

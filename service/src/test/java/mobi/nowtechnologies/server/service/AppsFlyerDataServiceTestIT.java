@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AppsFlyerData;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 
 import javax.annotation.Resource;
 
@@ -18,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 public class AppsFlyerDataServiceTestIT {
 
     @Resource
@@ -32,6 +33,9 @@ public class AppsFlyerDataServiceTestIT {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public void saveAppsFlyerData() throws Exception {
@@ -82,8 +86,8 @@ public class AppsFlyerDataServiceTestIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user = userRepository.saveAndFlush(user);
         return user;
     }

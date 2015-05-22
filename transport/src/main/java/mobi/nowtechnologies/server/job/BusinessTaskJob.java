@@ -5,14 +5,16 @@ import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.service.TaskService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 /**
  * User: gch Date: 12/19/13
@@ -23,15 +25,16 @@ public class BusinessTaskJob {
 
     private TaskService taskService;
     private ProcessorContainer processorContainer;
-    private ThreadPoolTaskExecutor executor;
+    private TaskExecutor executor;
     private int tasksCount = 100;
+    private Set<String> supportedTaskTypes = new HashSet<>();
 
     public void execute() {
         try {
             LogUtils.putClassNameMDC(this.getClass());
             LOGGER.info("About to start BusinessTaskJob...");
             long now = System.currentTimeMillis();
-            List<Task> tasksListForExecution = taskService.getTasksForExecution(now, tasksCount);
+            List<Task> tasksListForExecution = taskService.getTasksForExecution(now, supportedTaskTypes, tasksCount);
             LOGGER.info("{} tasks found, max count={}", tasksListForExecution.size(), tasksCount);
             if (tooManyTasks(tasksListForExecution.size())) {
                 warnAboutTooManyTasks(now);
@@ -72,8 +75,12 @@ public class BusinessTaskJob {
         this.tasksCount = tasksCount;
     }
 
+    public void setSupportedTaskTypes(Set<String> supportedTaskTypes) {
+        this.supportedTaskTypes.addAll(supportedTaskTypes);
+    }
+
     @Required
-    public void setExecutor(ThreadPoolTaskExecutor executor) {
+    public void setExecutor(TaskExecutor executor) {
         this.executor = executor;
     }
 

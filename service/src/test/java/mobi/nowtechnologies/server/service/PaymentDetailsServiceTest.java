@@ -13,11 +13,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import java.util.Date;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -27,8 +23,6 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
-
-import static org.hamcrest.core.Is.is;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -61,7 +55,7 @@ public class PaymentDetailsServiceTest {
         user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
 
         paymentDetailsServiceSpy = PowerMockito.spy(new PaymentDetailsService());
-        paymentDetailsServiceSpy.setPaymentDetailsRepository(paymentDetailsRepositoryMock);
+        paymentDetailsServiceSpy.paymentDetailsRepository = paymentDetailsRepositoryMock;
         paymentDetailsServiceSpy.setUserService(userService);
         paymentDetailsServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 
@@ -84,9 +78,10 @@ public class PaymentDetailsServiceTest {
 
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
 
+
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
-        verify(paymentDetailsServiceSpy, times(0)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(paymentDetailsRepositoryMock, times(0)).save(any(PaymentDetails.class));
         verify(userService, times(0)).updateUser(user);
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
@@ -100,13 +95,14 @@ public class PaymentDetailsServiceTest {
 
         user.setCurrentPaymentDetails(paymentDetails);
 
-        doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
+
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
         when(userService.updateUser(user)).thenReturn(user);
 
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
-        verify(paymentDetailsServiceSpy, times(1)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(paymentDetails).disable(eq(reason), any(Date.class));
+        verify(paymentDetailsRepositoryMock, times(1)).save(paymentDetails);
         verify(userService).updateUser(user);
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
@@ -120,12 +116,12 @@ public class PaymentDetailsServiceTest {
 
         user.setCurrentPaymentDetails(paymentDetails);
 
-        doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
+        doReturn(paymentDetails).when(paymentDetailsRepositoryMock).save(paymentDetails);
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
 
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
-        verify(paymentDetailsServiceSpy, times(0)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(paymentDetailsRepositoryMock, times(0)).save(paymentDetails);
         verify(userService, times(0)).updateUser(user);
         verify(userService).setToZeroSmsAccordingToLawAttributes(user);
     }
@@ -161,23 +157,5 @@ public class PaymentDetailsServiceTest {
 
         //when
         paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
-    }
-
-    @Test
-    public void shouldFindFailurePaymentPaymentDetailsWithNoNotification() {
-        //given
-        String communityUrl = "";
-        Pageable pageable = new PageRequest(0, 1);
-
-        List<PaymentDetails> expectedPaymentDetailsList = Collections.<PaymentDetails>singletonList(new O2PSMSPaymentDetails());
-
-        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
-        ;
-
-        //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsServiceSpy.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
-
-        //then
-        assertThat(paymentDetailsList, is(expectedPaymentDetailsList));
     }
 }

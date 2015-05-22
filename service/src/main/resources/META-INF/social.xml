@@ -5,16 +5,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- Google Plus -->
-    <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusTemplateProviderImpl"/>
-    <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
+    <bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.googleplus.impl.GooglePlusOperationsAdaptor"/>
+    <bean id="service.GooglePlusClient" class="mobi.nowtechnologies.server.social.service.googleplus.impl.GooglePlusClientImpl"/>
+
+    <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.social.service.googleplus.GooglePlusService"/>
 
     <!-- Facebook -->
-    <bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.FacebookOperationsAdaptor"/>
-    <bean id="service.FacebookClient" class="mobi.nowtechnologies.server.service.social.facebook.impl.FacebookClientImpl"/>
+    <bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.facebook.impl.FacebookOperationsAdaptor"/>
+    <bean id="service.FacebookClient" class="mobi.nowtechnologies.server.social.service.facebook.impl.FacebookClientImpl"/>
 
-    <bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService">
-        <property name="userId" value="${mobi.nowtechnologies.server.service.social.facebook.FacebookService.userId}"/>
-        <property name="userProfileImageUrlId" value="${mobi.nowtechnologies.server.service.social.facebook.FacebookService.userProfileImageUrlId}"/>
+    <bean id="service.FacebookService" class="mobi.nowtechnologies.server.social.service.facebook.FacebookService">
+        <property name="userId" value="${FacebookService.userId}"/>
+        <property name="userProfileImageUrlId" value="${FacebookService.userProfileImageUrlId}"/>
     </bean>
 
     <!-- Email -->

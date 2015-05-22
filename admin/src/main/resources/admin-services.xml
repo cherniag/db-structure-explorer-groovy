@@ -76,7 +76,7 @@
     </bean>
 
     <utils:list id="messagesBaseName">
-        <value>file:#{systemProperties['catalina.base']}/conf/i18n/admin/messages</value>
+        <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/i18n/admin/messages</value>
         <value>/i18n/messages</value>
     </utils:list>
 

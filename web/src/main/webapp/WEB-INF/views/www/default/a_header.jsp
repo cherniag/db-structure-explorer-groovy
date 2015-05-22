@@ -9,8 +9,6 @@
 			<div class="menu">
 				<a id="faq" href="faq.html"><s:message code='page.header.link.faq' /></a>
 				<span>|</span>
-				<a id="contactus" href="contact_us.html"><s:message code='page.header.link.contactus' /></a>
-				<span>|</span>
 				<a href="signout" class="rad3"><s:message code='page.header.link.signout' /></a>
 			</div>
 		</div>

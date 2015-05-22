@@ -103,7 +103,7 @@ public class GetContextFeature {
         runner = runnerService.create(userDeviceDatas)
 
         allCommunities.each{ it ->
-            List charts = chartRepository.getByCommunityName(it);
+            List charts = chartRepository.findByCommunityName(it);
             if(charts == null || charts.empty){
                 throw new IllegalStateException("Community $it has no charts.");
             }

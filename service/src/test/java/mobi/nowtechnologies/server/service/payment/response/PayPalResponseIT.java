@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service.payment.response;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import java.util.HashMap;
 import java.util.Locale;

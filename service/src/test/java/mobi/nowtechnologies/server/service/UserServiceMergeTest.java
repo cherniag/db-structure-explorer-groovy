@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 
 import org.junit.*;
@@ -30,8 +29,6 @@ public class UserServiceMergeTest {
     private DeviceUserDataService deviceUserDataService;
     @Mock
     private AppsFlyerDataService appsFlyerDataService;
-    @Mock
-    private UserTransactionRepository userTransactionRepository;
     @InjectMocks
     private UserService userService;
     private ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
@@ -66,7 +63,6 @@ public class UserServiceMergeTest {
         verify(userRepository).deleteUser(987);
         verify(accountLogService).logAccountMergeEvent(oldUser, tempUser);
         verify(appsFlyerDataService).mergeAppsFlyerData(tempUser, oldUser);
-        verify(userTransactionRepository).deleteByUser(tempUser);
 
         verify(oldUser).setDeviceUID("deviceUID");
         verify(oldUser).setDeviceType(deviceType);

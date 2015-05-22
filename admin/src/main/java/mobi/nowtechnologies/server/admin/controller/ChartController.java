@@ -7,7 +7,9 @@ import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
@@ -49,12 +51,14 @@ public class ChartController extends AbstractCommonController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
 
     private ChartService chartService;
+    private ChartRepository chartRepository;
+    private ChartDetailService chartDetailService;
     private ChartItemController chartItemController;
     private String filesURL;
     private String chartFilesURL;
     private Map<ChartType, String> viewByChartType;
-    private CommunityRepository communityRepository;
     private ChartAsm chartAsm;
+    private ChartDetailRepository chartDetailRepository;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -118,16 +122,16 @@ public class ChartController extends AbstractCommonController {
             selectedPublishDateTime = new Date();
         }
 
-        Chart chart = chartService.getChartById(chartId);
+        Chart chart = chartRepository.findOne(chartId);
         ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, false).get(0);
-        List<ChartDetail> chartItems = chartService.getActualChartItems(chartId, selectedPublishDateTime);
+        List<ChartDetail> chartItems = chartDetailService.getActualChartItems(chartId, selectedPublishDateTime);
         List<ChartItemDto> chartItemDTOs = ChartDetailsAsm.toChartItemDtos(chartItems);
         ChartDto chartDto = chartAsm.toChartDto(chartDetail);
 
         return new ModelAndView(viewByChartType.get(chart.getType())).addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDTOs)
                                                                      .addObject("selectedPublishDateTime", getSelectedPublishDateAsString(selectedPublishDateTime, chartItemDTOs))
                                                                      .addObject("selectedDateTime", selectedPublishDateTime)
-                                                                     .addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId)).addObject("filesURL", filesURL)
+                                                                     .addObject("allPublishTimeMillis", chartDetailRepository.findAllPublishTimeMillis(chartId)).addObject("filesURL", filesURL)
                                                                      .addObject("chartFilesURL", chartFilesURL).addObject("chart", chartDto);
     }
 
@@ -138,7 +142,7 @@ public class ChartController extends AbstractCommonController {
 
         LOGGER.debug("input parameters selectedPublishDateTime=[{}], chartId=[{}]", selectedPublishDateTime, chartId);
 
-        chartService.deleteChartItems(chartId, selectedPublishDateTime);
+        chartDetailService.deleteChartItems(chartId, selectedPublishDateTime.getTime());
         return new ModelAndView("redirect:/charts/" + chartId);
     }
 
@@ -171,11 +175,19 @@ public class ChartController extends AbstractCommonController {
         this.chartFilesURL = chartFilesURL;
     }
 
-    public void setCommunityRepository(CommunityRepository communityRepository) {
-        this.communityRepository = communityRepository;
-    }
-
     public void setChartAsm(ChartAsm chartAsm) {
         this.chartAsm = chartAsm;
+    }
+
+    public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
+        this.chartDetailRepository = chartDetailRepository;
+    }
+
+    public void setChartRepository(ChartRepository chartRepository) {
+        this.chartRepository = chartRepository;
+    }
+
+    public void setChartDetailService(ChartDetailService chartDetailService) {
+        this.chartDetailService = chartDetailService;
     }
 }

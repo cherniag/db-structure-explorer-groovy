@@ -15,7 +15,6 @@ import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateReposi
 import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
 
 import javax.annotation.Resource;
 
@@ -59,9 +58,6 @@ public class SQLTestInitializer {
 
     @Resource
     private UrbanAirshipTokenRepository urbanAirshipTokenRepository;
-
-    @Resource
-    private UserTransactionRepository userTransactionRepository;
 
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
@@ -121,7 +117,6 @@ public class SQLTestInitializer {
         }
         chartRepository.delete(charts);
 
-        userTransactionRepository.deleteAll();
         urbanAirshipTokenRepository.deleteAll();
         appsFlyerDataRepository.deleteAll();
         drmRepository.deleteAll();

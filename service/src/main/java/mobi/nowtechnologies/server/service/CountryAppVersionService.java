@@ -1,18 +1,23 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.CountryAppVersionDao;
+import mobi.nowtechnologies.server.persistence.repository.AppVersionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
 public class CountryAppVersionService {
 
-    private CountryAppVersionDao countryAppVersionDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CountryAppVersionService.class);
 
-    public void setCountryAppVersionDao(CountryAppVersionDao countryAppVersionDao) {
-        this.countryAppVersionDao = countryAppVersionDao;
-    }
+    @Resource
+    AppVersionRepository appVersionRepository;
+
 
     public boolean isAppVersionLinkedWithCountry(String appVersion, String countryCode) {
         if (appVersion == null) {
@@ -21,6 +26,17 @@ public class CountryAppVersionService {
         if (countryCode == null) {
             throw new ServiceException("The parameter countryCode is null");
         }
-        return countryAppVersionDao.isAppVersionLinkedWithCountry(appVersion, countryCode);
+
+        long count = appVersionRepository.countAppVersionLinkedWithCountry(appVersion, countryCode);
+
+        if (count == 1) {
+            return true;
+        }
+
+        if (count > 1) {
+            LOGGER.error( "There are " + count + " records found for appVersion = " + appVersion + ", countryFullName = " + countryCode);
+        }
+
+        return false;
     }
 }

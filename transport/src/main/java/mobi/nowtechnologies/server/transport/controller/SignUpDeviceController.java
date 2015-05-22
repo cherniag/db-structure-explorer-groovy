@@ -40,8 +40,8 @@ public class SignUpDeviceController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"**/{community}/{apiVersion:6\\.10}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.9}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.8}/SIGN_UP_DEVICE",
-                        "**/{community}/{apiVersion:6\\.7}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.10}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.9}/SIGN_UP_DEVICE",
+                        "**/{community}/{apiVersion:6\\.8}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.7}/SIGN_UP_DEVICE", "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"})
     public ModelAndView signUpDeviceV6_6(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
         return processSignUpDevice(userDeviceDetailsDto, true, true, true, true);
     }
@@ -71,13 +71,11 @@ public class SignUpDeviceController extends CommonController {
 
     private ModelAndView processSignUpDevice(UserDeviceRegDetailsDto userDeviceDetailsDto, boolean updateUserPendingActivation, boolean updateXtifyToken, boolean withUuid,
                                              boolean updateAppsFlyerUid) {
-        String community = getCurrentCommunityUri();
-        LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]", userDeviceDetailsDto, community);
-
-        User user = null;
-        Exception ex = null;
+        String community = null;
         try {
-            user = registerUser(userDeviceDetailsDto, community, updateUserPendingActivation);
+            community = getCurrentCommunityUri();
+            LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]", userDeviceDetailsDto, community);
+            User user = registerUser(userDeviceDetailsDto, community, updateUserPendingActivation);
 
             if (updateXtifyToken && !isEmpty(userDeviceDetailsDto.getXtifyToken())) {
                 deviceUserDataService.saveXtifyToken(user, userDeviceDetailsDto.getXtifyToken());
@@ -91,16 +89,11 @@ public class SignUpDeviceController extends CommonController {
 
             return buildModelAndView(accountCheck);
         } catch (ValidationException ve) {
-            ex = ve;
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]", ve.getMessage(), userDeviceDetailsDto, community);
             throw ve;
         } catch (RuntimeException re) {
-            ex = re;
             LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]", re.getMessage(), userDeviceDetailsDto, community);
             throw re;
-        } finally {
-            logProfileData(null, community, userDeviceDetailsDto, null, user, ex);
-            LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]", userDeviceDetailsDto, community);
         }
     }
 

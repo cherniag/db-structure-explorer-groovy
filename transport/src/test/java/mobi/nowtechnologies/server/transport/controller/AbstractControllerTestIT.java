@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
 
-    public static final String LATEST_SERVER_API_VERSION = "6.10";
+    public static final String LATEST_SERVER_API_VERSION = "6.11";
     private static AtomicInteger position = new AtomicInteger(0);
     protected MockMvc mockMvc;
     @Autowired
@@ -102,7 +102,6 @@ public abstract class AbstractControllerTestIT {
 
         o2ProviderServiceSpy.setO2Service(o2ServiceMock);
         userService.setMobileProviderService(o2ProviderServiceSpy);
-        userService.setO2ClientService(o2ProviderServiceSpy);
         ReflectionTestUtils.setField(o2ProviderDetailsExtractor, "o2ProviderService", o2ProviderServiceSpy);
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
 

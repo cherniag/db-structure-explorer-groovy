@@ -91,7 +91,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
-                String phoneNumber = phoneNumberCreator.createValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
+                String phoneNumber = phoneNumberCreator.createO2ValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
                 partnerDeviceSet.enterPhoneNumber(userDeviceData, phoneNumber);
             }
         });
@@ -174,7 +174,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
             public void invoke(UserDeviceData userDeviceData) {
                 final Contract anyContract = Contract.PAYG;
                 final ContractChannel anyContractChannel = ContractChannel.DIRECT;
-                String phoneNumber = phoneNumberCreator.createValidPhoneNumber(providerType, consumer, anyContract, tariff, anyContractChannel);
+                String phoneNumber = phoneNumberCreator.createO2ValidPhoneNumber(providerType, consumer, anyContract, tariff, anyContractChannel);
                 partnerDeviceSet.enterPhoneNumber(userDeviceData, phoneNumber);
             }
         });

@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPaymentFactory;
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
@@ -21,6 +20,7 @@ import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentReposi
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +51,7 @@ import static org.hamcrest.Matchers.is;
  * @author Titov Mykhaylo (titov)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class UserServiceTIT {
@@ -72,6 +73,8 @@ public class UserServiceTIT {
     private PaymentDetailsRepository paymentDetailsRepository;
     @Resource
     private SubmittedPaymentRepository submittedPaymentRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
 
     @Test
@@ -113,7 +116,7 @@ public class UserServiceTIT {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(1);
         testUser.setNextSubPayment(Utils.getEpochSeconds() - 100);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         testUser.setLastSubscribedPaymentSystem(null);
 
         userRepository.save(testUser);
@@ -138,7 +141,7 @@ public class UserServiceTIT {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(0);
         testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS - 10);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
 
         userRepository.save(testUser);
 
@@ -162,7 +165,7 @@ public class UserServiceTIT {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(0);
         testUser.setNextSubPayment(Utils.getEpochSeconds() - 10);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         testUser.setCurrentPaymentDetails(null);
 
         userRepository.save(testUser);
@@ -179,7 +182,7 @@ public class UserServiceTIT {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(0);
         testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 
         userRepository.save(testUser);
@@ -204,7 +207,7 @@ public class UserServiceTIT {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(0);
         testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 
         userRepository.save(testUser);
@@ -230,7 +233,7 @@ public class UserServiceTIT {
         User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
         testUser.setSubBalance(0);
         testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
-        testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+        testUser.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         testUser.setLastSubscribedPaymentSystem(PaymentDetails.MIG_SMS_TYPE);
 
         userRepository.save(testUser);
@@ -281,7 +284,7 @@ public class UserServiceTIT {
         user.setUserGroup(userGroup);
         userGroupRepository.save(userGroup);
         userRepository.save(user);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), user);
         sendChargeNotificationTask.setUser(user);
         taskRepository.save(sendChargeNotificationTask);
         List<UserTask> taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);

@@ -15,17 +15,17 @@ import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
 import mobi.nowtechnologies.applicationtests.services.runner.Runner;
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionMessage;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.VersionCheckRepository;
-import mobi.nowtechnologies.server.persistence.repository.VersionMessageRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheck;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckRepository;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionMessage;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionMessageRepository;
 
 import javax.annotation.Resource;
 
@@ -79,8 +79,10 @@ public class ServiceConfigFeature {
     private ApiVersions apiVersions;
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) above (.+)$")
-    public void givenVersionsAbove(@Transform(DictionaryTransformer.class) Word devices, @Transform(DictionaryTransformer.class) Word communities,
-                                   @Transform(DictionaryTransformer.class) Word versions, String aboveVersion) {
+    public void givenVersionsAbove(@Transform(DictionaryTransformer.class) Word devices,
+                                   @Transform(DictionaryTransformer.class) Word communities,
+                                   @Transform(DictionaryTransformer.class) Word versions,
+                                   String aboveVersion) {
         apiVersions = ApiVersions.from(versions.set());
         userDeviceDatas = userDeviceDataService.table(apiVersions.above(aboveVersion), communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
         applicationName = UUID.randomUUID().toString();
@@ -88,8 +90,10 @@ public class ServiceConfigFeature {
     }
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) bellow (.+)$")
-    public void givenVersionsBellow(@Transform(DictionaryTransformer.class) Word devices, @Transform(DictionaryTransformer.class) Word communities,
-                                    @Transform(DictionaryTransformer.class) Word versions, String bellowVersion) {
+    public void givenVersionsBellow(@Transform(DictionaryTransformer.class) Word devices,
+                                    @Transform(DictionaryTransformer.class) Word communities,
+                                    @Transform(DictionaryTransformer.class) Word versions,
+                                    String bellowVersion) {
         apiVersions = ApiVersions.from(versions.set());
         userDeviceDatas = userDeviceDataService.table(apiVersions.bellow(bellowVersion), communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
         applicationName = UUID.randomUUID().toString();
@@ -121,7 +125,7 @@ public class ServiceConfigFeature {
                     VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
                     Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
                     DeviceType deviceType = getDeviceType(userDeviceData);
-                    versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
+                    versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c.getId(), versionMessage, status, newApplicationName, clientVersion, imageFileName));
                 }
             });
         }
@@ -172,8 +176,12 @@ public class ServiceConfigFeature {
     }
 
     @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' image and '(.+)' link$")
-    public void whenServiceConfig(final VersionCheckStatus status, @Transform(ClientVersionTransformer.class) final ClientVersion clientVersion, final String application, final String code,
-                                  final String imageFileName, final String link) {
+    public void whenServiceConfig(final VersionCheckStatus status,
+                                  @Transform(ClientVersionTransformer.class) final ClientVersion clientVersion,
+                                  final String application,
+                                  final String code,
+                                  final String imageFileName,
+                                  final String link) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -183,7 +191,7 @@ public class ServiceConfigFeature {
 
                 Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
                 DeviceType deviceType = getDeviceType(userDeviceData);
-                VersionCheck versionCheck = new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName);
+                VersionCheck versionCheck = new VersionCheck(deviceType, c.getId(), versionMessage, status, newApplicationName, clientVersion, imageFileName);
                 versionCheckRepository.saveAndFlush(versionCheck);
             }
         });
@@ -237,6 +245,6 @@ public class ServiceConfigFeature {
     }
 
     private DeviceType getDeviceType(UserDeviceData userDeviceData) {
-        return DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceData.getDeviceType());
+        return DeviceTypeCache.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceData.getDeviceType());
     }
 }

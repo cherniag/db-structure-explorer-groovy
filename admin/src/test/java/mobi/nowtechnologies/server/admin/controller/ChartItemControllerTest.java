@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -53,6 +54,8 @@ public class ChartItemControllerTest {
     private ChartService chartService;
     @Mock
     private ChartAsm chartAsm;
+    @Mock
+    private ChartRepository chartRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -71,6 +74,7 @@ public class ChartItemControllerTest {
         fixture.setChartDetailService(chartDetailService);
         fixture.setFilesURL("");
         fixture.setChartAsm(chartAsm);
+        fixture.setChartRepository(chartRepository);
         //fixture.dateFormat = new SimpleDateFormat();
         fixture.messageSource = mock(MessageSource.class);
     }
@@ -118,7 +122,7 @@ public class ChartItemControllerTest {
 
         fixture.setFilesURL(filesUrl);
         when(chartDetailService.getChartItemsByDate(anyInt(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
-        when(chartService.getChartById(anyInt())).thenReturn(chart);
+        when(chartRepository.findOne(anyInt())).thenReturn(chart);
         when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
         when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 
@@ -151,7 +155,7 @@ public class ChartItemControllerTest {
         fixture.setFilesURL(filesUrl);
         when(chartDetailService.getChartItemsByDate(anyInt(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
         when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
-        when(chartService.getChartById(anyInt())).thenReturn(chart);
+        when(chartRepository.findOne(anyInt())).thenReturn(chart);
         when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 
         ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
@@ -183,7 +187,7 @@ public class ChartItemControllerTest {
 
         fixture.setFilesURL(filesUrl);
         when(chartDetailService.getChartItemsByDate(anyInt(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
-        when(chartService.getChartById(anyInt())).thenReturn(chart);
+        when(chartRepository.findOne(anyInt())).thenReturn(chart);
         when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 
         ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);

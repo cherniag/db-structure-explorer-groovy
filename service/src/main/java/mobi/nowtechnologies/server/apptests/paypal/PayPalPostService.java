@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.apptests.paypal;
 
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import javax.servlet.http.HttpServletResponse;
 

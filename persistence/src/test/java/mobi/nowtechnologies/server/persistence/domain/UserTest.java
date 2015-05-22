@@ -377,11 +377,6 @@ public class UserTest {
         assertEquals(true, result);
     }
 
-    private void createSubscribedUserWithTariffMigration(Tariff subscribedUserTariff, Tariff newUserTariff) {
-        user = UserFactory.createUserWithVideoPaymentDetails(subscribedUserTariff);
-        user.setTariff(newUserTariff);
-    }
-
     @Test
     public void testIsOn4GVideoAudioBoughtPeriod_Success() throws Exception {
         paymentPolicyTariff = _4G;
@@ -452,7 +447,8 @@ public class UserTest {
     @Test
     public void shouldReturnCanPlayVideoTrueForUserOn4GVideoAudioBoughtPeriod() {
         //given
-        user = new User().withTariff(_4G).withNextSubPayment(Integer.MAX_VALUE)
+        user = new User().withTariff(_4G)
+                         .withNextSubPayment(Integer.MAX_VALUE)
                          .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
 
         //when
@@ -465,7 +461,10 @@ public class UserTest {
     @Test
     public void shouldReturnCanPlayVideoFalseForUserWith4GVideoAudioFreeTrialExpiredAndNotOnBoughtVideoAudioPeriod() {
         //given
-        user = new User().withTariff(_4G).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(0L).withNextSubPayment(0)
+        user = new User().withTariff(_4G)
+                         .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO))
+                         .withFreeTrialExpiredMillis(0L)
+                         .withNextSubPayment(0)
                          .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
 
         //when
@@ -502,7 +501,8 @@ public class UserTest {
     @Test
     public void shouldReturnCanPlayVideoFalseForUserO3GAudioBoughtPeriod() {
         //given
-        user = new User().withTariff(_4G).withNextSubPayment(Integer.MAX_VALUE)
+        user = new User().withTariff(_4G)
+                         .withNextSubPayment(Integer.MAX_VALUE)
                          .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_3G).withMediaType(AUDIO)));
 
         //when
@@ -515,7 +515,8 @@ public class UserTest {
     @Test
     public void shouldReturnCanPlayVideoFalseForUserO4GAudioBoughtPeriod() {
         //given
-        user = new User().withTariff(_4G).withNextSubPayment(Integer.MAX_VALUE)
+        user = new User().withTariff(_4G)
+                         .withNextSubPayment(Integer.MAX_VALUE)
                          .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(AUDIO)));
 
         //when
@@ -528,7 +529,8 @@ public class UserTest {
     @Test
     public void shouldReturnCanPlayVideoFalseForUserOn4GVideoAudioSubscriptionWithNextSubPaymentInThePast() {
         //given
-        user = new User().withTariff(_4G).withNextSubPayment(0)
+        user = new User().withTariff(_4G)
+                         .withNextSubPayment(0)
                          .withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
 
         //when
@@ -703,7 +705,8 @@ public class UserTest {
     @Test
     public void shouldBeEligibleForVideoUserOnWhiteListedVideoAudioFreeTrial() {
         //given
-        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE)
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2")))
+                         .withFreeTrialExpiredMillis(Long.MAX_VALUE)
                          .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
 
         //when
@@ -716,7 +719,8 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnExpiredWhiteListedVideoAudioFreeTrial() {
         //given
-        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MIN_VALUE)
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2")))
+                         .withFreeTrialExpiredMillis(Long.MIN_VALUE)
                          .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
 
         //when
@@ -729,7 +733,8 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnNotWhiteListedVideoAudioFreeTrial() {
         //given
-        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE)
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2")))
+                         .withFreeTrialExpiredMillis(Long.MAX_VALUE)
                          .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
 
         //when
@@ -754,7 +759,8 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnWhiteListedAudioFreeTrial() {
         //given
-        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE)
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2")))
+                         .withFreeTrialExpiredMillis(Long.MAX_VALUE)
                          .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
 
         //when
@@ -839,7 +845,10 @@ public class UserTest {
     @Test
     public void shouldBeSubjectToAutoOptInO23GConsumerWithoutPromo() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2)
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(O2)
                               .withSegment(CONSUMER);
 
         //when
@@ -852,8 +861,12 @@ public class UserTest {
     @Test
     public void shouldBeSubjectToAutoOptInO23GConsumerWithVideoAudioLastPromo() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2)
-                              .withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(O2)
+                              .withSegment(CONSUMER)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -865,7 +878,11 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInNotO2Community() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(""))).withTariff(_3G).withProvider(O2).withSegment(BUSINESS)
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("")))
+                              .withTariff(_3G)
+                              .withProvider(O2)
+                              .withSegment(BUSINESS)
                               .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
@@ -878,8 +895,12 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInBusinessSegmentUser() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2)
-                              .withSegment(BUSINESS).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(O2)
+                              .withSegment(BUSINESS)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -891,8 +912,12 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInNonO2User() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(NON_O2)
-                              .withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(NON_O2)
+                              .withSegment(CONSUMER)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -904,8 +929,12 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInO23GConsumerWithAudioLastPromo() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2)
-                              .withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(O2)
+                              .withSegment(CONSUMER)
+                              .withLastPromo(new PromoCode().withMediaType(AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -917,7 +946,10 @@ public class UserTest {
     @Test
     public void shouldBeSubjectToAutoOptInO24GConsumerWithoutPromo() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_4G).withProvider(O2)
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_4G)
+                              .withProvider(O2)
                               .withSegment(CONSUMER);
 
         //when
@@ -930,7 +962,11 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInNotO2Community4G() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(""))).withTariff(_4G).withProvider(O2).withSegment(BUSINESS)
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("")))
+                              .withTariff(_4G)
+                              .withProvider(O2)
+                              .withSegment(BUSINESS)
                               .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
@@ -943,8 +979,12 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInBusinessSegment4GUser() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_4G).withProvider(O2)
-                              .withSegment(BUSINESS).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_4G)
+                              .withProvider(O2)
+                              .withSegment(BUSINESS)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -956,8 +996,12 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInNonO24GUser() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_4G).withProvider(NON_O2)
-                              .withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_4G)
+                              .withProvider(NON_O2)
+                              .withSegment(CONSUMER)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -969,8 +1013,13 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInUserWithOldUser() {
         //given
-        User user = new User().withAutoOptInEnabled(true).withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G)
-                              .withProvider(O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(true)
+                              .withOldUser(new User())
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(O2)
+                              .withSegment(CONSUMER)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -999,9 +1048,13 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInWhenDisabledAutoOptIn() {
         //given
-        User user =
-            new User().withAutoOptInEnabled(false).withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G)
-                      .withProvider(O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        User user = new User().withAutoOptInEnabled(false)
+                              .withOldUser(new User())
+                              .withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)))
+                              .withTariff(_3G)
+                              .withProvider(O2)
+                              .withSegment(CONSUMER)
+                              .withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();

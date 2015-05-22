@@ -3,13 +3,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<mvc:interceptors>
+<mvc:interceptors>
         <bean class="mobi.nowtechnologies.server.interceptor.RequestInfoInterceptor" />
         <bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
 		<mvc:interceptor>
@@ -73,25 +77,17 @@
 				<value>mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.ChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.Response</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.DeviceSet</value>
-				<value>mobi.nowtechnologies.server.shared.dto.DrmDto</value>
-				<value>mobi.nowtechnologies.server.shared.dto.DrmItemDto</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.SetPassword</value>
-				<value>mobi.nowtechnologies.server.shared.dto.BuyTrackDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.ErrorMessage</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
-				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
-				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDto</value>
 				<value>mobi.nowtechnologies.server.transport.phonenumber.dto.PhoneActivationDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.AccountCheckDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.LockedTrackDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
-                <value>mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto</value>
-                <value>mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto</value>
-                <value>mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.social.dto.facebook.FacebookUserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.social.dto.UserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.social.dto.googleplus.GooglePlusUserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.AccessPolicyDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.DeeplinkValueItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
@@ -111,6 +107,35 @@
 		</property>
 	</bean>
 
+	<bean id="templateResolver"
+		  class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".html" />
+		<property name="templateMode" value="HTML5" />
+		<property name="order" value="2" />
+		<property name="cacheable" value="false" />
+		<property name="templateAliases">
+			<map>
+				<entry key="tpl" value="fragments/main" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+		<property name="templateResolver" ref="templateResolver" />
+	</bean>
+
+	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="templateEngine" />
+		<property name="contentType" value="text/html; charset=UTF-8"/>
+		<property name="staticVariables" ref="thymeleafViewResolverStaticVars"/>
+	</bean>
+
+	<util:map id="thymeleafViewResolverStaticVars" >
+		<entry key="pass_salt" value="${pass_salt}" />
+		<entry key="admin_pass_salt" value="${admin_pass_salt}" />
+	</util:map>
+
    <bean id="contentNegotiationManagerFactoryBean" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
        <property name="defaultContentType" value="application/xml" />
        <property name="favorPathExtension" value="true" />
@@ -118,6 +143,7 @@
        <map>
            <entry key="xml" value="application/xml"/>
            <entry key="json" value="application/json" />
+           <entry key="html" value="application/html" />
        </map>
        </property>
    </bean>
@@ -158,71 +184,6 @@
 				<entry key="messageSource" value-ref="serviceMessageSource" />
 				<entry key="migHttpService" value-ref="service.migHttpService" />
 				<entry key="communityService" value-ref="service.communityService" />
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="transport.smsAccordingToLawMoboQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
-		<property name="startDelay"
-			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
-		<property name="repeatInterval"
-			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
-		<property name="jobDataAsMap">
-			<map merge="true">
-				<entry key="communityURL" value="mobo" />
-			</map>
-		</property>
-	</bean>
-
-	<bean id="transport.smsAccordingToLawMetalHammerQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
-		<property name="startDelay"
-			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
-		<property name="repeatInterval"
-			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
-		<property name="jobDataAsMap">
-			<map merge="true">
-				<entry key="communityURL" value="MetalHammer" />
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="transport.smsAccordingToLawSamsungQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
-		<property name="startDelay"
-			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
-		<property name="repeatInterval"
-			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
-		<property name="jobDataAsMap">
-			<map merge="true">
-				<entry key="communityURL" value="samsung" />
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="transport.smsAccordingToLawRunningTraxQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
-		<property name="startDelay"
-			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
-		<property name="repeatInterval"
-			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
-		<property name="jobDataAsMap">
-			<map merge="true">
-				<entry key="communityURL" value="runningtrax" />
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="transport.smsAccordingToLawChartsNowQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
-		<property name="startDelay"
-			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
-		<property name="repeatInterval"
-			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
-		<property name="jobDataAsMap">
-			<map merge="true">
-				<entry key="communityURL" value="ChartsNow" />
 			</map>
 		</property>
 	</bean>
@@ -329,7 +290,7 @@
     <bean id="job.UpdateO2UserTask" class="mobi.nowtechnologies.server.job.UpdateO2UserTask">
         <property name="userLogRepository" ref="userLogRepository"/>
         <property name="userService" ref="service.UserService"/>
-        <property name="deviceService" ref="service.DeviceService"/>
+        <property name="deviceService" ref="service.DevicePromotionsService"/>
         <property name="o2Service" ref="service.O2Service"/>
     </bean>
      
@@ -339,28 +300,36 @@
     	<property name="repeatInterval" value="${updateO2User.job.repeatIntervalMillis}" />
 	</bean>
 
-    <!-- Business Tasks Job -->
-    <bean id="businessTaskJob" class="mobi.nowtechnologies.server.job.BusinessTaskJob">
+    <!-- Send charge notification job -->
+    <bean id="sendChargeNotificationJob" class="mobi.nowtechnologies.server.job.BusinessTaskJob">
         <property name="taskService" ref="task.TaskService" />
-        <property name="processorContainer" ref="task.ProcessorContainer" />
+        <property name="processorContainer" ref="sendChargeNotificationProcessorContainer" />
         <property name="tasksCount" value="${task.job.tasks.count}" />
-        <property name="executor" ref="taskThreadExecutor" />
+        <property name="executor" ref="sendChargeNotificationThreadExecutor" />
+        <property name="supportedTaskTypes">
+            <set>
+                <value>SendChargeNotificationTask</value>
+            </set>
+        </property>
     </bean>
-    <bean id="businessTaskJobDetails" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="businessTaskJob" />
-        <property name="targetMethod" value="execute" />
-        <property name="concurrent" value="false" />
-    </bean>
-    <bean id="businessTaskTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail" ref="businessTaskJobDetails" />
+
+    <bean id="sendChargeNotificationTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetObject" ref="sendChargeNotificationJob" />
+                <property name="targetMethod" value="execute" />
+                <property name="concurrent" value="false" />
+            </bean>
+        </property>
         <property name="startDelay" value="${task.job.startDelayMillis}" />
         <property name="repeatInterval" value="${task.job.repeatIntervalMillis}" />
     </bean>
-    <bean id="taskThreadExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+    <bean id="sendChargeNotificationThreadExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="${task.job.executor.corePoolSize}"/>
         <property name="maxPoolSize" value="${task.job.executor.maxPoolSize}"/>
         <property name="queueCapacity" value="${task.job.executor.queueCapacity}"/>
     </bean>
+
 
     <!-- Fork users job -->
     <bean id="job.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -378,7 +347,7 @@
             <map merge="true">
                 <entry key="communityURL" value="vf_nz" />
                 <entry key="paymentDetailsFetchSize" value="1000" />
-                <entry key="paymentDetailsService" value-ref="service.PaymentDetailsService"/>
+                <entry key="paymentDetailsRepository" value-ref="paymentDetailsRepository"/>
                 <entry key="userNotificationService" value-ref="service.UserNotificationService"/>
             </map>
         </property>
@@ -432,15 +401,11 @@
 				<ref bean="paymentTrigger"/>
 				<ref bean="retryPaymentTrigger" />
 				<ref bean="expiredPaymentTrigger" />
-				<ref bean="transport.smsAccordingToLawSamsungQuartzTrigger" />
-				<ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
-				<ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
-				<ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
 				<ref bean="transport.smsNotificationQuartzTrigger" />
 				<ref bean="before48hPSMSPaymentTrigger"/>
                 <ref bean="sendSmsForVFNZUsersTrigger"/>
-                <ref bean="businessTaskTrigger"/>
+                <ref bean="sendChargeNotificationTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -472,15 +437,11 @@
                     <ref bean="paymentTrigger"/>
                     <ref bean="retryPaymentTrigger" />
                     <ref bean="expiredPaymentTrigger" />
-                    <ref bean="transport.smsAccordingToLawSamsungQuartzTrigger" />
-                    <ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
-                    <ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
-                    <ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
                     <ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
                     <ref bean="transport.smsNotificationQuartzTrigger" />
                     <ref bean="before48hPSMSPaymentTrigger"/>
                     <ref bean="sendSmsForVFNZUsersTrigger"/>
-                    <ref bean="businessTaskTrigger"/>
+                    <ref bean="sendChargeNotificationTrigger"/>
                     <ref bean="jobTrigger"/>
                 </list>
             </property>

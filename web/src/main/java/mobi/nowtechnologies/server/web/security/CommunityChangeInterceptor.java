@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.web.security;
 
+import mobi.nowtechnologies.server.shared.message.PropLocale;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
 import javax.servlet.ServletException;
@@ -18,52 +19,26 @@ import org.springframework.web.util.WebUtils;
 
 public class CommunityChangeInterceptor extends HandlerInterceptorAdapter {
 
-    public static final String DEFAULT_COMMUNITY_COOKIE_NAME = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
-    public static final String DEFAULT_LOCALE_PARAM_NAME = LocaleChangeInterceptor.DEFAULT_PARAM_NAME;
-    public static final String DEFAULT_COMMUNITY_DELIM = "_";
+    private PropLocale propLocale;
 
-    private String communityDelim = DEFAULT_COMMUNITY_DELIM;
-    private String communityCookieName = DEFAULT_COMMUNITY_COOKIE_NAME;
-    private String localeParamName = DEFAULT_LOCALE_PARAM_NAME;
-
-    public String getCommunityCookieName() {
-        return communityCookieName;
-    }
-
-    public void setCommunityCookieName(String communityCookieName) {
-        this.communityCookieName = communityCookieName;
-    }
-
-    public String getLocaleParamName() {
-        return localeParamName;
-    }
-
-    public void setLocaleParamName(String localeParamName) {
-        this.localeParamName = localeParamName;
-    }
-
-    public String getCommunityDelim() {
-        return communityDelim;
-    }
-
-    public void setCommunityDelim(String communityDelim) {
-        this.communityDelim = communityDelim;
+    public void setPropLocale(PropLocale propLocale) {
+        this.propLocale = propLocale;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
 
-        String localeParam = request.getParameter(this.getLocaleParamName());
-        Cookie communityCookie = WebUtils.getCookie(request, this.getCommunityCookieName());
+        String localeParam = request.getParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+        Cookie communityCookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
         String community = communityCookie != null ?
                            communityCookie.getValue() :
                            "";
 
-        Locale communityLocale = new Locale(community);
+        Locale stdLocale = null;
         if (localeParam != null) {
-            Locale stdLocale = StringUtils.parseLocaleString(localeParam);
-            communityLocale = new Locale(community + communityDelim + stdLocale.getLanguage(), stdLocale.getCountry(), stdLocale.getVariant());
+            stdLocale = StringUtils.parseLocaleString(localeParam);
         }
+        final Locale communityLocale = propLocale.getCommunityLocale(community, stdLocale);
 
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
         if (localeResolver == null) {

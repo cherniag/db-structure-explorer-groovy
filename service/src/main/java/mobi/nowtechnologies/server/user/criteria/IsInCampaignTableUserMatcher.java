@@ -29,7 +29,7 @@ public class IsInCampaignTableUserMatcher implements Matcher<User> {
         if (user.getMobile() == null) {
             return false;
         }
-        long countForMobile = subscriptionCampaignRepository.getCountForMobile(user.getMobile(), campaignId);
+        long countForMobile = subscriptionCampaignRepository.countForMobile(user.getMobile(), campaignId);
         LOGGER.debug("Result [{}] records", countForMobile);
         return countForMobile > 0;
     }

@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Author: Gennadii Cherniaiev Date: 4/10/2014
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 public class IsInCampaignTableUserMatcherIT {
 
     @Autowired

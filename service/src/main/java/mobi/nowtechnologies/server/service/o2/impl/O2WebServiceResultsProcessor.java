@@ -2,8 +2,10 @@ package mobi.nowtechnologies.server.service.o2.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.o2.soa.coredata_1.PaymentCategoryType;
@@ -24,9 +26,10 @@ public class O2WebServiceResultsProcessor {
     private static final Collection<String> KNOWN_INDIRECT_CHANNEL_PARTNERS = Arrays.asList(new String[] {"CPW", "esme", "Mass_Distribution", "PHONES4U", "TESCO"});
     private static final Collection<String> SUBSCRIBER_O2_CHANNELS = Arrays.asList(new String[] {"ISP", "OFFLINE", "ONLINE"});
     private final Logger LOGGER = LoggerFactory.getLogger(O2WebServiceResultsProcessor.class);
+    private Set<Integer> tarrif4GCodes = Sets.newHashSet(43, 44, 45, 46, 47, 48, 52);
 
-    public static boolean is4GTariffId(int tariffId) {
-        return tariffId == 43 || tariffId == 44 || tariffId == 45 || tariffId == 47 || tariffId == 48;
+    public boolean is4GTariffId(int tariffId) {
+        return tarrif4GCodes.contains(tariffId);
     }
 
     /**

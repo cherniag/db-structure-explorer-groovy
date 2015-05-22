@@ -1,30 +1,24 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PeriodMessageKeyBuilder;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
+import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
 import java.io.UnsupportedEncodingException;
@@ -39,12 +33,8 @@ import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -52,11 +42,11 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class UserNotificationServiceImpl implements UserNotificationService, ApplicationContextAware {
+public class UserNotificationServiceImpl implements UserNotificationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
     private UserService userService;
-    private PaymentDetailsService paymentDetailsService;
+    private PaymentDetailsRepository paymentDetailsRepository;
     private CommunityResourceBundleMessageSource messageSource;
     private List<String> availableCommunities = Collections.emptyList();
     private NowTechTokenBasedRememberMeServices rememberMeServices;
@@ -65,22 +55,22 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
     private String unsubscribeUrl;
     private String tinyUrlService;
     private String rememberMeTokenCookieName;
-    private DeviceService deviceService;
-    private ApplicationContext applicationContext;
+    private DevicePromotionsService deviceService;
+    private SmsServiceFacade smsServiceFacade;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 
@@ -122,6 +112,10 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+    }
+
+    public void setSmsServiceFacade(SmsServiceFacade smsServiceFacade) {
+        this.smsServiceFacade = smsServiceFacade;
     }
 
     @Async
@@ -200,13 +194,14 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     @Async
     @Override
-    public Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
+    public Future<Boolean> sendSubscriptionChangedSMS(User user) throws UnsupportedEncodingException {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
             if (user == null) {
                 throw new NullPointerException("The parameter user is null");
             }
-            if (user.getCurrentPaymentDetails() == null) {
+            PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+            if (currentPaymentDetails == null) {
                 throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
             }
 
@@ -220,7 +215,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             LOGGER.info("Attempt to send subscription confirmation sms async in memory");
 
             if (!rejectDevice(user, "sms.notification.subscribed.not.for.device.type")) {
-                PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
+                PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
                 String subCost = preFormatCurrency(paymentPolicy.getSubcost());
                 Period period = paymentPolicy.getPeriod();
                 String durationUnitPart = getDurationUnitPart(community, period);
@@ -264,7 +259,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
             final mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = user.getStatus();
             final String userStatusName = userStatus.getName();
-            final List<PaymentDetails> paymentDetailsList = user.getPaymentDetailsList();
+            final List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findPaymentDetailsByOwner(user);
 
             if (userStatusName == null) {
                 throw new NullPointerException("The parameter userStatusName is null");
@@ -382,33 +377,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     @Async
     @Override
-    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
-        try {
-            LOGGER.info("Start send payment fail SMS: {}", pendingPayment);
-            PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-            User user = pendingPayment.getUser();
-
-            final UserGroup userGroup = user.getUserGroup();
-            final Community community = userGroup.getCommunity();
-
-            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-
-            if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter())) {
-                return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails));
-            } else {
-                LOGGER.info("The payment fail sms for vf_nz community user wasn't sent cause it should be send between 8am and 8 pm by separate job");
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        } finally {
-            LogUtils.removeGlobalMDC();
-        }
-        return new AsyncResult<Boolean>(Boolean.FALSE);
-    }
-
-    @Override
-    @Transactional
-    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails) {
+    public Future<Boolean> sendPaymentFailSMS(PaymentDetails paymentDetails) {
         try {
             LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
 
@@ -420,33 +389,31 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
             boolean wasSmsSentSuccessfully = false;
 
-            if (paymentDetails.isCurrentAttemptFailed()) {
-                int attempt = paymentDetails.getMadeAttempts();
+            int attempt = paymentDetails.getMadeAttempts();
 
-                if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
-                    String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
-                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[] {paymentsUrl, shortCode});
+            if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
+                String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
+                wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[]{paymentsUrl, shortCode});
 
-                    if (wasSmsSentSuccessfully) {
-                        LOGGER.info("The payment fail sms was sent successfully");
-                        paymentDetailsService.update(paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis()));
-                    } else {
-                        LOGGER.info("The payment fail sms wasn't sent");
-                    }
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The payment fail sms was sent successfully");
+                    paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis());
+                    paymentDetailsRepository.save(paymentDetails);
                 } else {
-                    LOGGER.info("The payment fail sms wasn't sent cause rejecting");
+                    LOGGER.info("The payment fail sms wasn't sent for paymentDetails {}", paymentDetails);
                 }
             } else {
-                LOGGER.info("The payment fail sms wasn't sent cause current attempt isn't failed");
+                LOGGER.info("The payment fail sms wasn't sent cause rejecting");
             }
+
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
-            return wasSmsSentSuccessfully;
+            return new AsyncResult<>(wasSmsSentSuccessfully);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LogUtils.removeGlobalMDC();
         }
-        return false;
+        return new AsyncResult<>(false);
     }
 
 
@@ -535,6 +502,35 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
     }
 
+    @Override
+    public boolean sendSMSByKey(User user, String phoneNumber, String messageKey) throws UnsupportedEncodingException {
+        LOGGER.info("Send SMS by key, user id:{}, phoneNumber:{}, messageKey:{}", user.getId(), phoneNumber, messageKey);
+
+        String communityUrl = user.getCommunityRewriteUrl();
+        String rejectByDeviceTypeCode = "sms.notification.not.for.device.type";
+        if (rejectDevice(user, rejectByDeviceTypeCode)) {
+            LOGGER.warn("The sms wasn't sent cause rejecting, device: {}, code: {}", user.getDeviceTypeIdString(), rejectByDeviceTypeCode);
+            return false;
+        }
+
+        if (deviceService.isPromotedDevicePhone(user.getCommunity(), phoneNumber, null)) {
+            LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", phoneNumber, communityUrl);
+            return false;
+        }
+
+        String message = getMessage(user, messageKey, null);
+
+        if (StringUtils.isBlank(message)) {
+            LOGGER.error("The sms wasn't sent cause empty sms text message, community: {}, messageKey: {}", communityUrl, messageKey);
+            return false;
+        }
+
+        String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
+        SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(phoneNumber, message, title);
+        LOGGER.info("Sms response: {}, error: {}", smsResponse.isSuccessful(), smsResponse.getDescriptionError());
+        return smsResponse.isSuccessful();
+    }
+
     public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
         LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
 
@@ -545,8 +541,6 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         final UserGroup userGroup = user.getUserGroup();
         Community community = userGroup.getCommunity();
         String communityUrl = community.getRewriteUrlParameter();
-
-        boolean wasSmsSentSuccessfully = false;
 
         if (availableCommunities.contains(communityUrl)) {
             if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
@@ -570,36 +564,30 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                         msgArgs[0] = url;
                     }
 
-                    String message = getMessage(user, community, msgCode, msgArgs);
+                    String message = getMessage(user, msgCode, msgArgs);
 
                     if (!StringUtils.isBlank(message)) {
                         String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
-                        SMSResponse smsResponse = getSMSProvider(communityUrl).send(user.getMobile(), message, title);
-                        if (smsResponse.isSuccessful()) {
-                            wasSmsSentSuccessfully = true;
-                        } else {
-                            LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", smsResponse);
-                        }
+                        SMSGatewayService smsProvider = smsServiceFacade.getSMSProvider(communityUrl);
+                        SMSResponse smsResponse = smsProvider.send(user.getMobile(), message, title);
+
+                        LOGGER.info("SmsResponse, result: [{}], description error: [{}]", smsResponse.isSuccessful(), smsResponse.getDescriptionError());
+
+                        return smsResponse.isSuccessful();
                     } else {
-                        LOGGER.info("The sms wasn't sent cause empty sms text message");
+                        LOGGER.info("The sms wasn't sent cause empty sms text message for code: {} and community {}", msgCode, communityUrl);
                     }
                 } else {
-                    LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
+                    LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
                 }
             } else {
-                LOGGER.info("The sms wasn't sent cause rejecting");
+                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
             }
         } else {
-            LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
+            LOGGER.info("The sms wasn't sent cause rejecting community {}, all available are: {}", communityUrl, availableCommunities);
         }
 
-        LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
-        return wasSmsSentSuccessfully;
-    }
-
-    public SMSGatewayService getSMSProvider(String communityUrl) {
-        String smsProviderBeanName = messageSource.getMessage(communityUrl, "service.bean.smsProvider", null, null);
-        return (SMSGatewayService) applicationContext.getBean(smsProviderBeanName);
+        return false;
     }
 
     public boolean rejectDevice(User user, String code) {
@@ -617,122 +605,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         return false;
     }
 
-    protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-        LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
-
-        if (msgCodeBase == null) {
-            throw new NullPointerException("The parameter msgCodeBase is null");
-        }
-
-        String msg = null;
-
-        String[] codes = new String[25];
-
-        final String providerKey = isNull(user.getProvider()) ?
-                                   null :
-                                   user.getProvider().getKey();
-        final SegmentType segment = user.getSegment();
-        final Contract contract = user.getContract();
-        final DeviceType deviceType = user.getDeviceType();
-        final PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
-        String deviceTypeName = null;
-
-        if (deviceType != null) {
-            deviceTypeName = deviceType.getName();
-        }
-
-        codes[0] = msgCodeBase;
-        codes[1] = getCode(codes, 0, providerKey, true);
-        codes[2] = getCode(codes, 1, segment, true);
-        codes[3] = getCode(codes, 2, contract, true);
-        codes[4] = getCode(codes, 3, deviceTypeName, true);
-        codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ?
-                                     "VIDEO" :
-                                     null, true);
-        codes[6] = getCode(codes, 5, paymentDetails != null ?
-                                     paymentDetails.getPaymentType() :
-                                     null, true);
-
-        if (paymentDetails != null) {
-            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
-            String prefix = "before";
-            final String preProviderKey = isNull(paymentPolicy.getProvider()) ?
-                                          null :
-                                          paymentPolicy.getProvider().getKey();
-            final SegmentType preSegment = paymentPolicy.getSegment();
-            final Contract preContract = paymentPolicy.getContract();
-            final String providerSuffix = prefix + "." + preProviderKey;
-            final String segmentSuffix = providerSuffix + "." + preSegment;
-            final String contractSuffix = segmentSuffix + "." + preContract;
-            for (int i = 1; i <= 6; i++) {
-                if (!StringUtils.equals(preProviderKey, providerKey)) {
-                    codes[1 * 6 + i] = getCode(codes, i, providerSuffix, false);
-                }
-                if (segment != preSegment) {
-                    codes[2 * 6 + i] = getCode(codes, i, segmentSuffix, false);
-                }
-                if (contract != preContract) {
-                    codes[3 * 6 + i] = getCode(codes, i, contractSuffix, false);
-                }
-            }
-        }
-
-        for (int i = codes.length - 1; i >= 0; i--) {
-            if (codes[i] != null) {
-                msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
-                if (StringUtils.isNotEmpty(msg)) {
-                    break;
-                }
-            }
-        }
-
-        if (msg == null) {
-            LOGGER.warn("A user has not received sms notification because no message was found. getMessage( [{}], [{}])", user.getId(), msgCodeBase);
-        }
-
-        LOGGER.debug("Output parameter msg=[{}]", msg);
-        return msg;
-    }
-
-    private String getCode(String[] codes, int i, Object value, boolean recursive) {
-        LOGGER.debug("input parameters codes, i, value: [{}], [{}], [{}]", codes, i, value);
-
-        if (codes == null) {
-            throw new NullPointerException("The parameter codes is null");
-        }
-        if (codes.length == 0) {
-            throw new IllegalArgumentException("The parameter codes of array type has 0 size");
-        }
-        if (codes[0] == null) {
-            throw new IllegalArgumentException("The parameter codes of array type has null value as first element");
-        }
-        if (i >= codes.length) {
-            throw new IllegalArgumentException("The parameter i>=codes.length. i=" + i);
-        }
-        if (i < 0) {
-            throw new IllegalArgumentException("The parameter i less than 0. i=" + i);
-        }
-
-        String code = null;
-
-        if (value != null) {
-            final String prefix = codes[i];
-            if (prefix != null) {
-                if (i == 0) {
-                    code = prefix + ".for." + value;
-                } else {
-                    code = prefix + "." + value;
-                }
-            } else if (recursive) {
-                code = getCode(codes, i - 1, value, recursive);
-            }
-        }
-        LOGGER.debug("Output parameter code=[{}]", code);
-        return code;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    protected String getMessage(User user, String msgCodeBase, String[] msgArgs) {
+        MessageNotificationService messageNotificationService = smsServiceFacade.getMessageNotificationService(user.getCommunity().getRewriteUrlParameter());
+        return messageNotificationService.getMessage(user, msgCodeBase, msgArgs);
     }
 }

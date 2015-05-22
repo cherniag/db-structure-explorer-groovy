@@ -32,7 +32,8 @@ public class ContextController extends CommonController {
     PaymentTimeService paymentTimeService;
 
     @RequestMapping(method = GET,
-                    value = {"**/{community}/{apiVersion:6\\.10}/CONTEXT", "**/{community}/{apiVersion:6\\.9}/CONTEXT", "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
+                    value = {"**/{community}/{apiVersion:6\\.11}/CONTEXT", "**/{community}/{apiVersion:6\\.10}/CONTEXT", "**/{community}/{apiVersion:6\\.9}/CONTEXT",
+                        "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
     public ModelAndView getContext(@AuthenticatedUser User user, HttpServletResponse response) throws Exception {
         return getContext(user, true, response);
     }
@@ -44,31 +45,21 @@ public class ContextController extends CommonController {
     }
 
     public ModelAndView getContext(User user, boolean needToLookAtActivationDate, HttpServletResponse response) throws Exception {
-        LOGGER.info("command processing started");
-        Exception ex = null;
-        try {
-            userService.authorize(user, false, ActivationStatus.ACTIVATED);
+        userService.authorize(user, false, ActivationStatus.ACTIVATED);
 
-            final Date serverTime = timeService.now();
+        final Date serverTime = timeService.now();
 
-            ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate, serverTime);
+        ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate, serverTime);
 
-            handleExpires(user, response, serverTime);
+        handleExpires(user, response, serverTime);
 
-            return createModelAndView(contextDto);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(null, getCurrentCommunityUri(), null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return createModelAndView(contextDto);
     }
 
     private void handleExpires(User user, HttpServletResponse response, Date serverTime) {
-        if(user.isPaymentInProgress()) {
+        if (user.isPaymentInProgress()) {
             Date nextRetryTime = paymentTimeService.getNextRetryTime(user, serverTime);
-            if(nextRetryTime != null) {
+            if (nextRetryTime != null) {
                 response.setDateHeader("Expires", nextRetryTime.getTime());
             }
         }

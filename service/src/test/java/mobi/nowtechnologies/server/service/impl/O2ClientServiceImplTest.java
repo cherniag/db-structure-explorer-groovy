@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -54,7 +54,7 @@ public class O2ClientServiceImplTest {
     private CommunityService mockCommunityService;
 
     @Mock
-    private DeviceService mockDeviceService;
+    private DevicePromotionsService mockDeviceService;
 
     @Mock
     private UserService userServiceMock;

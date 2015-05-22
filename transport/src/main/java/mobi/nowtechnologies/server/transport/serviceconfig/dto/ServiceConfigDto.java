@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.transport.serviceconfig.dto;
 
-import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
+import mobi.nowtechnologies.server.versioncheck.domain.VersionCheckStatus;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

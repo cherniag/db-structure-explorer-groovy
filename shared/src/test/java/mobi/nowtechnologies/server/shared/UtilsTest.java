@@ -7,7 +7,6 @@ import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.Utils.getMajorVersionNumber;
 import static mobi.nowtechnologies.server.shared.Utils.getMonthlyNextSubPayment;
 import static mobi.nowtechnologies.server.shared.Utils.getNewNextSubPayment;
-import static mobi.nowtechnologies.server.shared.Utils.getOTACode;
 import static mobi.nowtechnologies.server.shared.Utils.getTimeOfMovingToLimitedStatus;
 import static mobi.nowtechnologies.server.shared.Utils.isMajorVersionNumberLessThan;
 import static mobi.nowtechnologies.server.shared.Utils.md5;
@@ -91,26 +90,6 @@ public class UtilsTest {
 
         assertTrue(timeBeforeProcessingSeconds + WEEK_SECONDS <= result);
         assertTrue(getEpochSeconds() + WEEK_SECONDS >= result);
-    }
-
-    @Test
-    public void testGetOTACode_1() throws Exception {
-        int userId = 1;
-        String userName = "";
-
-        String result = getOTACode(userId, userName);
-
-        assertEquals("dd5dacb0ac2a83b510ef8f6197e8f6ad", result);
-    }
-
-    @Test(expected = java.lang.NullPointerException.class)
-    public void testGetOTACode_2() throws Exception {
-        int userId = 1;
-        String userName = null;
-
-        String result = getOTACode(userId, userName);
-
-        assertNotNull(result);
     }
 
     @Test

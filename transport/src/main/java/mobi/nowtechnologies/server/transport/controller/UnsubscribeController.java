@@ -60,72 +60,53 @@ public class UnsubscribeController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = {"/{community:.+}/{apiVersion:6\\.10}/stop_subscription", "/{community:.+}/{apiVersion:6\\.9}/stop_subscription", "/{community:.+}/{apiVersion:6\\.8}/stop_subscription",
+                    value = {"/{community:.+}/{apiVersion:6\\.11}/stop_subscription", "/{community:.+}/{apiVersion:6\\.10}/stop_subscription", "/{community:.+}/{apiVersion:6\\.9}/stop_subscription",
+                        "/{community:.+}/{apiVersion:6\\.8}/stop_subscription",
                         "/{community:.+}/{apiVersion:6\\.7}/stop_subscription", "/{community:.+}/{apiVersion:6\\.6}/stop_subscription", "/{community:.+}/{apiVersion:6\\.5}/stop_subscription",
                         "/{community:.+}/{apiVersion:6\\.4}/stop_subscription", "/{community:.+}/{apiVersion:6\\.3}/stop_subscription", "/{community:.+}/{apiVersion:6\\.2}/stop_subscription",
                         "/{community:.+}/{apiVersion:6\\.1}/stop_subscription", "/{community:.+}/{apiVersion:6\\.0}/stop_subscription", "/{community:.+}/{apiVersion:5\\.0}/stop_subscription",
                         "/{community:.+}/{apiVersion:4\\.2}/stop_subscription", "/{community:.+}/{apiVersion:4\\.1}/stop_subscription", "/{community:.+}/{apiVersion:4\\.0}/stop_subscription",
-                        "/{community:.+}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]\\" + ".[1-9][0-9]{0,2}}/stop_subscription", "/{community:" +
-                                                                                                                         ".+}/{apiVersion:[3-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/stop_subscription",
+                        "/{community:.+}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]\\" + ".[1-9][0-9]{0,2}}/stop_subscription",
+                        "/{community:.+}/{apiVersion:[3-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/stop_subscription",
                         "/{community:.+}/{apiVersion:[3-9]\\.[8-9]\\.[1-9][0-9]{0,2}}/stop_subscription", "/{community:.+}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]}/stop_subscription",
                         "/{community:" + ".+}/{apiVersion:[1-9][0-9]\\.[0-9]}/stop_subscription", "/{community:.+}/{apiVersion:[3-9]\\.[1-9][0-9]}/stop_subscription",
                         "/{community:.+}/{apiVersion:[3-9]\\" + ".[8-9]}/stop_subscription"})
     public
     @ResponseBody
     String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws Exception {
-        User user = null;
-        Exception ex = null;
-        boolean hasNoSuchActivatedPaymentDetails = false;
-        try {
-            LOGGER.info("command processing started");
-            LOGGER.info("input parameters body, community: [{}], [{}]", body, community);
+        LOGGER.info("input parameters body, community: [{}], [{}]", body, community);
 
-            DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-            domFactory.setNamespaceAware(true); // never forget this!
-            StringReader characterStream = new StringReader(body);
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true); // never forget this!
+        StringReader characterStream = new StringReader(body);
 
-            InputSource source = new InputSource(characterStream);
+        InputSource source = new InputSource(characterStream);
 
-            String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
-            String phoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
-            if (phoneNumber.isEmpty()) {
-                throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE, "Couldn't parse phone number (MSISDN)");
-            }
-
-            characterStream = new StringReader(body);
-            source = new InputSource(characterStream);
-            String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
-            String operatorName = receivedOperatorName.replaceAll("\\*", "");
-            if (operatorName.isEmpty()) {
-                throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR, "Couldn't parse operator name (NETWORK)");
-            }
-
-            List<PaymentDetails> paymentDetailsList = userService.unsubscribeUser(phoneNumber, operatorName);
-
-            String message;
-            if (paymentDetailsList.isEmpty()) {
-                hasNoSuchActivatedPaymentDetails = true;
-                message = messageSource.getMessage(community, "unsubscribe.mrs.message.payment.details.not.found", null, null);
-            } else {
-                final PaymentDetails paymentDetails = paymentDetailsList.get(0);
-                if (paymentDetails != null) {
-                    user = paymentDetails.getOwner();
-                }
-                message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
-            }
-
-            LOGGER.info("Output parameter message=[{}]", message);
-            return message;
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            if (hasNoSuchActivatedPaymentDetails) {
-                ex = new Exception("No such activated payment details");
-            }
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
+        String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
+        String phoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
+        if (phoneNumber.isEmpty()) {
+            throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE, "Couldn't parse phone number (MSISDN)");
         }
+
+        characterStream = new StringReader(body);
+        source = new InputSource(characterStream);
+        String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
+        String operatorName = receivedOperatorName.replaceAll("\\*", "");
+        if (operatorName.isEmpty()) {
+            throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR, "Couldn't parse operator name (NETWORK)");
+        }
+
+        List<PaymentDetails> paymentDetailsList = userService.unsubscribeUser(phoneNumber, operatorName);
+
+        String message;
+        if (paymentDetailsList.isEmpty()) {
+            message = messageSource.getMessage(community, "unsubscribe.mrs.message.payment.details.not.found", null, null);
+        } else {
+            message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
+        }
+
+        LOGGER.info("Output parameter message=[{}]", message);
+        return message;
     }
 
     @ExceptionHandler(ServiceException.class)

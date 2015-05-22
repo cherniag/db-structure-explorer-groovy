@@ -4,7 +4,6 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 
 import java.net.URI;

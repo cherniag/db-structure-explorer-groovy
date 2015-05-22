@@ -15,8 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -30,15 +28,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "tb_promotions")
-@NamedQueries({@NamedQuery(name = Promotion.NQ_GET_PROMOTION_WITH_FILTER,
-                           query = "select distinct prom from Promotion prom join prom.filters where isActive=true and (numUsers<maxUsers or maxUsers=0) and endDate>?1 and startDate<?1 and " +
-                                   "userGroup=?2")})
 public class Promotion implements Serializable {
-
-    public static final String NQ_GET_PROMOTION_WITH_FILTER = "getPromotionWithFilter";
     public static final String ADD_FREE_WEEKS_PROMOTION = "PromoCode";
     public static final String ADD_SUBBALANCE_PROMOTION = "noPromoCode";
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer i;
@@ -311,7 +305,7 @@ public class Promotion implements Serializable {
         return this;
     }
 
-    public int getFreeWeeksEndDate(int freeTrialStartSeconds) {
+    public int getEndSeconds(int freeTrialStartSeconds) {
         return period == null || period.getDuration() <= 0 ?
                endDate :
                period.toNextSubPaymentSeconds(freeTrialStartSeconds);

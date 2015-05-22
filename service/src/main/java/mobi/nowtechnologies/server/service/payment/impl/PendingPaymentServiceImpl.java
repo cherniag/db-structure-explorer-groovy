@@ -96,7 +96,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 
         int epochSeconds = getEpochSeconds();
         PageRequest nextSubPayment = new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment");
-        final Page<User> usersPage = userRepository.getUsersForRetryPayment(epochSeconds, nextSubPayment);
+        final Page<User> usersPage = userRepository.findUsersForRetryPayment(epochSeconds, nextSubPayment);
 
         LOGGER.info("{} users were selected for retry payment", usersPage.getNumberOfElements());
         if (usersPage.hasNextPage()) {

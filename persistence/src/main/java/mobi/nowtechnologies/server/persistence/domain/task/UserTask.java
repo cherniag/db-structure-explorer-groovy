@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import static javax.persistence.FetchType.EAGER;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -19,6 +21,15 @@ public abstract class UserTask extends Task {
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "user_id")
     private User user;
+
+    protected UserTask(Date serverTime, User user) {
+        super(serverTime);
+        this.user = user;
+    }
+
+    protected UserTask() {
+        super();
+    }
 
     public User getUser() {
         return user;

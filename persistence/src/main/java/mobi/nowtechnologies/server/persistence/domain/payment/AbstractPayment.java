@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -17,20 +15,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @MappedSuperclass
 public abstract class AbstractPayment {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPayment.class);
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paymentDetailsId")
     protected PaymentDetails paymentDetails;
@@ -57,18 +49,6 @@ public abstract class AbstractPayment {
 
     public AbstractPayment() {
         internalTxId = UUID.randomUUID().toString().replaceAll("-", "");
-    }
-
-    public static List<PaymentHistoryItemDto> toPaymentHistoryItemDto(List<AbstractPayment> abstractPayments) {
-        LOGGER.debug("input parameters abstractPayments: [{}]", abstractPayments);
-
-        List<PaymentHistoryItemDto> paymentHistoryItemDtos = new LinkedList<PaymentHistoryItemDto>();
-        for (AbstractPayment abstractPayment : abstractPayments) {
-            paymentHistoryItemDtos.add(abstractPayment.toPaymentHistoryItemDto());
-        }
-
-        LOGGER.debug("Output parameter paymentHistoryItemDtos=[{}]", paymentHistoryItemDtos);
-        return paymentHistoryItemDtos;
     }
 
     public Long getI() {
@@ -167,25 +147,6 @@ public abstract class AbstractPayment {
 
     public void setPeriod(Period period) {
         this.period = period;
-    }
-
-    public PaymentHistoryItemDto toPaymentHistoryItemDto() {
-        PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
-
-        paymentHistoryItemDto.setTransactionId(internalTxId);
-        paymentHistoryItemDto.setDate(new Date(timestamp));
-        if (type.equals(PaymentDetailsType.FIRST)) {
-            paymentHistoryItemDto.setDescription("1");
-        } else {
-            paymentHistoryItemDto.setDescription("2");
-        }
-        paymentHistoryItemDto.setDuration(period.getDuration());
-        paymentHistoryItemDto.setDurationUnit(period.getDurationUnit());
-        paymentHistoryItemDto.setPaymentMethod(paymentSystem);
-        paymentHistoryItemDto.setAmount(amount);
-
-        LOGGER.debug("Output parameter paymentHistoryItemDto=[{}]", paymentHistoryItemDto);
-        return paymentHistoryItemDto;
     }
 
     @Override

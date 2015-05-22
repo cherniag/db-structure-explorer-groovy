@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service.payment.http;
 
 import mobi.nowtechnologies.server.service.payment.request.MigRequest;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import org.junit.*;
 

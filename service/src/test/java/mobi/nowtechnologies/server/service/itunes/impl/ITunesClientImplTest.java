@@ -7,8 +7,8 @@ package mobi.nowtechnologies.server.service.itunes.impl;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import org.junit.*;
 import org.mockito.*;

@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.job;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
@@ -36,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.TaskRejectedException;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -52,7 +53,7 @@ import static org.mockito.Mockito.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml", "classpath:jobs-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
+@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
 public class CreatePendingPaymentJobHandleExceptionIT {
 
     private static final String UNKNOWN_EXCEPTION = "Unknown exception";
@@ -97,7 +98,6 @@ public class CreatePendingPaymentJobHandleExceptionIT {
     public void tearDown() throws Exception {
         submittedPaymentRepository.deleteAll();
         user.setCurrentPaymentDetails(null);
-        user.getPaymentDetailsList().clear();
         userRepository.save(user);
         paymentDetailsRepository.delete(paymentDetails);
         userRepository.delete(user);
@@ -182,7 +182,7 @@ public class CreatePendingPaymentJobHandleExceptionIT {
     }
 
     private void mockUserNotificationService() throws UnsupportedEncodingException {
-        when(userNotificationServiceMocked.sendPaymentFailSMS(any(PaymentDetails.class))).thenReturn(true);
+        when(userNotificationServiceMocked.sendPaymentFailSMS(any(PaymentDetails.class))).thenReturn(new AsyncResult<>(true));
         smsNotification.setUserNotificationService(userNotificationServiceMocked);
     }
 

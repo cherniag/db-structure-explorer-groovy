@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:utils="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<import resource="service.xml" />
 
     <bean id="service.VersionService" class="java.lang.Object" />
     <bean id="service.DeviceUserDataService" class="java.lang.Object" />
-    <bean id="service.EntityService" class="java.lang.Object" />
     <bean id="service.UserService" class="java.lang.Object" />
     <bean id="service.PaymentDetailsService" class="java.lang.Object" />
-    <bean id="service.DeviceService" class="java.lang.Object" />
+    <bean id="service.DevicePromotionsService" class="java.lang.Object" />
     <bean id="service.DrmService" class="java.lang.Object" />
     <bean id="service.AccountLogService" class="java.lang.Object" />
     <bean id="service.NewsDetailService" class="java.lang.Object" />
@@ -49,19 +48,11 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.subBalancePaymentService" class="java.lang.Object" />
     <bean id="subBalancePaymentListener" class="java.lang.Object" />
     <bean id="service.RefundService" class="java.lang.Object"/>
-  
-    <!--<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>-->
 
-	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:application-test.properties</value>
-			</list>
-		</property>
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="ignoreResourceNotFound" value="true" />
-	</bean>
-	
+    <utils:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
+        <value>classpath:application-test.properties</value>
+    </utils:list>
+
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
 		<property name="mailSession" ref="service.MailSession" />
 	</bean>

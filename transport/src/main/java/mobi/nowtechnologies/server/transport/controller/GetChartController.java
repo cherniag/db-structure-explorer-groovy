@@ -57,11 +57,23 @@ public class GetChartController extends CommonController {
         binder.registerCustomEditor(Resolution.class, new ResolutionParameterEditor());
     }
 
+
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.11}/GET_CHART"})
+    public ModelAndView getChartV611(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
+        throws Exception {
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, true, ActivationStatus.ACTIVATED);
+
+        setMandatoryLastModifiedHeader(response);
+
+        return modelAndView;
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.10}/GET_CHART", "**/{community}/{apiVersion:6\\.9}/GET_CHART", "**/{community}/{apiVersion:6\\.8}/GET_CHART"})
     public ModelAndView getChartV68(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -72,7 +84,7 @@ public class GetChartController extends CommonController {
     public ModelAndView getChartV67(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, false, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -83,7 +95,7 @@ public class GetChartController extends CommonController {
     public ModelAndView getChartV6(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
         throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, false, false, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, false, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -94,7 +106,7 @@ public class GetChartController extends CommonController {
     @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.3}/GET_CHART"})
     public ModelAndView getChartV63(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.ACTIVATED);
+        ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -107,129 +119,78 @@ public class GetChartController extends CommonController {
                         "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART", "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART"})
     public ModelAndView getChart_O2_v4d0(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
                                          @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, false, ActivationStatus.ACTIVATED);
     }
 
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/5.5/GET_CHART", "**/{community}/5.5.0/GET_CHART"})
     public ModelAndView getChart_v5(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                     @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART"})
     public ModelAndView getChart_O2_v3d8(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
                                          @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        String apiVersion = getCurrentApiVersion();
-        try {
-            LOGGER.info("command processing started");
-            throttlingService.throttling(request, userName, deviceUID, community);
+        throttlingService.throttling(request, userName, deviceUID, getCurrentCommunityUri());
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ChartDto chartDto = chartService.processGetChartCommand(user, false, true, null, false);
-            chartDto = convertToOldVersion(chartDto, apiVersion);
+        ChartDto chartDto = chartService.processGetChartCommand(user, false, true, null, false, false);
+        chartDto = convertToOldVersion(chartDto, getCurrentApiVersion());
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
+        AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
-            return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return buildModelAndView(accountCheck, chartDto);
     }
 
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3.7}/GET_CHART"})
     public ModelAndView getChart_O2_v3d7(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
                                          @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        String apiVersion = getCurrentApiVersion();
-        try {
-            LOGGER.info("command processing started");
-            throttlingService.throttling(request, userName, deviceUID, community);
+        throttlingService.throttling(request, userName, deviceUID, getCurrentCommunityUri());
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ChartDto chartDto = chartService.processGetChartCommand(user, false, false, null, false);
-            chartDto = convertToOldVersion(chartDto, apiVersion);
+        ChartDto chartDto = chartService.processGetChartCommand(user, false, false, null, false, false);
+        chartDto = convertToOldVersion(chartDto, getCurrentApiVersion());
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
+        AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
-            return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return buildModelAndView(accountCheck, chartDto);
     }
 
 
     @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/3.6/GET_CHART"})
     public ModelAndView getChart_O2(HttpServletRequest request, @RequestParam("API_VERSION") String apiVersion, @RequestParam("USER_NAME") String userName,
-                                    @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID)
-        throws Exception {
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        try {
-            LOGGER.info("command processing started");
-            throttlingService.throttling(request, userName, deviceUID, community);
+                                    @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+        throttlingService.throttling(request, userName, deviceUID, getCurrentCommunityUri());
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ChartDto chartDto = chartService.processGetChartCommand(user, true, false, null, false);
+        ChartDto chartDto = chartService.processGetChartCommand(user, true, false, null, false, false);
 
-            chartDto = convertToOldVersion(chartDto, apiVersion);
+        chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
+        AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
-            return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+        return buildModelAndView(accountCheck, chartDto);
     }
 
 
     private ModelAndView getChart(HttpServletRequest request, String userName, String userToken, String timestamp, String deviceUID, Resolution resolution, boolean isPlayListLockedSupported,
-                                  boolean withOneTimePayment, ActivationStatus... activationStatuses) throws Exception {
-        User user = null;
-        Exception ex = null;
-        String community = getCurrentCommunityUri();
-        try {
-            LOGGER.info("command processing started");
-            throttlingService.throttling(request, userName, deviceUID, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
+                                  boolean withOneTimePayment, boolean withChartUpdateId, ActivationStatus... activationStatuses) throws Exception {
+        throttlingService.throttling(request, userName, deviceUID, getCurrentCommunityUri());
+        User user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            if (resolution != null) {
-                resolution.withDeviceType(user.getDeviceType().getName());
-            }
-            ChartDto chartDto = chartService.processGetChartCommand(user, false, true, resolution, isPlayListLockedSupported);
-
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
-
-            return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
+        if (resolution != null) {
+            resolution.withDeviceType(user.getDeviceType().getName());
         }
+        ChartDto chartDto = chartService.processGetChartCommand(user, false, true, resolution, isPlayListLockedSupported, withChartUpdateId);
+
+        AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
+
+        return buildModelAndView(accountCheck, chartDto);
     }
 
     private ChartDto convertToOldVersion(ChartDto chartDto, String version) {

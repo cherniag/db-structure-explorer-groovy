@@ -12,26 +12,9 @@
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
     </bean>
 
-    <bean id="userRegDetailsDtoValidator" class="mobi.nowtechnologies.server.web.asm.UserRegDetailsDtoValidator">
-        <property name="userService" ref="service.UserService"/>
-        <property name="userRepository" ref="userRepository"/>
-    </bean>
-
     <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
 
     <bean name="web.LoginController" class="mobi.nowtechnologies.server.web.controller.LoginLogoutController"/>
-
-    <bean name="web.SignUpController" class="mobi.nowtechnologies.server.web.controller.SignUpController">
-        <property name="userService" ref="service.UserService"/>
-        <property name="communityService" ref="service.communityService"/>
-        <property name="userRegDetailsDtoValidator" ref="userRegDetailsDtoValidator"/>
-        <property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
-        <property name="authenticationManager" ref="authenticationManager"/>
-    </bean>
-
-    <bean class="mobi.nowtechnologies.server.web.controller.GetAppController">
-        <property name="userService" ref="service.UserService"/>
-    </bean>
 
     <bean name="web.AccountController" class="mobi.nowtechnologies.server.web.controller.AccountController">
         <property name="userRepository" ref="userRepository"/>
@@ -40,23 +23,10 @@
         <property name="specificCommunityResourcesFolderPath" value="${specificCommunityResourcesFolderPath}"/>
     </bean>
 
-    <bean name="web.PaymentHistoryController"
-          class="mobi.nowtechnologies.server.web.controller.PaymentHistoryController">
-        <property name="paymentService" ref="service.PaymentService"/>
-        <property name="messageSource" ref="messageSource"/>
-    </bean>
-
-    <bean name="web.TracksController" class="mobi.nowtechnologies.server.web.controller.TracksController">
-        <property name="mediaLogService" ref="service.MediaLogService"/>
-        <property name="fileService" ref="service.FileService"/>
-        <property name="messageSource" ref="messageSource"/>
-    </bean>
-
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
-        <property name="communityService" ref="service.communityService"/>
         <property name="userRepository" ref="userRepository"/>
-    	<property name="userService" ref="service.UserService"/>
+        <property name="paymentDetailsRepository" ref="paymentDetailsRepository"/>
     	<property name="promotionService" ref="service.PromotionService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
@@ -108,13 +78,6 @@
         </property>
     </bean>
 
-    <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
-        <property name="userService" ref="service.UserService"/>
-        <property name="userRepository" ref="userRepository"/>
-    </bean>
-
-    <bean name="web.FaqController" class="mobi.nowtechnologies.server.web.controller.FaqController"/>
-
     <bean class="mobi.nowtechnologies.server.web.controller.TermsController"/>
 
     <bean name="web.ErrorController" class="mobi.nowtechnologies.server.web.controller.ErrorController"/>
@@ -123,6 +86,8 @@
         <property name="userService" ref="service.UserService"/>
         <property name="userRepository" ref="userRepository"/>
     </bean>
+
+    <bean class="mobi.nowtechnologies.server.support.props.PropController"/>
 
     <!-- Static Pages -->
     <mvc:view-controller path="/privacy_policy.html" view-name="privacy_policy"/>

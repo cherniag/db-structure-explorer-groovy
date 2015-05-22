@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserStatusRepository extends JpaRepository<UserStatus, Integer> {
 
-    @Query(value = "select userStatus from UserStatus userStatus " + " where userStatus.name = ?1")
+    @Query("select userStatus from UserStatus userStatus " +
+           "where userStatus.name = ?1")
     UserStatus findByName(String name);
 }

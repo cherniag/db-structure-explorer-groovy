@@ -21,6 +21,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -35,11 +36,22 @@ public abstract class Task implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "taskStatus", columnDefinition = "char(25)")
-    private TaskStatus taskStatus;
+    private TaskStatus taskStatus = TaskStatus.ACTIVE;
 
     @SuppressWarnings("unused")
     @Column(name = "taskType", insertable = false, updatable = false)
     private String taskType;
+
+    protected Task() {
+
+    }
+
+    protected Task(Date serverTime) {
+        executionTimestamp = serverTime.getTime();
+        creationTimestamp = serverTime.getTime();
+    }
+
+    public abstract String getTaskType();
 
     private long executionTimestamp;
 
@@ -58,27 +70,16 @@ public abstract class Task implements Serializable {
         this.id = id;
     }
 
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
-    }
-
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
-    }
-
     public long getExecutionTimestamp() {
         return executionTimestamp;
-    }
-
-    public void setExecutionTimestamp(long executionTimestamp) {
-        this.executionTimestamp = executionTimestamp;
     }
 
     public long getCreationTimestamp() {
         return creationTimestamp;
     }
 
-    public void setCreationTimestamp(long creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
+    public void scheduleAfter(long executeInterval) {
+        long latest = Math.max(creationTimestamp, executionTimestamp);
+        executionTimestamp = latest + executeInterval;
     }
 }

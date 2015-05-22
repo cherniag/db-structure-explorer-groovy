@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -41,6 +42,9 @@ public class VideoFreeTrialControllerIT extends AbstractWebControllerIT {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    private PaymentDetailsRepository paymentDetailsRepository;
+
     @Resource(name = "service.UserService")
     private UserService userService;
 
@@ -56,7 +60,7 @@ public class VideoFreeTrialControllerIT extends AbstractWebControllerIT {
     public void testActivateVideoFreeTrial() throws Exception {
         String communityUrl = "o2";
         user = userRepository.findOne(101);
-        assertTrue(user.getPaymentDetailsList().isEmpty());
+        assertTrue(paymentDetailsRepository.findPaymentDetailsByOwner(user).isEmpty());
         user.setActivationStatus(ACTIVATED);
         user.setTariff(_4G);
         user.setContract(PAYM);
@@ -90,7 +94,7 @@ public class VideoFreeTrialControllerIT extends AbstractWebControllerIT {
         SecurityContextHolder.setContext(createSecurityContext());
         mockMvc.perform(post("/videotrial.html").cookie(new Cookie[] {new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).andExpect(status().isOk());
         user = userRepository.findOne(user.getId());
-        assertFalse(user.getPaymentDetailsList().isEmpty());
+        assertFalse(paymentDetailsRepository.findPaymentDetailsByOwner(user).isEmpty());
     }
 
 

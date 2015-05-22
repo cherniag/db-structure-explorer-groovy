@@ -2,9 +2,9 @@ package mobi.nowtechnologies.applicationtests.configuration;
 
 import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
-import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
+import mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService;
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService;
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -13,8 +13,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.pool.ConnPoolControl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +39,8 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(
     basePackages = {"mobi.nowtechnologies.applicationtests.services", "mobi.nowtechnologies.applicationtests.features"})
 @Import(PropertyPlaceholderConfiguration.class)
-@ImportResource({"classpath:META-INF/dao.xml", "classpath:context/services.xml", "classpath:META-INF/service-application-tests.xml"})
+@ImportResource({"classpath:META-INF/dao.xml", "classpath:context/services.xml"
+        /*"classpath:META-INF/service-application-tests.xml"*/})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class ApplicationConfiguration {
 
@@ -49,8 +49,7 @@ public class ApplicationConfiguration {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         // just let the developer to debug
         requestFactory.setReadTimeout(120 * 1000);
-        DefaultHttpClient client = (DefaultHttpClient) requestFactory.getHttpClient();
-        PoolingClientConnectionManager conManager = (PoolingClientConnectionManager) client.getConnectionManager();
+        ConnPoolControl conManager = (ConnPoolControl) requestFactory.getHttpClient().getConnectionManager();
         conManager.setDefaultMaxPerRoute(20);
 
         // requestFactory.setOutputStreaming(false);
@@ -80,8 +79,8 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public PhoneExtensionsService getPhoneExtensionsService() {
-        return new PhoneExtensionsService();
+    public O2PhoneExtensionsService getPhoneExtensionsService() {
+        return new O2PhoneExtensionsService();
     }
 
     @Bean(name = "applicationTestsEntityManager")
@@ -96,6 +95,9 @@ public class ApplicationConfiguration {
             // two mno tables
             "mobi.nowtechnologies.server.mno.api.impl.domain",
             // all the tables form persistence artifact
+            "mobi.nowtechnologies.server.social.domain",
+            "mobi.nowtechnologies.server.device.domain",
+            "mobi.nowtechnologies.server.versioncheck.domain",
             "mobi.nowtechnologies.server.persistence.domain");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(additionalProperties());

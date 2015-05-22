@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:utils="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="/WEB-INF/transport-servlet.xml" />
 
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:application-test.properties</value>
-            </list>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
-        <property name="ignoreResourceNotFound" value="true" />
-    </bean>
+    <utils:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
+        <value>classpath:application-test.properties</value>
+    </utils:list>
     
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="autoStartup" value="false" />
 		<property name="triggers">
-			<list>
-			</list>
+			<list/>
 		</property>
 	</bean>
 	
@@ -32,4 +28,6 @@
     <bean id="reporter" class="mobi.nowtechnologies.server.httpinvoker.Reporter">
         <property name="dir" value="classpath:http_invoker_report" />
     </bean>
+
+    <bean id="sendChargeNotificationThreadExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 </beans>

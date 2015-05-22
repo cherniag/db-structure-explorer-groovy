@@ -22,12 +22,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,9 +38,6 @@ import org.slf4j.LoggerFactory;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "paymentType", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "tb_paymentDetails")
-@NamedQuery(name = PaymentDetails.FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE,
-            query = "select paymentDetails from PaymentDetails paymentDetails join paymentDetails.submittedPayments submittedPayments where paymentDetails.owner.id=?1 and submittedPayments.type=?2 " +
-                    "order by paymentDetails.creationTimestampMillis desc")
 public class PaymentDetails {
 
     public static final String UNKNOW_TYPE = "unknown";
@@ -51,7 +48,6 @@ public class PaymentDetails {
     public static final String VF_PSMS_TYPE = "vfPsms";
     public static final String PSMS_TYPE = "psms";
     public static final String ITUNES_SUBSCRIPTION = "iTunesSubscription";
-    public static final String FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE = "FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE";
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetails.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -192,9 +188,6 @@ public class PaymentDetails {
 
     public void setOwner(User owner) {
         this.owner = owner;
-        if (!owner.getPaymentDetailsList().contains(this)) {
-            owner.getPaymentDetailsList().add(this);
-        }
     }
 
     public int getMadeAttempts() {
@@ -359,5 +352,17 @@ public class PaymentDetails {
                                         .append("lastPaymentStatus", lastPaymentStatus).append("descriptionError", descriptionError).append("errorCode", errorCode)
                                         .append("creationTimestampMillis", creationTimestampMillis).append("disableTimestampMillis", disableTimestampMillis)
                                         .append("lastFailedPaymentNotificationMillis", lastFailedPaymentNotificationMillis).append("activated", activated).toString();
+    }
+
+    public void disable(String reason, Date epochMillis) {
+        withActivated(false);
+        withDisableTimestampMillis(epochMillis.getTime());
+        withDescriptionError(reason);
+    }
+
+    public void completedWithError(String descriptionError) {
+        setDescriptionError(descriptionError);
+        setErrorCode(null);
+        setLastPaymentStatus(PaymentDetailsStatus.ERROR);
     }
 }

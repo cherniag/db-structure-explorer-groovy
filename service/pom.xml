@@ -2,7 +2,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.17.2</version>
+        <version>5.20.1</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -54,6 +54,11 @@
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>persistence</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>tx-event-logger</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
@@ -129,6 +134,11 @@
             <groupId>uk.co.o2</groupId>
             <artifactId>o2-soa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nz.co.vodafone</groupId>
+            <artifactId>nz-soa</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- Social -->
         <dependency>
@@ -160,6 +170,11 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws</artifactId>
             <classifier>all</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.security</groupId>
+            <artifactId>wss4j</artifactId>
+            <version>1.6.7</version>
         </dependency>
 
         <dependency>

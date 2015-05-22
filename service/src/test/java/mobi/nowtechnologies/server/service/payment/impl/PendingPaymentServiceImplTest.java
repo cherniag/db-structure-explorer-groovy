@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -203,7 +205,7 @@ public class PendingPaymentServiceImplTest {
         when(page.hasNextPage()).thenReturn(true);
 
         pendingPaymentService.setMaxCount(maxCount);
-        when(userRepository.getUsersForRetryPayment(anyInt(), any(PageRequest.class))).thenReturn(page);
+        when(userRepository.findUsersForRetryPayment(anyInt(), any(PageRequest.class))).thenReturn(page);
 
         List<PendingPayment> createRetryPayments = pendingPaymentService.createRetryPayments();
 
@@ -227,8 +229,10 @@ public class PendingPaymentServiceImplTest {
 
 
     private User generateUserWithSagePayPaymentDetails(int subBalance, PaymentDetailsStatus status) {
-        User user = new User();
         String randomString = UUID.randomUUID().toString();
+
+        User user = new User();
+        user.setUserGroup(createUserGroup("c"));
         user.setUserName(randomString);
         PaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
         PaymentPolicy paymentPolicy = new PaymentPolicy();
@@ -239,14 +243,23 @@ public class PendingPaymentServiceImplTest {
         currentPaymentDetails.setPaymentPolicy(paymentPolicy);
         currentPaymentDetails.setLastPaymentStatus(status);
         user.setCurrentPaymentDetails(currentPaymentDetails);
-        user.addPaymentDetails(currentPaymentDetails);
         user.setSubBalance(subBalance);
         return user;
     }
 
+    private UserGroup createUserGroup(String community) {
+        Community c = new Community();
+        c.setRewriteUrlParameter(community);
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setCommunity(c);
+        return userGroup;
+    }
+
     private User generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus status, boolean invalid) {
-        User user = new User();
         String randomString = UUID.randomUUID().toString();
+        User user = new User();
+        user.setUserGroup(createUserGroup("c"));
         user.setUserName(randomString);
         PaymentDetails currentPaymentDetails = new O2PSMSPaymentDetails();
         PaymentPolicy paymentPolicy = new PaymentPolicy();
@@ -258,7 +271,6 @@ public class PendingPaymentServiceImplTest {
         paymentPolicy.setPeriod(new Period().withDuration(10).withDurationUnit(WEEKS));
         currentPaymentDetails.setPaymentPolicy(paymentPolicy);
         currentPaymentDetails.setLastPaymentStatus(status);
-        user.addPaymentDetails(currentPaymentDetails);
         user.setCurrentPaymentDetails(currentPaymentDetails);
         user.setProvider(invalid ?
                          ProviderType.NON_O2 :

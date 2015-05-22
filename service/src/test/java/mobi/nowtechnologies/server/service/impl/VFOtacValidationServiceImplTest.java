@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import static mobi.nowtechnologies.server.service.VFOtacValidationService.TEST_OTAC_NON_VF;
 import static mobi.nowtechnologies.server.service.VFOtacValidationService.TEST_OTAC_VF;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 public class VFOtacValidationServiceImplTest {
 
     @Mock
-    public DeviceService deviceService;
+    public DevicePromotionsService deviceService;
     @Mock
     public UserRepository userRepository;
     @InjectMocks

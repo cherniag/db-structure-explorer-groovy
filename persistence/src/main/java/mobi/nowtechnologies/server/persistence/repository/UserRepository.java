@@ -59,11 +59,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "update User user " +
                    "set " +
                    "user.amountOfMoneyToUserNotification=:amountOfMoneyToUserNotification " +
-                   ", user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccesfullPaymentSmsSendingTimestampMillis " +
+                   ", user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccessfulPaymentSmsSendingTimestampMillis " +
                    "where " +
                    "user.id=:id")
     int updateFields(@Param("amountOfMoneyToUserNotification") BigDecimal amountOfMoneyToUserNotification,
-                     @Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
+                     @Param("lastSuccessfulPaymentSmsSendingTimestampMillis") long lastSuccessfulPaymentSmsSendingTimestampMillis, @Param("id") int id);
 
     @Modifying
     @Query(value = "update User user " +
@@ -76,10 +76,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
     @Query(value = "update User user " +
                    "set " +
-                   "user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccesfullPaymentSmsSendingTimestampMillis " +
+                   "user.lastSuccesfullPaymentSmsSendingTimestampMillis=:lastSuccessfulPaymentSmsSendingTimestampMillis " +
                    "where " +
                    "user.id=:id")
-    int updateFields(@Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
+    int updateFields(@Param("lastSuccessfulPaymentSmsSendingTimestampMillis") long lastSuccessfulPaymentSmsSendingTimestampMillis, @Param("id") int id);
 
     @Query("select u from User u " +
            "join u.currentPaymentDetails pd " +
@@ -94,7 +94,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
            "and pd.activated=true " +
            "and u.lastDeviceLogin!=0")
     @QueryHints(@QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE"))
-    Page<User> getUsersForPendingPayment(int epochSeconds, Pageable pageable);
+    Page<User> findUsersForPendingPayment(int epochSeconds, Pageable pageable);
 
     @Query("select u from User u " +
            "join u.currentPaymentDetails pd " +
@@ -111,7 +111,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
            "       )" +
            ") " + "and pd.activated=true " + "and u.lastDeviceLogin!=0")
     @QueryHints(@QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE"))
-    Page<User> getUsersForRetryPayment(int epochSeconds, Pageable pageable);
+    Page<User> findUsersForRetryPayment(int epochSeconds, Pageable pageable);
 
     @Query(value = "select u from User u " +
                    "join u.userGroup ug " +
@@ -141,7 +141,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("select u from User u " +
            "where u.status=10 " +
            "and u.nextSubPayment<?1")
-    List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
+    List<User> findListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
 
     @Modifying
     @Query(value = "update User user " +
@@ -161,7 +161,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                                        "      and log.user_id is not null " +
                                        "      and log.type = 'UPDATE_O2_USER' " +
                                        "      and log.last_update >  ?1)")
-    List<Integer> getUsersForUpdate(long timeMillis, int userGroupId);
+    List<Integer> findUsersForUpdate(long timeMillis, int userGroupId);
 
     @Modifying
     @Query(value = "update User user " +
@@ -197,7 +197,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                    "where " +
                    "u.deviceUID = ?1 " +
                    "and u.userGroup=?2 ")
-    int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, UserGroup userGroup);
+    int updateUserAccountWithSameDeviceAndDisableIt(String deviceUID, UserGroup userGroup);
 
     @Query(value = "select user from User user " + "join FETCH user.deviceType deviceType " + "join FETCH user.userGroup userGroup " + "join FETCH userGroup.chart chart " +
                    "join FETCH userGroup.drmPolicy drmPolicy " + "join FETCH drmPolicy.drmType drmType " + "join FETCH userGroup.community community " + "join FETCH community.appVersion appVersion " +

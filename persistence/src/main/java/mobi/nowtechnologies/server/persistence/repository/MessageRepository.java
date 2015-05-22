@@ -59,7 +59,7 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
     List<Message> findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis, List<MessageType> banners);
 
     @Query("select count(message) from Message message where message.community=?1 and message.publishTimeMillis=?2 and message.messageType=?3")
-    long getCount(Community community, long publishTimeMillis, MessageType messageType);
+    long countMessages(Community community, long publishTimeMillis, MessageType messageType);
 
     @Query(
         "select distinct message from Message message left join FETCH  message.filterWithCtiteria where message.community= :community and message.messageType in :messageTypes order by  message" +
@@ -70,11 +70,11 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
     @Query(
         "select distinct message from Message message left join FETCH  message.filterWithCtiteria where message.community= :community and message.messageType='NEWS' and  message" +
         ".publishTimeMillis=:publishTimeMillis order by  message.position asc")
-    List<Message> getActualNews(@Param("community") Community community, @Param("publishTimeMillis") long publishTimeMillis);
+    List<Message> findActualNews(@Param("community") Community community, @Param("publishTimeMillis") long publishTimeMillis);
 
     @Query("select distinct message from Message message where message.id in :ids")
     List<Message> findAll(@Param("ids") Collection<Integer> ids);
 
     @Query("select message.publishTimeMillis from Message message where message.community=?1 group by message.publishTimeMillis")
-    List<Long> getAllPublishTimeMillis(Community community);
+    List<Long> findAllPublishTimeMillis(Community community);
 }

@@ -33,7 +33,7 @@ public class SubscriptionCampaignRepositoryIT {
         createAndSaveRecord("+447123456789", "campaignId");
         createAndSaveRecord("+447123456789", "other");
         createAndSaveRecord("+440000000000", "campaignId");
-        long countForMobile = subscriptionCampaignRepository.getCountForMobile("+447123456789", "campaignId");
+        long countForMobile = subscriptionCampaignRepository.countForMobile("+447123456789", "campaignId");
         assertThat(countForMobile, is(2L));
     }
 

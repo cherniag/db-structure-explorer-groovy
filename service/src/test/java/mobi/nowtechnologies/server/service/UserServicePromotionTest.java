@@ -11,7 +11,6 @@ import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.runners.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -25,8 +24,6 @@ public class UserServicePromotionTest {
     private PromotionService promotionServiceMock;
     @Mock
     private PaymentDetailsService paymentDetailsServiceMock;
-    @Mock
-    private EntityService entityServiceMock;
     @InjectMocks
     private UserService userService;
 
@@ -48,7 +45,6 @@ public class UserServicePromotionTest {
     public void testActivateVideoAudioFreeTrialAndAutoOptIn() throws Exception {
         User user = mock(User.class);
         when(user.isSubjectToAutoOptIn()).thenReturn(true);
-        when(entityServiceMock.findById(eq(User.class), anyInt())).thenReturn(user);
         when(ruleServiceSupportMock.fireRules(eq(EMPTY), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
 
         userService.activateVideoAudioFreeTrialAndAutoOptIn(user);

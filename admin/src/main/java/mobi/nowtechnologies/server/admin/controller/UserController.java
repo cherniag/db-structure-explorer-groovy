@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +114,7 @@ public class UserController extends AbstractCommonController {
             modelAndView = new ModelAndView("redirect:/users?q=" + user.getUserName());
         } else {
             modelAndView = getEditUserModelAndView(userDto);
-            httpServletResponse.setStatus(HttpStatus.SC_BAD_REQUEST);
+            httpServletResponse.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
         }
 
         LOGGER.info("Output parameter modelAndView=[{}]", modelAndView);

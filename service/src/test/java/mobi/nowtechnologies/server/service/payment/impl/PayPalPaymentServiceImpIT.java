@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
@@ -20,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.repository.PendingPaymentReposito
 import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -31,6 +33,7 @@ import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -42,7 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 public class PayPalPaymentServiceImpIT {
 
     @Resource(name = "service.payPalPaymentService")
@@ -61,6 +64,10 @@ public class PayPalPaymentServiceImpIT {
     private PendingPaymentRepository pendingPaymentRepository;
     @Resource
     private SubmittedPaymentRepository submittedPaymentRepository;
+    @Resource
+    private AccountLogRepository accountLogRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @Test
     public void startPayment() throws Exception {
@@ -88,6 +95,12 @@ public class PayPalPaymentServiceImpIT {
         assertEquals(1, submittedPayments.size());
     }
 
+    @After
+    public void tearDown() throws Exception {
+        accountLogRepository.deleteAll();
+        submittedPaymentRepository.deleteAll();
+    }
+
     private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails) {
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
@@ -106,8 +119,8 @@ public class PayPalPaymentServiceImpIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.SUBSCRIBED.name()));
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user = userRepository.saveAndFlush(user);
         return user;
@@ -136,6 +149,8 @@ public class PayPalPaymentServiceImpIT {
         paymentPolicy.setPaymentPolicyType(paymentPolicyType);
         paymentPolicy.setTariff(Tariff._3G);
         paymentPolicy.setCommunity(communityRepository.findByRewriteUrlParameter(communityRewriteUrl));
+        paymentPolicy.setStartDateTime(new Date(0L));
+        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
         return paymentPolicyRepository.saveAndFlush(paymentPolicy);
     }
 }

@@ -74,7 +74,7 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
     }
 
     public List<Integer> selectUsersForUpdate(int userGroupId) {
-        return userRepository.getUsersForUpdate(getTimeBeforeWhichUsersWasNotUpdated(), userGroupId);
+        return userRepository.findUsersForUpdate(getTimeBeforeWhichUsersWasNotUpdated(), userGroupId);
     }
 
     private long getTimeBeforeWhichUsersWasNotUpdated() {

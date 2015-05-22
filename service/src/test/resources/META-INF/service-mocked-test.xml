@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/util
+	   http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="service.MailService" class="mobi.nowtechnologies.server.transport.controller.MailServiceMocked">
-		<!--<property name="mailSession" ref="service.MailSession" />-->
-	</bean>
+	<bean id="service.MailService" class="mobi.nowtechnologies.server.transport.controller.MailServiceMocked"/>
 
 	<bean id="service.MailSession"
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

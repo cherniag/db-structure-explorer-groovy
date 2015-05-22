@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<import resource="service.xml" />
 
-	<bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService" />
-	<bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
+	<bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService" />
+	<bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
 
-	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:application-test.properties</value>
-			</list>
-		</property>
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="ignoreResourceNotFound" value="true" />
-	</bean>
+	<bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService" />
+	<bean id="service.GooglePlusOperationsAdaptor" class="mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusOperationsAdaptor"/>
+
+	<util:list id="appPropertiesLocations" value-type="org.springframework.core.io.Resource">
+		<value>classpath:application-test.properties</value>
+	</util:list>
 
     <bean id="serviceReloadableResourceBundleMessageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -80,10 +80,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
   	
 	<bean id="service.SpyUserService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.UserService"/>
-  	</bean>
-
-	<bean id="service.SpyEntityService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
-     	<property name="realObject" ref="service.EntityService"/>
   	</bean>
   	
 	<bean id="service.SpySagePayPaymentService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">

@@ -43,6 +43,7 @@ public class PaymentPolicyDto {
     private PaymentPolicyType paymentPolicyType;
     private String appStoreProductId;
     private int order;
+    private String messageKey;
 
     public PaymentPolicyDto() { }
 
@@ -79,6 +80,7 @@ public class PaymentPolicyDto {
         setPaymentPolicyType(policy.getPaymentPolicyType());
         setAppStoreProductId(policy.getAppStoreProductId());
         this.order = policy.getOrder();
+        this.messageKey = policy.getMessageKey();
     }
 
     public boolean isMonthly() {
@@ -229,6 +231,14 @@ public class PaymentPolicyDto {
         this.appStoreProductId = appStoreProductId;
     }
 
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("subcost", subcost).append("duration", duration).append("periodUnit", durationUnit).append("operator", operator)
@@ -236,11 +246,10 @@ public class PaymentPolicyDto {
                                         .append("oldDuration", oldDuration).append("oldPeriodUnit", oldDurationUnit).append("currencyISO", currencyISO)
                                         .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription).append("fourG", fourG).append("threeG", threeG)
                                         .append("paymentPolicyMediaType", paymentPolicyMediaType).append("paymentPolicyType", paymentPolicyType).append("appStoreProductId", appStoreProductId)
-                                        .append("order", order).toString();
+                                        .append("order", order).append("messageKey", messageKey).toString();
     }
 
     public static class ByOrderAscAndDurationAsc implements Comparator<PaymentPolicyDto> {
-
         @Override
         public int compare(PaymentPolicyDto dto1, PaymentPolicyDto dto2) {
             int compareResult = Integer.compare(dto1.order, dto2.order);

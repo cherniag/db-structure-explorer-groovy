@@ -14,13 +14,10 @@ import org.jsmpp.bean.DeliverSm;
  */
 public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessage> {
 
-    public static final String STOP_MSG = "stop";
-    public static final String OPERATOR_NAME = "vf";
-
     private UserService userService;
-    private String stopText = STOP_MSG;
-    private String operatorName = OPERATOR_NAME;
-    private Set<String> supportedNumbers = Collections.<String>emptySet();
+    private String stopText = "stop";
+    private String operatorName = "vf";
+    private Set<String> supportedNumbers = Collections.emptySet();
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -30,12 +27,12 @@ public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessag
     public void process(MOMessage message) {
         String text = message.getText();
         String phoneNumber = message.getOriginator();
-        if (text.toLowerCase().contains(stopText)) {
-            LOGGER.debug("Start proccess stop sms [{}]", message);
+        if (text.toLowerCase().trim().contains(stopText)) {
+            LOGGER.debug("Start precessing stop sms [{}]", message);
 
             userService.unsubscribeUser(phoneNumber, operatorName);
 
-            LOGGER.debug("Finish proccess stop sms [{}]", message);
+            LOGGER.debug("Finish processing stop sms [{}]", message);
         }
     }
 
@@ -45,7 +42,7 @@ public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessag
     }
 
     public void setStopText(String stopText) {
-        this.stopText = stopText;
+        this.stopText = stopText.trim().toLowerCase();
     }
 
     public void setOperatorName(String operatorName) {

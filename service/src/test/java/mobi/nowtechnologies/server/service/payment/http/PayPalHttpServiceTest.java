@@ -4,8 +4,8 @@ import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,8 +35,10 @@ public class PayPalHttpServiceTest {
     @Test
     public void makeTokenRequest_Successful() {
         PayPalRequest request = new PayPalRequest().addParam(PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0, "Information for paypal page")
-                                                   .addParam(PayPalRequestParam.L_BILLINGTYPE0, "MerchantInitiatedBillingSingleAgreement").addParam(PayPalRequestParam.PAYMENTACTION, "Authorization")
-                                                   .addParam(PayPalRequestParam.CURRENCYCODE, "GBP").addParam(PayPalRequestParam.RETURNURL, "http://10.20.30.18:8080/portal/payPalRequest.htm")
+                                                   .addParam(PayPalRequestParam.L_BILLINGTYPE0, "MerchantInitiatedBillingSingleAgreement")
+                                                   .addParam(PayPalRequestParam.PAYMENTACTION, "Authorization")
+                                                   .addParam(PayPalRequestParam.CURRENCYCODE, "GBP")
+                                                   .addParam(PayPalRequestParam.RETURNURL, "http://10.20.30.18:8080/portal/payPalRequest.htm")
                                                    .addParam(PayPalRequestParam.CANCELURL, "http://10.20.30.18:8080/portal/payPalCancel.htm");
 
         Mockito.when(httpService.sendHttpPost(Mockito.anyString(), Mockito.anyListOf(NameValuePair.class), (String) Mockito.eq(null))).thenReturn(getSuccessfulPayPalResponse());
@@ -52,10 +54,13 @@ public class PayPalHttpServiceTest {
 
     @Test
     public void makeBillingAgreementRequest_Successful() throws UnsupportedEncodingException {
-        PayPalRequest request =
-            new PayPalRequest().addParam(PayPalRequestParam.TOKEN, "EC-2JB29018X62164600").addParam(PayPalRequestParam.METHOD, "CreateBillingAgreement").addParam(PayPalRequestParam.VERSION, "80.0")
-                               .addParam(PayPalRequestParam.USER, "cn_1313656118_biz_api1.chartsnow.mobi").addParam(PayPalRequestParam.PWD, "1313656158")
-                               .addParam(PayPalRequestParam.BUTTONSOURCE, "PP-ECWizard").addParam(PayPalRequestParam.SIGNATURE, "AoTXEljMZhDQEXJFn1kQJo2C6CbIAPP7uCi4Y-85yG98nlcq-IJBt9jQ");
+        PayPalRequest request = new PayPalRequest().addParam(PayPalRequestParam.TOKEN, "EC-2JB29018X62164600")
+                                                   .addParam(PayPalRequestParam.METHOD, "CreateBillingAgreement")
+                                                   .addParam(PayPalRequestParam.VERSION, "80.0")
+                                                   .addParam(PayPalRequestParam.USER, "cn_1313656118_biz_api1.chartsnow.mobi")
+                                                   .addParam(PayPalRequestParam.PWD, "1313656158")
+                                                   .addParam(PayPalRequestParam.BUTTONSOURCE, "PP-ECWizard")
+                                                   .addParam(PayPalRequestParam.SIGNATURE, "AoTXEljMZhDQEXJFn1kQJo2C6CbIAPP7uCi4Y-85yG98nlcq-IJBt9jQ");
 
         Mockito.when(httpService.sendHttpPost(Mockito.anyString(), Mockito.anyListOf(NameValuePair.class), (String) Mockito.eq(null))).thenReturn(getSuccessfulBillingAgreementResponse());
 
@@ -96,8 +101,8 @@ public class PayPalHttpServiceTest {
     }
 
     private BasicResponse getSuccessfulPayPalResponse() {
-        return PaymentTestUtils
-            .createBasicResponse(HttpServletResponse.SC_OK, "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
+        return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                                                    "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
     }
 
     private BasicResponse getSuccessfulBillingAgreementResponse() {
@@ -111,10 +116,10 @@ public class PayPalHttpServiceTest {
     }
 
     private BasicResponse getFailResponse() {
-        return PaymentTestUtils
-            .createBasicResponse(HttpServletResponse.SC_OK, "TIMESTAMP=2011%2d12%2d26T14%3a08%3a40Z&CORRELATIONID=ca2c7bf39327f&ACK=Failure&VERSION=0%2e000000&BUILD=2271164&L_ERRORCODE0=10002" +
-                                                            "&L_SHORTMESSAGE0=Authentication%2fAuthorization%20Failed&L_LONGMESSAGE0=You%20do%20not%20have%20permissions%20to%20make%20this%20API" +
-                                                            "%20call" +
-                                                            "&L_SEVERITYCODE0=Error");
+        return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                                                    "TIMESTAMP=2011%2d12%2d26T14%3a08%3a40Z&CORRELATIONID=ca2c7bf39327f&ACK=Failure&VERSION=0%2e000000&BUILD=2271164&L_ERRORCODE0=10002" +
+                                                    "&L_SHORTMESSAGE0=Authentication%2fAuthorization%20Failed&L_LONGMESSAGE0=You%20do%20not%20have%20permissions%20to%20make%20this%20API" +
+                                                    "%20call" +
+                                                    "&L_SEVERITYCODE0=Error");
     }
 }

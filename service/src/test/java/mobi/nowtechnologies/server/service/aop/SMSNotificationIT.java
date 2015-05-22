@@ -9,12 +9,11 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -29,7 +28,7 @@ import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +57,7 @@ import static org.mockito.Mockito.*;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
@@ -71,16 +70,8 @@ public class SMSNotificationIT {
     private SMSNotification smsNotificationFixture;
 
     @Autowired
-    @Qualifier("service.WeeklyUpdateService")
-    private WeeklyUpdateService weeklyUpdateService;
-
-    @Autowired
     @Qualifier("service.SpyUserService")
     private UserService userService;
-
-    @Autowired
-    @Qualifier("service.SpyEntityService")
-    private EntityService entityService;
 
     @Autowired
     @Qualifier("service.SpyPaymentDetailsService")
@@ -110,10 +101,38 @@ public class SMSNotificationIT {
 
     private CommunityResourceBundleMessageSource mockMessageSource;
 
-    private BasicResponse successfulResponse = PaymentTestUtils
-        .createBasicResponse(HttpServletResponse.SC_OK, "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
+    private BasicResponse successfulResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                                                                                    "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
 
     private O2ProviderService mockO2ClientService;
+
+    @Mock
+    private PendingPaymentRepository pendingPaymentRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        mockMigService = mock(MigHttpService.class);
+        userRepository = mock(UserRepository.class);
+        mockPaypalHttpService = mock(PayPalHttpService.class);
+        mockSagePayHttpService = mock(SagePayHttpService.class);
+        mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
+        mockO2ClientService = mock(O2ProviderService.class);
+
+        userNotificationServiceMock = mock(UserNotificationService.class);
+
+        smsNotificationFixture.setUserRepository(userRepository);
+        smsNotificationFixture.setUserNotificationService(userNotificationServiceMock);
+
+        payPalPaymentService.setPendingPaymentRepository(pendingPaymentRepository);
+        payPalPaymentService.setHttpService(mockPaypalHttpService);
+
+        sagePayPaymentService.setPendingPaymentRepository(pendingPaymentRepository);
+        sagePayPaymentService.setHttpService(mockSagePayHttpService);
+
+        o2PaymentService.setPendingPaymentRepository(pendingPaymentRepository);
+        o2PaymentService.setMessageSource(mockMessageSource);
+        o2PaymentService.setO2ClientService(mockO2ClientService);
+    }
 
     @Test
     public void testUpdateLastBefore48SmsMillis_Success() throws Exception {
@@ -136,7 +155,6 @@ public class SMSNotificationIT {
         user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 
         Mockito.doReturn(null).when(userService).unsubscribeUser(any(User.class), anyString());
-        Mockito.doReturn(user).when(entityService).findById(any(Class.class), any(Object.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
 
@@ -163,7 +181,7 @@ public class SMSNotificationIT {
         pendingPayment.setPaymentDetails(paymentDetails);
 
         Mockito.doReturn(null).when(payPalPaymentService).commitPayment(any(PendingPayment.class), any(PayPalResponse.class));
-        Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
+        Mockito.doReturn(pendingPayment).when(pendingPaymentRepository).save(any(PendingPayment.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
         Mockito.doReturn(response).when(mockPaypalHttpService).makePaymentForRecurrentType(anyString(), anyString(), any(BigDecimal.class), anyString());
@@ -191,8 +209,8 @@ public class SMSNotificationIT {
         pendingPayment.setPaymentDetails(paymentDetails);
 
         Mockito.doReturn(null).when(sagePayPaymentService).commitPayment(any(PendingPayment.class), any(PayPalResponse.class));
-        Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
-        Mockito.doNothing().when(entityService).removeEntity(any(Class.class), any(Object.class));
+        Mockito.doReturn(pendingPayment).when(pendingPaymentRepository).save(any(PendingPayment.class));
+        Mockito.doNothing().when(pendingPaymentRepository).delete(any(Long.class));
         Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
         Mockito.doReturn(response).when(mockSagePayHttpService).makeReleaseRequest(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class));
@@ -221,12 +239,13 @@ public class SMSNotificationIT {
         pendingPayment.setPaymentDetails(paymentDetails);
 
         Mockito.doReturn(null).when(o2PaymentService).commitPayment(any(PendingPayment.class), any(PayPalResponse.class));
-        Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
+        Mockito.doReturn(pendingPayment).when(pendingPaymentRepository).save(any(PendingPayment.class));
         Mockito.doReturn(user).when(userRepository).findOne(anyInt());
         Mockito.doReturn("false").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms.send"), any(Object[].class), eq((Locale) null));
         Mockito.doReturn("false").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms.send"), any(Object[].class), eq((Locale) null));
         Mockito.doReturn("falsedfdsfsd").when(mockMessageSource).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("sms.o2_psms"), any(Object[].class), eq((Locale) null));
-        Mockito.doReturn(response).when(mockO2ClientService)
+        Mockito.doReturn(response)
+               .when(mockO2ClientService)
                .makePremiumSMSRequest(anyInt(), anyString(), any(BigDecimal.class), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean());
 
         o2PaymentService.startPayment(pendingPayment);
@@ -278,28 +297,4 @@ public class SMSNotificationIT {
         verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
     }
 
-    @Before
-    public void setUp() throws Exception {
-        mockMigService = mock(MigHttpService.class);
-        userRepository = mock(UserRepository.class);
-        mockPaypalHttpService = mock(PayPalHttpService.class);
-        mockSagePayHttpService = mock(SagePayHttpService.class);
-        mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
-        mockO2ClientService = mock(O2ProviderService.class);
-
-        userNotificationServiceMock = mock(UserNotificationService.class);
-
-        smsNotificationFixture.setUserRepository(userRepository);
-        smsNotificationFixture.setUserNotificationService(userNotificationServiceMock);
-
-        payPalPaymentService.setEntityService(entityService);
-        payPalPaymentService.setHttpService(mockPaypalHttpService);
-
-        sagePayPaymentService.setEntityService(entityService);
-        sagePayPaymentService.setHttpService(mockSagePayHttpService);
-
-        o2PaymentService.setEntityService(entityService);
-        o2PaymentService.setMessageSource(mockMessageSource);
-        o2PaymentService.setO2ClientService(mockO2ClientService);
-    }
 }

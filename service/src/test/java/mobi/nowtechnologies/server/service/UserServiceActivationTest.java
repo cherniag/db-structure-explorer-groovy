@@ -1,10 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
@@ -34,13 +30,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class})
+@PrepareForTest({UserService.class, Utils.class, DeviceTypeCache.class, AccountLog.class, EmailValidator.class})
 public class UserServiceActivationTest {
 
     private UserService userServiceSpy;
     private UserRepository userRepositoryMock;
-    private UserDao userDaoMock;
-    private EntityService entityServiceMock;
     private AccountLogService accountLogServiceMock;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
     private MigHttpService migHttpServiceMock;
@@ -48,7 +42,7 @@ public class UserServiceActivationTest {
     private CommunityService communityServiceMock;
     private CountryService countryServiceMock;
     private O2ProviderService o2ClientServiceMock;
-    private DeviceService deviceServiceMock;
+    private DevicePromotionsService deviceServiceMock;
     private RefundService refundServiceMock;
 
     private PromotionService promotionServiceMock;
@@ -65,11 +59,9 @@ public class UserServiceActivationTest {
         paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
         UrbanAirshipTokenService urbanAirshipTokenServiceMock = PowerMockito.mock(UrbanAirshipTokenService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
-        userDaoMock = PowerMockito.mock(UserDao.class);
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
-        entityServiceMock = PowerMockito.mock(EntityService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
-        deviceServiceMock = PowerMockito.mock(DeviceService.class);
+        deviceServiceMock = PowerMockito.mock(DevicePromotionsService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
         accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
         o2ClientServiceMock = PowerMockito.mock(O2ProviderService.class);
@@ -79,26 +71,20 @@ public class UserServiceActivationTest {
 
         userServiceSpy.setCountryService(countryServiceMock);
         userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
-        userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setCountryByIpService(countryByIpServiceMock);
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
         userServiceSpy.setUrbanAirshipTokenService(urbanAirshipTokenServiceMock);
         userServiceSpy.setPromotionService(promotionServiceMock);
-        userServiceSpy.setUserDao(userDaoMock);
         userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
-        userServiceSpy.setEntityService(entityServiceMock);
         userServiceSpy.setCommunityService(communityServiceMock);
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);
         userServiceSpy.setAccountLogService(accountLogServiceMock);
-        userServiceSpy.setMailService(mailServiceMock);
-        userServiceSpy.setO2ClientService(o2ClientServiceMock);
-        userServiceSpy.setUserRepository(userRepositoryMock);
+        userServiceSpy.userRepository = userRepositoryMock;
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);
 
-        PowerMockito.mockStatic(UserStatusDao.class);
     }
 
     @Test

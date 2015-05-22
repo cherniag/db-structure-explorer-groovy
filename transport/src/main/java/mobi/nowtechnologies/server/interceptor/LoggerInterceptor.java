@@ -13,11 +13,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
 public class LoggerInterceptor extends HandlerInterceptorAdapter {
+
+    Logger logger = LoggerFactory.getLogger(LoggerInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -35,6 +40,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                 LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), controller.getCurrentCommunityUri(), request.getPathInfo().replaceFirst("/", ""), bean.getClass(),
                                       controller.getCurrentRemoteAddr());
             }
+            logger.info("command processing started");
         }
 
         return super.preHandle(request, response, handler);
@@ -42,7 +48,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
+        logger.info("command processing finished");
         LogUtils.removeGlobalMDC();
         LogUtils.removeAll3rdParyRequestProfileMDC();
         super.afterCompletion(request, response, handler, ex);

@@ -1,30 +1,28 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
-import mobi.nowtechnologies.server.shared.Utils;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.ACCOUNT_MERGE;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.invocation.*;
+import org.mockito.runners.*;
 import org.mockito.stubbing.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * User: Titov Mykhaylo (titov) 04.10.13 15:40
  */
-@PrepareForTest(Utils.class)
-@RunWith(PowerMockRunner.class)
+
+@RunWith(MockitoJUnitRunner.class)
 public class AccountLogServiceTest {
 
     AccountLogService accountLogServiceFixture;
@@ -35,7 +33,7 @@ public class AccountLogServiceTest {
     @Before
     public void setUp() {
         accountLogServiceFixture = new AccountLogService();
-        accountLogServiceFixture.setAccountLogRepository(accountLogRepositoryMock);
+        accountLogServiceFixture.accountLogRepository = accountLogRepositoryMock;
     }
 
     @Test
@@ -44,15 +42,14 @@ public class AccountLogServiceTest {
         User user = new User();
         User removedUser = new User();
 
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getEpochSeconds()).thenReturn(Integer.MAX_VALUE);
-
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 return invocation.getArguments()[0];
             }
         }).when(accountLogRepositoryMock).save(any(AccountLog.class));
+
+        int now = DateTimeUtils.getEpochSeconds();
 
         //when
         AccountLog accountLog = accountLogServiceFixture.logAccountMergeEvent(user, removedUser);
@@ -62,7 +59,7 @@ public class AccountLogServiceTest {
         assertThat(accountLog.getUserId(), is(user.getId()));
         assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance()));
         assertThat(accountLog.getTransactionType(), is(ACCOUNT_MERGE));
-        assertThat(accountLog.getLogTimestamp(), is(Integer.MAX_VALUE));
+        assertTrue(accountLog.getLogTimestamp() >= now);
         assertThat(accountLog.getDescription(), is("Account was merged with " + removedUser.toString()));
     }
 
@@ -71,9 +68,6 @@ public class AccountLogServiceTest {
         //given
         User user = null;
         User removedUser = new User();
-
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getEpochSeconds()).thenReturn(Integer.MAX_VALUE);
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -91,9 +85,6 @@ public class AccountLogServiceTest {
         //given
         User user = new User();
         User removedUser = null;
-
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getEpochSeconds()).thenReturn(Integer.MAX_VALUE);
 
         Mockito.doAnswer(new Answer() {
             @Override

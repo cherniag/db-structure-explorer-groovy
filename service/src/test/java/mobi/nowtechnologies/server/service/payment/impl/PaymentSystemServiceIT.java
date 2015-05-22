@@ -1,17 +1,21 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
@@ -26,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.*;
@@ -37,7 +40,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class PaymentSystemServiceIT {
@@ -45,11 +48,23 @@ public class PaymentSystemServiceIT {
     @Resource(name = "service.sagePayPaymentService")
     private SagePayPaymentService paymentService;
 
-    @Resource(name = "service.EntityService")
-    private EntityService entityService;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
-    @Autowired
-    private CommunityRepository communityRepository;
+    @Resource
+    UserRepository userRepository;
+
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
+
+    @Resource
+    PendingPaymentRepository pendingPaymentRepository;
+
+    @Resource
+    UserGroupRepository userGroupRepository;
+
+    @Resource
+    CommunityRepository communityRepository;
 
     @Test
     public void commitSagePayPayment_Successful() throws Exception {
@@ -61,22 +76,22 @@ public class PaymentSystemServiceIT {
 
         User user = new User();
         user.setUserName(UUID.randomUUID().toString());
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
         currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
         currentPaymentDetails.setReleased(true);
-        entityService.saveEntity(user);
-        user.addPaymentDetails(currentPaymentDetails);
-        entityService.saveEntity(currentPaymentDetails);
+        userRepository.save(user);
+        currentPaymentDetails.setOwner(user);
+        paymentDetailsRepository.save(currentPaymentDetails);
 
-        entityService.saveEntity(user);
+        userRepository.save(user);
 
         UserGroup userGroup = UserGroupFactory.createUserGroup(communityRepository.findByRewriteUrlParameter(Community.O2_COMMUNITY_REWRITE_URL));
         user.setUserGroup(userGroup);
 
-        entityService.saveEntity(userGroup);
-        entityService.saveEntity(user);
+        userGroupRepository.save(userGroup);
+        userRepository.save(user);
 
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setAmount(new BigDecimal(10));
@@ -87,7 +102,7 @@ public class PaymentSystemServiceIT {
         pendingPayment.setTimestamp(System.currentTimeMillis());
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(currentPaymentDetails);
-        entityService.saveEntity(pendingPayment);
+        pendingPaymentRepository.save(pendingPayment);
 
         // Invocation of test method
         SubmittedPayment submittedPayment = paymentService.commitPayment(pendingPayment, response);

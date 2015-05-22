@@ -1,14 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceType;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
@@ -43,7 +40,7 @@ public class UserFactory {
 
         UserStatus userStatus = new UserStatus();
         userStatus.setI((byte) 10);
-        userStatus.setName(UserStatusDao.SUBSCRIBED);
+        userStatus.setName(UserStatusType.SUBSCRIBED.name());
 
         PaymentStatus paymentStatus = new PaymentStatus();
         paymentStatus.setId(2);
@@ -114,20 +111,11 @@ public class UserFactory {
         return user;
     }
 
-    public static User createUserWithVideoPaymentDetails(Tariff subscribedUserTariff) {
-        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(subscribedUserTariff);
-        paymentPolicy.setContentCategory("");
-
-        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-        paymentDetails.setPaymentPolicy(paymentPolicy);
-
-        User user = createUser(ACTIVATED);
-        user.setCurrentPaymentDetails(paymentDetails);
-
-        return user;
-    }
-
     public static User userWithDefaultNotNullFields() {
+        UserStatus userStatus = new UserStatus();
+        userStatus.setI((byte) 11);
+        userStatus.setName(UserStatusType.LIMITED.name());
+
         User user = new User();
         user.setDisplayName("");
         user.setTitle("");
@@ -136,10 +124,10 @@ public class UserFactory {
         user.setUserName("");
         user.setSubBalance((byte) 0);
         user.setToken("");
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setStatus(userStatus);
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setDevice("");
-        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(7));
+        user.setUserGroup(UserGroupFactory.createUserGroup());
         user.setUserType(UserType.DEV);
         user.setLastDeviceLogin(0);
         user.setLastWebLogin(0);

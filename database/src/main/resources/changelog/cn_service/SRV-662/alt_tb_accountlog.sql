@@ -1,0 +1,1 @@
+alter table tb_accountLog drop FOREIGN KEY tb_accountLog_U_offerId, drop INDEX tb_accountLog_PK_offerId, drop column offerId;

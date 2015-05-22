@@ -5,14 +5,14 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
 
 import javax.annotation.Resource;
 
@@ -36,10 +36,7 @@ public class ReferralService {
     private ReferralRepository referralRepository;
 
     @Resource
-    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
-
-    @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
+    private SocialNetworkInfoRepository socialNetworkInfoRepository;
 
     @Resource
     private UserReferralsSnapshotRepository userReferralsSnapshotRepository;
@@ -69,8 +66,8 @@ public class ReferralService {
     }
 
     @Transactional
-    public void acknowledge(User user, SocialInfo socialInfo) {
-        doAck(user, getContacts(socialInfo));
+    public void acknowledge(User user, SocialNetworkInfo socialNetworkInfo) {
+        doAck(user, getContacts(socialNetworkInfo));
     }
 
     private void doAck(User promoUser, List<String> contacts) {
@@ -83,7 +80,7 @@ public class ReferralService {
 
         List<UserReferralsSnapshot> snapshots = userReferralsSnapshotRepository.findAll(referralUserIds);
         for (UserReferralsSnapshot snapshot : snapshots) {
-            int referredAndConfirmedCount = referralRepository.getCountByCommunityIdUserIdAndStates(communityId, snapshot.getUserId(), ReferralState.ACTIVATED);
+            int referredAndConfirmedCount = referralRepository.countByCommunityIdUserIdAndStates(communityId, snapshot.getUserId(), ReferralState.ACTIVATED);
 
             logger.info("trying to update matchesData in snapshotId={} for communityId={}, userId={} with currentReferrals={}", snapshot.getUserId(), communityId, snapshot.getUserId(),
                         referredAndConfirmedCount);
@@ -104,20 +101,18 @@ public class ReferralService {
         final ProviderType providerType = referral.getProviderType();
         final String contact = referral.getContact();
 
+        Integer id = community.getId();
         if (providerType == ProviderType.EMAIL) {
             User byContact = userRepository.findByUserNameAndCommunityUrl(contact, community.getRewriteUrlParameter());
-            return byContact != null && byContact.getCommunityId().equals(community.getId());
+            return byContact != null && byContact.getCommunityId().equals(id);
         }
-        if (providerType == ProviderType.FACEBOOK) {
-            return !facebookUserInfoRepository.findByEmailOrSocialId(contact, community).isEmpty();
-        }
-        if (providerType == ProviderType.GOOGLE_PLUS) {
-            return !googlePlusUserInfoRepository.findByEmailOrSocialId(contact, community).isEmpty();
+        if (providerType == ProviderType.FACEBOOK || providerType == ProviderType.GOOGLE_PLUS) {
+            return !socialNetworkInfoRepository.findByEmailOrSocialId(contact, id, SocialNetworkType.FACEBOOK).isEmpty();
         }
         throw new IllegalArgumentException("Not supported type: " + providerType + " to find by " + contact);
     }
 
-    private List<String> getContacts(SocialInfo socialInfo) {
-        return Arrays.asList(socialInfo.getSocialId(), socialInfo.getEmail());
+    private List<String> getContacts(SocialNetworkInfo socialNetworkInfo) {
+        return Arrays.asList(socialNetworkInfo.getSocialNetworkId(), socialNetworkInfo.getEmail());
     }
 }

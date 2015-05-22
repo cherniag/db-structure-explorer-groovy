@@ -33,7 +33,7 @@ public class DeviceUserDataService {
 
     @Transactional
     public void removeDeviceUserData(User user) {
-        int count = deviceUserDataRepository.removeByUser(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
+        int count = deviceUserDataRepository.deleteByUser(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
         LOGGER.info("Removed {} records for User[id={}, deviceUID={}, communityRewriteUrl={}]", count, user.getId(), user.getDeviceUID(), user.getCommunityRewriteUrl());
     }
 
@@ -41,7 +41,7 @@ public class DeviceUserDataService {
         DeviceUserData found = deviceUserDataRepository.findByXtifyToken(token);
         if (found != null) {
             LOGGER.info("Removing existing device user data [{}]", found);
-            deviceUserDataRepository.removeByXtifyToken(token);
+            deviceUserDataRepository.deleteByXtifyToken(token);
         }
     }
 

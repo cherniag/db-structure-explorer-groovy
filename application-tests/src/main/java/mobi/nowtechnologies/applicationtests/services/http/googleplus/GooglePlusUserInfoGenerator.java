@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.applicationtests.services.http.googleplus;
 
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
+import mobi.nowtechnologies.server.social.domain.GenderType;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType;
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService;
 
 import javax.annotation.Resource;
-
-import java.util.Calendar;
 
 import org.springframework.stereotype.Component;
 
@@ -14,24 +16,32 @@ public class GooglePlusUserInfoGenerator {
     private static final String GIVEN_NAME = "Functional";
     private static final String FAMILY_NAME = "Test";
     private static final String IMAGE_URL = "http://WhataTerribleFailure.com/cat.jpg";
-    private static final boolean MALE = true;
     private static final String LOCATION = "Kiev, Ukraine";
-    private static final String URL = "homepage-url";
 
     @Resource
     private AppTestGooglePlusTokenService appTestGooglePlusTokenService;
 
     public String createAccessToken(String email, String userName, String googlePlusUserId) {
-        return appTestGooglePlusTokenService.build(googlePlusUserId, email, getDate(), userName, GIVEN_NAME, FAMILY_NAME, IMAGE_URL, MALE, LOCATION, URL);
+        SocialNetworkInfo info = doCreateAccessTokenInfo(googlePlusUserId, email, userName);
+        return appTestGooglePlusTokenService.buildToken(info);
     }
 
     public String createAccessTokenWithAuthError(String email, String userName, String googlePlusUserId) {
-        return appTestGooglePlusTokenService.buildTokenWithTokenError(googlePlusUserId, email, getDate(), userName, GIVEN_NAME, FAMILY_NAME, IMAGE_URL, MALE, LOCATION, URL);
+        SocialNetworkInfo info = doCreateAccessTokenInfo(googlePlusUserId, email, userName);
+        return appTestGooglePlusTokenService.buildTokenWithTokenError(info);
     }
 
-    private long getDate() {
-        Calendar c = Calendar.getInstance();
-        c.set(1983, Calendar.NOVEMBER, 3, 3, 3, 3);
-        return c.getTime().getTime();
+    private SocialNetworkInfo doCreateAccessTokenInfo(String googlePlusUserId, String email, String userName) {
+        SocialNetworkInfo info = new SocialNetworkInfo(SocialNetworkType.GOOGLE);
+        info.setSocialNetworkId(googlePlusUserId);
+        info.setEmail(email);
+        info.setBirthday(DateTimeUtils.newDate(3, 11, 1983));
+        info.setUserName(userName);
+        info.setFirstName(GIVEN_NAME);
+        info.setLastName(FAMILY_NAME);
+        info.setProfileImageUrl(IMAGE_URL);
+        info.setGenderType(GenderType.MALE);
+        info.setCity(LOCATION);
+        return info;
     }
 }

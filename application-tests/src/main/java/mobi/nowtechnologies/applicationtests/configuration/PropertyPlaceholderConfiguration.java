@@ -2,6 +2,7 @@ package mobi.nowtechnologies.applicationtests.configuration;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
+import mobi.nowtechnologies.server.shared.message.PropLocale;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ public class PropertyPlaceholderConfiguration {
 
         CommunityResourceBundleMessageSourceImpl source = new CommunityResourceBundleMessageSourceImpl();
         source.setReloadableResourceBundleMessageSource(reloadableResourceBundleMessageSource);
+        source.setPropLocale(new PropLocale());
         return source;
     }
 

@@ -10,7 +10,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
@@ -22,8 +23,9 @@ import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDeta
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 
+import java.net.HttpURLConnection;
+
 import org.springframework.context.ApplicationEventPublisher;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -42,25 +44,30 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(value = {PaymentEvent.class, Utils.class, SubmittedPayment.class})
 public class AbstractPaymentSystemServiceTest {
 
-    private EntityService mockEntityService;
+    @Mock
     private UserService mockUserService;
-    private AbstractPaymentSystemService mockAbstractPaymentSystemService;
+    @Mock
     private PaymentDetailsRepository mockPaymentDetailsRepository;
+    @Mock
+    SubmittedPaymentRepository mockSubmittedPaymentRepository;
+    @Mock
+    PendingPaymentRepository mockPendingPaymentRepository;
+    @Mock
     private ApplicationEventPublisher mockApplicationEventPublisher;
+    @Mock
+    private PaymentEventNotifier paymentEventNotifier;
+    private AbstractPaymentSystemService mockAbstractPaymentSystemService;
 
     @Before
     public void setUp() throws Exception {
-        mockEntityService = Mockito.mock(EntityService.class);
-        mockUserService = Mockito.mock(UserService.class);
-        mockPaymentDetailsRepository = Mockito.mock(PaymentDetailsRepository.class);
-        mockApplicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
-
         mockAbstractPaymentSystemService = Mockito.mock(AbstractPaymentSystemService.class, Mockito.CALLS_REAL_METHODS);
 
-        mockAbstractPaymentSystemService.setEntityService(mockEntityService);
         mockAbstractPaymentSystemService.setUserService(mockUserService);
-        mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
         mockAbstractPaymentSystemService.setApplicationEventPublisher(mockApplicationEventPublisher);
+        mockAbstractPaymentSystemService.setPaymentEventNotifier(paymentEventNotifier);
+        mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
+        mockAbstractPaymentSystemService.setSubmittedPaymentRepository(mockSubmittedPaymentRepository);
+        mockAbstractPaymentSystemService.setPendingPaymentRepository(mockPendingPaymentRepository);
     }
 
     @Test
@@ -78,17 +85,14 @@ public class AbstractPaymentSystemServiceTest {
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(paymentDetails);
 
-        PowerMockito.mockStatic(Utils.class);
-        Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
-
         final SubmittedPayment submittedPayment = new SubmittedPayment();
         submittedPayment.setPaymentDetails(paymentDetails);
 
         PowerMockito.mockStatic(SubmittedPayment.class);
         Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);
 
-        Mockito.when(mockEntityService.updateEntity(submittedPayment)).thenReturn(submittedPayment);
-        Mockito.when(mockEntityService.updateEntity(paymentDetails)).thenReturn(paymentDetails);
+        Mockito.when(mockSubmittedPaymentRepository.save(submittedPayment)).thenReturn(submittedPayment);
+        Mockito.when(mockPaymentDetailsRepository.save(paymentDetails)).thenReturn(paymentDetails);
 
         final ArgumentMatcher<PaymentEvent> applicationEventPublisherMatcher = new ArgumentMatcher<PaymentEvent>() {
             @Override
@@ -103,7 +107,7 @@ public class AbstractPaymentSystemServiceTest {
             }
         };
         Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
         Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
 
         SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, response);
@@ -116,10 +120,10 @@ public class AbstractPaymentSystemServiceTest {
         assertEquals(1, paymentDetails.getMadeRetries());
         assertEquals(0, paymentDetails.getMadeAttempts());
 
-        Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-        Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+        Mockito.verify(mockSubmittedPaymentRepository, times(1)).save(submittedPayment);
+        Mockito.verify(mockPaymentDetailsRepository, times(1)).save(paymentDetails);
         Mockito.verify(mockApplicationEventPublisher, times(1)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
 
         Mockito.verify(mockUserService, times(0)).unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
     }
@@ -154,8 +158,8 @@ public class AbstractPaymentSystemServiceTest {
         PowerMockito.mockStatic(SubmittedPayment.class);
         Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);
 
-        Mockito.when(mockEntityService.updateEntity(submittedPayment)).thenReturn(submittedPayment);
-        Mockito.when(mockEntityService.updateEntity(paymentDetails)).thenReturn(paymentDetails);
+        Mockito.when(mockSubmittedPaymentRepository.save(submittedPayment)).thenReturn(submittedPayment);
+        Mockito.when(mockPaymentDetailsRepository.save(paymentDetails)).thenReturn(paymentDetails);
 
         final ArgumentMatcher<PaymentEvent> applicationEventPublisherMatcher = new ArgumentMatcher<PaymentEvent>() {
             @Override
@@ -170,7 +174,7 @@ public class AbstractPaymentSystemServiceTest {
             }
         };
         Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
         Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
 
         SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, response);
@@ -183,10 +187,10 @@ public class AbstractPaymentSystemServiceTest {
         assertEquals(2, paymentDetails.getMadeRetries());
         assertEquals(0, paymentDetails.getMadeAttempts());
 
-        Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-        Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+        Mockito.verify(mockSubmittedPaymentRepository, times(1)).save(submittedPayment);
+        Mockito.verify(mockPaymentDetailsRepository, times(1)).save(paymentDetails);
         Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
 
         Mockito.verify(mockUserService, times(0)).unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
     }
@@ -224,8 +228,8 @@ public class AbstractPaymentSystemServiceTest {
         PowerMockito.mockStatic(SubmittedPayment.class);
         Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);
 
-        Mockito.when(mockEntityService.updateEntity(submittedPayment)).thenReturn(submittedPayment);
-        Mockito.when(mockEntityService.updateEntity(paymentDetails)).thenReturn(paymentDetails);
+        Mockito.when(mockSubmittedPaymentRepository.save(submittedPayment)).thenReturn(submittedPayment);
+        Mockito.when(mockPaymentDetailsRepository.save(paymentDetails)).thenReturn(paymentDetails);
 
         final ArgumentMatcher<PaymentEvent> applicationEventPublisherMatcher = new ArgumentMatcher<PaymentEvent>() {
             @Override
@@ -240,7 +244,7 @@ public class AbstractPaymentSystemServiceTest {
             }
         };
         Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
         Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
 
         SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, response);
@@ -248,16 +252,16 @@ public class AbstractPaymentSystemServiceTest {
         assertNotNull(actualSubmittedPayment);
         assertEquals(submittedPayment, actualSubmittedPayment);
         assertEquals(ERROR, actualSubmittedPayment.getStatus());
-        assertEquals("", actualSubmittedPayment.getExternalTxId());
+        assertEquals(null, actualSubmittedPayment.getExternalTxId());
 
         assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
         assertEquals(1, paymentDetails.getMadeRetries());
         assertEquals(1, paymentDetails.getMadeAttempts());
 
-        Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-        Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+        Mockito.verify(mockSubmittedPaymentRepository, times(1)).save(submittedPayment);
+        Mockito.verify(mockPaymentDetailsRepository, times(1)).save(paymentDetails);
         Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
 
         Mockito.verify(mockUserService, times(1)).unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
     }
@@ -268,7 +272,7 @@ public class AbstractPaymentSystemServiceTest {
 
         PaymentSystemResponse mockPaymentSystemResponse = Mockito.mock(PaymentSystemResponse.class);
         Mockito.when(mockPaymentSystemResponse.isSuccessful()).thenReturn(false);
-        Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(BAD_REQUEST.value());
+        Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
 
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
@@ -291,8 +295,8 @@ public class AbstractPaymentSystemServiceTest {
         PowerMockito.mockStatic(SubmittedPayment.class);
         Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);
 
-        Mockito.when(mockEntityService.updateEntity(submittedPayment)).thenReturn(submittedPayment);
-        Mockito.when(mockEntityService.updateEntity(paymentDetails)).thenReturn(paymentDetails);
+        Mockito.when(mockSubmittedPaymentRepository.save(submittedPayment)).thenReturn(submittedPayment);
+        Mockito.when(mockPaymentDetailsRepository.save(paymentDetails)).thenReturn(paymentDetails);
 
         final ArgumentMatcher<PaymentEvent> applicationEventPublisherMatcher = new ArgumentMatcher<PaymentEvent>() {
             @Override
@@ -307,17 +311,17 @@ public class AbstractPaymentSystemServiceTest {
             }
         };
         Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.doNothing().when(mockPendingPaymentRepository).delete(pendingPayment.getI());
         Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), mockPaymentSystemResponse.getDescriptionError())).thenReturn(user);
 
         SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
-        final String descriptionError = "Unexpected http status code [" + BAD_REQUEST.value() + "] so the madeRetries won't be incremented";
+        final String descriptionError = "Unexpected http status code [" + HttpURLConnection.HTTP_BAD_REQUEST + "] so the madeRetries won't be incremented";
 
         assertNotNull(actualSubmittedPayment);
         assertEquals(submittedPayment, actualSubmittedPayment);
         assertEquals(ERROR, actualSubmittedPayment.getStatus());
-        assertEquals("", actualSubmittedPayment.getExternalTxId());
+        assertEquals(null, actualSubmittedPayment.getExternalTxId());
         assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
 
         assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
@@ -325,10 +329,10 @@ public class AbstractPaymentSystemServiceTest {
         assertEquals(0, paymentDetails.getMadeAttempts());
         assertEquals(descriptionError, paymentDetails.getDescriptionError());
 
-        Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-        Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+        Mockito.verify(mockSubmittedPaymentRepository, times(1)).save(submittedPayment);
+        Mockito.verify(mockPaymentDetailsRepository, times(1)).save(paymentDetails);
         Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
-        Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+        Mockito.verify(mockPendingPaymentRepository, times(1)).delete(pendingPayment.getI());
 
         Mockito.verify(mockUserService, times(0)).unsubscribeUser(paymentDetails.getOwner(), mockPaymentSystemResponse.getDescriptionError());
     }

@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import javax.annotation.Resource;
@@ -20,18 +21,20 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  * @author Anton Rogachevskiy
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
 public class WeeklyUpdateServiceIT {
 
-    private static final mobi.nowtechnologies.server.persistence.domain.UserStatus userSubscribtionStatus = UserStatusDao.getEulaUserStatus();
-    @Resource(name = "service.WeeklyUpdateService")
-    private WeeklyUpdateService weeklyUpdateService;
-    private User testUser;
-    @Resource(name = "persistence.EntityDao")
-    private EntityDao entityDao;
+//    @Resource(name = "service.WeeklyUpdateService")
+//    private WeeklyUpdateService weeklyUpdateService;
+
+    @Resource
+    UserStatusRepository userStatusRepository;
+
+    @Resource
+    UserRepository userRepository;
 
     @Test
     public final void testSaveWeeklyPayment() throws Exception {
@@ -56,7 +59,7 @@ public class WeeklyUpdateServiceIT {
     public void setUp() throws Exception {
 
 		/* User */
-        testUser = new User();
+        User testUser = new User();
         testUser.setAddress1("678");
         testUser.setAddress2("");
         testUser.setCanContact(true);
@@ -80,7 +83,7 @@ public class WeeklyUpdateServiceIT {
         testUser.setPin("");
         testUser.setPostcode("412");
         testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-        testUser.setStatus(userSubscribtionStatus);
+        testUser.setStatus(userStatusRepository.findByName(UserStatus.EULA.name()));
         testUser.setSubBalance((byte) 5);
         testUser.setTempToken("NONE");
         testUser.setTitle("Mr");
@@ -89,7 +92,7 @@ public class WeeklyUpdateServiceIT {
         testUser.setUserName("test_transaction3@test.com");
         testUser.setUserType(UserType.NORMAL);
 
-        entityDao.saveEntity(testUser);
+        userRepository.save(testUser);
     }
 
 }

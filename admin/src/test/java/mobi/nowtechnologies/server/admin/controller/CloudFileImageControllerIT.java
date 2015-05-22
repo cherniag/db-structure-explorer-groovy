@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import org.junit.*;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,8 +59,27 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
     }
 
 
-    private MvcResult uploadAndWait(String communityUrl, File fileResource, String fileName) throws Exception {
-        MvcResult result = mockMvc.perform(post("/streamzine/upload/image").with(buildProcessorForFileUpload("file", fileName, fileResource)).
+    private MockHttpServletRequest writePartsAndReturnRequest(MockHttpServletRequest request, File file) {
+        try {
+            byte[] requestContent = FileUtils.readFileToByteArray(file);
+            request.setContent(requestContent);
+        } catch (IOException e) {
+            logger.error("Exception", e);
+        }
+        return request;
+    }
+
+    protected RequestPostProcessor buildProcessorForFileUpload(final File file) {
+        return new RequestPostProcessor() {
+            @Override
+            public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                return writePartsAndReturnRequest(request, file);
+            }
+        };
+    }
+
+    private MvcResult uploadAndWait(String communityUrl, File fileResource) throws Exception {
+        MvcResult result = mockMvc.perform(post("/streamzine/upload/image").with(buildProcessorForFileUpload(fileResource)).
             cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).andExpect(status().isOk()).andReturn();
         Thread.sleep(3000);
         return result;
@@ -74,8 +95,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
     @Test
     public void testUpload() throws Exception {
         String communityUrl = "nowtop40";
-        String fileName = file.getName();
-        MvcResult result = uploadAndWait(communityUrl, file, fileName);
+        MvcResult result = uploadAndWait(communityUrl, file);
         ImageDTO imageDTO = (ImageDTO) result.getModelAndView().getModel().get("dto");
         ResponseEntity<byte[]> downloadedImage = template.getForEntity(imageDTO.getUrl(), byte[].class);
         assertTrue(Arrays.equals(downloadedImage.getBody(), content));
@@ -86,10 +106,9 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
     public void testFindByPrefix() throws Exception {
         String communityUrl = "nowtop40";
         String fileNameBB = prefix + "BB";
-        uploadAndWait(communityUrl, file, fileNameBB);
+        uploadAndWait(communityUrl, file);
 
-        String fileNameAA = prefix + "aa";
-        uploadAndWait(communityUrl, file, fileNameAA);
+        uploadAndWait(communityUrl, file);
 
         Collection<ImageDTO> images = findByPrefix(communityUrl, fileNameBB);
         assertEquals(images.size(), 1);
@@ -100,7 +119,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
     public void testDeleteByName() throws Exception {
         String communityUrl = "nowtop40";
         String fileNameBB = prefix + "BB";
-        uploadAndWait(communityUrl, file, fileNameBB);
+        uploadAndWait(communityUrl, file);
         Collection<ImageDTO> images = findByPrefix(communityUrl, fileNameBB);
         assertEquals(images.size(), 1);
         mockMvc.perform(get("/images/delete").param("fileName", fileNameBB).

@@ -43,8 +43,10 @@
     <bean class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
         <property name="chartItemController" ref="admin.ChartItemController"/>
         <property name="viewByChartType" ref="chartViewByChartType"/>
-        <property name="communityRepository" ref="communityRepository"/>
         <property name="chartAsm" ref="admin.ChartAsm"/>
+        <property name="chartDetailRepository" ref="chartDetailRepository"/>
+        <property name="chartDetailService" ref="service.ChartDetailService"/>
+        <property name="chartRepository" ref="chartRepository"/>
     </bean>
 
     <bean id="admin.ChartItemController" class="mobi.nowtechnologies.server.admin.controller.ChartItemController"
@@ -54,6 +56,7 @@
         <property name="viewByChartType" ref="chartItemsViewByChartType"/>
         <property name="trackRepoService" ref="service.TrackRepoService"/>
         <property name="chartAsm" ref="admin.ChartAsm"/>
+        <property name="chartRepository" ref="chartRepository"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.admin.controller.UserController">
@@ -81,6 +84,8 @@
         <property name="filterService" ref="service.FilterService"/>
     </bean>
 
+    <bean class="mobi.nowtechnologies.server.support.props.PropController"/>
+
     <utils:map id="chartViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
         <entry key="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
@@ -90,6 +95,8 @@
         <entry key="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
         <entry key="HL_UK_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
         <entry key="HL_UK_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
+        <entry key="PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
+        <entry key="PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
     </utils:map>
 
     <utils:map id="chartItemsViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
@@ -101,6 +108,8 @@
         <entry key="VIDEO_CHART" value="chartItems/hotTracks"/>
         <entry key="HL_UK_PLAYLIST_1" value="chartItems/hotTracks"/>
         <entry key="HL_UK_PLAYLIST_2" value="chartItems/hotTracks"/>
+        <entry key="PLAYLIST_1" value="chartItems/hotTracks"/>
+        <entry key="PLAYLIST_2" value="chartItems/hotTracks"/>
     </utils:map>
 
 </beans>

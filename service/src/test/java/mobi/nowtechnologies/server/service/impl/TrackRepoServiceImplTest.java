@@ -255,10 +255,10 @@ public class TrackRepoServiceImplTest {
 
                 verify(mediaRepository, times(j)).findByTrackId(any(Long.class));
                 verify(mediaRepository, times(j)).save(any(Media.class));
-                verify(genreRepository, times(j)).getByName(anyString());
-                verify(mediaFileRepository, times(j * 6)).getByName(any(String.class));
+                verify(genreRepository, times(j)).findByName(anyString());
+                verify(mediaFileRepository, times(j * 6)).findByName(any(String.class));
                 verify(mediaFileRepository, times(j * 6)).save(any(MediaFile.class));
-                verify(artistRepository, times(j)).getByName(any(String.class));
+                verify(artistRepository, times(j)).findByName(any(String.class));
                 //verify(artistRepository, times(j)).getByRealName(any(String.class), any(Pageable.class));
                 verify(artistRepository, times(j)).save(any(Artist.class));
             } else {
@@ -298,16 +298,16 @@ public class TrackRepoServiceImplTest {
 
         verify(mediaRepository, times(1)).findByTrackId(any(Long.class));
         verify(mediaRepository, times(1)).save(any(Media.class));
-        verify(genreRepository, times(1)).getByName(anyString());
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_22.getSuffix() + "." + FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_21.getSuffix() + "." + FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_ORIGINAL.getSuffix() + "." + FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_ORIGINAL.getSuffix() + "." + FileType.DOWNLOAD.getExt()));
-        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_PREVIEW.getSuffix() + "." + FileType.MOBILE_AUDIO.getExt()));
-        verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_PREVIEW.getSuffix() + "." + FileType.MOBILE_HEADER.getExt()));
+        verify(genreRepository, times(1)).findByName(anyString());
+        verify(mediaFileRepository, times(1)).findByName(eq(expectedTrack.getIsrc()));
+        verify(mediaFileRepository, times(1)).findByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_22.getSuffix() + "." + FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(1)).findByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_21.getSuffix() + "." + FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(1)).findByName(eq(expectedTrack.getIsrc() + ImageResolution.SIZE_ORIGINAL.getSuffix() + "." + FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(0)).findByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_ORIGINAL.getSuffix() + "." + FileType.DOWNLOAD.getExt()));
+        verify(mediaFileRepository, times(0)).findByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_PREVIEW.getSuffix() + "." + FileType.MOBILE_AUDIO.getExt()));
+        verify(mediaFileRepository, times(0)).findByName(eq(expectedTrack.getIsrc() + AudioResolution.RATE_PREVIEW.getSuffix() + "." + FileType.MOBILE_HEADER.getExt()));
         verify(mediaFileRepository, times(4)).save(any(MediaFile.class));
-        verify(artistRepository, times(1)).getByName(any(String.class));
+        verify(artistRepository, times(1)).findByName(any(String.class));
         verify(artistRepository, times(1)).save(any(Artist.class));
         verify(client, times(1)).pullTrack(anyLong());
 
@@ -347,7 +347,7 @@ public class TrackRepoServiceImplTest {
                 return mapTrackById.get(PULL_METHOD, id, 0);
             }
         });
-        when(artistRepository.getByNames(any(String.class), any(Pageable.class))).thenAnswer(new Answer<List<Artist>>() {
+        when(artistRepository.findByNames(any(String.class), any(Pageable.class))).thenAnswer(new Answer<List<Artist>>() {
             @Override
             public List<Artist> answer(InvocationOnMock invocation) throws Throwable {
                 String name = (String) invocation.getArguments()[0];
@@ -357,7 +357,7 @@ public class TrackRepoServiceImplTest {
                        Collections.<Artist>emptyList();
             }
         });
-        when(artistRepository.getByName(any(String.class))).thenAnswer(new Answer<Artist>() {
+        when(artistRepository.findByName(any(String.class))).thenAnswer(new Answer<Artist>() {
             @Override
             public Artist answer(InvocationOnMock invocation) throws Throwable {
                 String name = (String) invocation.getArguments()[0];
@@ -371,7 +371,7 @@ public class TrackRepoServiceImplTest {
             }
         });
 
-        when(genreRepository.getByName(any(String.class))).thenAnswer(new Answer<Genre>() {
+        when(genreRepository.findByName(any(String.class))).thenAnswer(new Answer<Genre>() {
             @Override
             public Genre answer(InvocationOnMock invocation) throws Throwable {
                 String name = (String) invocation.getArguments()[0];
@@ -385,7 +385,7 @@ public class TrackRepoServiceImplTest {
             }
         });
 
-        when(mediaFileRepository.getByName(any(String.class))).thenAnswer(new Answer<MediaFile>() {
+        when(mediaFileRepository.findByName(any(String.class))).thenAnswer(new Answer<MediaFile>() {
             @Override
             public MediaFile answer(InvocationOnMock invocation) throws Throwable {
                 String name = (String) invocation.getArguments()[0];
@@ -399,7 +399,7 @@ public class TrackRepoServiceImplTest {
             }
         });
 
-        when(mediaRepository.getByIsrc(any(String.class))).thenAnswer(new Answer<List<Media>>() {
+        when(mediaRepository.findByIsrc(any(String.class))).thenAnswer(new Answer<List<Media>>() {
             @Override
             public List<Media> answer(InvocationOnMock invocation) throws Throwable {
                 String isrc = (String) invocation.getArguments()[0];

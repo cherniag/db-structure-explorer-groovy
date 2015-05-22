@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -17,6 +17,6 @@ import java.io.Serializable;
 public class LimitedFilter extends AbstractFilterWithCtiteria implements Serializable {
     @Override
     public boolean doFilter(User user) {
-        return UserStatusDao.getLimitedUserStatus().equals(user.getStatus());
+        return UserStatusType.LIMITED.name().equals(user.getStatus().getName());
     }
 }

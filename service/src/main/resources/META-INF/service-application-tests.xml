@@ -8,7 +8,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd" profile="applicati
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
-                <value>file:#{systemProperties['catalina.base']}/conf/services</value>
+                <value>file:#{systemProperties['catalina.base']}/conf/#{systemProperties['env']}/services</value>
                 <value>classpath:services</value>
                 <value>classpath:application-tests/services</value>
             </list>
@@ -18,4 +18,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd" profile="applicati
         <property name="cacheSeconds" value="180"/>
         <property name="useCodeAsDefaultMessage" value="true"/>
     </bean>
+
+    <bean id="vf_nz.service.VFNZSMSGatewayService" class="mobi.nowtechnologies.server.apptests.VFNZSMSGatewayServiceImplMock" />
 </beans>

@@ -7,13 +7,13 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -58,8 +58,6 @@ public class ReferralServiceTest {
         User user = createUser("user_name@dot.com", 33, 17);
 
         when(communityRepository.findOne(17)).thenReturn(mock(Community.class));
-        when(userService.getWithSocial(user.getId())).thenReturn(user);
-
         referralService.refer(Arrays.asList(r1, r2));
 
         verify(referralRepository).saveAndFlush(r1);
@@ -90,7 +88,6 @@ public class ReferralServiceTest {
         User user = createUser("user_name@dot.com", 34, 17);
 
         when(communityRepository.findOne(17)).thenReturn(mock(Community.class));
-        when(userService.getWithSocial(user.getId())).thenReturn(user);
         when(referralRepository.save(r1)).thenThrow(new DataIntegrityViolationException(""));
 
         referralService.refer(Arrays.asList(r1, r2));
@@ -133,7 +130,7 @@ public class ReferralServiceTest {
 
         verify(userReferralsSnapshotRepository).findAll(referralUserIds);
 
-        verify(referralRepository).getCountByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
+        verify(referralRepository).countByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
         snapshot1.updateMatchesData(anyInt(), any(Date.class));
     }
 
@@ -150,9 +147,9 @@ public class ReferralServiceTest {
 
         UserGroup g = mock(UserGroup.class);
         Community c = mock(Community.class);
-        SocialInfo socialInfo = mock(SocialInfo.class);
-        when(socialInfo.getSocialId()).thenReturn("social.id.1");
-        when(socialInfo.getEmail()).thenReturn("user_name@dot.com");
+        SocialNetworkInfo socialNetworkInfo = mock(SocialNetworkInfo.class);
+        when(socialNetworkInfo.getSocialNetworkId()).thenReturn("social.id.1");
+        when(socialNetworkInfo.getEmail()).thenReturn("user_name@dot.com");
 
         User user = createUser("user_name@dot.com", 37, communityId);
         when(user.getId()).thenReturn(userId);
@@ -164,7 +161,7 @@ public class ReferralServiceTest {
         when(userReferralsSnapshotRepository.findAll(referralUserIds)).thenReturn(snapshots);
 
         // when
-        referralService.acknowledge(user, socialInfo);
+        referralService.acknowledge(user, socialNetworkInfo);
 
         // then
         verify(referralRepository).updateReferrals(contactsCaptor.capture(), eq(communityId), eq(ReferralState.ACTIVATED), eq(ReferralState.PENDING));
@@ -179,7 +176,7 @@ public class ReferralServiceTest {
 
         verify(userReferralsSnapshotRepository).findAll(referralUserIds);
 
-        verify(referralRepository).getCountByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
+        verify(referralRepository).countByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
         snapshot1.updateMatchesData(anyInt(), any(Date.class));
     }
 

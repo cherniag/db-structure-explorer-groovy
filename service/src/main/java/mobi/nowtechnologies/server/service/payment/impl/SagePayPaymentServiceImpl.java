@@ -2,8 +2,6 @@ package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
@@ -16,11 +14,9 @@ import mobi.nowtechnologies.server.service.payment.response.PaymentSystemRespons
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
 import javax.servlet.http.HttpServletResponse;
-
-import java.math.BigDecimal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,38 +33,6 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
 
     private SagePayHttpService httpService;
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public SagePayCreditCardPaymentDetails makePaymentWithPaymentDetails(PaymentDetailsDto paymentDto, User user, PaymentPolicy paymentPolicy) throws ServiceException {
-        SagePayCreditCardPaymentDetails newPaymentDetails = null;
-        SagePayResponse response = httpService.makePaymentRequest(paymentDto);
-
-        if (response.isSagePaySuccessful()) {
-            newPaymentDetails = commitPaymentDetails(response, paymentDto, user, paymentPolicy, false);
-
-            PendingPayment pendingPayment = new PendingPayment();
-            pendingPayment.setAmount(new BigDecimal(paymentDto.getAmount()));
-            pendingPayment.setCurrencyISO(paymentDto.getCurrency());
-            pendingPayment.setPaymentSystem(PaymentDetails.SAGEPAY_CREDITCARD_TYPE);
-            pendingPayment.setUser(user);
-            pendingPayment.setExternalTxId(response.getVPSTxId());
-            long currentTimeMillis = System.currentTimeMillis();
-            pendingPayment.setTimestamp(currentTimeMillis);
-            pendingPayment.setExpireTimeMillis(currentTimeMillis);
-            pendingPayment.setType(PaymentDetailsType.PAYMENT);
-            pendingPayment.setPaymentDetails(newPaymentDetails);
-
-            entityService.saveEntity(pendingPayment);
-
-            commitPayment(pendingPayment, response);
-
-            return newPaymentDetails;
-        }
-
-        LOGGER.info("Error while trying to get sagepay payment details. (httpStatus: {}, description: {})", response.getHttpStatus(), response.getDescriptionError());
-        throw new ServiceException("External error while trying to get sagepay payment details");
-    }
-
     /**
      * We send a release or repeat request to SagePay depends on lastPaymentStatus of the user If lastPaymentStatus of user equals to {@link PaymentDetailsStatus.NONE} means this user has never payed
      * before and this is his first payment. In this case we make release request other wise if last payment status of the user is equals to {@link PaymentDetailsStatus.SUCCESSFUL} the we do repeat
@@ -83,12 +47,22 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
         SagePayCreditCardPaymentDetails paymentDetails = (SagePayCreditCardPaymentDetails) pendingPayment.getPaymentDetails();
         SagePayResponse response = null;
         if (!paymentDetails.getReleased()) {
-            response = httpService
-                .makeReleaseRequest(pendingPayment.getCurrencyISO(), "Making first payment", paymentDetails.getVPSTxId(), paymentDetails.getVendorTxCode(), paymentDetails.getSecurityKey(),
-                                    paymentDetails.getTxAuthNo(), pendingPayment.getAmount());
+            response = httpService.makeReleaseRequest(pendingPayment.getCurrencyISO(),
+                                                      "Making first payment",
+                                                      paymentDetails.getVPSTxId(),
+                                                      paymentDetails.getVendorTxCode(),
+                                                      paymentDetails.getSecurityKey(),
+                                                      paymentDetails.getTxAuthNo(),
+                                                      pendingPayment.getAmount());
         } else {
-            response = httpService.makeRepeatRequest(pendingPayment.getCurrencyISO(), "Making payment", paymentDetails.getVPSTxId(), paymentDetails.getVendorTxCode(), paymentDetails.getSecurityKey(),
-                                                     paymentDetails.getTxAuthNo(), pendingPayment.getInternalTxId(), pendingPayment.getAmount());
+            response = httpService.makeRepeatRequest(pendingPayment.getCurrencyISO(),
+                                                     "Making payment",
+                                                     paymentDetails.getVPSTxId(),
+                                                     paymentDetails.getVendorTxCode(),
+                                                     paymentDetails.getSecurityKey(),
+                                                     paymentDetails.getTxAuthNo(),
+                                                     pendingPayment.getInternalTxId(),
+                                                     pendingPayment.getAmount());
         }
 
         pendingPayment.setExternalTxId(response.getVPSTxId());

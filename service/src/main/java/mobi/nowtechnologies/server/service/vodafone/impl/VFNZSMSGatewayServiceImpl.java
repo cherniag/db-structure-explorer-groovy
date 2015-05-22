@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.sms.SMPPMessage;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
-import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 
 import com.sentaca.spring.smpp.mt.MTMessage;
@@ -20,7 +19,6 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private SMPPServiceImpl smppService;
-    private SMSMessageProcessorContainer smppMessageProcessorContainer;
 
     @Override
     public SMSResponse send(String numbers, String message, String originator) {
@@ -33,7 +31,7 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
 
     protected SMSResponse send(MTMessage messageObject) {
         LOGGER.debug("start sending sms [{}], [{}], [{}]", new Object[] {messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
-        boolean result = false;
+        SMSResponse result;
         try {
             result = smppService.sendMessage(messageObject);
         } catch (Exception e) {
@@ -41,36 +39,12 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
             throw new ServiceException(e.getMessage());
         }
 
-        SMSResponse response = generateResponse(result, messageObject);
-        LOGGER.info(response.getMessage());
-        return response;
-    }
-
-    private SMSResponse generateResponse(final boolean result, final MTMessage message) {
-        final String resultPrefix = result ?
-                                    "" :
-                                    "un";
-        return new SMSResponse() {
-            private MTMessage mtMessage;
-
-            @Override
-            public String getMessage() {
-                return String
-                    .format("Sms was sent %ssuccessfully from [%s] to [%s] with message [%s]", resultPrefix, message.getOriginatingAddress(), message.getDestinationAddress(), message.getContent());
-            }
-
-            @Override
-            public boolean isSuccessful() {
-                return result;
-            }
-        };
+        LOGGER.info("Sms was sent result:{} from [{}] to [{}] with message [{}]", result, messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
+        return result;
     }
 
     public void setSmppService(SMPPServiceImpl smppService) {
         this.smppService = smppService;
     }
 
-    public void setSmppMessageProcessorContainer(SMSMessageProcessorContainer smppMessageProcessorContainer) {
-        this.smppMessageProcessorContainer = smppMessageProcessorContainer;
-    }
 }

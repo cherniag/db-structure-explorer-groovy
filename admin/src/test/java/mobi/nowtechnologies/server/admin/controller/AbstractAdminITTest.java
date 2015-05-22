@@ -5,16 +5,7 @@ import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import com.google.common.collect.Lists;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import org.junit.*;
 import org.junit.runner.*;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -33,7 +23,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 // Created by oar on 2/3/14.
@@ -45,8 +34,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ActiveProfiles("TEST")
 public abstract class AbstractAdminITTest {
 
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MockMvc mockMvc;
 
@@ -77,33 +65,5 @@ public abstract class AbstractAdminITTest {
             headers.put("Accept", Lists.newArrayList("application/json"));
         }
         return headers;
-    }
-
-    private MockHttpServletRequest writePartsAndReturnRequest(MockHttpServletRequest request, Part[] parts) {
-        MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(parts, new PostMethod().getParams());
-        ByteArrayOutputStream requestContent = new ByteArrayOutputStream();
-        try {
-            multipartRequestEntity.writeRequest(requestContent);
-        } catch (IOException e) {
-            logger.error("Exception", e);
-        }
-        request.setContent(requestContent.toByteArray());
-        request.setContentType(multipartRequestEntity.getContentType());
-        return request;
-    }
-
-    protected RequestPostProcessor buildProcessorForFileUpload(final String fileAttributeName, final String fileName, final File file) {
-        return new RequestPostProcessor() {
-            @Override
-            public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                Part[] parts = new Part[0];
-                try {
-                    parts = new Part[] {new FilePart(fileAttributeName, fileName, file)};
-                } catch (FileNotFoundException e) {
-                    logger.error("Exception", e);
-                }
-                return writePartsAndReturnRequest(request, parts);
-            }
-        };
     }
 }

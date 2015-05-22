@@ -7,17 +7,18 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
-import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
 import mobi.nowtechnologies.server.persistence.repository.UserRepository
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus
 import mobi.nowtechnologies.server.shared.enums.ProviderType
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfoRepository
+import mobi.nowtechnologies.server.social.domain.SocialNetworkType
+import mobi.nowtechnologies.server.social.service.facebook.impl.mock.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.social.service.googleplus.impl.mock.AppTestGooglePlusTokenService
 import org.springframework.stereotype.Service
 import org.springframework.util.Assert
 
@@ -25,6 +26,7 @@ import javax.annotation.Resource
 import java.text.SimpleDateFormat
 
 import static org.junit.Assert.*
+
 /**
  * Created by kots on 9/5/2014.
  */
@@ -49,9 +51,9 @@ class CommonAssertionsService {
     AppTestGooglePlusTokenService appTestGooglePlusTokenService
 
     @Resource
-    GooglePlusUserInfoRepository googlePlusUserInfoRepository
+    SocialNetworkInfoRepository socialNetworkInfoRepository
     @Resource
-    FacebookUserInfoRepository facebookUserInfoRepository
+    PaymentDetailsRepository paymentDetailsRepository;
 
     @Resource
     RunnerService runnerService;
@@ -70,12 +72,12 @@ class CommonAssertionsService {
 
     def checkFacebookUserWasNotChanged(User before, User after) {
         checkUserWasNotChanged(before, after);
-        assertNull("New record is created", facebookUserInfoRepository.findByUser(after));
+        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), SocialNetworkType.FACEBOOK));
     }
 
     def checkGooglePlusUserWasNotChanged(User before, User after) {
         checkUserWasNotChanged(before, after);
-        assertNull("New record is created", googlePlusUserInfoRepository.findByUser(after));
+        assertNull("New record is created", socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(after.getId(), SocialNetworkType.GOOGLE));
     }
 
     def checkDeviceTypeField(UserDeviceData device, ClientDevicesSet devicesSet) {
@@ -104,7 +106,7 @@ class CommonAssertionsService {
             def accountCheckResponse = deviceSet.getPhoneState(it).lastAccountCheckResponse
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def promotion = promotionRepository.getPromotionByPromoCode(user.getLastPromo().getCode(),
+            def promotion = promotionRepository.findPromotionByPromoCode(user.getLastPromo().getCode(),
                     user.getUserGroup(),
                     user.getLastPromo().getPromotion().getType())
             //TODO: what's wrong
@@ -141,7 +143,8 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            assertTrue(user.getPaymentDetailsList() == null || user.getPaymentDetailsList().isEmpty())
+            def paymentDetailsByOwner = paymentDetailsRepository.findPaymentDetailsByOwner(user)
+            assertTrue(paymentDetailsByOwner.isEmpty())
         }
     }
 
@@ -202,14 +205,14 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def facebookUserInfo = facebookUserInfoRepository.findByUser(user)
+            def facebookUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.FACEBOOK)
             def facebookProfile = appTestFacebookTokenService.parseToken(phoneState.facebookAccessToken)
             assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
             assertEquals(facebookUserInfo.getFirstName(), FacebookUserInfoGenerator.FIRST_NAME)
             assertEquals(facebookUserInfo.getBirthday().getTime(), dateFormat.parse(facebookProfile.getBirthday()).getTime())
-            assertEquals(facebookUserInfo.getSurname(), FacebookUserInfoGenerator.SURNAME)
+            assertEquals(facebookUserInfo.getLastName(), FacebookUserInfoGenerator.SURNAME)
             assertEquals(facebookUserInfo.getCity(), FacebookUserInfoGenerator.CITY)
-            assertEquals(facebookUserInfo.getFacebookId(), phoneState.getFacebookUserId())
+            assertEquals(facebookUserInfo.getSocialNetworkId(), phoneState.getFacebookUserId())
             assertEquals(facebookUserInfo.getUserName(), phoneState.getFacebookUserId())
         }
     }
@@ -249,14 +252,14 @@ class CommonAssertionsService {
         runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
-            def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
-            def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
+            def googlePlusUserInfo = socialNetworkInfoRepository.findByUserIdAndSocialNetworkType(user.getId(), SocialNetworkType.GOOGLE)
+            def googlePlusProfile = appTestGooglePlusTokenService.parseToken(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
-            assertEquals(googlePlusUserInfo.getDisplayName(), googlePlusProfile.getDisplayName())
-            assertEquals(googlePlusUserInfo.getFamilyName(), googlePlusProfile.getFamilyName())
-            assertEquals(googlePlusUserInfo.getGivenName(), googlePlusProfile.getGivenName())
-            assertEquals(googlePlusUserInfo.getGooglePlusId(), googlePlusProfile.getId())
-            assertEquals(googlePlusUserInfo.getLocation(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
+            assertEquals(googlePlusUserInfo.getUserName(), googlePlusProfile.getDisplayName())
+            assertEquals(googlePlusUserInfo.getLastName(), googlePlusProfile.getFamilyName())
+            assertEquals(googlePlusUserInfo.getFirstName(), googlePlusProfile.getGivenName())
+            assertEquals(googlePlusUserInfo.getSocialNetworkId(), googlePlusProfile.getId())
+            assertEquals(googlePlusUserInfo.getCity(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
         }
     }
 

@@ -55,15 +55,6 @@
 						</span>
 					</div>
 				</c:if>
-				<s:message code='account.page.menu.getApp' var="account_page_menu_getApp" />
-				<c:if test="${not empty account_page_menu_getApp}">
-					<div class="contentButton formButton rad5 rel" >
-						<input class="button accounts" title="getapp.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.menu.getApp' />" />
-						<span class="rightButtonArrow">
-							&nbsp;
-						</span>
-					</div>
-				</c:if>
 			</div>
 		</form:form>
 	</div>

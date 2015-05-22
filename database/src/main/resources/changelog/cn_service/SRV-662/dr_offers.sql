@@ -1,0 +1,1 @@
+drop table if exists offers_filters, offer_items, offers;

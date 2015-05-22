@@ -27,7 +27,7 @@ public class ChartRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testGetByCommunityName() throws Exception {
 
-        List<Chart> charts = chartRepository.getByCommunityName("CN Commercial Beta");
+        List<Chart> charts = chartRepository.findByCommunityName("CN Commercial Beta");
 
         assertNotNull(charts);
         assertEquals(2, charts.size());
@@ -36,7 +36,7 @@ public class ChartRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void testGetByCommunityUrl() throws Exception {
 
-        List<Chart> charts = chartRepository.getByCommunityURL("ChartsNow");
+        List<Chart> charts = chartRepository.findByCommunityURL("ChartsNow");
 
         assertNotNull(charts);
         assertEquals(2, charts.size());
@@ -54,7 +54,7 @@ public class ChartRepositoryIT extends AbstractRepositoryIT {
         Chart chart2 = chartRepository.save(new Chart().withCommunity(community).withName("chart 2").withGenre(rockGenre).withChartType(BASIC_CHART));
 
         //when
-        List<Chart> charts = chartRepository.getByCommunityURLAndExcludedChartId(communityUrl, chart1.getI());
+        List<Chart> charts = chartRepository.findByCommunityURLAndExcludedChartId(communityUrl, chart1.getI());
 
         //then
         assertThat(charts.size(), is(1));

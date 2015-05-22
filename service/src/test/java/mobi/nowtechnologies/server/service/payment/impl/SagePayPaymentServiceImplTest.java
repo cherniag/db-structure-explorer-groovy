@@ -7,8 +7,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
-import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
@@ -25,11 +27,17 @@ import java.util.UUID;
 import org.springframework.context.ApplicationEventPublisher;
 
 import org.junit.*;
+import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.invocation.*;
+import org.mockito.runners.*;
 import org.mockito.stubbing.*;
 import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
+import org.powermock.modules.junit4.PowerMockRunner;
+
+@RunWith(MockitoJUnitRunner.class)
 public class SagePayPaymentServiceImplTest {
 
     private SagePayPaymentServiceImpl service;
@@ -38,10 +46,14 @@ public class SagePayPaymentServiceImplTest {
     private String vpsTxId = "{94E05B24-E1FC-23CB-F2A7-24E595C89F02}";
     private String securityKey = "GXKLI5OUKU";
     private String txAuthNo = "133731";
-    private EntityService entityService;
     private PaymentDetailsService paymentDetailsService;
-    private PaymentDetailsRepository paymentDetailsRepository;
     private ApplicationEventPublisher applicationEventPublisher;
+    @Mock
+    PaymentDetailsRepository paymentDetailsRepository;
+    @Mock
+    SubmittedPaymentRepository submittedPaymentRepository;
+    @Mock
+    PendingPaymentRepository pendingPaymentRepository;
 
     @Before
     public void before() {
@@ -49,29 +61,21 @@ public class SagePayPaymentServiceImplTest {
         service.setRetriesOnError(3);
         httpService = Mockito.mock(SagePayHttpService.class);
         service.setHttpService(httpService);
-        entityService = Mockito.mock(EntityService.class);
-        Mockito.when(entityService.updateEntity(Mockito.anyObject())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArguments()[0];
-            }
-        });
-
         paymentDetailsService = Mockito.mock(PaymentDetailsService.class);
-        paymentDetailsRepository = Mockito.mock(PaymentDetailsRepository.class);
         applicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
         service.setPaymentDetailsService(paymentDetailsService);
         service.setApplicationEventPublisher(applicationEventPublisher);
         service.setPaymentDetailsRepository(paymentDetailsRepository);
-        service.setEntityService(entityService);
+        service.setSubmittedPaymentRepository(submittedPaymentRepository);
+        service.setPendingPaymentRepository(pendingPaymentRepository);
     }
 
     @Test
     public void createPaymentDetails_Successful() {
 
-        Mockito.when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getSuccesfulSagePayResponse());
+        when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getSuccesfulSagePayResponse());
 
-        Mockito.when(paymentDetailsRepository.save(any(PaymentDetails.class))).then(new Answer<Object>() {
+        when(paymentDetailsRepository.save(any(PaymentDetails.class))).then(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 PaymentDetails paymentDetails = (PaymentDetails) invocationOnMock.getArguments()[0];
@@ -97,8 +101,8 @@ public class SagePayPaymentServiceImplTest {
 
     @Test
     public void reCreatePaymentDetails_Successful() {
-        Mockito.when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getSuccesfulSagePayResponse());
-        Mockito.when(paymentDetailsRepository.save(any(PaymentDetails.class))).then(new Answer<Object>() {
+        when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getSuccesfulSagePayResponse());
+        when(paymentDetailsRepository.save(any(PaymentDetails.class))).then(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 PaymentDetails paymentDetails = (PaymentDetails) invocationOnMock.getArguments()[0];
@@ -116,7 +120,6 @@ public class SagePayPaymentServiceImplTest {
         currentPaymentDetails.setTxAuthNo("wertwert");
         currentPaymentDetails.setVendorTxCode("1234123412");
         currentPaymentDetails.setVPSTxId("12341234");
-        user.addPaymentDetails(currentPaymentDetails);
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         SagePayCreditCardPaymentDetails paymentDetails = service.createPaymentDetails(paymentDto, user, paymentPolicy);
 
@@ -132,7 +135,7 @@ public class SagePayPaymentServiceImplTest {
 
     @Test(expected = ServiceException.class)
     public void createPaymentDetails_Fail_AwaitingPayment() {
-        Mockito.when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getFailSagePayResponse());
+        when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getFailSagePayResponse());
         PaymentDetailsDto paymentDto = getPaymentDto();
         User user = new User();
         SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
@@ -142,7 +145,6 @@ public class SagePayPaymentServiceImplTest {
         currentPaymentDetails.setTxAuthNo("wertwert");
         currentPaymentDetails.setVendorTxCode("1234123412");
         currentPaymentDetails.setVPSTxId("12341234");
-        user.addPaymentDetails(currentPaymentDetails);
         PaymentPolicy paymentPolicy = new PaymentPolicy();
 
         service.createPaymentDetails(paymentDto, user, paymentPolicy);
@@ -151,7 +153,7 @@ public class SagePayPaymentServiceImplTest {
     @Test(expected = ServiceException.class)
     public void createPaymentDetails_Fail_InvalidCardType() {
 
-        Mockito.when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getFailSagePayResponse());
+        when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getFailSagePayResponse());
 
         PaymentDetailsDto paymentDto = getPaymentDto();
         User user = new User();
@@ -162,7 +164,7 @@ public class SagePayPaymentServiceImplTest {
     @Test(expected = ServiceException.class)
     public void createPaymentDetails_Fail_HttpError() {
 
-        Mockito.when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getHttpFailSagePayResponse());
+        when(httpService.makeDeferRequest(Mockito.any(PaymentDetailsDto.class))).thenReturn(getHttpFailSagePayResponse());
 
         PaymentDetailsDto paymentDto = getPaymentDto();
         User user = new User();
@@ -217,7 +219,7 @@ public class SagePayPaymentServiceImplTest {
     @Test
     public void startPayment_Successful() {
 
-        Mockito.when(httpService.makeReleaseRequest(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class))).thenReturn(getSagePayPayResponseSuccessful());
+        when(httpService.makeReleaseRequest(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any(BigDecimal.class))).thenReturn(getSagePayPayResponseSuccessful());
 
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setAmount(new BigDecimal(10));
@@ -237,6 +239,11 @@ public class SagePayPaymentServiceImplTest {
         currentPaymentDetails.setReleased(false);
 
         pendingPayment.setPaymentDetails(currentPaymentDetails);
+        SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
+        submittedPayment.setStatus(PaymentDetailsStatus.SUCCESSFUL);
+
+        when(submittedPaymentRepository.save(any(SubmittedPayment.class))).thenReturn(submittedPayment);
+
         service.startPayment(pendingPayment);
     }
 

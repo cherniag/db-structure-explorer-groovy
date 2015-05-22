@@ -1,26 +1,25 @@
 package mobi.nowtechnologies.server.transport.controller.core;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
-import mobi.nowtechnologies.server.service.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.AccCheckService;
 import mobi.nowtechnologies.server.service.CommunityService;
+import mobi.nowtechnologies.server.service.ThrottlingException;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
-import mobi.nowtechnologies.server.service.exception.NoNewContentException;
 import mobi.nowtechnologies.server.service.exception.ReactivateUserException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
-import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.social.service.OAuth2ForbiddenException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +41,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -52,7 +50,7 @@ import static org.springframework.http.HttpStatus.OK;
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
-public abstract class CommonController extends ProfileController {
+public abstract class CommonController {
 
     public static final String MODEL_NAME = "response";
     public static final int VERSION_4 = 4;
@@ -353,12 +351,6 @@ public abstract class CommonController extends ProfileController {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
         }
-    }
-
-    @ExceptionHandler(NoNewContentException.class)
-    @ResponseStatus(HttpStatus.NOT_MODIFIED)
-    public void handleNowNewContent(NoNewContentException exception) {
-        LOGGER.info("No new content. Check time from client: [{}]. Last updated time: [{}]", exception.getCheckForTimeInMillis(), exception.getDateOfLastUpdateInMillis());
     }
 
     // until cache not implemented

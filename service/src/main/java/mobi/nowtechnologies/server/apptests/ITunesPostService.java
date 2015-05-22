@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.apptests;
 
 import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionRequestDto;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import java.io.IOException;
 import java.util.Arrays;

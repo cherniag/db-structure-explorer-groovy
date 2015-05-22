@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
-import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DevicePromotionsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -24,11 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class UpdateO2UserTask {
 
-    private transient static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
     private transient UserLogRepository userLogRepository;
     private transient O2Service o2Service;
     private transient UserService userService;
-    private transient DeviceService deviceService;
+    private transient DevicePromotionsService deviceService;
     private transient O2UserDetailsUpdater o2UserDetailsUpdater = new O2UserDetailsUpdater();
 
     @Transactional
@@ -103,7 +103,7 @@ public class UpdateO2UserTask {
         this.userService = userService;
     }
 
-    public void setDeviceService(DeviceService deviceService) {
+    public void setDeviceService(DevicePromotionsService deviceService) {
         this.deviceService = deviceService;
     }
 }

@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.shared.Utils;
 
@@ -31,7 +31,7 @@ public class LastTrialDayFilter extends AbstractFilterWithCtiteria {
         boolean filtrate = false;
         final UserStatus userStatus = user.getStatus();
         final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-        if (userStatus.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null) {
+        if (UserStatusType.SUBSCRIBED.name().equals(userStatus.getName()) && currentPaymentDetails == null) {
             int nextSubPaymentSeconds = user.getNextSubPayment();
             int currentTimeSeconds = Utils.getEpochSeconds();
             if (nextSubPaymentSeconds - currentTimeSeconds < ONE_DAY_SECONDS) {

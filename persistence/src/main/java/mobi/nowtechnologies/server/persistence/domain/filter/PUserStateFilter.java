@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserState;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -48,23 +48,23 @@ public class PUserStateFilter extends AbstractFilter {
         if (currentPaymentDetails == null || !currentPaymentDetails.isActivated()) {
             userStates.add(UserState.NOT_ACTIVE_PAYMENT_DETAILS_OR_NO_PAYMENT_DETAILS);
         }
-        if (userStatus.equals(UserStatusDao.getLimitedUserStatus())) {
+        if (UserStatusType.LIMITED.name().equals(userStatus.getName())) {
             userStates.add(UserState.LIMITED);
         }
-        if (userStatus.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null) {
+        if (UserStatusType.SUBSCRIBED.name().equals(userStatus.getName()) && currentPaymentDetails == null) {
             int nextSubPaymentSeconds = user.getNextSubPayment();
-            int currentTimeSeconds = Utils.getEpochSeconds();
+            int currentTimeSeconds = DateTimeUtils.getEpochSeconds();
             if (nextSubPaymentSeconds - currentTimeSeconds < ONE_DAY_SECONDS) {
                 userStates.add(UserState.LAST_TRIAL_DAY);
             }
         }
-        if (userStatus.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null) {
+        if (UserStatusType.SUBSCRIBED.name().equals(userStatus.getName()) && currentPaymentDetails == null) {
             userStates.add(UserState.FREE_TRIAL);
         }
         if (currentPaymentDetails != null && currentPaymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.ERROR)) {
             userStates.add(UserState.PAYMENT_ERROR);
         }
-        if (userStatus.equals(UserStatusDao.getLimitedUserStatus()) && currentPaymentDetails == null) {
+        if (UserStatusType.LIMITED.name().equals(userStatus.getName()) && currentPaymentDetails == null) {
             userStates.add(UserState.LIMITED_AFTER_TRIAL);
         }
         for (UserState state : userStates) {

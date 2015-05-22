@@ -1,14 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.TaskFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
+import mobi.nowtechnologies.server.persistence.domain.task.SendPaymentErrorNotificationTask;
+import mobi.nowtechnologies.server.persistence.domain.task.SendUnsubscribeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
+import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
@@ -19,7 +22,10 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import static java.lang.String.format;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +37,9 @@ import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -41,7 +49,7 @@ import static org.hamcrest.core.Is.is;
  * User: gch Date: 12/17/13
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class TaskServiceTestIT {
@@ -60,10 +68,21 @@ public class TaskServiceTestIT {
     private CommunityRepository communityRepository;
 
     @Autowired
-    private TaskRepository taskRepository;
+    private TaskRepository<Task> taskRepository;
 
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    private Set<String> supportedTypes = new HashSet<>();
+
+    private TimeService timeService = mock(TimeService.class);
+
+    @Before
+    public void setUp() throws Exception {
+        supportedTypes.add("SendChargeNotificationTask");
+        when(timeService.now()).thenReturn(new Date());
+        taskService.setTimeService(timeService);
+    }
 
     @Test
     public void testCreateSendChargeNotificationWithExistingCommunity() {
@@ -71,7 +90,7 @@ public class TaskServiceTestIT {
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
         taskService.createSendChargeNotificationTask(user);
-        List<Task> task = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
+        List<UserTask> task = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
         assertThat(task.size(), is(1));
         assertThat(task.get(0), notNullValue());
         assertThat(task.get(0).getId(), notNullValue());
@@ -88,18 +107,13 @@ public class TaskServiceTestIT {
         assertThat(count, is(0));
     }
 
-    @Test(expected = ServiceException.class)
-    public void checkCreateSendChargeNotificationWithUserNull() {
-        taskService.createSendChargeNotificationTask(null);
-    }
-
     @Test
     public void checkIfTaskAlreadyExistsNoTasksShouldBeCreated() throws Exception {
         Community community = createAndSaveCommunity("vf_nz");
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
         taskService.createSendChargeNotificationTask(user);
-        List<Task> task = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
+        List<UserTask> task = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
         assertThat(task.size(), is(1));
         Long taskId = task.get(0).getId();
         long executionTimestamp = task.get(0).getExecutionTimestamp();
@@ -115,7 +129,7 @@ public class TaskServiceTestIT {
         Community community = createAndSaveCommunity("vf_nz");
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setUser(user);
         taskRepository.save(sendChargeNotificationTask);
         int count = jdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
@@ -135,13 +149,13 @@ public class TaskServiceTestIT {
         List<SendChargeNotificationTask> tasksIsReady = new ArrayList<SendChargeNotificationTask>();
         List<SendChargeNotificationTask> tasksInFuture = new ArrayList<SendChargeNotificationTask>();
         long now = System.currentTimeMillis();
-        for (int i = 1; i < 11; i++) {
-            tasksIsReady.add(createAndStoreTask("vf_nz", now - i * 10000L));
+        for(int i = 1; i < 11; i++) {
+            tasksIsReady.add(createAndStoreTask("vf_nz", now - i * 10000L, System.currentTimeMillis()));
         }
-        for (int i = 1; i < 8; i++) {
-            tasksInFuture.add(createAndStoreTask("vf_nz", now + i * 10000L));
+        for(int i = 1; i < 8; i++){
+            tasksInFuture.add(createAndStoreTask("vf_nz", now + i * 10000L, System.currentTimeMillis()));
         }
-        List<Task> taskToExecute = taskService.getTasksForExecution(now, 100);
+        List<Task> taskToExecute = taskService.getTasksForExecution(now, supportedTypes, 100);
         assertThat(taskToExecute.size(), is(10));
         assertThat(taskToExecute.get(0), instanceOf(SendChargeNotificationTask.class));
         assertThat(((SendChargeNotificationTask) taskToExecute.get(0)).getUser(), notNullValue());
@@ -150,9 +164,9 @@ public class TaskServiceTestIT {
     @Test
     public void testRescheduleTaskForCommunityWithOwnScheduleProperty() throws Exception {
         long now = System.currentTimeMillis();
-        SendChargeNotificationTask task = createAndStoreTask("vf_nz", now);
+        SendChargeNotificationTask task = createAndStoreTask("vf_nz", now, now);
         taskService.reScheduleTask("vf_nz", task);
-        Task saved = (Task) taskRepository.findOne(task.getId());
+        Task saved = taskRepository.findOne(task.getId());
         assertThat(saved, notNullValue());
         assertThat(saved.getExecutionTimestamp(), is(now + 2000L));
     }
@@ -160,9 +174,9 @@ public class TaskServiceTestIT {
     @Test
     public void testRescheduleTaskForCommunityWithoutOwnScheduleProperty() throws Exception {
         long now = System.currentTimeMillis();
-        SendChargeNotificationTask task = createAndStoreTask("samsung", now);
+        SendChargeNotificationTask task = createAndStoreTask("samsung", now, now);
         taskService.reScheduleTask("samsung", task);
-        Task saved = (Task) taskRepository.findOne(task.getId());
+        Task saved = taskRepository.findOne(task.getId());
         assertThat(saved, notNullValue());
         assertThat(saved.getExecutionTimestamp(), is(now + 4500L));
     }
@@ -170,9 +184,9 @@ public class TaskServiceTestIT {
     @Test
     public void testRescheduleTaskForCommunityWithEmptyScheduleProperty() throws Exception {
         long now = System.currentTimeMillis();
-        SendChargeNotificationTask task = createAndStoreTask("o2", now);
+        SendChargeNotificationTask task = createAndStoreTask("o2", now, now);
         taskService.reScheduleTask("o2", task);
-        Task saved = (Task) taskRepository.findOne(task.getId());
+        Task saved = taskRepository.findOne(task.getId());
         assertThat(saved, notNullValue());
         assertThat(saved.getExecutionTimestamp(), is(now));
     }
@@ -180,24 +194,61 @@ public class TaskServiceTestIT {
     @Test
     public void testCountTasksToExecute() throws Exception {
         long executeAt = System.currentTimeMillis() - 1000L;
-        createAndStoreTask("o2", executeAt);
-        createAndStoreTask("o2", executeAt);
-        createAndStoreTask("o2", executeAt);
-        createAndStoreTask("o2", executeAt);
-        createAndStoreTask("o2", executeAt);
+        createAndStoreTask("o2", executeAt, executeAt);
+        createAndStoreTask("o2", executeAt, executeAt);
+        createAndStoreTask("o2", executeAt, executeAt);
+        createAndStoreTask("o2", executeAt, executeAt);
+        createAndStoreTask("o2", executeAt, executeAt);
         long count = taskService.countTasksToExecute(System.currentTimeMillis());
         assertThat(count, is(5L));
     }
 
-    private SendChargeNotificationTask createAndStoreTask(String communityUrl, long executionTimestamp) {
+    @Test
+    public void createSendPaymentErrorNotificationTask() throws Exception {
+        final Date creationDate = new Date();
+        when(timeService.now()).thenReturn(creationDate);
+        Community community = createAndSaveCommunity("vf_nz");
+        UserGroup userGroup = createAndSaveUserGroup(community);
+        User user = createAndSaveUser(userGroup);
+
+        taskService.createSendPaymentErrorNotificationTask(user);
+
+        List<UserTask> tasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendPaymentErrorNotificationTask.TASK_TYPE);
+        assertEquals(1, tasks.size());
+        assertEquals(creationDate.getTime(), tasks.get(0).getCreationTimestamp());
+        assertEquals(creationDate.getTime(), tasks.get(0).getExecutionTimestamp());
+        assertTrue(tasks.get(0) instanceof SendPaymentErrorNotificationTask);
+    }
+
+    @Test
+    public void createSendUnsubscribeNotificationTask() throws Exception {
+        final Date creationDate = new Date();
+        when(timeService.now()).thenReturn(creationDate);
+        Community community = createAndSaveCommunity("vf_nz");
+        UserGroup userGroup = createAndSaveUserGroup(community);
+        User user = createAndSaveUser(userGroup);
+
+        taskService.createSendUnsubscribeNotificationTask(user);
+
+        List<UserTask> tasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendUnsubscribeNotificationTask.TASK_TYPE);
+        assertEquals(1, tasks.size());
+        assertEquals(creationDate.getTime(), tasks.get(0).getCreationTimestamp());
+        assertEquals(creationDate.getTime(), tasks.get(0).getExecutionTimestamp());
+        assertTrue(tasks.get(0) instanceof SendUnsubscribeNotificationTask);
+    }
+
+    private SendChargeNotificationTask createAndStoreTask(String communityUrl, long executionTimestamp, long creationTimestamp){
         Community community = createAndSaveCommunity(communityUrl);
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
-        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
         sendChargeNotificationTask.setId(null);
         sendChargeNotificationTask.setUser(user);
-        sendChargeNotificationTask.setExecutionTimestamp(executionTimestamp);
-        return (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
+
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", executionTimestamp);
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", creationTimestamp);
+
+        return taskRepository.save(sendChargeNotificationTask);
     }
 
     private User createAndSaveUser(UserGroup userGroup) {

@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -67,6 +68,7 @@ public class ChartItemController extends AbstractCommonController {
     private ChartService chartService;
     private Map<ChartType, String> viewByChartType;
     private ChartAsm chartAsm;
+    private ChartRepository chartRepository;
     @Resource
     private DuplicatedMediaAcrossNearestChartsDtoAssembler duplicatedMediaAcrossNearestChartsDtoAssembler;
 
@@ -75,16 +77,12 @@ public class ChartItemController extends AbstractCommonController {
         return chartFilesURL;
     }
 
-    public void setFilesURL(String filesURL) {
-        this.filesURL = filesURL;
-    }
-
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = GET)
     public ModelAndView getChartItemsPage(@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
                                           @PathVariable("chartId") Integer chartId, @RequestParam(value = "changePosition", required = false) boolean changePosition, Locale locale) {
         LOGGER.info("input parameters chartId=[{}], selectedPublishDateTime=[{}], changePosition=[{}]", chartId, selectedPublishDateTime, changePosition);
 
-        Chart chart = chartService.getChartById(chartId);
+        Chart chart = chartRepository.findOne(chartId);
         ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, true).get(0);
         List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDateTime, changePosition);
         List<ChartItemDto> chartItemDTOs = ChartDetailsAsm.toChartItemDtos(chartDetails);
@@ -240,5 +238,13 @@ public class ChartItemController extends AbstractCommonController {
 
     public void setChartAsm(ChartAsm chartAsm) {
         this.chartAsm = chartAsm;
+    }
+
+    public void setChartRepository(ChartRepository chartRepository) {
+        this.chartRepository = chartRepository;
+    }
+
+    public void setFilesURL(String filesURL) {
+        this.filesURL = filesURL;
     }
 }

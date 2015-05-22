@@ -15,7 +15,6 @@
             <option name="USE_RELATIVE_INDENTS" value="false" />
           </value>
         </option>
-        <option name="USE_FQ_CLASS_NAMES_IN_JAVADOC" value="false" />
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999999" />
         <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999999" />
         <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
@@ -70,6 +69,7 @@
         <JavaCodeStyleSettings>
           <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
           <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
+          <option name="CLASS_NAMES_IN_JAVADOC" value="3" />
         </JavaCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
@@ -91,20 +91,22 @@
           <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
           <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
           <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
+          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
           <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
-          <option name="CALL_PARAMETERS_WRAP" value="1" />
-          <option name="METHOD_PARAMETERS_WRAP" value="1" />
+          <option name="CALL_PARAMETERS_WRAP" value="5" />
+          <option name="METHOD_PARAMETERS_WRAP" value="5" />
           <option name="RESOURCE_LIST_WRAP" value="1" />
           <option name="EXTENDS_LIST_WRAP" value="1" />
           <option name="THROWS_LIST_WRAP" value="1" />
           <option name="EXTENDS_KEYWORD_WRAP" value="1" />
           <option name="THROWS_KEYWORD_WRAP" value="1" />
-          <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
+          <option name="METHOD_CALL_CHAIN_WRAP" value="5" />
           <option name="BINARY_OPERATION_WRAP" value="1" />
-          <option name="TERNARY_OPERATION_WRAP" value="2" />
+          <option name="TERNARY_OPERATION_WRAP" value="1" />
           <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
           <option name="KEEP_SIMPLE_CLASSES_IN_ONE_LINE" value="true" />
           <option name="FOR_STATEMENT_WRAP" value="1" />
+          <option name="ARRAY_INITIALIZER_WRAP" value="5" />
           <option name="ASSIGNMENT_WRAP" value="1" />
           <option name="IF_BRACE_FORCE" value="3" />
           <option name="DOWHILE_BRACE_FORCE" value="3" />

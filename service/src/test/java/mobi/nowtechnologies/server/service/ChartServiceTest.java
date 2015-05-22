@@ -244,7 +244,7 @@ public class ChartServiceTest {
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         String communityName = "chartsnow";
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
         List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
@@ -253,7 +253,7 @@ public class ChartServiceTest {
         assertEquals(1, result.size());
         assertEquals(chartDetailIds.get(0), result.get(0).getMedia());
 
-        verify(mockChartRepository, times(1)).getByCommunityName(anyString());
+        verify(mockChartRepository, times(1)).findByCommunityName(anyString());
         verify(mockChartDetailService, times(1)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
     }
 
@@ -268,7 +268,7 @@ public class ChartServiceTest {
         user.setNextSubPayment(Utils.getEpochSeconds() + 48 * 60 * 60);
         user.setFreeTrialExpiredMillis(user.getNextSubPayment() * 1000L);
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
         List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
@@ -276,7 +276,7 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(0, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
         verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
     }
 
@@ -291,7 +291,7 @@ public class ChartServiceTest {
         user.setNextSubPayment(Utils.getEpochSeconds() + 10 * 60 * 60);
         user.setLastSuccessfulPaymentDetails(paymentDetails);
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
         List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
@@ -299,7 +299,7 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(0, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
         verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
     }
 
@@ -315,7 +315,7 @@ public class ChartServiceTest {
         user.setNextSubPayment(Utils.getEpochSeconds() + 10 * 60 * 60);
         user.setLastSuccessfulPaymentDetails(paymentDetails);
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
         List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
@@ -323,7 +323,7 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(0, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
         verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
     }
 
@@ -334,7 +334,7 @@ public class ChartServiceTest {
         User user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
         user.setUserGroup(new UserGroup().withCommunity(new Community().withName(communityName)));
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.<Chart>singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(Collections.<Chart>singletonList(new Chart()));
         when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<Media>emptyList());
 
         //when
@@ -343,7 +343,7 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(Collections.<ChartDetail>emptyList(), result);
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
         verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(any(Integer.class), any(Date.class));
     }
 
@@ -355,9 +355,9 @@ public class ChartServiceTest {
         String communityName = null;
         ChartType chartType = ChartType.OTHER_CHART;
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityURLAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityURLAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
         doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
         List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, chartType);
@@ -365,9 +365,9 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-        verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
-        verify(mockChartRepository, times(1)).getByCommunityURLAndChartType(anyString(), any(ChartType.class));
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityURL(anyString());
+        verify(mockChartRepository, times(1)).findByCommunityURLAndChartType(anyString(), any(ChartType.class));
         verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
@@ -378,8 +378,8 @@ public class ChartServiceTest {
         String communityUrl = "chartsnow";
         String communityName = null;
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
         doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
         List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, null);
@@ -387,8 +387,8 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-        verify(mockChartRepository, times(1)).getByCommunityURL(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
+        verify(mockChartRepository, times(1)).findByCommunityURL(anyString());
         verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
@@ -400,9 +400,9 @@ public class ChartServiceTest {
         String communityName = "chartsnow";
         ChartType chartType = ChartType.OTHER_CHART;
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityNameAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityNameAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
         doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
         List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, chartType);
@@ -410,9 +410,9 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-        verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
-        verify(mockChartRepository, times(1)).getByCommunityNameAndChartType(anyString(), any(ChartType.class));
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityURL(anyString());
+        verify(mockChartRepository, times(1)).findByCommunityNameAndChartType(anyString(), any(ChartType.class));
         verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
@@ -423,8 +423,8 @@ public class ChartServiceTest {
         String communityUrl = null;
         String communityName = "chartsnow";
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
         doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
         List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, null);
@@ -432,8 +432,8 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
 
-        verify(mockChartRepository, times(1)).getByCommunityName(anyString());
-        verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
+        verify(mockChartRepository, times(1)).findByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityURL(anyString());
         verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
@@ -444,8 +444,8 @@ public class ChartServiceTest {
         String communityUrl = null;
         String communityName = null;
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
-        when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+        when(mockChartRepository.findByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
         doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
         List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, null);
@@ -453,8 +453,8 @@ public class ChartServiceTest {
         assertNotNull(result);
         assertEquals(0, result.size());
 
-        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-        verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityName(anyString());
+        verify(mockChartRepository, times(0)).findByCommunityURL(anyString());
         verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
@@ -533,7 +533,7 @@ public class ChartServiceTest {
         when(badgesService.getBadgeFileName(eq(908L), eq(c), eq(resolution))).thenReturn("image_908");
         when(badgesService.getBadgeFileName(909L, c, resolution)).thenReturn("image_909");
 
-        ChartDto result = chartServiceFixture.processGetChartCommand(user, true, true, resolution, false);
+        ChartDto result = chartServiceFixture.processGetChartCommand(user, true, true, resolution, false, false);
 
         assertNotNull(result);
 
@@ -863,7 +863,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
         when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(null);
@@ -874,8 +874,8 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
         when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
 
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
 
         //when
         List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
@@ -888,7 +888,7 @@ public class ChartServiceTest {
         assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
         assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -898,8 +898,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
 
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
     }
 
     @Test
@@ -912,7 +912,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = 555L;
         when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(featureUpdateOfExcludedChartPublishTimeMillis);
@@ -923,8 +923,8 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
         when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
 
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
 
         //when
         List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
@@ -937,7 +937,7 @@ public class ChartServiceTest {
         assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
         assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -947,8 +947,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
 
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
     }
 
     @Test
@@ -961,7 +961,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = 555L;
         when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(featureUpdateOfExcludedChartPublishTimeMillis);
@@ -972,8 +972,8 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
         when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(null);
 
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(0), asList(11L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(1), asList(21L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
 
         //when
         List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
@@ -986,7 +986,7 @@ public class ChartServiceTest {
         assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
         assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -996,8 +996,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
 
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L), mediaIds);
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(0), asList(11L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(1), asList(21L), mediaIds);
     }
 
     @Test
@@ -1010,7 +1010,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = 555L;
         when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(featureUpdateOfExcludedChartPublishTimeMillis);
@@ -1021,8 +1021,8 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
         when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
 
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(0), asList(12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
 
         //when
         List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
@@ -1035,7 +1035,7 @@ public class ChartServiceTest {
         assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
         assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -1045,8 +1045,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
 
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(12L), mediaIds);
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(0), asList(12L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
     }
 
     @Test
@@ -1059,7 +1059,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = new ArrayList<Chart>();
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
 
@@ -1069,7 +1069,7 @@ public class ChartServiceTest {
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -1079,8 +1079,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(0)).findNearestLatestChartPublishDate(eq(selectedTimeMillis), anyInt());
         verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDateBeforeGivenDate(eq(selectedTimeMillis), eq(featureUpdateOfExcludedChartPublishTimeMillis), anyInt());
 
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).findDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).findDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
     }
 
     @Test
@@ -1097,15 +1097,15 @@ public class ChartServiceTest {
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));
 
-        verify(mockChartRepository, times(0)).getByCommunityURLAndExcludedChartId(anyString(), anyInt());
+        verify(mockChartRepository, times(0)).findByCommunityURLAndExcludedChartId(anyString(), anyInt());
 
         verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDate(anyLong(), anyInt());
 
         verify(mockChartDetailRepository, times(0)).findNearestLatestChartPublishDate(anyLong(), anyInt());
         verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDateBeforeGivenDate(anyLong(), anyLong(), anyInt());
 
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).findDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).findDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
     }
 
     @Test
@@ -1118,7 +1118,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
         when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(null);
@@ -1129,8 +1129,8 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(null);
         when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(null);
 
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), new ArrayList<Long>(), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), new ArrayList<Long>(), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(0), new ArrayList<Long>(), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(1), new ArrayList<Long>(), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
 
         //when
         List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
@@ -1138,7 +1138,7 @@ public class ChartServiceTest {
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -1148,8 +1148,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
 
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).findDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).findDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
     }
 
     @Test
@@ -1162,7 +1162,7 @@ public class ChartServiceTest {
 
         List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
 
-        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+        when(mockChartRepository.findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
 
         Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
         when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(null);
@@ -1173,8 +1173,8 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
         when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
 
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
-        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+        when(mockChartDetailRepository.findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
 
         //when
         List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
@@ -1182,7 +1182,7 @@ public class ChartServiceTest {
         //then
         assertThat(duplicatedMediaChartDetails.size(), is(0));
 
-        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+        verify(mockChartRepository).findByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
 
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
 
@@ -1192,8 +1192,8 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
         verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
 
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
-        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
+        verify(mockChartDetailRepository).findDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
     }
 
     private ChartDetail getChartDetailInstance(final long publishTimeMillis, int i, Media media, final Chart chart) {

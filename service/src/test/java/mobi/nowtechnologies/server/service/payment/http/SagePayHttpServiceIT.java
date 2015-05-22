@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service.payment.http;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
-import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.support.http.PostService;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -91,9 +91,13 @@ public class SagePayHttpServiceIT {
         Assert.assertEquals(HttpServletResponse.SC_OK, response.getHttpStatus());
         Assert.assertEquals(true, response.isSuccessful());
 
-        response = httpService
-            .makeReleaseRequest(paymentDto.getCurrency(), "Making release payment", response.getVPSTxId(), paymentDto.getVendorTxCode(), response.getSecurityKey(), response.getTxAuthNo(),
-                                new BigDecimal("10"));
+        response = httpService.makeReleaseRequest(paymentDto.getCurrency(),
+                                                  "Making release payment",
+                                                  response.getVPSTxId(),
+                                                  paymentDto.getVendorTxCode(),
+                                                  response.getSecurityKey(),
+                                                  response.getTxAuthNo(),
+                                                  new BigDecimal("10"));
 
         Assert.assertEquals(HttpServletResponse.SC_OK, response.getHttpStatus());
         Assert.assertEquals(true, response.isSuccessful());
@@ -107,8 +111,13 @@ public class SagePayHttpServiceIT {
         Assert.assertEquals(HttpServletResponse.SC_OK, response.getHttpStatus());
         Assert.assertEquals(true, response.isSuccessful());
 
-        response = httpService
-            .makeReleaseRequest(paymentDto.getCurrency(), "Making release payment", response.getVPSTxId(), "123234234", response.getSecurityKey(), response.getTxAuthNo(), new BigDecimal("10"));
+        response = httpService.makeReleaseRequest(paymentDto.getCurrency(),
+                                                  "Making release payment",
+                                                  response.getVPSTxId(),
+                                                  "123234234",
+                                                  response.getSecurityKey(),
+                                                  response.getTxAuthNo(),
+                                                  new BigDecimal("10"));
 
         Assert.assertEquals(HttpServletResponse.SC_OK, response.getHttpStatus());
         Assert.assertEquals(false, response.isSuccessful());
@@ -122,16 +131,25 @@ public class SagePayHttpServiceIT {
         Assert.assertEquals(HttpServletResponse.SC_OK, deferResponse.getHttpStatus());
         Assert.assertEquals(true, deferResponse.isSuccessful());
 
-        SagePayResponse response = httpService
-            .makeReleaseRequest(paymentDto.getCurrency(), "Making release payment", deferResponse.getVPSTxId(), paymentDto.getVendorTxCode(), deferResponse.getSecurityKey(),
-                                deferResponse.getTxAuthNo(), new BigDecimal("10"));
+        SagePayResponse response = httpService.makeReleaseRequest(paymentDto.getCurrency(),
+                                                                  "Making release payment",
+                                                                  deferResponse.getVPSTxId(),
+                                                                  paymentDto.getVendorTxCode(),
+                                                                  deferResponse.getSecurityKey(),
+                                                                  deferResponse.getTxAuthNo(),
+                                                                  new BigDecimal("10"));
 
         Assert.assertEquals(HttpServletResponse.SC_OK, response.getHttpStatus());
         Assert.assertEquals(true, response.isSuccessful());
 
-        response = httpService
-            .makeRepeatRequest(paymentDto.getCurrency(), "Making repeat payment", deferResponse.getVPSTxId(), paymentDto.getVendorTxCode(), deferResponse.getSecurityKey(), deferResponse.getTxAuthNo(),
-                               UUID.randomUUID().toString(), new BigDecimal(paymentDto.getAmount()));
+        response = httpService.makeRepeatRequest(paymentDto.getCurrency(),
+                                                 "Making repeat payment",
+                                                 deferResponse.getVPSTxId(),
+                                                 paymentDto.getVendorTxCode(),
+                                                 deferResponse.getSecurityKey(),
+                                                 deferResponse.getTxAuthNo(),
+                                                 UUID.randomUUID().toString(),
+                                                 new BigDecimal(paymentDto.getAmount()));
 
         Assert.assertEquals(HttpServletResponse.SC_OK, response.getHttpStatus());
         Assert.assertEquals(true, response.isSuccessful());

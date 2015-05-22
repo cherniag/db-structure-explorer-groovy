@@ -168,7 +168,7 @@ public class ChartDetailsConverterTest {
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         Chart chart = chartDetail.getChart();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, true, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, true, false);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -188,7 +188,7 @@ public class ChartDetailsConverterTest {
         chartDetail.setTitle(null);
         Chart chart = chartDetail.getChart();
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false);
 
         assertNotNull(result);
         assertEquals(chart.getName(), result.getPlaylistTitle());
@@ -204,7 +204,7 @@ public class ChartDetailsConverterTest {
 
         when(badgesService.getBadgeFileName(123L, community, resolution)).thenReturn("badgeIconFileName");
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, resolution, community, true, false, false);
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, resolution, community, true, false);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -220,30 +220,17 @@ public class ChartDetailsConverterTest {
     }
 
     @Test
-    public void testToPlaylistDtoWithLockNotSupported() throws Exception {
-        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+    public void testToPlaylistDtoWithChartUpdateId() throws Exception {
+        final Integer updateId = 15;
+        final boolean withUpdateId = true;
 
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false);
+        ChartDetail chartDetail = mock(ChartDetail.class);
+        when(chartDetail.getChart()).thenReturn(mock(Chart.class));
+        when(chartDetail.getI()).thenReturn(updateId);
 
-        assertNull(result.getLocked());
-    }
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, withUpdateId);
 
-    @Test
-    public void testToPlaylistDtoWithLockSupportedAndAllTracksAreNotLocked() throws Exception {
-        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
-
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, false);
-
-        assertFalse(result.getLocked());
-    }
-
-    @Test
-    public void testToPlaylistDtoWithLockSupportedAndAllTracksAreLocked() throws Exception {
-        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
-
-        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, true);
-
-        assertTrue(result.getLocked());
+        assertEquals(updateId, result.getChartUpdateId());
     }
 
     private void shouldConvertToChartDetailDtoSuccessfully() {
@@ -262,18 +249,12 @@ public class ChartDetailsConverterTest {
         int audioSize = media.getAudioSize();
         int headerSize = media.getHeaderSize();
 
-        assertThat(chartDetailDto.getHeaderSize(), Is.is(headerSize));
         assertThat(chartDetailDto.getImageLargeSize(), Is.is(media.getImageLargeSize()));
         assertThat(chartDetailDto.getImageSmallSize(), Is.is(media.getImageSmallSize()));
         assertThat(chartDetailDto.getInfo(), Is.is(chartDetail.getInfo()));
         assertThat(chartDetailDto.getMedia(), Is.is(media.getIsrc() + ISRC_TRACK_ID_DELIMITER + media.getTrackId()));
         assertThat(chartDetailDto.getTitle(), Is.is(media.getTitle()));
-        assertThat(chartDetailDto.getTrackSize(), Is.is(headerSize + audioSize - 2));
         assertThat(chartDetailDto.getChartDetailVersion(), Is.is(chartDetail.getVersionAsPrimitive()));
-        assertThat(chartDetailDto.getHeaderVersion(), Is.is(0));
-        assertThat(chartDetailDto.getAudioVersion(), Is.is(media.getAudioFile().getVersionAsPrimitive()));
-        assertThat(chartDetailDto.getImageLargeVersion(), Is.is(media.getImageFIleLarge().getVersionAsPrimitive()));
-        assertThat(chartDetailDto.getImageSmallVersion(), Is.is(media.getImageFileSmall().getVersionAsPrimitive()));
         assertThat(chartDetailDto.getDuration(), Is.is(media.getAudioFile().getDuration()));
         assertThat(chartDetailDto.getAmazonUrl(), Is.is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F1425249%23t15720039%3Fpartner%3D3734"));
         assertThat(chartDetailDto.getiTunesUrl(), Is.is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttps%3A%2F%2Fitunes.apple" +

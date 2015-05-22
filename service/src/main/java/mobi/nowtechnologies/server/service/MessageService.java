@@ -2,11 +2,11 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -42,15 +42,10 @@ public class MessageService {
 
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    private CommunityRepository communityRepository;
     private MessageRepository messageRepository;
-    private UserService userService;
     private FilterService filterService;
-    private CommunityService communityService;
     private CloudFileService cloudFileService;
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     public void setMessageRepository(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -60,12 +55,12 @@ public class MessageService {
         this.filterService = filterService;
     }
 
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
-    }
-
     public void setCloudFileService(CloudFileService cloudFileService) {
         this.cloudFileService = cloudFileService;
+    }
+
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
     }
 
     @Transactional(readOnly = true)
@@ -140,7 +135,7 @@ public class MessageService {
     private List<Message> getMessages(String communityURL, List<MessageType> messageTypes, Date choosedPublishDate) {
         LOGGER.debug("input parameters communityURL, messageTypes: [{}], [{}], [{}]", communityURL, messageTypes, choosedPublishDate);
 
-        Community community = communityService.getCommunityByUrl(communityURL);
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL);
 
         final List<Message> messages;
         if (choosedPublishDate != null) {
@@ -176,7 +171,7 @@ public class MessageService {
     protected Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
         LOGGER.debug("input parameters messageDto, communityURL, message: [{}], [{}]", new Object[] {messageDto, communityURL, message});
 
-        Community community = communityService.getCommunityByUrl(communityURL);
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL);
 
         final long publishTimeMillis = messageDto.getPublishTime().getTime();
         Integer position;
@@ -234,8 +229,7 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public Message getMessageWithFilters(Integer messageId) {
-        Message message = messageRepository.findOneWithFilters(messageId);
-        return message;
+        return messageRepository.findOneWithFilters(messageId);
     }
 
     @Transactional(readOnly = true)
@@ -285,7 +279,7 @@ public class MessageService {
     protected Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
         LOGGER.debug("input parameters newsItemDto, communityURL, message: [{}], [{}]", new Object[] {newsItemDto, communityURL, message});
 
-        Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL.toLowerCase());
 
         final Date publishTime = newsItemDto.getPublishTime();
         final long publishTimeMillis = publishTime.getTime();
@@ -356,10 +350,10 @@ public class MessageService {
         LOGGER.debug("input parameters choosedPublishDate, communityURL: [{}], [{}]", choosedPublishDate, communityURL);
         List<Message> clonedMessages = new LinkedList<Message>();
 
-        Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL.toLowerCase());
 
         final long choosedPublishTimeMillis = choosedPublishDate.getTime();
-        final long count = messageRepository.getCount(community, choosedPublishTimeMillis, MessageType.NEWS);
+        final long count = messageRepository.countMessages(community, choosedPublishTimeMillis, MessageType.NEWS);
         boolean isNewsForChoosedPublishDateAlreadyExist = (count > 0);
         if (!isNewsForChoosedPublishDateAlreadyExist) {
 
@@ -394,14 +388,14 @@ public class MessageService {
     public List<Message> getActualNews(String communityUrl, Date selectedDate) {
         LOGGER.debug("input parameters communityUrl, selectedDate: [{}], [{}]", communityUrl, selectedDate);
 
-        Community community = communityService.getCommunityByUrl(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         long currentTimeMillis = selectedDate.getTime();
 
         Long nearestLatestPublishTimeMillis = findNearestLatestPublishDate(community, currentTimeMillis);
 
         final List<Message> messages;
         if (nearestLatestPublishTimeMillis != null) {
-            messages = messageRepository.getActualNews(community, nearestLatestPublishTimeMillis);
+            messages = messageRepository.findActualNews(community, nearestLatestPublishTimeMillis);
         } else {
             messages = Collections.EMPTY_LIST;
         }
@@ -470,9 +464,9 @@ public class MessageService {
     public List<Long> getAllPublishTimeMillis(String communityUrl) {
         LOGGER.debug("input parameters communityUrl: [{}]", communityUrl);
 
-        Community community = communityService.getCommunityByUrl(communityUrl);
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
 
-        List<Long> allPublishTimeMillis = messageRepository.getAllPublishTimeMillis(community);
+        List<Long> allPublishTimeMillis = messageRepository.findAllPublishTimeMillis(community);
         LOGGER.info("Output parameter [{}]", allPublishTimeMillis);
         return allPublishTimeMillis;
     }
@@ -487,7 +481,7 @@ public class MessageService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Message saveAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos, boolean removeImage) {
-        Community community = communityService.getCommunityByUrl(communityURL);
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL);
 
         Integer position = messageRepository.findMaxPosition(community, MessageType.AD, 0L);
         if (position != null) {
@@ -526,7 +520,7 @@ public class MessageService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Message updateAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos, boolean removeImage) {
-        Community community = communityService.getCommunityByUrl(communityURL);
+        Community community = communityRepository.findByRewriteUrlParameter(communityURL);
 
         final Set<AbstractFilterWithCtiteria> filterWithCtiteria = fromDtos(filterDtos);
         long epochMillis = Utils.getEpochMillis();

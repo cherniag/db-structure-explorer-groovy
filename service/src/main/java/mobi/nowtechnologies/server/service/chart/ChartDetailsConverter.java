@@ -1,12 +1,11 @@
 package mobi.nowtechnologies.server.service.chart;
 
-import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
+import mobi.nowtechnologies.server.persistence.domain.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.AppConstants;
@@ -53,20 +52,14 @@ public class ChartDetailsConverter {
         return original.build().toString();
     }
 
-    public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
-        if (chartDetails == null) {
-            throw new PersistenceException("The parameter chartDetails is null");
-        }
-        if (defaultAmazonUrl == null) {
-            throw new NullPointerException("The parameter defaultAmazonUrl is null");
-        }
+    public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community) {
+        String defaultAmazonUrl = messageSource.getMessage(community.getRewriteUrlParameter(), "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
-        LOGGER.debug("input parameters chartDetails: [{}]", new Object[] {chartDetails});
         List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
         for (ChartDetail chartDetail : chartDetails) {
             chartDetailDtos.add(toChartDetailDto(chartDetail, community, defaultAmazonUrl));
         }
-        LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
+
         return chartDetailDtos;
     }
 
@@ -76,9 +69,7 @@ public class ChartDetailsConverter {
 
         Drm drm = getDrm(media);
 
-        MediaFile headerFile = media.getHeaderFile();
         Integer audioSize = media.getAudioSize();
-        int headerSize = media.getHeaderSize();
         Chart chart = chartDetail.getChart();
 
         byte pos = getPosition(chartDetail, chart);
@@ -93,20 +84,12 @@ public class ChartDetailsConverter {
         chartDetailDto.setGenre1(chart.getGenre().getName());
         chartDetailDto.setGenre2(media.getGenre().getName());
 
-        chartDetailDto.setHeaderSize(headerSize);
         chartDetailDto.setImageLargeSize(media.getImageLargeSize());
         chartDetailDto.setImageSmallSize(media.getImageSmallSize());
         chartDetailDto.setInfo(chartDetail.getInfo());
         chartDetailDto.setMedia(media.getIsrcTrackId());
         chartDetailDto.setTitle(media.getTitle());
-        chartDetailDto.setTrackSize(headerSize + audioSize - 2);
         chartDetailDto.setChartDetailVersion(chartDetail.getVersionAsPrimitive());
-        chartDetailDto.setHeaderVersion(headerFile != null ?
-                                        headerFile.getVersionAsPrimitive() :
-                                        0);
-        chartDetailDto.setAudioVersion(media.getAudioFile().getVersionAsPrimitive());
-        chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersionAsPrimitive());
-        chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersionAsPrimitive());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
         chartDetailDto.setAmazonUrl(getAmazonUrl(media.getAmazonUrl(), defaultAmazonUrl, community.getRewriteUrlParameter()));
@@ -120,34 +103,34 @@ public class ChartDetailsConverter {
         return chartDetailDto;
     }
 
-    public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked) {
-        LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
+    public PlaylistDto toPlaylistDto(ChartDetail chartUpdateMarker, Resolution resolution, Community community, final boolean switchable, boolean withChartUpdateId) {
+        LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartUpdateMarker, switchable);
 
         PlaylistDto playlistDto = new PlaylistDto();
-        playlistDto.setId(chartDetail.getChart().getI() != null ?
-                          chartDetail.getChart().getI() :
+        playlistDto.setId(chartUpdateMarker.getChart().getI() != null ?
+                          chartUpdateMarker.getChart().getI() :
                           null);
-        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ?
-                                     chartDetail.getTitle() :
-                                     chartDetail.getChart().getName());
-        playlistDto.setSubtitle(chartDetail.getSubtitle());
-        playlistDto.setImage(chartDetail.getImageFileName());
-        playlistDto.setImageTitle(chartDetail.getImageTitle());
-        playlistDto.setDescription(chartDetail.getChartDescription());
-        playlistDto.setPosition(chartDetail.getPosition());
+        playlistDto.setPlaylistTitle(chartUpdateMarker.getTitle() != null ?
+                                     chartUpdateMarker.getTitle() :
+                                     chartUpdateMarker.getChart().getName());
+        playlistDto.setSubtitle(chartUpdateMarker.getSubtitle());
+        playlistDto.setImage(chartUpdateMarker.getImageFileName());
+        playlistDto.setImageTitle(chartUpdateMarker.getImageTitle());
+        playlistDto.setDescription(chartUpdateMarker.getChartDescription());
+        playlistDto.setPosition(chartUpdateMarker.getPosition());
         playlistDto.setSwitchable(switchable);
-        playlistDto.setType(chartDetail.getChartType());
+        playlistDto.setType(chartUpdateMarker.getChartType());
 
-        if (chartDetail.getBadgeId() != null && resolution != null) {
-            String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
+        if (chartUpdateMarker.getBadgeId() != null && resolution != null) {
+            String badgeFileName = badgesService.getBadgeFileName(chartUpdateMarker.getBadgeId(), community, resolution);
             playlistDto.setBadgeIcon(badgeFileName);
         }
 
-        if (isPlayListLockSupported) {
-            playlistDto.setLocked(areAllTracksLocked);
+        if (withChartUpdateId) {
+            playlistDto.setChartUpdateId(chartUpdateMarker.getI());
         }
 
-        LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
+        LOGGER.debug("Output parameter playlistDto=[{}]", playlistDto);
         return playlistDto;
     }
 

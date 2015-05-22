@@ -12,5 +12,5 @@ import org.springframework.data.repository.query.Param;
 public interface MediaFileRepository extends JpaRepository<MediaFile, Integer> {
 
     @Query(value = "select file from MediaFile file where file.filename = :name")
-    MediaFile getByName(@Param("name") String name);
+    MediaFile findByName(@Param("name") String name);
 }

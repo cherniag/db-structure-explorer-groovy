@@ -1,19 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserTransaction;
-import mobi.nowtechnologies.server.persistence.domain.UserTransactionType;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserTransactionRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -21,16 +19,11 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
 import javax.annotation.Resource;
 
-import java.util.List;
-
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.hamcrest.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,7 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author Titov Mykhaylo (titov)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 public class PromotionServiceTestIT {
 
     private static final String MOBILE = "+447123456789";
@@ -60,7 +53,7 @@ public class PromotionServiceTestIT {
     private UserGroupRepository userGroupRepository;
 
     @Resource
-    private UserTransactionRepository userTransactionRepository;
+    UserStatusRepository userStatusRepository;
 
     private SubscriptionCampaignRecord subscriptionCampaignRecord;
 
@@ -103,13 +96,6 @@ public class PromotionServiceTestIT {
         assertTrue(user.getFreeTrialExpiredMillis() > System.currentTimeMillis());
         assertNotNull(user.getLastPromo());
         assertEquals("promo8", user.getLastPromo().getCode());
-
-        List<UserTransaction> userTransactions = userTransactionRepository.findByUser(user);
-        assertEquals(1, userTransactions.size());
-        assertEquals(UserTransactionType.PROMOTION_BY_PROMO_CODE, userTransactions.get(0).getTransactionType());
-        assertEquals("promo8", userTransactions.get(0).getPromoCode());
-        assertEquals(user.getFreeTrialStartedTimestampMillis().longValue(), userTransactions.get(0).getStartTimestamp());
-        assertEquals(user.getFreeTrialExpiredMillis().longValue(), userTransactions.get(0).getEndTimestamp());
     }
 
     private void initSubscriptionCampaignRecord() {
@@ -121,7 +107,7 @@ public class PromotionServiceTestIT {
 
     private User createUser(Tariff tariff, String communityRewriteUrl) {
         User user = new User();
-        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDeviceType(DeviceTypeCache.getAndroidDeviceType());
         user.setMobile(MOBILE);
         user.setTariff(tariff);
         user.setUserGroup(getUserGroup(communityRewriteUrl));
@@ -130,7 +116,7 @@ public class PromotionServiceTestIT {
         user.setSegment(SegmentType.CONSUMER);
         user.withOldUser(getOldUser());
         user.withAutoOptInEnabled(false);
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         return user;
     }
 
@@ -140,7 +126,7 @@ public class PromotionServiceTestIT {
 
     private User getOldUser() {
         User oldUser = new User();
-        oldUser.setStatus(UserStatusDao.getLimitedUserStatus());
+        oldUser.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         oldUser.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);
         oldUser.setCurrentPaymentDetails(null);
         return oldUser;

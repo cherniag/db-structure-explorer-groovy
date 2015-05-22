@@ -2,13 +2,13 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.service.MergeResult;
+import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.social.core.UserPromoService;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
-import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.social.domain.SocialNetworkInfo;
+import mobi.nowtechnologies.server.social.dto.facebook.FacebookUserDetailsDto;
+import mobi.nowtechnologies.server.social.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 
 import javax.annotation.Resource;
@@ -32,7 +32,7 @@ public class SigninFacebookController extends CommonController {
     @Resource
     private UserPromoService userPromoService;
 
-    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.10}/SIGN_IN_FACEBOOK"})
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.11}/SIGN_IN_FACEBOOK", "**/{community}/{apiVersion:6\\.10}/SIGN_IN_FACEBOOK"})
     public ModelAndView applyPromotionByFacebookWithProfileImageUrl(@RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
                                                                     @RequestParam("ACCESS_TOKEN") String facebookAccessToken, @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
                                                                     @RequestParam("USER_NAME") String userName, @RequestParam("DEVICE_UID") String deviceUID) {
@@ -64,13 +64,12 @@ public class SigninFacebookController extends CommonController {
 
     private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean disableReactivation,
                                             boolean withOneTimeSubscriptionFlag, boolean withFacebookProfileImageUrl) {
-        Exception ex = null;
-        User user = null;
-        String community = getCurrentCommunityUri();
+        String community = null;
         try {
+            community = getCurrentCommunityUri();
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
-            FacebookUserInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
+            User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
+            SocialNetworkInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             AccountCheckDto accountCheckDto = accCheckService.processAccCheck(mergeResult, true, withOneTimeSubscriptionFlag);
 
@@ -81,16 +80,11 @@ public class SigninFacebookController extends CommonController {
 
             return buildModelAndView(accountCheckDto);
         } catch (UserCredentialsException ce) {
-            ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK can not find deviceUID[{}] in community[{}]", deviceUID, community);
             throw ce;
         } catch (RuntimeException re) {
-            ex = re;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK error [{}] for facebookAccessToken[{}] in community[{}]", re.getMessage(), facebookAccessToken, community);
             throw re;
-        } finally {
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Finished for facebookAccessToken[{}] in community[{}]", facebookAccessToken, community);
         }
     }
 

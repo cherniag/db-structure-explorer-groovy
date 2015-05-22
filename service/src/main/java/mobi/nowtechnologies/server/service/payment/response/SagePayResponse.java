@@ -1,13 +1,13 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.support.http.BasicResponse;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.util.Properties;
 
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +33,12 @@ public class SagePayResponse extends PaymentSystemResponse {
             properties.load(new StringReader(message));
 
             String status = properties.getProperty(MessageResponseParam.Status.toString());
-            if (httpStatus != HttpStatus.SC_OK) {
+            if (httpStatus != HttpURLConnection.HTTP_OK) {
                 descriptionError = message;
             } else if (!MessageResponseStatus.OK.toString().equals(status)) {
                 isSuccessful = false;
                 String errorMessage = properties.getProperty(MessageResponseParam.StatusDetail.toString());
-                descriptionError = StringUtils.hasText(errorMessage) ?
-                                   errorMessage :
-                                   message;
+                descriptionError = StringUtils.hasText(errorMessage) ? errorMessage : message;
             } else {
                 isSuccessful = true;
                 sagePaySuccessful = true;
@@ -58,9 +56,7 @@ public class SagePayResponse extends PaymentSystemResponse {
 
     public String getVPSTxId() {
         String property = properties.getProperty(SagePayRequest.SageRequestParam.VPSTxId.toString());
-        return property == null ?
-               "" :
-               property;
+        return property == null ? "" : property;
     }
 
     public String getSecurityKey() {

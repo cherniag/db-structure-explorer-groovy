@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -8,6 +7,7 @@ import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+import mobi.nowtechnologies.server.social.dto.UserDetailsDto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -53,7 +53,7 @@ public class AccountCheckDTO {
     public String promotionLabel;
 
     public boolean fullyRegistred;
-    public OAuthProvider oAuthProvider;
+    public String oAuthProvider;
     public boolean promotedDevice;
     public int promotedWeeks;
     public boolean hasPotentialPromoCodePromotion;

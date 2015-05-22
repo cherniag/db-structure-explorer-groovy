@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentLock;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.persistence.repository.ITunesPaymentLockRepos
 import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
@@ -34,7 +35,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/service-test.xml", "/META-INF/dao-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager")
 public class ITunesServiceIT {
 
@@ -50,6 +51,8 @@ public class ITunesServiceIT {
     SubmittedPaymentRepository submittedPaymentRepository;
     @Resource
     AccountLogRepository accountLogRepository;
+    @Resource
+    UserStatusRepository userStatusRepository;
 
     @After
     public void tearDown() throws Exception {
@@ -166,8 +169,8 @@ public class ITunesServiceIT {
         user.setUserName(userName);
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(communityRewriteUrl);
         user.setUserGroup(userGroup);
-        user.setDeviceType(DeviceTypeDao.getIOSDeviceType());
-        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setDeviceType(DeviceTypeCache.getIOSDeviceType());
+        user.setStatus(userStatusRepository.findByName(UserStatusType.LIMITED.name()));
         user = userRepository.saveAndFlush(user);
         return user;
     }

@@ -26,7 +26,7 @@ public interface ReferralRepository extends JpaRepository<Referral, Long> {
     void updateReferrals(@Param("contacts") List<String> contacts, @Param("communityId") int communityId, @Param("newState") ReferralState newState, @Param("inState") ReferralState inState);
 
     @Query("select count(referral) from Referral referral where referral.userId=:userId and referral.communityId=:communityId and referral.state in :states")
-    int getCountByCommunityIdUserIdAndStates(@Param("communityId") Integer communityId, @Param("userId") Integer userId, @Param("states") ReferralState... states);
+    int countByCommunityIdUserIdAndStates(@Param("communityId") Integer communityId, @Param("userId") Integer userId, @Param("states") ReferralState... states);
 
     @Query("select r from Referral r where r.userId=:userId and r.communityId=:communityId")
     List<Referral> findByCommunityIdUserId(@Param("communityId") Integer communityId, @Param("userId") Integer userId);

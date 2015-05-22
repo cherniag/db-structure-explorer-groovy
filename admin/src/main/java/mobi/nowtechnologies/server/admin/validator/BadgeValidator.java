@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.dto.streamzine.badge.ResolutionDto;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class BadgeValidator extends BaseValidator {
         if (ResolutionDto.class.equals(target.getClass())) {
             ResolutionDto dto = (ResolutionDto) target;
 
-            if (!DeviceType.all().contains(dto.getDeviceType())) {
+            if (!DeviceType.ALL_DEVICE_TYPES.contains(dto.getDeviceType())) {
                 errors.rejectValue("deviceType", "error.not.valid");
             }
         }

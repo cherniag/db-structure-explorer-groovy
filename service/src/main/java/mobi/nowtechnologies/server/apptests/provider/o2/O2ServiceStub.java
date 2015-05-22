@@ -14,11 +14,11 @@ import mobi.nowtechnologies.server.shared.enums.Tariff;
  */
 public class O2ServiceStub implements O2Service {
 
-    private PhoneExtensionsService phoneExtensionsService;
+    private O2PhoneExtensionsService o2PhoneExtensionsService;
 
     @Override
     public O2SubscriberData getSubscriberData(String phoneNumber) {
-        PhoneExtensionsService.PhoneDataKey phoneDataKey = getPhoneDataKey(phoneNumber);
+        O2PhoneExtensionsService.PhoneDataKey phoneDataKey = getPhoneDataKey(phoneNumber);
 
         O2SubscriberData o2SubscriberData = new O2SubscriberData();
         o2SubscriberData.setProviderO2(phoneDataKey.providerType == ProviderType.O2);
@@ -31,16 +31,16 @@ public class O2ServiceStub implements O2Service {
 
     @Override
     public String validatePhoneNumber(String url, String phoneNumber) {
-        PhoneExtensionsService.PhoneDataKey phoneDataKey = getPhoneDataKey(phoneNumber);
-        if (phoneDataKey.exception) {
-            throw new RuntimeException("Expected exception for phone: " + phoneNumber);
+        O2PhoneExtensionsService.PhoneDataKey phoneDataKey = getPhoneDataKey(phoneNumber);
+        if(phoneDataKey.exception){
+            throw new RuntimeException("Expected exception for phone: "+ phoneNumber);
         }
         return phoneNumber;
     }
 
-    private PhoneExtensionsService.PhoneDataKey getPhoneDataKey(String phoneNumber) {
+    private O2PhoneExtensionsService.PhoneDataKey getPhoneDataKey(String phoneNumber) {
         String suffix = phoneNumber.substring(4, 6);
-        return phoneExtensionsService.getDataBySuffix(Integer.valueOf(suffix));
+        return o2PhoneExtensionsService.getDataBySuffix(Integer.valueOf(suffix));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class O2ServiceStub implements O2Service {
         return providerUserDetails;
     }
 
-    public void setPhoneExtensionsService(PhoneExtensionsService phoneExtensionsService) {
-        this.phoneExtensionsService = phoneExtensionsService;
+    public void setO2PhoneExtensionsService(O2PhoneExtensionsService o2PhoneExtensionsService) {
+        this.o2PhoneExtensionsService = o2PhoneExtensionsService;
     }
 }

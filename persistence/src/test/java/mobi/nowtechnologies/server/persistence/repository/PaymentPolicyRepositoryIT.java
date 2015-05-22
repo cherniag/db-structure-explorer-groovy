@@ -15,6 +15,9 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 import javax.annotation.Resource;
 
+import java.util.Date;
+import java.util.List;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -85,7 +88,7 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         paymentPolicy = paymentPolicyRepository
             .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
             .withOnline(true);
-        PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        PaymentPolicy result = paymentPolicyRepository.findPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
         assertEquals(result, paymentPolicy);
     }
 
@@ -95,10 +98,29 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT {
         paymentPolicy = paymentPolicyRepository
             .save(createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true))
             .withOnline(false);
-        PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        PaymentPolicy result = paymentPolicyRepository.findPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
         assertNull(result);
     }
 
+    @Test
+    public void shouldNotFindAppStoreProductIdWithStartDateInTheFutureByCommunityAndAppStoreProductIdIsNotNull() {
+        //given
+        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
+        paymentPolicy.setAppStoreProductId("appStoreProductId");
+        paymentPolicy.setStartDateTime(new Date(Long.MAX_VALUE));
+        paymentPolicy.setEndDateTime(new Date(Long.MAX_VALUE));
+
+        paymentPolicyRepository.save(paymentPolicy);
+
+        //when
+        List<String> appStoreProductIds = paymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(paymentPolicy.getCommunity());
+
+        //then
+        for (String appStoreProductId : appStoreProductIds) {
+            assertFalse(paymentPolicy.getAppStoreProductId().equals(appStoreProductId));
+        }
+
+    }
 
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");

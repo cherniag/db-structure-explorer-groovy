@@ -24,7 +24,7 @@ public class PromotionTest {
         int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
 
         //when
-        int freeWeeksEndDate = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
+        int freeWeeksEndDate = promotion.getEndSeconds(freeTrialStartedTimestampSeconds);
 
         //then
         assertThat(freeWeeksEndDate, is(freeTrialStartedTimestampSeconds + 5 * WEEK_SECONDS));
@@ -39,7 +39,7 @@ public class PromotionTest {
         int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
 
         //when
-        int freeWeeksEndDate = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
+        int freeWeeksEndDate = promotion.getEndSeconds(freeTrialStartedTimestampSeconds);
 
         //then
         assertThat(freeWeeksEndDate, is(7 * WEEK_SECONDS));
@@ -54,7 +54,7 @@ public class PromotionTest {
         int freeTrialStartedTimestampSeconds = WEEK_SECONDS;
 
         //when
-        int freeWeeksEndDate = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
+        int freeWeeksEndDate = promotion.getEndSeconds(freeTrialStartedTimestampSeconds);
 
         //then
         assertThat(freeWeeksEndDate, is(7 * WEEK_SECONDS));
