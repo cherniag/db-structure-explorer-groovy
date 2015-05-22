@@ -78,11 +78,11 @@ class ITunesPaymentFeature {
     // Scenario: Activated user sends valid Apple Store receipt and payment verification occurs immediately
     //
     @Given('^Activated user with (.+) device using (.+) for (.+) bellow (.+) and (.+) community$')
-    def given0(String deviceType,
+    public void given0(String deviceType,
                @Transform(DictionaryTransformer.class) Word formats,
                @Transform(DictionaryTransformer.class) Word versions,
                String bellow,
-               String communityUrl) {
+               String communityUrl){
         def versionsBellow = ApiVersions.from(versions.list()).bellow(bellow)
         userDeviceDatas = userDeviceDataService.table(versionsBellow, communityUrl, [deviceType], formats.set(RequestFormat));
 
@@ -95,8 +95,19 @@ class ITunesPaymentFeature {
         community = communityRepository.findByRewriteUrlParameter(communityUrl)
     }
 
+    @And('User is on free trial')
+    public void isOnFreeTrial(){
+        runner.parallel({
+            User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
+
+            logger.info("User is on free trial: {}", user.shortInfo())
+            Assert.assertNotNull(user.getLastPromo())
+            Assert.assertTrue(user.isOnFreeTrial())
+        })
+    }
+
     @And('^User is on LIMITED state$')
-    def and0() {
+    public void and0(){
         runner.parallel {
             User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
             logger.info("Limit access for user {}", user.userName)
@@ -105,7 +116,7 @@ class ITunesPaymentFeature {
     }
 
     @When('^Subscribes in iTunes on product id of existing recurrent payment policy$')
-    def when() {
+    public void when(){
         iTunesPaymentPolicy = getITunesPaymentPolicy({ it.paymentType == 'iTunesSubscription' && it.paymentPolicyType == PaymentPolicyType.RECURRENT })
         logger.info("Recurrent payment policy found: {}", iTunesPaymentPolicy)
 
@@ -115,21 +126,21 @@ class ITunesPaymentFeature {
     }
 
     @And('^Sends ACC_CHECK request with provided valid Apple Store receipt$')
-    def and1() {
+    public void and1(){
         runner.parallel {
             responses[(it)] = deviceSet.accountCheckFromIOS(it, appStoreReceipt)
         }
     }
 
     @Then('^Response should have (.+) http status$')
-    def then0(int status) {
+    def then0(int status){
         userDeviceDatas.each {
             Assert.assertEquals(status, responses[(it)].httpStatus)
         }
     }
 
     @And('^Response header \'(.+)\' should be in the future$')
-    def and8(String headerName) {
+    public void and8(String headerName){
         userDeviceDatas.each {
             String headerValue = responses[(it)].headers[headerName].get(0)
             long expires = Date.parse(headerValue)
@@ -139,7 +150,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Client should have \'(.+)\' status$')
-    def and0(String status) {
+    public void and0(String status){
         userDeviceDatas.each {
             PhoneState state = deviceSet.getPhoneState(it)
             Assert.assertEquals(status, state.lastAccountCheckResponse.status)
@@ -147,7 +158,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Next sub payment should be the same as expiration date of receipt$')
-    def and2() {
+    public void and2(){
         userDeviceDatas.each {
             PhoneState state = deviceSet.getPhoneState(it)
             Assert.assertEquals(nextSubPaymentSeconds, state.lastAccountCheckResponse.nextSubPaymentSeconds)
@@ -155,7 +166,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Payment type in response should be \'(.+)\'$')
-    def and3(String paymentType) {
+    public void and3(String paymentType){
         userDeviceDatas.each {
             PhoneState state = deviceSet.getPhoneState(it)
             Assert.assertEquals(paymentType, state.lastAccountCheckResponse.paymentType)
@@ -163,7 +174,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Current payment details should not exist$')
-    def and4() {
+    public void and4(){
         runner.parallel {
             User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
             Assert.assertNull(user.getCurrentPaymentDetails())
@@ -174,11 +185,11 @@ class ITunesPaymentFeature {
     // Scenario: Activated user sends valid Apple Store receipt and payment details are created
     //
     @Given('^Activated user with (.+) device using (.+) for (.+) above (.+) and (.+) community$')
-    def given1(String deviceType,
+    public void given1(String deviceType,
                @Transform(DictionaryTransformer.class) Word formats,
                @Transform(DictionaryTransformer.class) Word versions,
                String above,
-               String communityUrl) {
+               String communityUrl){
         def versionsAbove = ApiVersions.from(versions.list()).above(above)
         userDeviceDatas = userDeviceDataService.table(versionsAbove, communityUrl, [deviceType], formats.set(RequestFormat));
 
@@ -195,15 +206,30 @@ class ITunesPaymentFeature {
     // Scenario: Activated user sends valid Apple Store receipt and payment details are created
     //
     @Then('^Next sub payment should be in the past$')
-    def and5() {
+    public void and5(){
         userDeviceDatas.each {
             PhoneState state = deviceSet.getPhoneState(it)
-            Assert.assertTrue((new Date().getTime() / 1000).intValue() > state.lastAccountCheckResponse.nextSubPaymentSeconds)
+            def nowSeconds = (new Date().getTime() / 1000).intValue()
+            def nextSubPaymentSeconds = state.lastAccountCheckResponse.nextSubPaymentSeconds
+            Assert.assertTrue("Next sub payment ${nextSubPaymentSeconds} should be in the past, now ${nowSeconds}",
+                    nowSeconds >= nextSubPaymentSeconds)
         }
     }
 
+
+    @Then('Free trial is skipped')
+    public void freeTrialIsSkipped() {
+        and5()
+        runner.parallel({
+            User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
+
+            logger.info("Free trial is skipped: {}", user.shortInfo())
+            Assert.assertTrue(!user.isOnFreeTrial())
+        })
+    }
+
     @And('^User should have active current payment details$')
-    def and6() {
+    public void and6(){
         runner.parallel {
             User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
             userByDeviceUserData[(it)] = user
@@ -215,7 +241,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Payment type of current payment details should be \'(.+)\'$')
-    def and7(String paymentType) {
+    public void and7(String paymentType){
         userDeviceDatas.each {
             User user = userByDeviceUserData[(it)]
             Assert.assertEquals(paymentType, user.getCurrentPaymentDetails().paymentType)
@@ -223,7 +249,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Payment policy of current payment details should be the same as subscribed$')
-    def and8() {
+    public void and8(){
         userDeviceDatas.each {
             User updatedUser = userByDeviceUserData[(it)]
             def actualCurrentPaymentDetails = updatedUser.getCurrentPaymentDetails()
@@ -239,11 +265,11 @@ class ITunesPaymentFeature {
     }
 
     //
-    // Scenario: Activated user with stored Apple Store receipt doesn't send it in ACC_CHEC but iTunes payment details are created
+    // Scenario: Activated limited user with stored Apple Store receipt doesn't send it in ACC_CHEC but iTunes payment details are created
     //
     @And('^User is subscribed on iTunes via existing recurrent payment policy without payment details$')
-    def and9() {
-        runner.parallel {
+    public void and9(){
+        runner.parallel({
             User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
 
             iTunesPaymentPolicy = getITunesPaymentPolicy({ it.paymentType == 'iTunesSubscription' && it.paymentPolicyType == PaymentPolicyType.RECURRENT })
@@ -251,18 +277,18 @@ class ITunesPaymentFeature {
             appStoreReceipt = "renewable:200:0:${iTunesPaymentPolicy.appStoreProductId}:0123456789:${nextSubPaymentSeconds}000".toString()
 
             subscriptionService.subscribeOnITunesWithoutPaymentDetails(user, nextSubPaymentSeconds, appStoreReceipt)
-        }
+        })
     }
 
     @When('^Sends ACC_CHECK request without Apple Store receipt$')
-    def when3() {
+    public void when3(){
         runner.parallel {
             responses[(it)] = deviceSet.accountCheck(it)
         }
     }
 
     @And('^Response header \'(.+)\' should be \'(.+)\'$')
-    def and10(String headerName, String expectedHeaderValue) {
+    public void and10(String headerName, String expectedHeaderValue){
         userDeviceDatas.each {
             String actualHeaderValue = responses[(it)].headers[headerName].get(0)
             Assert.assertEquals("Header $headerName: expected=$expectedHeaderValue, actual=$actualHeaderValue", expectedHeaderValue, actualHeaderValue)
@@ -273,7 +299,7 @@ class ITunesPaymentFeature {
     // Scenario: Activated user with active ITunes payment details sends new Apple Store receipt with the same product id
     //
     @When('^User sends in ACC_CHECK request new valid Apple Store receipt with the same product id$')
-    def when4() {
+    public void when4(){
         def newTransactionId = "111110000"
         newAppStoreReceipt = "renewable:200:0:${iTunesPaymentPolicy.appStoreProductId}:$newTransactionId:${nextSubPaymentSeconds}000".toString()
 
@@ -286,7 +312,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^User is subscribed on iTunes via existing recurrent payment policy with payment details$')
-    def and14() {
+    public void and14(){
         iTunesPaymentPolicy = getITunesPaymentPolicy({ it.paymentType == 'iTunesSubscription' && it.paymentPolicyType == PaymentPolicyType.RECURRENT })
         nextSubPaymentSeconds = iTunesPaymentPolicy.period.toNextSubPaymentSeconds((new Date().getTime() / 1000).intValue())
         appStoreReceipt = "renewable:200:0:${iTunesPaymentPolicy.appStoreProductId}:0123456789:${nextSubPaymentSeconds}000".toString()
@@ -301,7 +327,7 @@ class ITunesPaymentFeature {
 
 
     @And('^User should have the same active current payment details$')
-    def and11() {
+    public void and11(){
         runner.parallel {
             def originalUser = userByDeviceUserData[(it)]
             User updatedUser = findUserInDatabase(it, deviceSet.getPhoneState(it))
@@ -311,7 +337,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^Apple Store receipt in current payment details should be updated with the last one$')
-    def and12() {
+    public void and12(){
         runner.parallel {
             User updatedUser = findUserInDatabase(it, deviceSet.getPhoneState(it))
             ITunesPaymentDetails details = updatedUser.getCurrentPaymentDetails()
@@ -324,7 +350,7 @@ class ITunesPaymentFeature {
     // Scenario: Activated user with active ITunes payment details sends new Apple Store receipt with new product id
     //
     @When('^User sends in ACC_CHECK request new valid Apple Store receipt with new product id$')
-    def when5() {
+    public void when5(){
         newITunesPaymentPolicy = getITunesPaymentPolicy({ it.paymentType == 'iTunesSubscription' && it.id != iTunesPaymentPolicy.id})
         newAppStoreReceipt = "renewable:200:0:${newITunesPaymentPolicy.appStoreProductId}:0123456789:${nextSubPaymentSeconds}000".toString()
 
@@ -337,7 +363,7 @@ class ITunesPaymentFeature {
     }
 
     @And('^User should have new active current payment details with new Apple Store receipt and new product id$')
-    def and13() {
+    public void and13(){
         runner.parallel {
             def originalUser = userByDeviceUserData[(it)]
             User updatedUser = findUserInDatabase(it, deviceSet.getPhoneState(it))
@@ -350,7 +376,7 @@ class ITunesPaymentFeature {
     }
 
     @After
-    def tearDown() {
+    def tearDown(){
         responses.clear()
         userDeviceDatas.clear()
         userByDeviceUserData.clear()

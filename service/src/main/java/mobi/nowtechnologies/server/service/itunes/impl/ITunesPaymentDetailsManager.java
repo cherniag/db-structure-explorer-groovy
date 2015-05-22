@@ -49,7 +49,7 @@ public class ITunesPaymentDetailsManager {
                         logger.info("Another product id [{}] or user does not have payment details", productId);
                         iTunesPaymentDetailsService.createNewPaymentDetails(user, appStoreReceipt, productId);
 
-                        if(user.isLimited()) {
+                        if(!user.isNextSubPaymentInTheFuture()) {
                             Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
                             if (nextRetryTimeForITunesPayment != null) {
                                 response.setNextRetry(nextRetryTimeForITunesPayment);
