@@ -4,17 +4,17 @@
 
 package mobi.nowtechnologies.database.jasypt;
 
+import java.util.Properties;
+
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
-
-import java.util.Properties;
 
 /**
  * Created by enes on 3/31/15.
  */
 public class DecryptableProperties extends Properties {
 
-    private final static String PWD_SYS_PROP_NAME = "pwd";
+    private final static String PWD_SYS_PROP_NAME = "jasyptPassword";
 
     private EncryptableProperties properties;
 
