@@ -2,7 +2,6 @@ package mobi.nowtechnologies.applicationtests.services.runner;
 
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -31,14 +30,7 @@ public class Runner {
     }
 
     public void parallel(Closure<UserDeviceData> toInvoke) {
-        List<UserDeviceData> copy = new ArrayList<>(datas);
-
-        UserDeviceData firstTest = copy.get(0);
-        toInvoke.call(firstTest);
-        copy.remove(0);
-
-        // run others when first is OK
-        List<List<UserDeviceData>> partitions = Lists.partition(copy, threads);
+        List<List<UserDeviceData>> partitions = Lists.partition(datas, threads);
         for (List<UserDeviceData> p : partitions) {
             try {
                 service.invokeAll(createTasks(p, toInvoke));
@@ -49,14 +41,7 @@ public class Runner {
     }
 
     public void parallel(Invoker<UserDeviceData> toInvoke) {
-        List<UserDeviceData> copy = new ArrayList<>(datas);
-
-        UserDeviceData firstTest = copy.get(0);
-        toInvoke.invoke(firstTest);
-        copy.remove(0);
-
-        // run others when first is OK
-        List<List<UserDeviceData>> partitions = Lists.partition(copy, threads);
+        List<List<UserDeviceData>> partitions = Lists.partition(datas, threads);
         for (List<UserDeviceData> p : partitions) {
             try {
                 service.invokeAll(createTasks(p, toInvoke));
