@@ -192,18 +192,6 @@ public class TaskServiceTestIT {
     }
 
     @Test
-    public void testCountTasksToExecute() throws Exception {
-        long executeAt = System.currentTimeMillis() - 1000L;
-        createAndStoreTask("o2", executeAt, executeAt);
-        createAndStoreTask("o2", executeAt, executeAt);
-        createAndStoreTask("o2", executeAt, executeAt);
-        createAndStoreTask("o2", executeAt, executeAt);
-        createAndStoreTask("o2", executeAt, executeAt);
-        long count = taskService.countTasksToExecute(System.currentTimeMillis());
-        assertThat(count, is(5L));
-    }
-
-    @Test
     public void createSendPaymentErrorNotificationTask() throws Exception {
         final Date creationDate = new Date();
         when(timeService.now()).thenReturn(creationDate);

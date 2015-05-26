@@ -26,8 +26,4 @@
 	<bean name="trackRepo.TrackReportingOptionsController" class="mobi.nowtechnologies.server.trackrepo.controller.TrackReportingOptionsController">
 		<property name="trackReportingOptionsService" ref="trackReportingOptionsService"/>
  	</bean>
-
-	<bean class="mobi.nowtechnologies.server.support.props.PropController">
-		<property name="propertyPlaceholderConfigurer" ref="propertyPlaceholderConfigurer"/>
- 	</bean>
 </beans>

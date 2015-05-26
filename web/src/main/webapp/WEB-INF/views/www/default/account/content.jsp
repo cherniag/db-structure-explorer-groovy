@@ -2,8 +2,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@page import="mobi.nowtechnologies.server.shared.util.EmailValidator"%>
-<%@page import="mobi.nowtechnologies.server.shared.dto.web.AccountDto.Subscription"%>
+<%@page import="mobi.nowtechnologies.server.web.controller.AccountDto.Subscription"%>
 
 <div class="contentContainer">
 	<div class="verticalSpace"></div>

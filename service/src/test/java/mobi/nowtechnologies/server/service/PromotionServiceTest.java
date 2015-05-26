@@ -149,6 +149,7 @@ public class PromotionServiceTest {
         promotionServiceSpy.setMessageSource(messageSourceMock);
         promotionServiceSpy.setUserService(userServiceMock);
         promotionServiceSpy.setDeviceService(deviceServiceMock);
+        promotionServiceSpy.setEventLoggerService(eventLoggerService);
         promotionServiceSpy.promotionRepository = promotionRepositoryMock;
         promotionServiceSpy.userBannedRepository = userBannedRepositoryMock;
         promotionServiceSpy.userStatusRepository = userStatusRepository;

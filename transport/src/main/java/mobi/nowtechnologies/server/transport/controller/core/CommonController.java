@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.transport.controller.core;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.AccCheckService;
@@ -50,7 +49,7 @@ import static org.springframework.http.HttpStatus.OK;
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
-public abstract class CommonController extends ProfileController {
+public abstract class CommonController {
 
     public static final String MODEL_NAME = "response";
     public static final int VERSION_4 = 4;
@@ -134,9 +133,7 @@ public abstract class CommonController extends ProfileController {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = versionPriority > 0 ?
-                            BAD_REQUEST :
-                            INTERNAL_SERVER_ERROR;
+        HttpStatus status = versionPriority > 0 ? BAD_REQUEST : INTERNAL_SERVER_ERROR;
 
         return sendResponse(exception, response, status, true);
     }
@@ -174,9 +171,7 @@ public abstract class CommonController extends ProfileController {
 
     private ModelAndView processException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = versionPriority > 0 ?
-                            BAD_REQUEST :
-                            INTERNAL_SERVER_ERROR;
+        HttpStatus status = versionPriority > 0 ? BAD_REQUEST : INTERNAL_SERVER_ERROR;
 
         ServerMessage serverMessage = validationException.getServerMessage();
         String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
@@ -220,15 +215,11 @@ public abstract class CommonController extends ProfileController {
             errorCode = serverMessage.getErrorCode();
 
             localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
-            localizedDisplayMessage = versionPriority > 0 ?
-                                      localizedDisplayMessage :
-                                      "Bad user credentials";
+            localizedDisplayMessage = versionPriority > 0 ? localizedDisplayMessage : "Bad user credentials";
             message = localizedDisplayMessage;
         } else {
             errorCode = null;
-            localizedDisplayMessage = versionPriority > 0 ?
-                                      exception.getMessage() :
-                                      "Bad user credentials";
+            localizedDisplayMessage = versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
             message = localizedDisplayMessage;
         }
 
@@ -293,15 +284,13 @@ public abstract class CommonController extends ProfileController {
 
         if (communityName != null) {
             Community community = communityService.getCommunityByName(communityName);
-            return community != null ?
-                   community.getRewriteUrlParameter() :
-                   null;
+            return community != null ? community.getRewriteUrlParameter() : null;
         }
 
         return null;
     }
 
-    private ErrorMessage getErrorMessage(String displayMessage, String message, Integer errorCode) {
+    protected ErrorMessage getErrorMessage(String displayMessage, String message, Integer errorCode) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setDisplayMessage(displayMessage);
         errorMessage.setMessage(message);
@@ -310,7 +299,7 @@ public abstract class CommonController extends ProfileController {
 
     }
 
-    private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
+    protected ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
         notNull(status, "The parameter httpStatus is null");
         notNull(errorMessage, "The parameter errorMessage is null");
         response.setStatus(status.value());
@@ -323,9 +312,7 @@ public abstract class CommonController extends ProfileController {
         final String message = exception.getMessage();
         Integer errorCode;
         try {
-            errorCode = exception instanceof ServiceException ?
-                        new Integer(((ServiceException) exception).getErrorCodeForMessageLocalization()) :
-                        null;
+            errorCode = exception instanceof ServiceException ? new Integer(((ServiceException) exception).getErrorCodeForMessageLocalization()) : null;
         } catch (NumberFormatException e) {
             errorCode = null;
         }

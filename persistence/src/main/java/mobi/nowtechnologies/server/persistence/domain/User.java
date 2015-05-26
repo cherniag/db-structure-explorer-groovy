@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
@@ -26,7 +25,6 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-import static mobi.nowtechnologies.server.shared.Utils.getTimeOfMovingToLimitedStatus;
 import static mobi.nowtechnologies.server.shared.Utils.truncatedToSeconds;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
@@ -58,7 +56,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -74,8 +71,6 @@ import com.google.common.base.MoreObjects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -91,8 +86,6 @@ public class User implements Serializable {
     public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";
     public static final String NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN = "getUserCountByDeviceUID_UserGroup_StoredToken";
     public static final String NONE = "NONE";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "i")
@@ -206,8 +199,6 @@ public class User implements Serializable {
     private String conformStoredToken;
     private int paymentStatus;
     private long lastSuccessfulPaymentTimeMillis;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Drm> drms;
     private String facebookId;
     @Column(nullable = true)
     private String deviceUID;
@@ -891,14 +882,6 @@ public class User implements Serializable {
         this.lastSuccessfulPaymentTimeMillis = lastSuccessfulPaymentTimeMillis;
     }
 
-    public List<Drm> getDrms() {
-        return drms;
-    }
-
-    public void setDrms(List<Drm> drms) {
-        this.drms = drms;
-    }
-
     public int getSubBalance() {
         return subBalance;
     }
@@ -947,35 +930,6 @@ public class User implements Serializable {
         if (potentialPromoCodePromotion != null) {
             potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
         }
-    }
-
-    public AccountDto toAccountDto() {
-        AccountDto accountDto = new AccountDto();
-        accountDto.setEmail(userName);
-        accountDto.setPhoneNumber(mobile);
-        accountDto.setSubBalance(subBalance);
-
-        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-
-        AccountDto.Subscription subscription;
-        if (UserStatusType.SUBSCRIBED.name().equals(status.getName()) && currentPaymentDetails == null) {
-            subscription = AccountDto.Subscription.freeTrialSubscription;
-        } else if (UserStatusType.SUBSCRIBED.name().equals(status.getName()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
-            subscription = AccountDto.Subscription.subscribedSubscription;
-        } else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || UserStatusType.LIMITED.name().equals(status.getName())) {
-            subscription = AccountDto.Subscription.unsubscribedSubscription;
-        } else {
-            throw new PersistenceException("Couldn't recognize the user subscription");
-        }
-
-        accountDto.setSubscription(subscription);
-
-        accountDto.setTimeOfMovingToLimitedStatus(getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L);
-        if (potentialPromotion != null) {
-            accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
-        }
-        LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
-        return accountDto;
     }
 
     public Long getFirstDeviceLoginMillis() {

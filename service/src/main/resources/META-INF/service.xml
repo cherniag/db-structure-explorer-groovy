@@ -150,10 +150,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 
-	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
-		<property name="drmRepository" ref="drmRepository" />
-	</bean>
-
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService"/>
 
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" >
@@ -185,7 +181,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="drmService" ref="service.DrmService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -258,7 +253,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
           class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
         <property name="reloadableResourceBundleMessageSource" ref="serviceReloadableResourceBundleMessageSource"/>
         <property name="stringEncryptor" ref="configurationEncryptor"/>
-		<property name="propLocale" ref="propLocale"/>
     </bean>
 
 	<import resource="social.xml" />
@@ -403,12 +397,14 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="iTunesClient" ref="service.ITunesClient"/>
 		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
 		<property name="messageSource" ref="serviceMessageSource"/>
+        <property name="eventLoggerService" ref="eventLoggerService"/>
 	</bean>
 	<bean id="service.iTunesPaymentService" class="mobi.nowtechnologies.server.service.itunes.payment.impl.ITunesPaymentServiceImpl">
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
 		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
 		<property name="timeService" ref="timeService"/>
 		<property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
+        <property name="eventLoggerService" ref="eventLoggerService"/>
 	</bean>
 
 	<bean id="iTunesResponseParser" class="mobi.nowtechnologies.server.service.itunes.CompositeITunesResponseParser" />

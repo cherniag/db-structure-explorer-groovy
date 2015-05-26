@@ -39,7 +39,6 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActionReason;
@@ -570,15 +569,15 @@ public class UserService {
         return user;
     }
 
-    public void saveAccountDetails(AccountDto accountDto, int userId) {
-        LOGGER.debug("input parameters accountDto: [{}]", accountDto);
+    public void saveAccountDetails(int userId, String newPassword, String phoneNumber) {
+        LOGGER.debug("input parameters: [{}], [{}]", newPassword, phoneNumber);
 
         User user = userRepository.findOne(userId);
 
-        String localStoredToken = Utils.createStoredToken(user.getUserName(), accountDto.getNewPassword());
+        String localStoredToken = Utils.createStoredToken(user.getUserName(), newPassword);
 
         user.setToken(localStoredToken);
-        user.setMobile(accountDto.getPhoneNumber());
+        user.setMobile(phoneNumber);
 
         userRepository.save(user);
     }
