@@ -15,7 +15,7 @@ public class CompositeITunesResponseParser implements ITunesResponseParser {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    private List<ITunesResponseParser> parsers = new ArrayList<ITunesResponseParser>();
+    private List<ITunesResponseParser> parsers = new ArrayList<>();
 
     @Override
     public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseFormatException {

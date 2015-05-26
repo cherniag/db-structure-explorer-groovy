@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.event.service.EventLoggerService;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
@@ -11,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserBanned;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
@@ -60,7 +58,7 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g";
     @Resource
     PromotionRepository promotionRepository;
-
+    
     @Resource
     UserBannedRepository userBannedRepository;
 
@@ -338,14 +336,14 @@ public class PromotionService extends ConfigurationAwareService<PromotionService
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
     }
 
+    public void setEventLoggerService(EventLoggerService eventLoggerService) {
+        this.eventLoggerService = eventLoggerService;
+    }
+    
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
     
-    public void setEventLoggerService(EventLoggerService eventLoggerService) {
-        this.eventLoggerService = eventLoggerService;
-    }
-
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
         this.messageSource = messageSource;
     }

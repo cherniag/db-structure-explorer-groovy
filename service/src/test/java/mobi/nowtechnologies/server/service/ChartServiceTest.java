@@ -7,9 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
 import mobi.nowtechnologies.server.persistence.domain.ChartFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Drm;
-import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.Genre;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
@@ -55,8 +52,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import org.mockito.invocation.*;
-import org.mockito.stubbing.*;
 import org.springframework.mock.web.MockMultipartFile;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -84,8 +79,6 @@ public class ChartServiceTest {
     @Mock
     ChartRepository mockChartRepository;
     @Mock
-    DrmService mockDrmService;
-    @Mock
     ChartDetailRepository mockChartDetailRepository;
     @Mock
     UserService mockUserService;
@@ -109,10 +102,8 @@ public class ChartServiceTest {
 
         testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
         testUser.setId(1);
-        DrmType drmType = new DrmType();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        drmPolicy.setDrmType(drmType);
-        testUser.getUserGroup().setDrmPolicy(drmPolicy);
+
+        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
 
         PowerMockito.mockStatic(UserAsm.class);
 
@@ -123,7 +114,6 @@ public class ChartServiceTest {
         chartServiceFixture.setChartDetailService(mockChartDetailService);
         chartServiceFixture.setCloudFileService(mockCloudFileService);
         chartServiceFixture.setChartDetailRepository(mockChartDetailRepository);
-        chartServiceFixture.setDrmService(mockDrmService);
         chartServiceFixture.setApplicationContext(mockApplicationContext);
 
 
@@ -463,10 +453,6 @@ public class ChartServiceTest {
         UserGroup userGroup = mock(UserGroup.class);
         when(userGroup.getCommunity()).thenReturn(c);
         when(user.getUserGroup()).thenReturn(userGroup);
-        DrmPolicy drmPolicy = mock(DrmPolicy.class);
-        when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
-        DrmType drmType = mock(DrmType.class);
-        when(drmPolicy.getDrmType()).thenReturn(drmType);
         Resolution resolution = mock(Resolution.class);
 
         Media media = getMediaInstance(1);
@@ -515,14 +501,6 @@ public class ChartServiceTest {
         when(mockChartDetailService.findChartDetailTree(eq(4), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
         when(mockChartDetailService.findChartDetailTree(eq(5), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
         when(mockChartDetailService.findChartDetailTree(eq(6), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
-        when(mockDrmService.findDrmByUserAndMedia(any(User.class), any(Media.class), any(DrmPolicy.class), anyBoolean())).thenAnswer(new Answer<Drm>() {
-            @Override
-            public Drm answer(InvocationOnMock invocation) throws Throwable {
-                Media media = (Media) invocation.getArguments()[1];
-
-                return media.getDrms().get(0);
-            }
-        });
         when(mockMessageSource.getMessage(anyString(), eq("getChartContentManager.beanName"), any(Object[].class), any(Locale.class))).thenReturn("communityChartManager");
         when(mockMessageSource.getMessage(anyString(), eq("get.chart.command.default.amazon.url"), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
         when(mockApplicationContext.getBean("communityChartManager", GetChartContentManager.class)).thenReturn(getChartContentManager);
@@ -1225,12 +1203,6 @@ public class ChartServiceTest {
         media.setAudioFile(mediaFile);
         media.setImageFIleLarge(mediaFile);
         media.setHeaderFile(mediaFile);
-
-        Drm drm = new Drm();
-        drm.setDrmValue((byte) 1);
-        drm.setDrmType(new DrmType());
-        media.setDrms(singletonList(drm));
-
         media.setI(i);
         return media;
     }

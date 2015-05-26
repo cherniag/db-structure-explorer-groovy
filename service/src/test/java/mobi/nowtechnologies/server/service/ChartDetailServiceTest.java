@@ -4,8 +4,6 @@ import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Artist;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.Label;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
@@ -146,11 +144,7 @@ public class ChartDetailServiceTest {
 
         User user = new User();
         user.setId(userId);
-        DrmType drmType = new DrmType();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        drmPolicy.setDrmType(drmType);
         final UserGroup userGroup = new UserGroup().withId(1);
-        userGroup.setDrmPolicy(drmPolicy);
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(nearestLatestPublishTimeMillis);
@@ -188,11 +182,7 @@ public class ChartDetailServiceTest {
 
         User user = new User();
         user.setId(userId);
-        DrmType drmType = new DrmType();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        drmPolicy.setDrmType(drmType);
         final UserGroup userGroup = new UserGroup().withId(1);
-        userGroup.setDrmPolicy(drmPolicy);
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(nearestLatestPublishTimeMillis);
@@ -233,11 +223,7 @@ public class ChartDetailServiceTest {
 
         User user = new User();
         user.setId(userId);
-        DrmType drmType = new DrmType();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        drmPolicy.setDrmType(drmType);
         final UserGroup userGroup = new UserGroup().withId(1);
-        userGroup.setDrmPolicy(drmPolicy);
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(0L);
@@ -275,11 +261,7 @@ public class ChartDetailServiceTest {
 
         User user = new User();
         user.setId(userId);
-        DrmType drmType = new DrmType();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        drmPolicy.setDrmType(drmType);
         final UserGroup userGroup = new UserGroup().withId(1);
-        userGroup.setDrmPolicy(drmPolicy);
         user.setUserGroup(userGroup);
 
         List<ChartDetail> originalChartDetails = getChartDetails(0L);

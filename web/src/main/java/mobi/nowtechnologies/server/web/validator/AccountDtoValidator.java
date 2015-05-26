@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
+import mobi.nowtechnologies.server.web.controller.AccountDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

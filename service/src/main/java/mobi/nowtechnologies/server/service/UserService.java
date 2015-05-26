@@ -799,12 +799,10 @@ public class UserService {
         PromoRequest promoRequest = new PromoRequestBuilder().setUser(user)
                                                              .setMobileUser(mobileUser)
                                                              .setOtac(otac)
-                                                             .setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4)
-                                                             .setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone)
+                                                             .setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone)
                                                              .
                                                                  setIsSubjectToAutoOptIn(false)
-                                                             .setDisableReactivationForUser(disableReactivationForUser)
-                                                             .createPromoRequest();
+                                                             .setDisableReactivationForUser(disableReactivationForUser).createPromoRequest();
         MergeResult mergeResult = applyInitPromoInternal(promoRequest);
         user = mergeResult.getResultOfOperation();
         user.setHasPromo(user.isPromotionApplied());

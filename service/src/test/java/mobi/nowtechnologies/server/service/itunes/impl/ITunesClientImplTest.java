@@ -4,6 +4,7 @@
 
 package mobi.nowtechnologies.server.service.itunes.impl;
 
+import mobi.nowtechnologies.server.service.itunes.ITunesClientException;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;

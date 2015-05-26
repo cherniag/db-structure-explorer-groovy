@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.AutoOptInExemptPhoneNumber;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
@@ -42,10 +40,6 @@ public class AccountCheckDTOAsmOneTimeFlagTest {
     @Mock
     private Chart chart;
     @Mock
-    private DrmPolicy drmPolicy;
-    @Mock
-    private DrmType drmType;
-    @Mock
     private UserStatus userStatus;
     @Mock
     private DeviceType deviceType;
@@ -59,8 +53,6 @@ public class AccountCheckDTOAsmOneTimeFlagTest {
         when(user.getStatus()).thenReturn(userStatus);
         when(user.getDeviceType()).thenReturn(deviceType);
         when(userGroup.getChart()).thenReturn(chart);
-        when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
-        when(drmPolicy.getDrmType()).thenReturn(drmType);
     }
 
     @Test

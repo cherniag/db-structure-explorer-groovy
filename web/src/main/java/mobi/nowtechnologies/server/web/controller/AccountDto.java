@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.shared.dto.web;
+package mobi.nowtechnologies.server.web.controller;
 
 import javax.validation.constraints.Pattern;
 

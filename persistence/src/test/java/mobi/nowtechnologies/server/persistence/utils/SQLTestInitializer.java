@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.repository.ActivationEmailReposit
 import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
@@ -33,7 +32,6 @@ public class SQLTestInitializer {
 
     public SQLUtils sqlUtils;
     protected UserRepository userRepository;
-    protected DrmRepository drmRepository;
     protected PaymentDetailsRepository paymentDetailsRepository;
     protected ChartRepository chartRepository;
     protected ChartDetailRepository chartDetailRepository;
@@ -66,10 +64,6 @@ public class SQLTestInitializer {
     public void setChartRepository(ChartRepository chartRepository) {
 
         this.chartRepository = chartRepository;
-    }
-
-    public void setDrmRepository(DrmRepository drmRepository) {
-        this.drmRepository = drmRepository;
     }
 
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
@@ -119,7 +113,6 @@ public class SQLTestInitializer {
 
         urbanAirshipTokenRepository.deleteAll();
         appsFlyerDataRepository.deleteAll();
-        drmRepository.deleteAll();
         accountLogRepository.deleteAll();
         reactivationUserInfoRepository.deleteAll();
         streamzineUpdateRepository.deleteAll();

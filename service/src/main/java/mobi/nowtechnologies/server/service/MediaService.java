@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
@@ -41,9 +39,6 @@ public class MediaService {
     @Resource
     private ChartDetailRepository chartDetailRepository;
 
-    @Resource
-    DrmRepository drmRepository;
-
     public Media findByIsrc(String mediaIsrc) {
         if (mediaIsrc == null) {
             throw new ServiceException("The parameter mediaIsrc is null");
@@ -52,11 +47,6 @@ public class MediaService {
         List<Media> medias = mediaRepository.findByIsrc(mediaIsrc);
 
         return Iterables.getFirst(medias, null);
-    }
-
-    @Transactional
-    public void conditionalUpdateByUserAndMedia(int userId, int mediaId) {
-        drmRepository.updateByUserAndMedia(userId, mediaId, DateTimeUtils.getEpochSeconds());
     }
 
     @Transactional(readOnly = true)
