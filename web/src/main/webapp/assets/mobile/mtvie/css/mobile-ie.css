@@ -1,0 +1,1712 @@
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
+body {
+    height: 100%!important;
+    margin: 0;
+}
+html {
+    height: 100%!important;
+}
+.page {
+    height: 100%;
+}
+@font-face {
+    font-family: 'FuturaSB-BoldItalic';
+    src: url('../fonts/FuturaSB-BoldItalic.ttf');
+}
+@font-face {
+    font-family: 'NimbusSanTOTLig';
+    src: url('../fonts/NimbusSanTOT-Lig.otf');
+}
+body {
+    font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    -webkit-text-size-adjust: none;
+}
+.cookie_conteiner {
+    position: absolute;
+    margin: 0;
+    width: 100%;
+    z-index: 1000;
+    display: none;
+}
+
+/**
+** HOLDING PAGE SECTION
+**/
+.holding_page_main_container {
+    background: url(../imgs/bgs/coming_soon.png) no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+}
+
+.holding_page_content_container {
+    background-color: #FFFFFF;
+    text-align: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    bottom: 20px;
+}
+
+.holding_page_close_button_small {
+    margin-top: 30px;
+    margin-left: 30px;
+    width: 20px;
+    height: 20px;
+    float: left;
+}
+
+.holding_page_close_button_small button {
+    background: url(../imgs/icon_close.png) no-repeat center;
+    background-size: 100% auto;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+}
+
+.holding_page_logo {
+    background: url(../imgs/logo_holding.png) no-repeat center;
+    background-size: 100% auto;
+    clear: left;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 31%;
+    height: 4%;
+    display: block;
+}
+
+.holding_page_img {
+    background: url(../imgs/img_holding.png) no-repeat center;
+    background-size: 100% auto;
+    margin-top: 13%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 66%;
+    height: 27%;
+}
+
+.holding_page_relax {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    font-size: 46px;
+    color: #000000;
+    margin-left: auto;
+    margin-right: auto;
+    width: 82%;
+    margin-top: 13%;
+}
+
+.holding_page_enjoy {
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    font-size: 28px;
+    color: #000000;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 7%;
+    line-height: 150%;
+}
+
+.holding_page_close_button_big {
+    margin: 33% 9% 1%;
+}
+
+.holding_page_close_button_big button{
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    font-size: 36px;
+    border-radius: 45px;
+    background-color: #18F3CD;
+    color: #000000;
+    border: none;
+    padding: 4%;
+    width: 100%;
+}
+
+@media all and (min-width: 1000px) {
+    .holding_page_content_container {
+        top: 32px;
+        right: 32px;
+        left: 32px;
+        bottom: 32px;
+    }
+
+    .holding_page_close_button_small {
+        margin-top: 45px;
+        margin-left: 45px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .holding_page_relax {
+        font-size: 72px;
+    }
+
+    .holding_page_enjoy {
+        font-size: 41px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 56px;
+    }
+
+    .holding_page_close_button_big button{
+        border-radius: 65px;
+    }
+}
+
+@media all and (min-width: 720px) {
+
+    .holding_page_close_button_small {
+        background: url(../imgs/icon_close_big.png) no-repeat center;
+        background-size: 100% auto;
+    }
+
+    .holding_page_logo {
+        background: url(../imgs/logo_holding_big.png) no-repeat center;
+        background-size: 100% auto;
+        width: 29%;
+    }
+
+    .holding_page_img {
+        background: url(../imgs/img_holding_big.png) no-repeat center;
+        background-size: 100% auto;
+        width: 60%;
+    }
+
+    .holding_page_close_button_big {
+        margin: 30% 9% 1%;
+    }
+}
+
+@media all and (max-width: 580px) {
+    .holding_page_relax {
+        font-size: 37px;
+    }
+
+    .holding_page_enjoy {
+        font-size: 21px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 33px;
+    }
+}
+
+@media all and (max-width: 480px) {
+    .holding_page_content_container {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        bottom: 15px;
+    }
+
+    .holding_page_img {
+        width: 63%;
+        height: 28%;
+    }
+
+    .holding_page_relax {
+        font-size: 33px;
+    }
+
+    .holding_page_enjoy {
+        font-size: 18px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 27px;
+    }
+
+    .holding_page_close_button_big {
+        margin: 27% 11% 1%;
+    }
+}
+
+@media all and (max-width: 430px){
+    .holding_page_relax {
+        font-size: 26px;
+    }
+
+    .holding_page_enjoy {
+        font-size: 15px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 24px;
+    }
+
+    .holding_page_close_button_big {
+        margin-top: 20%;
+    }
+}
+
+@media all and (max-width: 330px){
+
+    .holding_page_close_button_small {
+        margin-top: 15px;
+        margin-left: 15px;
+        height: 15px;
+        width: 15px;
+    }
+
+    .holding_page_img {
+        height: 30%;
+    }
+
+    .holding_page_relax {
+        font-size: 18px;
+    }
+
+    .holding_page_enjoy {
+        font-size: 12px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 16px;
+    }
+
+    .holding_page_close_button_big {
+        margin: 18% 9% 1%;
+    }
+}
+
+@media all and (max-width: 250px){
+
+    .holding_page_close_button_small {
+        margin-top: 10px;
+        margin-left: 10px;
+        height: 13px;
+        width: 13px;
+    }
+
+    .holding_page_logo {
+        margin-top: 10%;
+        width: 24%;
+    }
+
+    .holding_page_img {
+        margin-top: 10%;
+        width: 50%;
+    }
+
+    .holding_page_relax {
+        margin-top: 10%;
+        font-size: 15px;
+    }
+
+    .holding_page_enjoy {
+        margin-top: 5%;
+        font-size: 10px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 13px;
+    }
+
+    .holding_page_close_button_big {
+        margin: 7% 9% 1%;
+    }
+
+    .holding_page_close_button_big button{
+        padding: 2%;
+    }
+}
+
+/* iPhone fix */
+@media all and (width: 640px) and (height: 960px){
+
+    .holding_page_logo {
+        margin-top: 8%;
+        width: 25%;
+    }
+
+    .holding_page_img {
+        margin-top: 10%;
+        width: 57%;
+        height: 28%;
+    }
+
+    .holding_page_relax {
+        margin-top: 10%;
+        font-size: 43px;
+    }
+
+    .holding_page_enjoy {
+        margin-top: 5%;
+        font-size: 23px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 33px;
+    }
+
+    .holding_page_close_button_big {
+        margin: 25% 13% 1%;
+    }
+}
+
+
+/**
+** GO PREMIUM SECTION - OLD
+**/
+.go-premium-container {
+    padding: 30px;
+    height: 100%;
+    background-color: white;
+}
+
+.go-premium-container-ios {
+    padding: 30px;
+    background-color: white;
+}
+
+.go-premium-header {
+    display: table;
+}
+
+.go-premium-body-title {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    display: block;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.go-premium-text-message-wrapper {
+    display: block;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.go-premium-text-message {
+    font-family: 'NimbusSanTOTLig', Arial, sans-serif;
+    line-height: 150%;
+}
+
+.go-premium-button {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    display: block;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+}
+
+.go-premium-button-target:active {
+    opacity: 0.5;
+}
+
+.go-premium-body-ok {
+    background-color: #19f3cd;
+    border: 1px solid #19f3cd;
+}
+
+.go-premium-body-cancel {
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+.go-premium-body-button-up {
+    margin: 60px 50px 0 50px;
+}
+
+.go-premium-body-button-below {
+    margin: 40px 50px 0 50px;
+}
+
+.go-premium-button-close {
+    background: url(../imgs/icon_close_72.png) no-repeat center;
+    background-size: 100% auto;
+    display: block;
+    margin-left: 20px;
+}
+
+.error-title p{
+    margin: 0px;
+    font-size: 150%;
+}
+
+.error-title span{
+    color: #FFF;
+    background-color: #000;
+    padding: 5px 10px 3px 10px;
+    display: inline-block;
+}
+
+.error-description {
+    margin: 30px auto 30px auto;
+}
+
+
+.go-premium-unsubscribe-banner {
+    background-size: 100% auto;
+    display: block;
+    margin: 10px auto;
+}
+
+.go-premium-first-half {
+    width: 100%;
+    height: 50%;
+    background-color: #19f3cd;
+}
+
+.go-premium-second-half {
+    width: 100%;
+    height: 50%;
+}
+
+.go-premium-success {
+    padding: 0 !important;
+    height: 100%;
+}
+
+.go-premium-success-salutation-container {
+    width: 100%;
+    position: absolute;
+}
+
+.go-premium-success-salutation-container-text {
+    margin: 0 auto;
+    width:90%;
+    text-align: center;
+}
+
+.go-premium-success-salutation {
+    background-color: #000;
+    color:#FFF;
+    font-family: 'FuturaSB-BoldItalic';
+    line-height: 120%;
+}
+
+.go-premium-success-salutation-title {
+    background-color: #000;
+    color:#FFF;
+    font-family: 'FuturaSB-BoldItalic';
+    line-height: 120%;
+}
+
+.go-premium-success-notification-container {
+    position: absolute;
+    width: 100%;
+    height: 180px;
+    margin-top: -110px;
+}
+
+.go-premium-success-notification{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 5%;
+    right: 5%;
+}
+
+.go-premium-success-notification-img{
+    display: block;
+    height: 100%;
+    margin: auto;
+}
+
+.go-premium-success-ad-container {
+    width: 100%;
+    position: absolute;
+}
+
+.go-premium-success-ad-text {
+    margin: 0 auto;
+    width:90%;
+    text-align: center;
+}
+
+.go-premium-success-ad-text-1 {
+    font-family: 'FuturaSB-BoldItalic';
+    line-height: 120%;
+}
+
+.go-premium-success-ad-text-2 {
+    font-family: 'FuturaSB-BoldItalic';
+    line-height: 120%;
+}
+
+.go-premium-success-close-button-container {
+    position: absolute;
+}
+
+/**
+** GO PREMIUM SECTION - NEW
+**/
+.subscribe_root_container {
+    background: url(../imgs/bgs/bg.png) no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.subscribe_content_container {
+    position: absolute;
+    background-color: #ffffff;
+}
+
+.subscribe_header_block {
+    background-color: #F5E15E;
+    padding: 13%;
+    position: relative;
+}
+
+
+.mtv_tracks_styled_title {
+    color: #ffffff;
+    background-color: #000000;
+    display: inline-block;
+}
+
+.subscribe_header_ad_title {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    text-align: center;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+
+
+.subscribe_description_block {
+
+}
+
+.subscribe_description_item{
+    font-family: 'NimbusSanTOTLig', Arial, sans-serif;
+}
+
+.subscribe_description_item_text {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.subscribe_option_holder{
+
+}
+
+.subscribe_option_discount_text{
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    text-align: center;
+}
+
+.go-premium-unsubscribe-title{
+    color: #ffffff;
+    background-color: #000000;
+    padding: 4px 8px;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.go-premium-unsubscribe-title-ios{
+    padding-top: 7px;
+}
+
+.go-premium-unsubscribe-title-bottom{
+    padding-top: 2px;
+}
+
+.go-premium-success-salutation-device {
+    white-space: nowrap;
+}
+
+.error-banner {
+    width: 30%;
+    background: url(../imgs/icon_error.png) no-repeat center;
+    background-size: 100% auto;
+}
+
+@media all and (max-width: 3000px) {
+    .subscribe_content_container_device {
+        top: 70px;
+        right: 20px;
+        left: 20px;
+        bottom: 20px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 16px 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 32px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 52px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 12px 0 48px 32px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 16px;
+        font-size: 32px;
+        line-height: 100%;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 36px;
+        height: 36px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 10px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 20px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 30px;
+        margin: 10px auto 0;
+        font-size: 20px;
+    }
+
+    .go-premium-button-close-device {
+        width: 72px;
+        height: 72px;
+    }
+
+    .go-premium-container-device {
+        padding: 60px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 50px;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 80px;
+        margin: 80px auto 50px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 80px;
+        margin: 80px auto 80px;
+    }
+
+    .go-premium-button-device {
+        padding: 40px;
+        font-size: 54px;
+        border-radius: 80px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top:75px;
+        width: 236px;
+        height: 380px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 400px;
+    }
+
+    .go-premium-text-message-wrapper-device {
+        width: 90%;
+        margin: 0 auto 20px;
+    }
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-500px;
+    }
+    .go-premium-success-salutation-device {
+        font-size: 80px;
+        padding: 10px;
+    }
+    .go-premium-success-ad-text-1-device {
+        padding: 12px;
+        font-size: 60px;
+    }
+    .go-premium-success-ad-text-2-device {
+        padding: 8px;
+        font-size: 60px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        font-size: 60px;
+        padding: 12px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        font-size: 60px;
+        padding: 8px;
+    }
+    .go-premium-success-ad-container-device {
+        margin-top:170px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:20px;
+    }
+
+    .subscribe-button-device {
+        margin: 0 55px 0;
+        padding: 20px 0 20px 0;
+        border-radius: 60px;
+        font-size: 28px;
+    }
+
+    .error-title {
+        font-size: 70px;
+    }
+
+    .error-description {
+        margin: 60px auto 60px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 320px;
+        margin-top: -190px;
+    }
+}
+
+@media all and (max-width: 1080px) {
+    .go-premium-button-close-device {
+        width: 72px;
+        height: 72px;
+    }
+
+    .go-premium-container-device {
+        padding: 60px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 50px;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 80px;
+        margin: 80px auto 50px;
+    }
+
+    .go-premium-button-device {
+        padding: 40px;
+        font-size: 54px;
+        border-radius: 80px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top:75px;
+        width: 236px;
+        height: 380px;
+    }
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-420px;
+    }
+    .go-premium-success-salutation-device {
+        font-size: 70px;
+        padding: 10px;
+    }
+    .go-premium-success-ad-text-1-device {
+        padding: 12px;
+        font-size: 50px;
+    }
+    .go-premium-success-ad-text-2-device {
+        padding: 8px;
+        font-size: 50px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        font-size: 50px;
+        padding: 12px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        font-size: 50px;
+        padding: 8px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:20px;
+    }
+
+    .error-title {
+        font-size: 70px;
+    }
+}
+
+@media all and (max-width: 800px) {
+    .go-premium-button-close-device {
+        width: 66px;
+        height: 66px;
+    }
+
+    .go-premium-container-device {
+        padding: 20px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 25px;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 45px;
+        margin: 60px auto 50px;
+    }
+
+    .go-premium-button-device {
+        padding: 22px;
+        font-size: 40px;
+        border-radius: 50px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top:50px;
+        width: 200px;
+        height: 322px;
+    }
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-400px;
+    }
+    .go-premium-success-ad-text-1-device {
+        padding: 12px;
+        font-size: 50px;
+    }
+    .go-premium-success-ad-text-2-device {
+        padding: 8px;
+        font-size: 50px;
+    }
+    .go-premium-success-salutation-device {
+        font-size: 60px;
+        padding: 10px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        font-size: 45px;
+        padding: 12px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        font-size: 45px;
+        padding: 8px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:20px;
+    }
+    .go-premium-unsubscribe-title-device{
+        font-size: 38px;
+        margin: 60px auto 60px;
+    }
+    .go-premium-unsubscribe-logo-device{
+        height: 390px;
+    }
+
+    .error-title {
+        font-size: 35px;
+    }
+
+    .go-premium-success-notification-container {
+        height: 320px;
+        margin-top: -190px;
+    }
+}
+
+@media all and (max-width: 640px) {
+    .subscribe_content_container_device {
+        top: 60px;
+        right: 18px;
+        left: 18px;
+        bottom: 18px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 16px 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 26px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 42px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 10px 0 40px 28px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 14px;
+        font-size: 26px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 30px;
+        height: 30px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 9px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 18px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 24px;
+        margin: 9px auto 0;
+        font-size: 18px;
+    }
+
+    .go-premium-button-close-device {
+        width: 50px;
+        height: 50px;
+    }
+
+    .go-premium-container-device {
+        padding: 20px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 28px;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 45px;
+        margin: 30px auto 20px;
+    }
+
+    .go-premium-button-device {
+        padding: 25px;
+        font-size: 30px;
+        border-radius: 40px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top: 20px;
+        width: 142px;
+        height: 228px;
+    }
+
+    .go-premium-body-button-up {
+        margin: 30px 50px 0 50px;
+    }
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-360px;
+    }
+    .go-premium-success-ad-text-1-device {
+        padding: 12px;
+        font-size: 50px;
+    }
+    .go-premium-success-ad-text-2-device {
+        padding: 8px;
+        font-size: 50px;
+    }
+    .go-premium-success-salutation-device {
+        font-size: 50px;
+        padding: 10px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        font-size: 40px;
+        padding: 12px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        font-size: 40px;
+        padding: 8px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:20px;
+    }
+    .go-premium-unsubscribe-title-device{
+        font-size: 32px;
+        margin: 30px auto 30px;
+    }
+    .go-premium-unsubscribe-logo-device{
+        height: 310px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 35px 0;
+        padding: 18px 0 18px 0;
+        border-radius: 50px;
+        font-size: 22px;
+    }
+
+    .error-title {
+        font-size:35px;
+    }
+
+    .go-premium-success-notification-container {
+        height: 300px;
+        margin-top: -180px;
+    }
+}
+
+@media all and (max-width: 480px) {
+
+    .subscribe_content_container_device {
+        top: 46px;
+        right: 14px;
+        left: 14px;
+        bottom: 14px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 10px 3px;
+    }
+
+    .mtv_tracks_styled_title_device_ios{
+        padding-top: 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 22px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 34px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 10px 0 32px 22px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 10px;
+        font-size: 22px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 24px;
+        height: 24px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 6px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 14px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 20px;
+        margin: 6px auto 0;
+        font-size: 14px;
+    }
+
+    .go-premium-header {
+        margin-top: 15px;
+    }
+
+    .go-premium-button-close-device {
+        width: 28px;
+        height: 28px;
+        margin: 22px 18px 18px;
+    }
+
+    .go-premium-container-device {
+        padding: 10px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 16px;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 28px;
+        margin: 26px auto 18px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 24px;
+        margin: 26px auto 26px;
+    }
+
+    .go-premium-button-device {
+        padding: 14px 60px 14px 60px;
+        font-size: 20px;
+        border-radius: 40px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top: 10px;
+        width: 78px;
+        height: 125px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 240px;
+    }
+
+    .go-premium-body-button-up {
+        margin: 20px 20px 0 20px;
+    }
+
+    .go-premium-body-button-below {
+        margin: 20px 20px 0 20px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 35px;
+    }
+
+    .go-premium-text-message-wrapper-device {
+        width: 90%;
+        margin: 0 auto 30px;
+    }
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-230px;
+    }
+    .go-premium-success-ad-text-1-device {
+        padding: 4px;
+        font-size: 20px;
+    }
+    .go-premium-success-ad-text-2-device {
+        padding: 4px;
+        font-size: 20px;
+    }
+    .go-premium-success-salutation-device {
+        padding: 7px;
+        font-size: 28px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        padding: 5px;
+        font-size: 20px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        padding: 5px;
+        font-size: 20px;
+    }
+    .go-premium-success-ad-container-device {
+        margin-top:130px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:10px;
+    }
+
+    .subscribe-button-device{
+        padding: 15px 0 15px 0;
+        border-radius: 40px;
+        font-size: 20px;
+    }
+
+    .error-title {
+        font-size: 18px;
+    }
+
+    .error-description {
+        margin: 30px auto 30px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 240px;
+        margin-top: -145px;
+    }
+}
+
+@media all and (max-width: 440px) {
+    .subscribe_content_container_device {
+        top: 42px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 20px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 30px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 10px 0 30px 20px ;
+    }
+
+    .subscribe_description_item_device {
+        font-size: 20px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+@media all and (max-width: 400px){
+
+    .subscribe_content_container_device {
+        top: 38px;
+        right: 12px;
+        left: 12px;
+        bottom: 12px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 2px 8px 2px;
+    }
+
+    .mtv_tracks_styled_title_device_ios{
+        padding-top: 4px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 18px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 28px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 6px 0 26px 18px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 8px;
+        font-size: 18px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 20px;
+        height: 20px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 6px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 12px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 16px;
+        margin: 6px auto 0;
+        font-size: 12px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 20px;
+        margin: 24px auto 24px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 210px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 28px 0;
+        padding: 13px 0 13px 0;
+        border-radius: 36px;
+        font-size: 19px;
+    }
+
+    .go-premium-success-notification-container {
+        height: 193px;
+        margin-top: -118px;
+    }
+}
+
+@media all and (max-width: 360px) {
+
+    .subscribe_content_container_device {
+        top: 35px;
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 16px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 26px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 6px 0 24px 16px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 8px;
+        font-size: 16px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 18px;
+        height: 18px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 5px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 10px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 15px;
+        margin: 5px auto 0;
+        font-size: 10px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 175px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 18px;
+        margin: 22px auto 22px;
+    }
+
+    .go-premium-header {
+        margin-top: 10px;
+    }
+
+    .go-premium-success-ad-container-device {
+        margin-top:125px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 35px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 25px 0;
+        padding: 12px 0 12px 0;
+        border-radius: 30px;
+        font-size: 17px;
+    }
+
+}
+
+@media all and (max-width: 320px) {
+    .subscribe_content_container_device {
+        top: 20px;
+        right: 8px;
+        left: 8px;
+        bottom: 8px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 14px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 24px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 6px 0 20px 14px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 16px;
+        height: 16px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 4px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 6px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 14px;
+        margin: 4px auto 0;
+        font-size: 8px;
+    }
+
+    .go-premium-button-close-device {
+        width: 22px;
+        height: 22px;
+        margin: 5px;
+        background: url(../imgs/icon_close_36.png) no-repeat center;
+        background-size: 96%;
+    }
+
+    .go-premium-container-device {
+        padding: 10px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 16px;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 20px;
+        margin: 24px auto 6px;
+    }
+
+    .go-premium-button-device {
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 24px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top: 16px;
+        margin-bottom: 0px;
+        width: 62px;
+        height: 100px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 160px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 17px;
+        margin: 20px auto 20px;
+    }
+
+    .go-premium-body-button-up {
+        margin: 13px 26px 0 26px;
+    }
+
+    .go-premium-body-button-below {
+        margin: 13px 26px 0 26px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 38px;
+    }
+
+    .go-premium-text-message-wrapper-device {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-180px;
+    }
+    .go-premium-success-ad-text-1-device {
+        font-size: 16px;
+        padding: 2px;
+    }
+    .go-premium-success-ad-text-2-device {
+        font-size: 16px;
+        padding: 2px;
+    }
+    .go-premium-success-salutation-device {
+        font-size: 20px;
+        padding: 6px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        font-size: 16px;
+        padding: 4px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        font-size: 16px;
+        padding: 4px;
+    }
+    .go-premium-success-ad-container-device {
+        margin-top:105px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:20px;
+        margin-left:20px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 23px 0;
+        padding: 11px 0 11px 0;
+        border-radius: 24px;
+        font-size: 14px;
+    }
+
+    .error-title {
+        font-size: 15px;
+    }
+
+    .error-description {
+        margin: 25px auto 25px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 165px;
+        margin-top: -100px;
+    }
+}
+
+@media all and (max-height: 480px) and (max-width: 320px){
+    .subscribe_content_container_device {
+        top: 15px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 22px;
+    }
+
+    .subscribe_description_item_device {
+        padding: 5px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 5px;
+    }
+}
+
+@media all and (max-width: 240px) {
+    .subscribe_content_container_device {
+        top: 24px;
+        right: 6px;
+        left: 6px;
+        bottom: 6px;
+    }
+
+    .mtv_tracks_styled_title_device {
+        padding: 1px 6px 1px;
+    }
+
+    .mtv_tracks_styled_title_small_device {
+        font-size: 10px;
+    }
+
+    .mtv_tracks_styled_title_big_device {
+        font-size: 18px;
+    }
+
+    .subscribe_description_block_device {
+        margin: 4px 0 16px 10px ;
+    }
+
+    .subscribe_description_item_device {
+        padding: 6px;
+        font-size: 10px;
+    }
+
+    .subscribe_description_item_logo_device {
+        width: 12px;
+        height: 12px;
+    }
+
+    .subscribe_description_item_text_device {
+        padding-left: 4px;
+    }
+
+    .subscribe_option_holder_device {
+        margin-top: 6px;
+    }
+
+    .subscribe_option_discount_text_device{
+        height: 10px;
+        margin: 4px auto 0;
+        font-size: 6px;
+    }
+
+    .go-premium-button-close-device {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+    }
+
+    .go-premium-container-device {
+        padding: 10px;
+    }
+
+    .go-premium-text-message-device {
+        font-size: 11px;
+        line-height: 110%;
+    }
+
+    .go-premium-body-title-device {
+        font-size: 16px;
+        margin: 8px auto 8px;
+    }
+
+    .go-premium-button-device {
+        padding: 4px;
+        font-size: 14px;
+        border-radius: 20px;
+    }
+
+    .go-premium-unsubscribe-banner-device {
+        margin-top: 0;
+        width: 36px;
+        height: 57px;
+    }
+
+    .go-premium-body-button-up {
+        margin: 8px 50px 0 50px;
+    }
+
+    .go-premium-body-button-below {
+        margin: 8px 50px 0 50px;
+    }
+
+    .go-premium-text-message-wrapper-device {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+
+    .go-premium-success-salutation-container-device {
+        margin-top:-125px;
+    }
+    .go-premium-success-ad-text-1-device {
+        font-size: 10px;
+        padding: 2px;
+    }
+    .go-premium-success-ad-text-2-device {
+        font-size: 10px;
+        padding: 2px;
+    }
+    .go-premium-success-salutation-device {
+        font-size: 14px;
+        padding: 2px;
+    }
+    .go-premium-success-salutation-title-1-device {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .go-premium-success-salutation-title-2-device {
+        font-size: 12px;
+        padding: 2px;
+    }
+    .go-premium-success-ad-container-device {
+        margin-top:65px;
+    }
+    .go-premium-success-close-button-container-device {
+        margin-top:10px;
+        margin-left:10px;
+        width: 60%;
+    }
+
+    .subscribe-button-device {
+        margin: 0 15px 0;
+        padding: 8px 0 8px 0;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 12px;
+        margin: 8px auto 8px;
+    }
+    .go-premium-unsubscribe-logo-device{
+        height: 120px;
+    }
+
+    .error-title {
+        font-size: 12px;
+    }
+
+    .error-description {
+        margin: 20px auto 20px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 120px;
+        margin-top: -72px;
+    }
+}

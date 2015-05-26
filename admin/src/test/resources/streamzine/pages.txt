@@ -1,2 +1,2 @@
 mtv1=main_content,playlists,tracks,terms_of_service,about,account_home,news,favourites
-mtvit=main_content,playlists,tracks,terms_of_service,about,account_home,news,favourites
+mtvie=main_content,playlists,tracks,terms_of_service,about,account_home,news,favourites

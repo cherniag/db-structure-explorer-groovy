@@ -6,6 +6,7 @@ package mobi.nowtechnologies.server.service.itunes.payment.impl;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.TimeService;
+import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
@@ -24,6 +25,9 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
 
+import java.util.Date;
+
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +49,7 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
     private ITunesPaymentLockRepository iTunesPaymentLockRepository;
     private TimeService timeService;
     private SubmittedPaymentService submittedPaymentService;
+    private EventLoggerService eventLoggerService;
 
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -72,6 +77,29 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
             return latest.getPaymentPolicy();
         }
         return null;
+    }
+
+    @Override
+    public long createXPlayCapPayment(User user, String receipt, ITunesResult response, int playCapValue) {
+        PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getCommunity(), response.getProductId());
+        Preconditions.checkState(paymentPolicy != null, String.format("No PaymentPolicy.appStoreProductId=%s configured in Community.id=%s", response.getProductId(), user.getCommunityId()));
+        // for experimental feature do not created SubmittedPayment - log as much as we can about TX is enough
+
+        Period period = paymentPolicy.getPeriod();
+        Date playCapExpiryDate = DateTimeUtils.moveDate(timeService.now(), DateTimeUtils.UTC_TIME_ZONE_ID, period.getDuration(), period.getDurationUnit());
+        long playCapExpiry = playCapExpiryDate.getTime();
+
+        eventLoggerService.logXPlayCapReceiptVerified(user.getId(),
+                                                      user.getUuid(),
+                                                      receipt,
+                                                      response.getResult(),
+                                                      paymentPolicy.getId(),
+                                                      playCapValue,
+                                                      response.getOriginalTransactionId(),
+                                                      response.getPurchaseTime(),
+                                                      playCapExpiry);
+
+        return playCapExpiry;
     }
 
     @Transactional
@@ -106,9 +134,7 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
         submittedPayment.setPaymentPolicy(paymentPolicy);
 
         boolean isFirstPayment = user.getLastSuccessfulPaymentTimeMillis() == 0;
-        submittedPayment.setType(isFirstPayment ?
-                                 FIRST :
-                                 REGULAR);
+        submittedPayment.setType(isFirstPayment ? FIRST : REGULAR);
 
         submittedPayment = submittedPaymentService.save(submittedPayment);
 
@@ -155,5 +181,9 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
 
     public void setTimeService(TimeService timeService) {
         this.timeService = timeService;
+    }
+
+    public void setEventLoggerService(EventLoggerService eventLoggerService) {
+        this.eventLoggerService = eventLoggerService;
     }
 }

@@ -30,6 +30,10 @@ public class ITunesResult {
         return result == 0;
     }
 
+    public int getResult() {
+        return result;
+    }
+
     public String getProductId() {
         return productId;
     }
@@ -47,7 +51,11 @@ public class ITunesResult {
     }
 
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("result", result).append("productId", productId).append("originalTransactionId", originalTransactionId)
-                                                            .append("expireTime", expireTime).append("purchaseTime", purchaseTime).toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("result", result)
+                                                            .append("productId", productId)
+                                                            .append("originalTransactionId", originalTransactionId)
+                                                            .append("expireTime", expireTime)
+                                                            .append("purchaseTime", purchaseTime)
+                                                            .toString();
     }
 }

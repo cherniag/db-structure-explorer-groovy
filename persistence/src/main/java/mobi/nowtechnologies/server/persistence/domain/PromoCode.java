@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.shared.dto.PromoCodeDto;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
@@ -17,9 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -43,20 +39,6 @@ public class PromoCode {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
-
-    public static PromoCodeDto valueOf(PromoCode promoCode) {
-        PromoCodeDto dto = new PromoCodeDto();
-        dto.setPromoCode(promoCode.getCode());
-        return dto;
-    }
-
-    public static List<PromoCodeDto> toPromoCodeDtoList(List<PromoCode> codes) {
-        List<PromoCodeDto> dtoList = new ArrayList<PromoCodeDto>();
-        for (PromoCode promoCode : codes) {
-            dtoList.add(valueOf(promoCode));
-        }
-        return dtoList;
-    }
 
     public boolean forVideoAndAudio() {
         return isNotNull(mediaType) && VIDEO_AND_AUDIO.equals(mediaType);

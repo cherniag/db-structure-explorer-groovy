@@ -4,6 +4,7 @@
 
 package mobi.nowtechnologies.server.service.itunes.impl;
 
+import mobi.nowtechnologies.server.service.itunes.ITunesClientException;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
@@ -40,8 +41,8 @@ public class ITunesClientImplTest {
         when(config.getPassword()).thenReturn("password");
     }
 
-    @Test
-    public void testVerifyReceipt_ResposeNoOK() throws Exception {
+    @Test(expected = ITunesClientException.class)
+    public void testVerifyReceipt_ResponseNotOK() throws Exception {
         final String appStoreReceipt = "appStoreReceipt";
 
         final BasicResponse basicResponse = mock(BasicResponse.class);

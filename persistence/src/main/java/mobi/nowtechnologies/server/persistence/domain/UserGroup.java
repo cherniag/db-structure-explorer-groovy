@@ -32,11 +32,6 @@ public class UserGroup implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "community")
     private Community community;
-    @Column(name = "drmPolicy", insertable = false, updatable = false)
-    private byte drmPolicyId;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "drmPolicy")
-    private DrmPolicy drmPolicy;
     @Column(name = "name", columnDefinition = "char(25)")
     private String name;
 
@@ -82,19 +77,6 @@ public class UserGroup implements Serializable {
         this.name = name;
     }
 
-    public DrmPolicy getDrmPolicy() {
-        return drmPolicy;
-    }
-
-    public void setDrmPolicy(DrmPolicy drmPolicy) {
-        this.drmPolicy = drmPolicy;
-        drmPolicyId = drmPolicy.getI();
-    }
-
-    public byte getDrmPolicyId() {
-        return drmPolicyId;
-    }
-
     public UserGroup withCommunity(Community community) {
         setCommunity(community);
         return this;
@@ -107,6 +89,6 @@ public class UserGroup implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("chartId", chartId).append("communityId", communityId).append("drmPolicyId", drmPolicyId).append("name", name).toString();
+        return new ToStringBuilder(this).append("id", id).append("chartId", chartId).append("communityId", communityId).append("name", name).toString();
     }
 }

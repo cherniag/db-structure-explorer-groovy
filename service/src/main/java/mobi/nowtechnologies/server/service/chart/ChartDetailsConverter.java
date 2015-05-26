@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.service.chart;
 
-import mobi.nowtechnologies.server.persistence.domain.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.AppConstants;
@@ -67,8 +66,6 @@ public class ChartDetailsConverter {
         ChartDetailDto chartDetailDto = new ChartDetailDto();
         Media media = chartDetail.getMedia();
 
-        Drm drm = getDrm(media);
-
         Integer audioSize = media.getAudioSize();
         Chart chart = chartDetail.getChart();
 
@@ -79,8 +76,9 @@ public class ChartDetailsConverter {
         chartDetailDto.setPlaylistId(chart.getI());
         chartDetailDto.setArtist(media.getArtistName());
         chartDetailDto.setAudioSize(audioSize);
-        chartDetailDto.setDrmType(drm.getDrmType().getName());
-        chartDetailDto.setDrmValue(drm.getDrmValue());
+        // legacy values
+        chartDetailDto.setDrmType("PLAYS");
+        chartDetailDto.setDrmValue((byte) 100);
         chartDetailDto.setGenre1(chart.getGenre().getName());
         chartDetailDto.setGenre2(media.getGenre().getName());
 
@@ -145,14 +143,6 @@ public class ChartDetailsConverter {
               (byte) (position + 50) :
               pos;
         return pos;
-    }
-
-    private Drm getDrm(Media media) {
-        List<Drm> drms = media.getDrms();
-        if (drms.size() != 1) {
-            throw new IllegalArgumentException("There are [" + drms.size() + "] of drm found but 1 expected");
-        }
-        return drms.get(0);
     }
 
     private String getAmazonUrl(String mediaAmazonUrl, String defaultAmazonUrl, String communityRewriteUrlParameter) {
