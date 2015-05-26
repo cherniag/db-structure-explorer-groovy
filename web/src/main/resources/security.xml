@@ -5,20 +5,7 @@
 
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <import resource="admin-security.xml"/>
-
-    <sec:http name="admin.security.section" create-session="stateless" pattern="/admin/.*" authentication-manager-ref="adminAuthenticationManager" use-expressions="true" request-matcher="regex">
-        <sec:anonymous/>
-
-        <sec:intercept-url pattern="/admin/messageProps.*" access="hasRole('ROLE_ADMIN')" />
-        <sec:intercept-url pattern="/admin/serviceProps.*" access="hasRole('ROLE_ADMIN')" />
-        <sec:intercept-url pattern="/admin/appProps.*" access="hasRole('ROLE_ADMIN')" />
-
-        <sec:custom-filter before="FIRST" ref="communityResolverFilter" />
-
-        <sec:http-basic />
-    </sec:http>
-
+    <sec:http pattern="/admin/*" security="none"/>
     <sec:http pattern="/MANIFEST.MF" security="none" />
 
     <sec:http create-session="stateless" use-expressions="true">

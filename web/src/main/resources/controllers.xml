@@ -85,8 +85,6 @@
         <property name="userRepository" ref="userRepository"/>
     </bean>
 
-    <bean class="mobi.nowtechnologies.server.support.props.PropController"/>
-
     <!-- Static Pages -->
     <mvc:view-controller path="/privacy_policy.html" view-name="privacy_policy"/>
     <mvc:resources mapping="/MANIFEST.MF" location="classpath:version/MANIFEST.MF" />
