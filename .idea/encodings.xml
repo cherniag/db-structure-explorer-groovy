@@ -3,7 +3,9 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/admin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/application-tests" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/database" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/env" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/env/src/main/resources/conf/application.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mq-parent-pom" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/persistence" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/service" charset="UTF-8" />

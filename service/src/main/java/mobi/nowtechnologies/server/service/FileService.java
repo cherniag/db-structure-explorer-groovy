@@ -204,7 +204,6 @@ public class FileService {
 
         if (fileType.equals(FileType.HEADER)) {
             LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", user.getId(), media.getI());
-            mediaService.conditionalUpdateByUserAndMedia(user.getId(), media.getI());
         }
     }
 

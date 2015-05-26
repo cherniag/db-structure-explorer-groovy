@@ -16,4 +16,6 @@ public interface ITunesPaymentService {
     boolean hasOneTimeSubscription(User user);
 
     PaymentPolicy getCurrentSubscribedPaymentPolicy(User user);
+
+    long createXPlayCapPayment(User user, String receipt, ITunesResult response, int playCapValue);
 }

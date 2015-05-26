@@ -1,2 +1,2 @@
 mtv1=refer_a_friend,openbrowser,openadds
-mtvit=refer_a_friend,openbrowser,openadds
+mtvie=refer_a_friend,openbrowser,openadds

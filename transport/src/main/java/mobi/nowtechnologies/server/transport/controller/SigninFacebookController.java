@@ -64,12 +64,11 @@ public class SigninFacebookController extends CommonController {
 
     private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean disableReactivation,
                                             boolean withOneTimeSubscriptionFlag, boolean withFacebookProfileImageUrl) {
-        Exception ex = null;
-        User user = null;
-        String community = getCurrentCommunityUri();
+        String community = null;
         try {
+            community = getCurrentCommunityUri();
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
+            User user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             SocialNetworkInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             AccountCheckDto accountCheckDto = accCheckService.processAccCheck(mergeResult, true, withOneTimeSubscriptionFlag);
@@ -81,16 +80,11 @@ public class SigninFacebookController extends CommonController {
 
             return buildModelAndView(accountCheckDto);
         } catch (UserCredentialsException ce) {
-            ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK can not find deviceUID[{}] in community[{}]", deviceUID, community);
             throw ce;
         } catch (RuntimeException re) {
-            ex = re;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK error [{}] for facebookAccessToken[{}] in community[{}]", re.getMessage(), facebookAccessToken, community);
             throw re;
-        } finally {
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Finished for facebookAccessToken[{}] in community[{}]", facebookAccessToken, community);
         }
     }
 

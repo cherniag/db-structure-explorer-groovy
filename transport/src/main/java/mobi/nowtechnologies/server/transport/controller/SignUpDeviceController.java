@@ -71,13 +71,11 @@ public class SignUpDeviceController extends CommonController {
 
     private ModelAndView processSignUpDevice(UserDeviceRegDetailsDto userDeviceDetailsDto, boolean updateUserPendingActivation, boolean updateXtifyToken, boolean withUuid,
                                              boolean updateAppsFlyerUid) {
-        String community = getCurrentCommunityUri();
-        LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]", userDeviceDetailsDto, community);
-
-        User user = null;
-        Exception ex = null;
+        String community = null;
         try {
-            user = registerUser(userDeviceDetailsDto, community, updateUserPendingActivation);
+            community = getCurrentCommunityUri();
+            LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]", userDeviceDetailsDto, community);
+            User user = registerUser(userDeviceDetailsDto, community, updateUserPendingActivation);
 
             if (updateXtifyToken && !isEmpty(userDeviceDetailsDto.getXtifyToken())) {
                 deviceUserDataService.saveXtifyToken(user, userDeviceDetailsDto.getXtifyToken());
@@ -91,16 +89,11 @@ public class SignUpDeviceController extends CommonController {
 
             return buildModelAndView(accountCheck);
         } catch (ValidationException ve) {
-            ex = ve;
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]", ve.getMessage(), userDeviceDetailsDto, community);
             throw ve;
         } catch (RuntimeException re) {
-            ex = re;
             LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]", re.getMessage(), userDeviceDetailsDto, community);
             throw re;
-        } finally {
-            logProfileData(null, community, userDeviceDetailsDto, null, user, ex);
-            LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]", userDeviceDetailsDto, community);
         }
     }
 

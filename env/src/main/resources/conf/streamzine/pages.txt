@@ -1,5 +1,4 @@
 hl_uk=main_content,settings,faq,privacy_policy,terms_of_service,about,account_home
 demo4=main_content,settings,faq,privacy_policy,terms_of_service,about,account_home
 mtv1=main_content,settings,faq,privacy_policy,terms_of_service,about,account_home
-mtvnz=main_content,settings,faq,privacy_policy,terms_of_service,about,account_home
-mtvit=main_content,settings,faq,privacy_policy,terms_of_service,about,account_home
+mtvie=main_content,settings,faq,privacy_policy,terms_of_service,about,account_home

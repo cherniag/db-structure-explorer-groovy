@@ -18,7 +18,6 @@ import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.device.domain.DeviceType;
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.versioncheck.domain.ClientVersion;
 import mobi.nowtechnologies.server.versioncheck.domain.VersionCheck;
@@ -170,7 +169,7 @@ public class ServiceConfigFeature {
                 ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, null, apiVersions);
                 ErrorMessage errorMessage = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), "$.response.data[0].errorMessage", ErrorMessage.class);
 
-                assertEquals("Error message from server: " + message + " differs from expected: " + errorMessage.getMessage() + " for " + userDeviceData, message, errorMessage.getMessage());
+                assertEquals("Error message from server: " + message + " differs from expected: " + errorMessage.message + " for " + userDeviceData, message, errorMessage.message);
             }
         });
     }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.19</version>
+        <version>5.20.1</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -17,69 +17,17 @@
     <packaging>jar</packaging>
     <name>Now Technologies Java Server Env</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-admin-properties-files</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/test-classes/admin/src/main/webapp/i18n/</outputDirectory>
-                            <overwrite>false</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>../admin/src/main/webapp/i18n</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-web-properties-files</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/test-classes/web/src/main/webapp/i18n</outputDirectory>
-                            <overwrite>false</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>../web/src/main/webapp/i18n</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
-            <artifactId>admin</artifactId>
-            <classifier>jar</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
-            <artifactId>web</artifactId>
-            <classifier>jar</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
-            <artifactId>track-repo</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
             <scope>test</scope>
-            <classifier>jar</classifier>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
