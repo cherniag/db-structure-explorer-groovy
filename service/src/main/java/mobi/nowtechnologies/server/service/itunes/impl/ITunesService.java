@@ -5,8 +5,8 @@ import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
+import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 import mobi.nowtechnologies.server.service.itunes.ITunesXPlayCapSubscriptionException;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -33,7 +33,7 @@ public class ITunesService {
     private CommunityResourceBundleMessageSource messageSource;
     private EventLoggerService eventLoggerService;
 
-    public Map<String, ?> processXPlayCapSubscription(User user, String receipt) throws ITunesXPlayCapSubscriptionException {
+    public Map<String, ?> processXPlayCapSubscription(User user, String receipt) throws ITunesXPlayCapSubscriptionException, ITunesResponseFormatException, ITunesConnectionException {
         logger.info("Start processXPlayCapSubscription for user [{}], receipt [{}]", user.shortInfo(), receipt);
 
         final String community = user.getCommunityRewriteUrl();

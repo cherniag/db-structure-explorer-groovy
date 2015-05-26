@@ -4,12 +4,9 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.AccountDtoValidator;
-
 import static mobi.nowtechnologies.server.shared.Utils.getTimeOfMovingToLimitedStatus;
 
 import javax.persistence.PersistenceException;
@@ -38,13 +35,8 @@ import org.springframework.web.util.WebUtils;
  */
 @Controller
 public class AccountController extends CommonController {
-    private UserService userService;
     private UserRepository userRepository;
     private String specificCommunityResourcesFolderPath;
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;

@@ -7,8 +7,10 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
+import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 import mobi.nowtechnologies.server.service.itunes.ITunesXPlayCapSubscriptionException;
+import mobi.nowtechnologies.server.service.itunes.impl.ITunesService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import mobi.nowtechnologies.server.transport.controller.core.ErrorMessage;
@@ -36,8 +38,11 @@ public class XPlayCapController extends CommonController {
     @Resource
     PaymentPolicyRepository paymentPolicyRepository;
 
-    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/{apiVersion:6\\.11}/X_PLAY_CAP"})
-    ModelAndView postPlayCap(@AuthenticatedUser User user, @RequestParam(value = "TRANSACTION_RECEIPT") String receipt) throws ITunesXPlayCapSubscriptionException {
+    @RequestMapping(method = RequestMethod.POST, value = {
+        "**/{community}/{apiVersion:6\\.12}/X_PLAY_CAP",
+        "**/{community}/{apiVersion:6\\.11}/X_PLAY_CAP"
+    })
+    ModelAndView postPlayCap(@AuthenticatedUser User user, @RequestParam(value = "TRANSACTION_RECEIPT") String receipt) throws ITunesXPlayCapSubscriptionException, ITunesResponseFormatException, ITunesConnectionException {
         LOGGER.info("command processing started");
         try {
             userService.authorize(user, false, ActivationStatus.ACTIVATED);

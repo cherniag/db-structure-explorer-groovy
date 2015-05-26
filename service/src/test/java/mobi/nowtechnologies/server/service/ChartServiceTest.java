@@ -103,8 +103,6 @@ public class ChartServiceTest {
         testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
         testUser.setId(1);
 
-        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
-
         PowerMockito.mockStatic(UserAsm.class);
 
         chartServiceFixture = spy(new ChartService());

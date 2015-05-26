@@ -4,14 +4,11 @@
 
 package mobi.nowtechnologies.server.service.itunes.impl;
 
-import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesClient;
-import mobi.nowtechnologies.server.service.itunes.ITunesClientException;
 import mobi.nowtechnologies.server.service.itunes.ITunesConnectionConfig;
+import mobi.nowtechnologies.server.service.itunes.ITunesConnectionException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseFormatException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
-import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionRequestDto;
 import mobi.nowtechnologies.server.support.http.BasicResponse;
 import mobi.nowtechnologies.server.support.http.PostService;
