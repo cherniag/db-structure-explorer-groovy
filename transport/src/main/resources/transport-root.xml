@@ -16,7 +16,6 @@
         </property>
     </bean>
 
-    <import resource="classpath:security.xml"/>
     <import resource="classpath:META-INF/service.xml"/>
     <import resource="classpath:META-INF/dao.xml"/>
     <import resource="classpath:META-INF/shared.xml"/>

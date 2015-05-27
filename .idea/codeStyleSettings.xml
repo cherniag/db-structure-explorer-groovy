@@ -69,7 +69,6 @@
         <JavaCodeStyleSettings>
           <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
           <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
-          <option name="CLASS_NAMES_IN_JAVADOC" value="3" />
         </JavaCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />

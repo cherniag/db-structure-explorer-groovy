@@ -33,32 +33,20 @@ public class BusinessTaskJob {
         try {
             LogUtils.putClassNameMDC(this.getClass());
             LOGGER.info("About to start BusinessTaskJob...");
-            long now = System.currentTimeMillis();
+            final long now = System.currentTimeMillis();
             List<Task> tasksListForExecution = taskService.getTasksForExecution(now, supportedTaskTypes, tasksCount);
             LOGGER.info("{} tasks found, max count={}", tasksListForExecution.size(), tasksCount);
-            if (tooManyTasks(tasksListForExecution.size())) {
-                warnAboutTooManyTasks(now);
-            }
             for (Task task : tasksListForExecution) {
                 try {
                     executor.execute(new ExecutableTask(task));
                 } catch (RejectedExecutionException e) {
-                    LOGGER.error("Can't execute ExecutableTask({})", task.toString(), e);
+                    LOGGER.error("Can't execute ExecutableTask: " + task.toString(), e);
                 }
             }
             LOGGER.info("BusinessTaskJob completed.");
         } finally {
             LogUtils.removeClassNameMDC();
         }
-    }
-
-    private void warnAboutTooManyTasks(long now) {
-        long generalCount = taskService.countTasksToExecute(now);
-        LOGGER.warn("Fetched for execution {} of {} tasks. Consider increasing [tasksCount] parameter", tasksCount, generalCount);
-    }
-
-    private boolean tooManyTasks(int retrievedCount) {
-        return retrievedCount >= tasksCount;
     }
 
     @Required

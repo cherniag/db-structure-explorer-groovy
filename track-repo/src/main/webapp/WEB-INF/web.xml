@@ -104,4 +104,28 @@
   		<error-code>404</error-code>
   		<location>/errors/404.html</location>
    </error-page>
+
+	<!--Admin page with properties-->
+	<servlet>
+		<servlet-name>AdminServlet</servlet-name>
+		<jsp-file>/WEB-INF/views/admin/properties.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AdminServlet</servlet-name>
+		<url-pattern>/admin/*</url-pattern>
+	</servlet-mapping>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>App admin page</web-resource-name>
+			<url-pattern>/admin/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>app-admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	<!--Admin page with properties-->
+
 </web-app>

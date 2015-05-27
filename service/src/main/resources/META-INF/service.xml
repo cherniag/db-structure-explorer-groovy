@@ -253,7 +253,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
           class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
         <property name="reloadableResourceBundleMessageSource" ref="serviceReloadableResourceBundleMessageSource"/>
         <property name="stringEncryptor" ref="configurationEncryptor"/>
-		<property name="propLocale" ref="propLocale"/>
     </bean>
 
 	<import resource="social.xml" />

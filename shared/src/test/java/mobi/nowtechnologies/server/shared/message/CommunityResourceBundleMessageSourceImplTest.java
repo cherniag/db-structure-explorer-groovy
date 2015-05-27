@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.shared.message;
 
+import mobi.nowtechnologies.common.util.LocaleUtils;
+
 import java.util.Locale;
 import static java.util.Locale.ENGLISH;
 
@@ -26,7 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Locale.class, CommunityResourceBundleMessageSourceImpl.class, PropertyValueEncryptionUtils.class})
+@PrepareForTest({Locale.class, LocaleUtils.class, CommunityResourceBundleMessageSourceImpl.class, PropertyValueEncryptionUtils.class})
 public class CommunityResourceBundleMessageSourceImplTest {
 
     @Mock
@@ -36,7 +38,7 @@ public class CommunityResourceBundleMessageSourceImplTest {
     StringEncryptor stringEncryptor;
 
     @Mock
-    PropLocale propLocale;
+    LocaleUtils localeUtils;
 
     @InjectMocks
     CommunityResourceBundleMessageSourceImpl communityResourceBundleMessageSourceSpy;
@@ -56,7 +58,8 @@ public class CommunityResourceBundleMessageSourceImplTest {
         Locale locale = null;
 
         Locale localeMock = mock(Locale.class);
-        when(propLocale.getCommunityLocale(community, locale)).thenReturn(localeMock);
+        mockStatic(LocaleUtils.class);
+        when(LocaleUtils.buildLocale(community, locale)).thenReturn(localeMock);
 
         String originalValue = "ENC(gg)";
         doReturn(originalValue).when(reloadableResourceBundleMessageSource).getMessage(code, args, defaultMessage, localeMock);
@@ -85,7 +88,8 @@ public class CommunityResourceBundleMessageSourceImplTest {
         Locale locale = ENGLISH;
 
         Locale localeMock = mock(Locale.class);
-        when(propLocale.getCommunityLocale(community, locale)).thenReturn(localeMock);
+        mockStatic(LocaleUtils.class);
+        when(LocaleUtils.buildLocale(community, locale)).thenReturn(localeMock);
 
         String originalValue = "ENC(gg)";
         doReturn(originalValue).when(reloadableResourceBundleMessageSource).getMessage(code, args, defaultMessage, localeMock);
@@ -114,7 +118,8 @@ public class CommunityResourceBundleMessageSourceImplTest {
         Locale locale = null;
 
         Locale localeMock = mock(Locale.class);
-        when(propLocale.getCommunityLocale(community, locale)).thenReturn(localeMock);
+        mockStatic(LocaleUtils.class);
+        when(LocaleUtils.buildLocale(community, locale)).thenReturn(localeMock);
 
         String originalValue = "ENC(gg)";
         doReturn(originalValue).when(reloadableResourceBundleMessageSource).getMessage(code, args, defaultMessage, localeMock);
@@ -143,7 +148,8 @@ public class CommunityResourceBundleMessageSourceImplTest {
         Locale locale = ENGLISH;
 
         Locale localeMock = mock(Locale.class);
-        when(propLocale.getCommunityLocale(community, locale)).thenReturn(localeMock);
+        mockStatic(LocaleUtils.class);
+        when(LocaleUtils.buildLocale(community, locale)).thenReturn(localeMock);
 
         String originalValue = "ENC(gg)";
         doReturn(originalValue).when(reloadableResourceBundleMessageSource).getMessage(code, args, defaultMessage, localeMock);
@@ -171,7 +177,8 @@ public class CommunityResourceBundleMessageSourceImplTest {
         Locale locale = null;
 
         Locale localeMock = mock(Locale.class);
-        when(propLocale.getCommunityLocale(community, locale)).thenReturn(localeMock);
+        mockStatic(LocaleUtils.class);
+        when(LocaleUtils.buildLocale(community, locale)).thenReturn(localeMock);
 
         String originalValue = "ENC(gg)";
         doReturn(originalValue).when(reloadableResourceBundleMessageSource).getMessage(code, args, null, localeMock);
@@ -199,7 +206,8 @@ public class CommunityResourceBundleMessageSourceImplTest {
         Locale locale = ENGLISH;
 
         Locale localeMock = mock(Locale.class);
-        when(propLocale.getCommunityLocale(community, locale)).thenReturn(localeMock);
+        mockStatic(LocaleUtils.class);
+        when(LocaleUtils.buildLocale(community, locale)).thenReturn(localeMock);
 
         String originalValue = "ENC(gg)";
         doReturn(originalValue).when(reloadableResourceBundleMessageSource).getMessage(code, args, null, localeMock);

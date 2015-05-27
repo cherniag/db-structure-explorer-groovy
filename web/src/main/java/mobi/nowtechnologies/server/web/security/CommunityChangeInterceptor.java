@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.web.security;
 
-import mobi.nowtechnologies.server.shared.message.PropLocale;
+import mobi.nowtechnologies.common.util.LocaleUtils;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
 import javax.servlet.ServletException;
@@ -19,26 +19,18 @@ import org.springframework.web.util.WebUtils;
 
 public class CommunityChangeInterceptor extends HandlerInterceptorAdapter {
 
-    private PropLocale propLocale;
-
-    public void setPropLocale(PropLocale propLocale) {
-        this.propLocale = propLocale;
-    }
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
 
         String localeParam = request.getParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
         Cookie communityCookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
-        String community = communityCookie != null ?
-                           communityCookie.getValue() :
-                           "";
+        String community = communityCookie != null ? communityCookie.getValue() : "";
 
         Locale stdLocale = null;
         if (localeParam != null) {
             stdLocale = StringUtils.parseLocaleString(localeParam);
         }
-        final Locale communityLocale = propLocale.getCommunityLocale(community, stdLocale);
+        final Locale communityLocale = LocaleUtils.buildLocale(community, stdLocale);
 
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
         if (localeResolver == null) {
