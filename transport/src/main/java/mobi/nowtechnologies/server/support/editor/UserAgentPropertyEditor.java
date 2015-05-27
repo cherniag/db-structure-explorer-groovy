@@ -15,10 +15,15 @@ import java.beans.PropertyEditorSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.util.Assert;
 
 public class UserAgentPropertyEditor extends PropertyEditorSupport {
+
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private static final Pattern PATTERN = Pattern.compile("(.+)/(\\d{1,2}\\.\\d.*) \\((\\S+); (\\S+)\\)");
 
@@ -35,6 +40,7 @@ public class UserAgentPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
+        LOGGER.info("Raw User-Agent / X-User-Agent header value is: {}", text);
         Matcher matcher = PATTERN.matcher(text);
         if (!matcher.find()) {
             throw new ConversionNotSupportedException(text, UserAgent.class, null);
