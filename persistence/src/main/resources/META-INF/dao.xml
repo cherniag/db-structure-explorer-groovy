@@ -23,11 +23,6 @@
 			</bean>
 		</property>
 		<property name="jpaProperties" ref="jpaProperties" />
-        <property name="mappingResources">
-            <list>
-                <value>META-INF/jpql/paymentPolicy.xml</value>
-            </list>
-        </property>
         <property name="packagesToScan" ref="listOfPackagesToScan" />
 	</bean>
 
