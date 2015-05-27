@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.shared.message;
 
+import mobi.nowtechnologies.common.util.LocaleUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,7 +27,6 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
 
     private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
     private StringEncryptor stringEncryptor;
-    private PropLocale propLocale;
 
     public void setReloadableResourceBundleMessageSource(ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource) {
         this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
@@ -33,10 +34,6 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
 
     public void setStringEncryptor(StringEncryptor stringEncryptor) {
         this.stringEncryptor = stringEncryptor;
-    }
-
-    public void setPropLocale(PropLocale propLocale) {
-        this.propLocale = propLocale;
     }
 
     @Override
@@ -93,7 +90,7 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
 
     @Override
     public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
-        Locale communityLocale = propLocale.getCommunityLocale(community, locale);
+        Locale communityLocale = LocaleUtils.buildLocale(community, locale);
 
         return reloadableResourceBundleMessageSource.getMessage(code, args, defaultMessage, communityLocale);
     }

@@ -2,22 +2,20 @@
  * Copyright 2015 Musicqubed.com. All Rights Reserved.
  */
 
-package mobi.nowtechnologies.server.shared.message;
+package mobi.nowtechnologies.common.util;
 
 import java.util.Locale;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.runners.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import static org.hamcrest.core.Is.is;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PropLocaleTest {
-
-    PropLocale propLocale = new PropLocale();
-
+public class LocaleUtilsTest {
+    
     @Test
     public void shouldGetEmptyLocaleAsCommunityLocaleWhenCommunityAndLocaleAreNull() {
         //given
@@ -25,7 +23,7 @@ public class PropLocaleTest {
         final Locale locale = null;
 
         //when
-        final Locale communityLocale = propLocale.getCommunityLocale(community, locale);
+        final Locale communityLocale = LocaleUtils.buildLocale(community, locale);
 
         //then
         assertThat(communityLocale, is(new Locale("")));
@@ -38,7 +36,7 @@ public class PropLocaleTest {
         final Locale locale = null;
 
         //when
-        final Locale communityLocale = propLocale.getCommunityLocale(community, locale);
+        final Locale communityLocale = LocaleUtils.buildLocale(community, locale);
 
         //then
         assertThat(communityLocale, is(new Locale(community)));
@@ -51,7 +49,7 @@ public class PropLocaleTest {
         final Locale locale = Locale.ENGLISH;
 
         //when
-        final Locale communityLocale = propLocale.getCommunityLocale(community, locale);
+        final Locale communityLocale = LocaleUtils.buildLocale(community, locale);
 
         //then
         assertThat(communityLocale, is(new Locale("o2_en")));

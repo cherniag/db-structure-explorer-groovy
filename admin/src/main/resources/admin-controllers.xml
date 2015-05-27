@@ -84,8 +84,6 @@
         <property name="filterService" ref="service.FilterService"/>
     </bean>
 
-    <bean class="mobi.nowtechnologies.server.support.props.PropController"/>
-
     <utils:map id="chartViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
         <entry key="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>

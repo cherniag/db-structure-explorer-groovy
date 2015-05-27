@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
@@ -11,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
@@ -65,7 +65,6 @@ public class BusinessTaskJobTestIT {
     private UserGroupRepository userGroupRepository;
 
     private SMPPServiceImpl smppService;
-    private User user;
 
     @Before
     public void setUp() throws Exception {
@@ -79,50 +78,42 @@ public class BusinessTaskJobTestIT {
 
     @Test
     public void checkSendChargeNotificationTaskExecution() throws Exception {
-        long now = System.currentTimeMillis();
-        UserGroup userGroup = userGroupRepository.findOne(8);
-        user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-        user.setId(0);
-        user.setUserName("+64598720352");
-        user.setUserGroup(userGroup);
-        user.setProvider(ProviderType.VF);
-        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
-        sendChargeNotificationTask.setUser(userRepository.save(user));
+        final long now = System.currentTimeMillis();
+        User userToSend = createAndSaveUser("+64598720352");
+        SendChargeNotificationTask taskToSend = createAndSaveSendChargeNotificationTask(userToSend, now - 2000L, now);
+        User userNotToSend = createAndSaveUser("+6459336695");
+        SendChargeNotificationTask taskNotToSend = createAndSaveSendChargeNotificationTask(userNotToSend, now - 2000L, now + 3000L);
 
-        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", now);
-        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", now - 2000L);
-
-        sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
         sendChargeNotificationJob.execute();
-        Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());
-        assertThat(saved.getExecutionTimestamp(), is(now + 2000L));
-        verify(smppService).sendMessage(argThat(getMTMMessageMatcherMatcher("You are charged for 28 days continuously", user.getMobile())));
+
+        Task foundTaskToSend = taskRepository.findOne(taskToSend.getId());
+        assertThat(foundTaskToSend.getExecutionTimestamp(), is(now + 2000L));
+        verify(smppService).sendMessage(argThat(getMTMMessageMatcher("You are charged for 28 days continuously", userToSend.getMobile())));
+
+        Task foundTaskNotToSend = taskRepository.findOne(taskNotToSend.getId());
+        assertThat(foundTaskNotToSend.getExecutionTimestamp(), is(now + 3000L));
+        verify(smppService, never()).sendMessage(argThat(getMTMMessageMatcher("You are charged for 28 days continuously", userNotToSend.getMobile())));
     }
 
-    @Test
-    public void checkSendChargeNotificationTaskInFutureShouldNotBeSend() throws Exception {
-        long now = System.currentTimeMillis();
-        UserGroup userGroup = userGroupRepository.findOne(8);
-        userGroup.setId(8);
-        user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-        user.setId(0);
-        user.setUserName("+6459336695");
-        user.setUserGroup(userGroup);
-        user.setProvider(ProviderType.VF);
-        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), UserFactory.createUser(ActivationStatus.ACTIVATED));
-        sendChargeNotificationTask.setUser(userRepository.save(user));
-
-        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", now + 3000L);
-        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", now - 2000L);
-
-        sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
-        sendChargeNotificationJob.execute();
-        Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());
-        assertThat(saved.getExecutionTimestamp(), is(now + 3000L));
-        verify(smppService, never()).sendMessage(argThat(getMTMMessageMatcherMatcher("You are charged for 28 days continuously", user.getMobile())));
+    private SendChargeNotificationTask createAndSaveSendChargeNotificationTask(User user, long creationTimestamp, long executionTimestamp) {
+        SendChargeNotificationTask sendChargeNotificationTask = new SendChargeNotificationTask(new Date(), user);
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "creationTimestamp", creationTimestamp);
+        ReflectionTestUtils.setField(sendChargeNotificationTask, "executionTimestamp", executionTimestamp);
+        return taskRepository.save(sendChargeNotificationTask);
     }
 
-    private BaseMatcher<MTMessage> getMTMMessageMatcherMatcher(final String text, final String phone) {
+    private User createAndSaveUser(String userName) {
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setId(0);
+        user.setUserName(userName);
+        user.setMobile(userName);
+        user.setDeviceUID(Utils.getRandomUUID());
+        user.setUserGroup(userGroupRepository.findOne(8));
+        user.setProvider(ProviderType.VF);
+        return userRepository.save(user);
+    }
+
+    private BaseMatcher<MTMessage> getMTMMessageMatcher(final String text, final String phone) {
         return new BaseMatcher<MTMessage>() {
             @Override
             public boolean matches(Object o) {
