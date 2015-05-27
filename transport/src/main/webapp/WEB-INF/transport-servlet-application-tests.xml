@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd" profile="application-tests">
+
+	<bean id="jobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="autoStartup" value="${jobs.autoStartup}" />
+		<property name="triggers">
+			<list>
+				<ref bean="paymentTrigger"/>
+				<ref bean="retryPaymentTrigger" />
+				<ref bean="expiredPaymentTrigger" />
+				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
+				<ref bean="transport.smsNotificationQuartzTrigger" />
+				<ref bean="before48hPSMSPaymentTrigger"/>
+				<ref bean="sendSmsForVFNZUsersTrigger"/>
+				<ref bean="sendChargeNotificationTrigger"/>
+				<ref bean="jobTrigger"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ftJobDetail"/>
+		<property name="name" value="triggerName" />
+		<property name="jobName" value="jobName"/>
+		<property name="startDelay" value="${jobTrigger.job.startDelayMillis}" />
+		<property name="repeatInterval" value="${jobTrigger.job.repeatIntervalMillis}" />
+	</bean>
+
+	<bean id="ftJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="mobi.nowtechnologies.server.job.AppTestManageJobsBean" />
+		<property name="jobDataAsMap">
+			<map merge="true">
+				<entry key="jobTriggerRequestRepository" value-ref="jobTriggerRequestRepository" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="throttlingService" class="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl" />
+</beans>
