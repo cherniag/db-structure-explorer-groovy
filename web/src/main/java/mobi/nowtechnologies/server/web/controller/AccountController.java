@@ -1,12 +1,16 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.AccountDtoValidator;
 
+import static mobi.nowtechnologies.server.shared.Utils.getTimeOfMovingToLimitedStatus;
+
+import javax.persistence.PersistenceException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,7 +79,7 @@ public class AccountController extends CommonController {
         String communityUrl = cookie.getValue();
 
         User user = userRepository.findOne(userId);
-        AccountDto accountDto = user.toAccountDto();
+        AccountDto accountDto = toAccountDto(user);
 
         ModelAndView modelAndView = getAccountPageModelView(locale, accountDto, communityUrl);
 
@@ -93,7 +97,7 @@ public class AccountController extends CommonController {
         String communityUrl = cookie.getValue();
 
         User user = userRepository.findOne(userId);
-        AccountDto accountDto = user.toAccountDto();
+        AccountDto accountDto = toAccountDto(user);
 
         accountDto = getLocalizedAccountDto(locale, accountDto, communityUrl);
 
@@ -115,7 +119,7 @@ public class AccountController extends CommonController {
         } else {
             int userId = getUserId();
 
-            userService.saveAccountDetails(accountDto, userId);
+            userService.saveAccountDetails(userId, accountDto.getNewPassword(), accountDto.getPhoneNumber());
 
             modelAndView = new ModelAndView("redirect:account.html");
         }
@@ -132,6 +136,34 @@ public class AccountController extends CommonController {
 
         LOGGER.debug("Output parameter modelAndView=[{}]", modelAndView);
         return modelAndView;
+    }
+
+    private AccountDto toAccountDto(User user) {
+        AccountDto accountDto = new AccountDto();
+        accountDto.setEmail(user.getUserName());
+        accountDto.setPhoneNumber(user.getMobile());
+        accountDto.setSubBalance(user.getSubBalance());
+
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+
+        AccountDto.Subscription subscription;
+        if (UserStatusType.SUBSCRIBED.name().equals(user.getStatus().getName()) && currentPaymentDetails == null) {
+            subscription = AccountDto.Subscription.freeTrialSubscription;
+        } else if (UserStatusType.SUBSCRIBED.name().equals(user.getStatus().getName()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
+            subscription = AccountDto.Subscription.subscribedSubscription;
+        } else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || UserStatusType.LIMITED.name().equals(user.getStatus().getName())) {
+            subscription = AccountDto.Subscription.unsubscribedSubscription;
+        } else {
+            throw new PersistenceException("Couldn't recognize the user subscription");
+        }
+
+        accountDto.setSubscription(subscription);
+
+        accountDto.setTimeOfMovingToLimitedStatus(getTimeOfMovingToLimitedStatus(user.getNextSubPayment(), user.getSubBalance()) * 1000L);
+        if (user.getPotentialPromotion() != null) {
+            accountDto.setPotentialPromotion(String.valueOf(user.getPotentialPromotion().getI()));
+        }
+        return accountDto;
     }
 
     private AccountDto getLocalizedAccountDto(Locale locale, AccountDto accountDto, String communityUrl) {

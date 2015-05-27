@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.transport.controller.core;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

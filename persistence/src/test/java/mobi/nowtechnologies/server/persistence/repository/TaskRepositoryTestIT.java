@@ -49,9 +49,6 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     private UserRepository userRepository;
 
     @Resource
-    private DrmRepository drmRepository;
-
-    @Resource
     private SendChargeNotificationTaskRepository repository;
 
     @PersistenceContext
@@ -62,7 +59,6 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     @Before
     public void setUp() {
         taskRepository.deleteAll();
-        drmRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
 
         supportedTypes.add("SendChargeNotificationTask");

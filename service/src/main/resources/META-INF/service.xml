@@ -150,10 +150,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 
-	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
-		<property name="drmRepository" ref="drmRepository" />
-	</bean>
-
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService"/>
 
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" >
@@ -185,7 +181,6 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="drmService" ref="service.DrmService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />

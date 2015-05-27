@@ -4,7 +4,6 @@
 
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
@@ -12,6 +11,7 @@ import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.service.itunes.ITunesXPlayCapSubscriptionException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
+import mobi.nowtechnologies.server.transport.controller.core.ErrorMessage;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
