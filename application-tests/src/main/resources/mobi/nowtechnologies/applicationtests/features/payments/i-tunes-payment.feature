@@ -25,6 +25,24 @@ Feature: Process iTunes subscription
     And Payment type of current payment details should be 'iTunesSubscription'
     And Payment policy of current payment details should be the same as subscribed
 
+  Scenario: Activated limited user sends creates iTunes payment details and sends ACC_CHECK again
+    Given Activated user with IOS device using all formats for all versions above 6.12 and mtv1 community
+    And User is on LIMITED state
+    When Subscribes in iTunes on product id of existing recurrent payment policy
+    And Sends ACC_CHECK request with provided valid Apple Store receipt
+    Then Response should have 200 http status
+    And Response header 'Expires' should be in the future
+    And Client should have 'LIMITED' status
+    And Next sub payment should be in the past
+    And User should have active current payment details
+    # Assume that CreatePaymentJob has not started yet
+    When Sends ACC_CHECK request without Apple Store receipt
+    Then Response should have 200 http status
+    And Response header 'Expires' should be in the future
+    And Client should have 'LIMITED' status
+    And Next sub payment should be in the past
+    And User should have active current payment details
+
   Scenario: Activated free trial user sends valid Apple Store receipt to new version enpoint and payment details are created
     Given Activated user with IOS device using all formats for all versions above 6.12 and mtv1 community
     And User is on free trial
@@ -45,6 +63,17 @@ Feature: Process iTunes subscription
     When Sends ACC_CHECK request without Apple Store receipt
     Then Response should have 200 http status
     And Response header 'Expires' should be 'Thu, 01 Jan 1970 00:00:00 GMT'
+    And Payment type in response should be 'ITUNES_SUBSCRIPTION'
+    And User should have active current payment details
+    And Payment type of current payment details should be 'iTunesSubscription'
+    And Payment policy of current payment details should be the same as subscribed
+
+  Scenario: Activated user with stored Apple Store receipt doesn't send it to new version enpoint but iTunes payment details are created - migration of limited users
+    Given Activated user with IOS device using all formats for all versions above 6.12 and mtv1 community
+    And User was subscribed on iTunes via existing recurrent payment policy without payment details
+    When Sends ACC_CHECK request without Apple Store receipt
+    Then Response should have 200 http status
+    And Response header 'Expires' should be in the future
     And Payment type in response should be 'ITUNES_SUBSCRIPTION'
     And User should have active current payment details
     And Payment type of current payment details should be 'iTunesSubscription'

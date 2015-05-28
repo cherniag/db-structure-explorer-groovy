@@ -41,4 +41,7 @@ public interface PaymentDetailsRepository extends JpaRepository<PaymentDetails, 
 
     @Query("select paymentDetails from PaymentDetails paymentDetails join paymentDetails.submittedPayments submittedPayments where paymentDetails.owner.id=:userId and submittedPayments.type=:paymentDetailsType order by paymentDetails.creationTimestampMillis desc")
     List<PaymentDetails> findByUserIdAndPaymentDetailsType(@Param("userId") int userId, @Param("paymentDetailsType") PaymentDetailsType paymentDetailsType);
+
+    @Query("select count(pd) from PaymentDetails pd where pd.owner=:user and type(pd) = ITunesPaymentDetails")
+    Long countITunesPaymentDetails(@Param("user") User user);
 }

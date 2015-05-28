@@ -280,6 +280,20 @@ class ITunesPaymentFeature {
         })
     }
 
+    @And('^User was subscribed on iTunes via existing recurrent payment policy without payment details$')
+    public void andUserWasSubscribedOnITunes(){
+        runner.parallel({
+            User user = findUserInDatabase(it, deviceSet.getPhoneState(it))
+
+            iTunesPaymentPolicy = getITunesPaymentPolicy({ it.paymentType == 'iTunesSubscription' && it.paymentPolicyType == PaymentPolicyType.RECURRENT })
+            nextSubPaymentSeconds = (new Date().getTime() / 1000).intValue() - 1;
+            appStoreReceipt = "renewable:200:0:${iTunesPaymentPolicy.appStoreProductId}:0123456789:${nextSubPaymentSeconds}000".toString()
+
+            subscriptionService.subscribeOnITunesWithoutPaymentDetails(user, nextSubPaymentSeconds, appStoreReceipt)
+            subscriptionService.limitAccess(user, new Date(nextSubPaymentSeconds * 1000))
+        })
+    }
+
     @When('^Sends ACC_CHECK request without Apple Store receipt$')
     public void when3(){
         runner.parallel {

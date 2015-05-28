@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsReposito
 import mobi.nowtechnologies.server.service.ITunesPaymentDetailsService;
 import mobi.nowtechnologies.server.service.behavior.PaymentTimeService;
 import mobi.nowtechnologies.server.service.itunes.AppStoreReceiptParser;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import javax.annotation.Resource;
 
@@ -48,13 +49,6 @@ public class ITunesPaymentDetailsManager {
                     if(!user.hasActiveITunesPaymentDetails() || !productId.equals(user.getCurrentPaymentDetails().getPaymentPolicy().getAppStoreProductId())) {
                         logger.info("Another product id [{}] or user does not have payment details", productId);
                         iTunesPaymentDetailsService.createNewPaymentDetails(user, appStoreReceipt, productId);
-
-                        if(!user.isNextSubPaymentInTheFuture()) {
-                            Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
-                            if (nextRetryTimeForITunesPayment != null) {
-                                response.setNextRetry(nextRetryTimeForITunesPayment);
-                            }
-                        }
                     } else {
                         ITunesPaymentDetails currentDetails = user.getCurrentPaymentDetails();
                         boolean justNeedToUpdateTheReceipt = !appStoreReceipt.equals(currentDetails.getAppStoreReceipt());
@@ -65,20 +59,40 @@ public class ITunesPaymentDetailsManager {
                         }
                     }
                 } else {
-                    // temp fix for migration
-                    final String existingAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
-                    if(StringUtils.isNotEmpty(existingAppStoreReceipt) && user.hasITunesSubscription() && !user.hasActiveITunesPaymentDetails()) {
-                        String productId = appStoreReceiptParser.getProductId(user.getBase64EncodedAppStoreReceipt());
-                        logger.info("Another product id [{}] or user does not have payment details", productId);
-                        iTunesPaymentDetailsService.createNewPaymentDetails(user, existingAppStoreReceipt, productId);
-                    }
+                    migrateUserOnITunesPaymentDetails(user);
                 }
+
+                setExpiresIfNeeded(user, response);
+
             } else {
                 // legacy
                 iTunesService.processInAppSubscription(user, appStoreReceipt);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    private void migrateUserOnITunesPaymentDetails(User user) {// temp fix for migration
+        final String existingAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
+        final boolean notEmptyReceipt = StringUtils.isNotEmpty(existingAppStoreReceipt);
+        final boolean userHasActiveITunesSubscriptionAndNotMigrated = notEmptyReceipt && user.hasITunesSubscription() && !user.hasActiveITunesPaymentDetails();
+        final boolean userHadITunesSubscriptionAndNotMigrated = notEmptyReceipt && !user.isNextSubPaymentInTheFuture() && !user.hasActivePaymentDetails()
+                                                                && paymentDetailsRepository.countITunesPaymentDetails(user) < 1;
+        if(userHasActiveITunesSubscriptionAndNotMigrated || userHadITunesSubscriptionAndNotMigrated) {
+            String productId = appStoreReceiptParser.getProductId(user.getBase64EncodedAppStoreReceipt());
+            logger.info("Migrate user:{}, hasActiveITunesSubscriptionAndNotMigrated:{}, hadITunesSubscriptionAndNotMigrated:{}", user.getId(),
+                        userHasActiveITunesSubscriptionAndNotMigrated, userHadITunesSubscriptionAndNotMigrated);
+            iTunesPaymentDetailsService.createNewPaymentDetails(user, existingAppStoreReceipt, productId);
+        }
+    }
+
+    private void setExpiresIfNeeded(User user, NextRetryInfo response) {
+        if(!user.isNextSubPaymentInTheFuture() && user.hasActiveITunesPaymentDetails() && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.NONE) {
+            Date nextRetryTimeForITunesPayment = paymentTimeService.getNextRetryTimeForITunesPayment(user, new Date());
+            if (nextRetryTimeForITunesPayment != null) {
+                response.setNextRetry(nextRetryTimeForITunesPayment);
+            }
         }
     }
 }

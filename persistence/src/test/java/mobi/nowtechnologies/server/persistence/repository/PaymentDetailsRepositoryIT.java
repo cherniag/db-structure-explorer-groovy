@@ -3,9 +3,11 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -37,6 +39,8 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
     private UserGroupRepository userGroupRepository;
     @Resource(name = "userRepository")
     private UserRepository userRepository;
+    @Resource
+    private PaymentPolicyRepository paymentPolicyRepository;
 
     private PayPalPaymentDetails getPaymentDetails(String billingAgreement) {
         PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails();
@@ -256,4 +260,20 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
         paymentDetailsRepository.save(paymentDetails);
     }
 
+    @Test
+    public void testCountITunesPaymentDetails() throws Exception {
+        User user = createUser();
+        user.setActivationStatus(ActivationStatus.ACTIVATED);
+        final UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl("mtv1");
+        user.setUserGroup(userGroup);
+        userRepository.save(user);
+        final PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(234);
+
+        ITunesPaymentDetails iTunesPaymentDetails = new ITunesPaymentDetails(user, paymentPolicy, "RECEIPT", 3);
+        paymentDetailsRepository.save(iTunesPaymentDetails);
+
+        final Long countITunesPaymentDetails = paymentDetailsRepository.countITunesPaymentDetails(user);
+
+        assertEquals(1L, countITunesPaymentDetails.longValue());
+    }
 }
