@@ -38,8 +38,10 @@
     </div>
     <div class="subscribe_payment_options_block_ios">
         <c:forEach var="paymentPolicyDto" items="${paymentsPage.subscriptionInfo.paymentPolicyDTOs}" varStatus="optionNumber">
-            <div class="subscribe_option_border_ios subscribe_option_border_ios_${optionNumber.index + 1}" data-button="${paymentPolicyDto.id}" style="display:none;">
-                <div class="subscribe_option_holder_ios" onclick="goTo('${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentPolicyDto.appStoreProductId}');">
+            <div class="subscribe_option_border_ios subscribe_option_border_ios_${optionNumber.index + 1}"
+                 data-button="${paymentPolicyDto.id}"
+                 data-goToUrl="${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentPolicyDto.appStoreProductId}" style="display:none;">
+                <div class="subscribe_option_holder_ios">
                     <div class="subscribe_option_text_ios">
                         <c:choose>
                             <c:when test="${payAsYouGoIOSProductIds.containsKey(paymentPolicyDto.appStoreProductId)}">

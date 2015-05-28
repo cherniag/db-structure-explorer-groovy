@@ -10,30 +10,56 @@ $(document).ready(function() {
         RECURRENT: 'showRecurrentPaymentOption'
     };
 
-    if (LEANPLUM_IS_DEVELOPMENT) {
-        Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APP_ID, LEANPLUM_DEV_APP_KEY);
-    } else {
-        Leanplum.setAppIdForProductionMode(LEANPLUM_APP_ID, LEANPLUM_PROD_APP_KEY);
-    }
-    Leanplum.addVariablesChangedHandler(changePaymentOptionsVisibility);
-    Leanplum.setVariables(variables);
-    Leanplum.start(USER_UUID, function(success) {
-        if(success) {
-            setupClickHandlers();
+    try{
+        if (LEANPLUM_IS_DEVELOPMENT) {
+            Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APP_ID, LEANPLUM_DEV_APP_KEY);
+        } else {
+            Leanplum.setAppIdForProductionMode(LEANPLUM_APP_ID, LEANPLUM_PROD_APP_KEY);
         }
+
+        Leanplum.setRequestBatching(false);
+        Leanplum.addVariablesChangedHandler(changePaymentOptionsVisibility);
+        Leanplum.setVariables(variables);
+        Leanplum.start(USER_UUID, function(success) {
+            setupClickHandlers(success);
+            changePaymentOptionsVisibility();
+        });
+    }catch(e){
+        if(LEANPLUM_IS_DEVELOPMENT){
+            alert("Failed to initialize Leanplum: message: " + e.message + ", string: " + e);
+        }
+
+        setupClickHandlers(false);
         changePaymentOptionsVisibility();
-    });
+    }
 
     //
     // internals
     //
-    function setupClickHandlers() {
+    function setupClickHandlers(leanplumLoaded) {
+        var blocked = false;
+        var redirect = function (url) {
+            blocked = false;
+            goTo(url);
+        };
+
         $('[data-type]').each(function() {
             var dataId = $(this).attr('data-id');
             var productId = $(this).attr('data-productId');
 
             $('[data-button="' + dataId + '"]').on('click', function(){
-                Leanplum.track("Purchase", {product: productId});
+                if(!blocked){
+                    blocked = true;
+                    var url = $(this).attr('data-goToUrl');
+                    if(leanplumLoaded){
+                        Leanplum.track("Purchase", {product: productId}, function(){
+                            redirect(url);
+                        });
+                        setTimeout(function(){redirect(url);}, 2000);
+                    }else{
+                        redirect(url);
+                    }
+                }
             });
         });
     }
