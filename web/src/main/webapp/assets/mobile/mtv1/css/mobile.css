@@ -1955,11 +1955,13 @@ body {
 
 #info_popup span {
     display: block;
-    background:url(../imgs/subscribe_description_item_logo.png) no-repeat left 3px;
+    background:url(../imgs/subscribe_description_item_logo.png) no-repeat left 2px;
     background-size: 8%;
-    padding: 1% 0 4% 12%;
+    padding: 0 0 5% 12%;
     font-size: 100%;
     font-size: 5vw;
+    vertical-align: top;
+    line-height: 1.3;
 }
 
 #info_popup_overlay {
