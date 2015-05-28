@@ -1774,25 +1774,19 @@ body {
 }
 
 .subscribe_description_item_ios {
+    background: url(../imgs/subscribe_description_item_logo.png) no-repeat left center;
+    background-size: 6%;
     padding: 3% 0 3% 8%;
     position: relative;
     color: #2E2E2E;
     font-size: 90%;
     font-size: 4vw;
+    vertical-align: middle;
 }
 
 .subscribe_description_item_ios:first-child {
+    background: none;
     padding: 5% 0 1% 0;
-}
-
-.subscribe_description_item_logo_ios {
-    background: url(../imgs/subscribe_description_item_logo.png) no-repeat left;
-    background-size: contain;
-    position: absolute;
-    top: 25%;
-    left: 0;
-    height: 48%;
-    width: 6%;
 }
 
 .subscribe_payment_options_block_ios {

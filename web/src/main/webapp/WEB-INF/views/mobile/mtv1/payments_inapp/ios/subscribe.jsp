@@ -24,15 +24,12 @@
             <s:message code='subscribe.ios.description.header'/>
         </div>
         <div class="subscribe_description_item_ios">
-            <div class="subscribe_description_item_logo_ios"></div>
             <s:message code='subscribe.ios.description.item.1'/>
         </div>
         <div class="subscribe_description_item_ios">
-            <div class="subscribe_description_item_logo_ios"></div>
             <s:message code='subscribe.ios.description.item.2'/>
         </div>
         <div class="subscribe_description_item_ios">
-            <div class="subscribe_description_item_logo_ios"></div>
             <s:message code='subscribe.ios.description.item.3'/>
         </div>
     </div>
