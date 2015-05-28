@@ -1877,11 +1877,11 @@ body {
     background: url(../imgs/icon_info.png) no-repeat center;
     background-size: 100%;
     border-radius: 50%;
-    width: 52%;
-    height: 52%;
+    width: 50%;
+    height: 50%;
     position: absolute;
-    top: 24%;
-    left: 24%;
+    top: 25%;
+    left: 25%;
 }
 
 .subscribe_option_price_ios {
