@@ -112,7 +112,7 @@ h.open(a,c);h.timeout=1E3*v;h.send(d)};b.ja=function(a){b.S.push(a)};b.C=functio
    }
   };
 
-  f.open(a,c,0); //f.open(a,c,!0);
+  f.open(a,c,!0);
   f.setRequestHeader("Content-Type","text/plain");f.send(d);setTimeout(function(){h||f.abort()},1E3*v)
  }
 
