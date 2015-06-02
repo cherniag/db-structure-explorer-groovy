@@ -74,6 +74,8 @@ public class ServiceConfigController extends CommonController {
 
 
     private ServiceConfigDto getServiceConfigInternal(UserAgent userAgent, String community, Set<VersionCheckStatus> includedStatuses) throws Exception {
+        LOGGER.info("Raw User-Agent / X-User-Agent header value is: {}", userAgent.info());
+
         VersionCheckResponse check = versionCheckService.check(userAgent.getCommunity().getId(), userAgent.getPlatform(), userAgent.getApplicationName(), userAgent.getVersion(), includedStatuses);
 
         ServiceConfigDto dto = convert(check, userAgent.getCommunity().getRewriteUrlParameter());
