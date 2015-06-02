@@ -1755,7 +1755,8 @@ body {
     top: 0;
     right: 0;
     left: 0;
-    bottom: 0;
+    height: auto;
+    min-height: 100%;
     padding: 6%;
 }
 
@@ -1774,25 +1775,19 @@ body {
 }
 
 .subscribe_description_item_ios {
+    background: url(../imgs/subscribe_description_item_logo.png) no-repeat left center;
+    background-size: 6%;
     padding: 3% 0 3% 8%;
     position: relative;
     color: #2E2E2E;
     font-size: 90%;
-    font-size: 4vw;
+    font-size: 4.3vw;
+    vertical-align: middle;
 }
 
 .subscribe_description_item_ios:first-child {
+    background: none;
     padding: 5% 0 1% 0;
-}
-
-.subscribe_description_item_logo_ios {
-    background: url(../imgs/subscribe_description_item_logo.png) no-repeat left;
-    background-size: contain;
-    position: absolute;
-    top: 25%;
-    left: 0;
-    height: 48%;
-    width: 6%;
 }
 
 .subscribe_payment_options_block_ios {
@@ -1883,11 +1878,11 @@ body {
     background: url(../imgs/icon_info.png) no-repeat center;
     background-size: 100%;
     border-radius: 50%;
-    width: 52%;
-    height: 52%;
+    width: 50%;
+    height: 50%;
     position: absolute;
-    top: 24%;
-    left: 24%;
+    top: 25%;
+    left: 25%;
 }
 
 .subscribe_option_price_ios {
@@ -1935,14 +1930,14 @@ body {
 }
 
 #info_popup a.modalCloseImg {
-    background:url(../imgs/icon_close.png) no-repeat;
+    background:url(../imgs/icon_close_50.png) no-repeat;
     background-size: contain;
     width: 8%;
     height: 15%;
     display:inline;
     z-index:3200;
     position:absolute;
-    top: 10%;
+    top: 8.5%;
     left: 4%;
 }
 
@@ -1960,11 +1955,13 @@ body {
 
 #info_popup span {
     display: block;
-    background:url(../imgs/subscribe_description_item_logo.png) no-repeat left 3px;
+    background:url(../imgs/subscribe_description_item_logo.png) no-repeat left 2px;
     background-size: 8%;
-    padding: 1% 0 4% 12%;
+    padding: 0 0 5% 12%;
     font-size: 100%;
     font-size: 5vw;
+    vertical-align: top;
+    line-height: 1.3;
 }
 
 #info_popup_overlay {
@@ -1977,7 +1974,8 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 100%;
+    height: auto;
+    min-height: 100%;
     background-color: #FFF;
     position: absolute;
     z-index: 300;
@@ -2006,15 +2004,6 @@ body {
     padding: 2% 0 1% 0;
     background-color: #000;
     line-height: 1.3;
-}
-
-.interstitial_page_ios .interstitial_page_close_icon_ios {
-    background:url(../imgs/icon_close.png) no-repeat;
-    background-size: contain;
-    position:absolute;
-    top: 24%;
-    left: 4%;
-    padding: 7%;
 }
 
 .interstitial_page_ios .description_section_ios {
