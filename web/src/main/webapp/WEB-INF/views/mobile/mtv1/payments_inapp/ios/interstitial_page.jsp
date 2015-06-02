@@ -4,7 +4,6 @@
         <div class="interstitial_page_title_ios">
             <span><s:message code='interstitial.page.ios.title'/></span>
         </div>
-        <div class="interstitial_page_close_icon_ios" onclick="returnToApp();"></div>
     </div>
 
     <div class="description_section_ios">
