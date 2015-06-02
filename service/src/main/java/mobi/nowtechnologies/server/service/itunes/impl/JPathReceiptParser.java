@@ -26,7 +26,7 @@ public class JPathReceiptParser implements ITunesResponseParser {
     @Override
     public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseFormatException {
         try {
-            ITunesResult parseResult = new ITunesResult();
+            ITunesResult parseResult = new ITunesResult(response);
 
             final int result = statusPath.<Integer>read(response);
 
@@ -36,7 +36,7 @@ public class JPathReceiptParser implements ITunesResponseParser {
                 parseResult.productId = productIdPath.read(response);
                 parseResult.originalTransactionId = originalTransactionIdPath.read(response);
                 parseResult.expireTime = safeReadTime(expireTimestampPath, response);
-                parseResult.purchaseTime = safeReadTime(purchaseTimestampPath, response);
+                parseResult.purchaseTime = Long.valueOf(purchaseTimestampPath.<String>read(response));
             }
 
             return parseResult;
@@ -85,10 +85,7 @@ public class JPathReceiptParser implements ITunesResponseParser {
         Assert.notNull(statusPath);
         Assert.notNull(productIdPath);
         Assert.notNull(originalTransactionIdPath);
-
-        if (expireTimestampPath == null && purchaseTimestampPath == null) {
-            throw new IllegalArgumentException("expireTimestampPath or purchaseTimestampPath should be defined");
-        }
+        Assert.notNull(purchaseTimestampPath);
     }
 
     private String toString(JsonPath path) {

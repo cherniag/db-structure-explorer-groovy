@@ -422,6 +422,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
 		<property name="statusPath" value="${itunes.renewable.response.path.status}"/>
 		<property name="productIdPath" value="${itunes.renewable.response.path.productId}"/>
 		<property name="originalTransactionIdPath" value="${itunes.renewable.response.path.originalTransactionId}"/>
+		<property name="purchaseTimestampPath" value="${itunes.renewable.response.path.purchaseDate}"/>
 		<property name="expireTimestampPath" value="${itunes.renewable.response.path.expiresDate}"/>
 	</bean>
 	<bean id="oneTimeSubscriptionParser" class="mobi.nowtechnologies.server.service.itunes.impl.JPathReceiptParser">

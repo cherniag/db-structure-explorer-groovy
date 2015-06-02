@@ -1,6 +1,9 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.device.domain.DeviceTypeCache;
+import mobi.nowtechnologies.server.event.domain.EventLog;
+import mobi.nowtechnologies.server.event.domain.EventLogRepository;
+import mobi.nowtechnologies.server.event.domain.EventLogType;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -36,6 +39,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.minidev.json.JSONObject;
 import org.apache.commons.lang.time.DateUtils;
 
 import org.junit.*;
@@ -73,7 +79,13 @@ public class ITunesPaymentSystemServiceIT {
     private AccountLogRepository accountLogRepository;
     @Resource
     private UserStatusRepository userStatusRepository;
+    @Resource
+    private EventLogRepository eventLogRepository;
 
+    @Before
+    public void setUp() throws Exception {
+        eventLogRepository.deleteAll();
+    }
 
     @Test
     public void startSuccessfulPaymentRecurrent() throws Exception {
@@ -115,6 +127,15 @@ public class ITunesPaymentSystemServiceIT {
         List<AccountLog> accountLogs = accountLogRepository.findByUserId(user.getId());
         Assert.assertEquals(1, accountLogs.size());
         Assert.assertEquals(TransactionType.CARD_TOP_UP, accountLogs.get(0).getTransactionType());
+
+        List<EventLog> eventLogs = eventLogRepository.findAll();
+        EventLog eventLog = eventLogs.get(0);
+        assertEquals(EventLogType.SUBSCRIPTION_BY_PAYMENT, eventLog.getEventLogType());
+        assertTrue(eventLog.getData().contains("\"uID\":" + user.getId()));
+        assertTrue(eventLog.getData().contains("\"uuid\":\"" + user.getUuid()));
+        assertTrue(eventLog.getData().contains("\"spID\":" + submittedPayment.getI()));
+        assertTrue(eventLog.getData().contains("\"spTime\":" + submittedPayment.getTimestamp()));
+        assertTrue(eventLog.getData().contains("\"subEndTime\":" + submittedPayment.getNextSubPayment()));
     }
 
     @Test
@@ -160,6 +181,16 @@ public class ITunesPaymentSystemServiceIT {
         List<AccountLog> accountLogs = accountLogRepository.findByUserId(user.getId());
         Assert.assertEquals(1, accountLogs.size());
         Assert.assertEquals(TransactionType.CARD_TOP_UP, accountLogs.get(0).getTransactionType());
+
+        List<EventLog> eventLogs = eventLogRepository.findAll();
+        EventLog eventLog = eventLogs.get(0);
+        assertEquals(EventLogType.SUBSCRIPTION_BY_PAYMENT, eventLog.getEventLogType());
+        assertTrue(eventLog.getData().contains("\"uID\":" + user.getId()));
+        assertTrue(eventLog.getData().contains("\"uuid\":\"" + user.getUuid()));
+        assertTrue(eventLog.getData().contains("\"spID\":" + submittedPayment.getI()));
+        assertTrue(eventLog.getData().contains("\"spTime\":" + submittedPayment.getTimestamp()));
+        assertTrue(eventLog.getData().contains("\"subStartTime\":" + purchaseSeconds));
+        assertTrue(eventLog.getData().contains("\"subEndTime\":" + submittedPayment.getNextSubPayment()));
     }
 
     @Test
@@ -221,6 +252,7 @@ public class ITunesPaymentSystemServiceIT {
         User user = new User();
         user.setUserName(Utils.getRandomUUID());
         user.setDeviceUID(Utils.getRandomUUID());
+        user.setUuid(Utils.getRandomUUID());
         UserGroup userGroup = userGroupRepository.findByCommunityRewriteUrl(this.communityRewriteUrl);
         user.setUserGroup(userGroup);
         user.setDeviceType(DeviceTypeCache.getIOSDeviceType());

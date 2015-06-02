@@ -58,7 +58,6 @@
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>tx-event-logger</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>

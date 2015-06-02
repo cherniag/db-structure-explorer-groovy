@@ -15,7 +15,7 @@ public class JPathReceiptParserTest {
     public void parseValidAutoRenewableReceipt() throws Exception {
         JPathReceiptParser jPathReceiptParser =
             create(JsonPath.compile("$.status"), JsonPath.compile("$.latest_receipt_info.product_id"), JsonPath.compile("$.latest_receipt_info.original_transaction_id"),
-                   JsonPath.compile("$.latest_receipt_info.expires_date"), null);
+                   JsonPath.compile("$.latest_receipt_info.expires_date"), JsonPath.compile("$.latest_receipt_info.purchase_date_ms"));
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/renewable.json");
         String json = Streams.asString(inputStream);
 
@@ -25,7 +25,7 @@ public class JPathReceiptParserTest {
         Assert.assertEquals("com.musicqubed.o2.autorenew.test", parseResult.getProductId());
         Assert.assertEquals("1000000064861007", parseResult.getOriginalTransactionId());
         Assert.assertEquals(1360756242000L, parseResult.getExpireTime().longValue());
-        Assert.assertNull(parseResult.getPurchaseTime());
+        Assert.assertEquals(1360756062000L, parseResult.getPurchaseTime().longValue());
     }
 
     @Test

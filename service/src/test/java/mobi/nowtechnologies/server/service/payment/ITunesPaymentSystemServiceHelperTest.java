@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.payment;
 
 import mobi.nowtechnologies.server.TimeService;
+import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
@@ -58,6 +59,8 @@ public class ITunesPaymentSystemServiceHelperTest {
     PendingPaymentRepository pendingPaymentRepository;
     @Mock
     UserService userService;
+    @Mock
+    EventLoggerService eventLoggerService;
     @InjectMocks
     ITunesPaymentSystemServiceHelper helper;
 
@@ -93,6 +96,7 @@ public class ITunesPaymentSystemServiceHelperTest {
         when(user.getCommunity()).thenReturn(community);
         when(paymentDetails.getPaymentPolicy()).thenReturn(paymentPolicy);
         when(paymentDetails.getAppStoreReceipt()).thenReturn(actualReceipt);
+        when(iTunesResult.getPurchaseTime()).thenReturn(now.getTime());
         when(iTunesResult.getExpireTime()).thenReturn(expire.getTime());
         when(iTunesResult.getProductId()).thenReturn(actualProductId);
         when(iTunesResult.getOriginalTransactionId()).thenReturn(originalTransactionId);
@@ -117,6 +121,14 @@ public class ITunesPaymentSystemServiceHelperTest {
         verify(pendingPaymentRepository).delete(pendingPayment);
 
         SubmittedPayment submittedPayment = submittedPaymentArgumentCaptor.getValue();
+        verify(eventLoggerService).logSubscriptionByPayment(user.getId(),
+                                                            user.getUuid(),
+                                                            submittedPayment.getI(),
+                                                            submittedPayment.getTimestamp(),
+                                                            iTunesResult.getPurchaseTime(),
+                                                            submittedPayment.getNextSubPayment() * 1000L,
+                                                            iTunesResult.getResponse());
+
         assertEquals(originalTransactionId, submittedPayment.getAppStoreOriginalTransactionId());
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, submittedPayment.getStatus());
         assertEquals(actualReceipt, submittedPayment.getBase64EncodedAppStoreReceipt());
@@ -150,6 +162,14 @@ public class ITunesPaymentSystemServiceHelperTest {
         verify(pendingPaymentRepository).delete(pendingPayment);
 
         SubmittedPayment submittedPayment = submittedPaymentArgumentCaptor.getValue();
+        verify(eventLoggerService).logSubscriptionByPayment(user.getId(),
+                                                            user.getUuid(),
+                                                            submittedPayment.getI(),
+                                                            submittedPayment.getTimestamp(),
+                                                            iTunesResult.getPurchaseTime(),
+                                                            submittedPayment.getNextSubPayment() * 1000L,
+                                                            iTunesResult.getResponse());
+
         assertEquals(originalTransactionId, submittedPayment.getAppStoreOriginalTransactionId());
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, submittedPayment.getStatus());
         assertEquals(actualReceipt, submittedPayment.getBase64EncodedAppStoreReceipt());
@@ -185,6 +205,15 @@ public class ITunesPaymentSystemServiceHelperTest {
         verify(pendingPaymentRepository).delete(pendingPayment);
 
         SubmittedPayment submittedPayment = submittedPaymentArgumentCaptor.getValue();
+
+        verify(eventLoggerService).logSubscriptionByPayment(user.getId(),
+                                                            user.getUuid(),
+                                                            submittedPayment.getI(),
+                                                            submittedPayment.getTimestamp(),
+                                                            iTunesResult.getPurchaseTime(),
+                                                            submittedPayment.getNextSubPayment() * 1000L,
+                                                            iTunesResult.getResponse());
+
         assertEquals(originalTransactionId, submittedPayment.getAppStoreOriginalTransactionId());
         assertEquals(PaymentDetailsStatus.SUCCESSFUL, submittedPayment.getStatus());
         assertEquals(actualReceipt, submittedPayment.getBase64EncodedAppStoreReceipt());

@@ -14,8 +14,10 @@ public class ITunesResult {
     String originalTransactionId;
     Long expireTime;
     Long purchaseTime;
+    String response;
 
-    ITunesResult() {
+    ITunesResult(String response) {
+        this.response = response;
     }
 
     public boolean isSuccessful() {
@@ -40,6 +42,10 @@ public class ITunesResult {
 
     public Long getExpireTime() {
         return expireTime;
+    }
+
+    public String getResponse() {
+        return response;
     }
 
     public String toString() {

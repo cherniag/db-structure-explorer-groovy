@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.payment;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.TimeService;
+import mobi.nowtechnologies.server.event.service.EventLoggerService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentDetails;
@@ -42,6 +43,7 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
     private PendingPaymentRepository pendingPaymentRepository;
     private UserService userService;
     private TimeService timeService;
+    private EventLoggerService eventLoggerService;
 
     @Transactional
     public void confirmPayment(PendingPayment pendingPayment, ITunesResult result) {
@@ -60,6 +62,14 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
         SubmittedPayment submittedPayment = createSuccessfulSubmittedPayment(user, result, actualPaymentPolicy, actualReceipt);
         submittedPaymentService.save(submittedPayment);
         logger.info("Submitted payment {} has been saved", submittedPayment.getI());
+
+        eventLoggerService.logSubscriptionByPayment(user.getId(),
+                                                    user.getUuid(),
+                                                    submittedPayment.getI(),
+                                                    submittedPayment.getTimestamp(),
+                                                    result.getPurchaseTime(),
+                                                    submittedPayment.getNextSubPayment() * 1000L,
+                                                    result.getResponse());
 
         PaymentEvent paymentEvent = new PaymentEvent(submittedPayment);
         applicationEventPublisher.publishEvent(paymentEvent);
@@ -263,5 +273,9 @@ public class ITunesPaymentSystemServiceHelper implements ApplicationEventPublish
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setEventLoggerService(EventLoggerService eventLoggerService) {
+        this.eventLoggerService = eventLoggerService;
     }
 }
