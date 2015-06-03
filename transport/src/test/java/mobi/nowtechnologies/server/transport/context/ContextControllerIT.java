@@ -18,6 +18,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ContextControllerIT extends AbstractControllerTestIT {
 
     @Test
+    public void checkGetContext_LatestVersion() throws Exception {
+        String apiVersion = LATEST_SERVER_API_VERSION;
+
+        String communityUrl = "hl_uk";
+        String userName = "test@ukr.net";
+        String timestamp = "" + new Date().getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
+                                                                                   accept(MediaType.APPLICATION_JSON).
+                                                                                   param(AuthenticatedUser.USER_NAME, userName).
+                                                                                   param(AuthenticatedUser.USER_TOKEN, userToken).
+                                                                                   param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                   andDo(print()).
+                   andExpect(status().isOk()).
+                   andExpect(content().contentType(MediaType.APPLICATION_JSON)).
+                   andExpect(jsonPath("$.context").exists()).
+                   andExpect(jsonPath("$.context.referrals").exists());
+    }
+
+    @Test
     public void checkGetContext_67_referralsOff() throws Exception {
         String apiVersion = "6.7";
 

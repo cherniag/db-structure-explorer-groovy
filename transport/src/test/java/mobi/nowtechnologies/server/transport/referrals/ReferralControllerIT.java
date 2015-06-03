@@ -33,7 +33,7 @@ public class ReferralControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void checkSaveReferrals_LatestVersion() throws Exception {
-        String apiVersion = "6.7";
+        String apiVersion = LATEST_SERVER_API_VERSION;
 
         String communityUrl = "hl_uk";
         String userName = "test@ukr.net";
