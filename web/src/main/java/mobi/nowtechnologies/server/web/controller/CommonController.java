@@ -59,12 +59,14 @@ public abstract class CommonController implements MessageSourceAware {
 
     @ExceptionHandler(value = {CanNotDeactivatePaymentDetailsException.class})
     public ModelAndView handleCanNotDeactivatePaymentDetailsException(HttpServletRequest request, ServiceException exception, Locale locale) {
+        logger.error(exception.getMessage(), exception);
         return new ModelAndView("errors/can_not_change_payment_options");
     }
 
     @ExceptionHandler(value = {Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleAllExceptions(Exception e) {
+        logger.error(e.getMessage(), e);
         return new ModelAndView("errors/500");
     }
 

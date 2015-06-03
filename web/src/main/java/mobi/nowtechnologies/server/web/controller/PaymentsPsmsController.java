@@ -52,10 +52,12 @@ public class PaymentsPsmsController extends CommonController {
     private void createPaymentDetails(User user, PaymentPolicy policy) {
         if(user.isVFNZCommunityUser()) {
             vfpsmsPaymentDetailsService.createPaymentDetails(user, policy);
+            return;
         }
 
         if(user.isO2CommunityUser()) {
             o2PSMSPaymentDetailsService.createPaymentDetails(user, policy);
+            return;
         }
 
         throw new IllegalArgumentException("Can not create Payment Detail");
