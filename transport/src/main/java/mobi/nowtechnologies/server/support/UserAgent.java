@@ -17,4 +17,6 @@ public interface UserAgent {
     DeviceType getPlatform();
 
     Community getCommunity();
+
+    String info();
 }

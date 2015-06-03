@@ -15,16 +15,10 @@ import java.beans.PropertyEditorSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.util.Assert;
 
 public class UserAgentPropertyEditor extends PropertyEditorSupport {
-
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
     private static final Pattern PATTERN = Pattern.compile("(.+)/(\\d{1,2}\\.\\d.*) \\((\\S+); (\\S+)\\)");
 
     private CommunityRepository communityRepository;
@@ -40,7 +34,6 @@ public class UserAgentPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
-        LOGGER.info("Raw User-Agent / X-User-Agent header value is: {}", text);
         Matcher matcher = PATTERN.matcher(text);
         if (!matcher.find()) {
             throw new ConversionNotSupportedException(text, UserAgent.class, null);
@@ -60,27 +53,52 @@ public class UserAgentPropertyEditor extends PropertyEditorSupport {
         final ClientVersion version = ClientVersion.from(strApplicationVersion);
         Assert.notNull(version, "Can not find application version by value: " + strApplicationVersion);
 
-        setValue(new UserAgent() {
-            @Override
-            public String getApplicationName() {
-                return strApplicationName;
-            }
+        UserAgentImpl userAgent = new UserAgentImpl();
+        userAgent.info = text;
+        userAgent.applicationName = strApplicationName;
+        userAgent.version = version;
+        userAgent.platform = platform;
+        userAgent.community = community;
 
-            @Override
-            public ClientVersion getVersion() {
-                return version;
-            }
+        setValue(userAgent);
+    }
 
-            @Override
-            public DeviceType getPlatform() {
-                return platform;
-            }
+    private static class UserAgentImpl implements UserAgent {
+        private String applicationName;
+        private ClientVersion version;
+        private DeviceType platform;
+        private Community community;
+        private String info;
 
-            @Override
-            public Community getCommunity() {
-                return community;
-            }
-        });
+        @Override
+        public String getApplicationName() {
+            return applicationName;
+        }
+
+        @Override
+        public ClientVersion getVersion() {
+            return version;
+        }
+
+        @Override
+        public DeviceType getPlatform() {
+            return platform;
+        }
+
+        @Override
+        public Community getCommunity() {
+            return community;
+        }
+
+        @Override
+        public String info() {
+            return info;
+        }
+
+        @Override
+        public String toString() {
+            return info();
+        }
     }
 
     DeviceType toDeviceType(String deviceTypeString) {

@@ -370,39 +370,5 @@
 
     <import resource="classpath:controllers.xml" />
 
-    <beans profile="application-tests">
-        <bean id="jobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-            <property name="autoStartup" value="${jobs.autoStartup}" />
-            <property name="triggers">
-                <list>
-                    <ref bean="paymentTrigger"/>
-                    <ref bean="retryPaymentTrigger" />
-                    <ref bean="expiredPaymentTrigger" />
-                    <ref bean="transport.smsNotificationQuartzTrigger" />
-                    <ref bean="before48hPSMSPaymentTrigger"/>
-                    <ref bean="sendSmsForVFNZUsersTrigger"/>
-                    <ref bean="sendChargeNotificationTrigger"/>
-                    <ref bean="jobTrigger"/>
-                </list>
-            </property>
-        </bean>
-
-        <bean id="jobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-            <property name="jobDetail" ref="ftJobDetail"/>
-            <property name="name" value="triggerName" />
-            <property name="jobName" value="jobName"/>
-            <property name="startDelay" value="${jobTrigger.job.startDelayMillis}" />
-            <property name="repeatInterval" value="${jobTrigger.job.repeatIntervalMillis}" />
-        </bean>
-
-        <bean id="ftJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
-            <property name="jobClass" value="mobi.nowtechnologies.server.job.AppTestManageJobsBean" />
-            <property name="jobDataAsMap">
-                <map merge="true">
-                    <entry key="jobTriggerRequestRepository" value-ref="jobTriggerRequestRepository" />
-                </map>
-            </property>
-        </bean>
-
-</beans>
+    <import resource="transport-servlet-application-tests.xml" />
 </beans>
