@@ -9,8 +9,9 @@ import groovy.sql.Sql
 class Boot {
 
     /*
-    -Djdbc.userName=root -Djdbc.password=12345 -Djdbc.host=localhost -Djdbc.port=3306
+    -Djdbc.userName=root -Djdbc.password=12345 -Djdbc.host=localhost -Djdbc.port=3306 -Daction=DELETE|SELECT|COUNT -Did=<id>
      */
+    static def resultQueries = []
 
     public static void main(String[] args) {
         Sql informationSchemaSql = initializeSql()
@@ -29,6 +30,10 @@ class Boot {
         // printFK(rootFK, 0, '')
 
         buildQueries(rootFK, [])
+
+        printResult()
+
+
     }
 
     private static Sql initializeSql() {
@@ -102,31 +107,66 @@ class Boot {
             buildQueries(it, list)
         }
 
-        fk.cyclicChilds.each {
-            println "update ${it.tableName} " +
-                    "set ${it.tableName}.${it.columnName} = NULL where ${it.backReference.referencedTableName}.${it.backReference.referencedColumnName} = "
+        def action = System.getProperty("action")
+        switch (action){
+            case 'DELETE' : fk.cyclicChilds.each {
+                resultQueries << "update ${it.tableName} " +
+                        "set ${it.tableName}.${it.columnName} = NULL where ${it.backReference.referencedTableName}.${it.backReference.referencedColumnName} = "
+            } ; break
+
+            case 'SELECT' : fk.cyclicChilds.each {
+                resultQueries << "select '(C)',`${it.tableName}`.${it.columnName}, `${it.referencedTableName}`.${it.referencedColumnName}  " +
+                        "from `${it.tableName}` join ${it.referencedTableName} on `${it.tableName}`.${it.columnName} = ${it.referencedTableName}.${it.referencedColumnName} " +
+                        "where `${it.backReference.referencedTableName}`.${it.backReference.referencedColumnName} = "
+            } ; break
+
+            case 'COUNT' : fk.cyclicChilds.each {
+                resultQueries << "select count(*) " +
+                        "from `${it.tableName}` join ${it.referencedTableName} on `${it.tableName}`.${it.columnName} = ${it.referencedTableName}.${it.referencedColumnName} "
+            } ; break
+            default : throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
         }
 
-        buildDelete(list)
+
+        buildDelete(list, action)
+
     }
 
-    private static void buildDelete(ArrayList list) {
+    private static void printResult() {
+        def action = System.getProperty("action")
+        def id = System.getProperty("id")
+        resultQueries.each {
+            switch (action) {
+                case 'DELETE' :
+                case 'SELECT' :  println it.toString() + id + ";" ; break
+                case 'COUNT' : println it.toString() + " where tb_users.userGroup < 10;" ; break
+                default : throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
+            }
+        }
+    }
+
+    private static void buildDelete(ArrayList list, action) {
         def size = list.size()
-        StringBuilder sb = new StringBuilder(list.get(size - 1).tableName)
+        StringBuilder sb = new StringBuilder("`").append(list.get(size - 1).tableName).append("`")
         for (int i = size - 1; i > 0; i--) {
-            sb.append(" join ")
+            sb.append(" join `")
             sb.append(list.get(i).referencedTableName)
-            sb.append(" on ")
+            sb.append("` on `")
             sb.append(list.get(i).tableName)
-            sb.append(".")
+            sb.append("`.")
             sb.append(list.get(i).columnName)
-            sb.append(" = ")
+            sb.append(" = `")
             sb.append(list.get(i).referencedTableName)
-            sb.append(".")
+            sb.append("`.")
             sb.append(list.get(i).referencedColumnName)
         }
 
-        println "delete ${list.get(size - 1).tableName} from $sb where tb_users.i = "
+        switch (action) {
+            case 'DELETE' : resultQueries << "delete `${list.get(size - 1).tableName}` from $sb where tb_users.i = " ; break
+            case 'SELECT' : resultQueries << "select `${list.get(size - 1).tableName}`.* from $sb where tb_users.i = " ; break
+            case 'COUNT' : resultQueries <<  "select count(*) from $sb" ; break
+            default : throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
+        }
     }
 
     private static void printFK(FK fk, int level, String prefix) {
