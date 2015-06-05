@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.cleaner
 
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 
 /**
@@ -11,13 +12,13 @@ class Boot {
     /*
     -Djdbc.userName=root -Djdbc.password=12345 -Djdbc.host=localhost -Djdbc.port=3306 -Daction=DELETE|SELECT|COUNT -Did=<id>
      */
-    static def resultQueries = []
+    static def resultQueries = [:]
 
     public static void main(String[] args) {
-        Sql informationSchemaSql = initializeSql()
+        Sql informationSchemaSql = initializeSql('information_schema')
 
         def foreignConstraints = [] as ArrayList
-        def rootFK = new FK(tableSchema:'cn_service',tableName: 'tb_users',columnName: 'i')
+        def rootFK = new FK(tableSchema: 'cn_service', tableName: 'tb_users', columnName: 'i')
 
         // import from db
         importFKConstraints(informationSchemaSql, foreignConstraints)
@@ -36,7 +37,7 @@ class Boot {
 
     }
 
-    private static Sql initializeSql() {
+    private static Sql initializeSql(schema) {
         def userName = System.getProperty("jdbc.userName")
         def password = System.getProperty("jdbc.password")
         def host = System.getProperty("jdbc.host")
@@ -47,7 +48,7 @@ class Boot {
         assert host
         assert port
 
-        Sql.newInstance("jdbc:mysql://$host:$port/information_schema?useUnicode=yes&amp;characterEncoding=UTF-8".toString(),
+        Sql.newInstance("jdbc:mysql://$host:$port/$schema?useUnicode=yes&amp;characterEncoding=UTF-8".toString(),
                 userName, password, "com.mysql.jdbc.Driver")
     }
 
@@ -69,10 +70,10 @@ class Boot {
             fk.referencedColumnName = 'i'
 
             def contains = false
-            foreignConstraints.each{
-                if(it.tableSchema == fk.tableSchema && it.tableName == fk.tableName && it.columnName == fk.columnName) contains = true
+            foreignConstraints.each {
+                if (it.tableSchema == fk.tableSchema && it.tableName == fk.tableName && it.columnName == fk.columnName) contains = true
             }
-            if(!contains) foreignConstraints << fk
+            if (!contains) foreignConstraints << fk
         }
     }
 
@@ -108,23 +109,26 @@ class Boot {
         }
 
         def action = System.getProperty("action")
-        switch (action){
-            case 'DELETE' : fk.cyclicChilds.each {
-                resultQueries << "update ${it.tableName} " +
-                        "set ${it.tableName}.${it.columnName} = NULL where ${it.backReference.referencedTableName}.${it.backReference.referencedColumnName} = "
-            } ; break
+        switch (action) {
+            case 'DELETE': fk.cyclicChilds.each {
+                resultQueries[(it)] = "update `${it.tableName}` " +
+                        "set `${it.tableName}`.${it.columnName} = NULL where ${it.backReference.referencedTableName}.${it.backReference.referencedColumnName} = "
+            }; break
 
-            case 'SELECT' : fk.cyclicChilds.each {
-                resultQueries << "select '(C)',`${it.tableName}`.${it.columnName}, `${it.referencedTableName}`.${it.referencedColumnName}  " +
+            case 'INSERT': break ;
+
+            case 'SELECT': fk.cyclicChilds.each {
+                resultQueries[(it)] = "select '(C)',`${it.tableName}`.${it.columnName}, `${it.referencedTableName}`.${it.referencedColumnName}  " +
                         "from `${it.tableName}` join ${it.referencedTableName} on `${it.tableName}`.${it.columnName} = ${it.referencedTableName}.${it.referencedColumnName} " +
                         "where `${it.backReference.referencedTableName}`.${it.backReference.referencedColumnName} = "
-            } ; break
+            }; break
 
-            case 'COUNT' : fk.cyclicChilds.each {
-                resultQueries << "select count(*) " +
+            case 'COUNT': fk.cyclicChilds.each {
+                resultQueries[(it)] = "select count(*) " +
                         "from `${it.tableName}` join ${it.referencedTableName} on `${it.tableName}`.${it.columnName} = ${it.referencedTableName}.${it.referencedColumnName} "
-            } ; break
-            default : throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
+            }; break
+
+            default: throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
         }
 
 
@@ -135,12 +139,24 @@ class Boot {
     private static void printResult() {
         def action = System.getProperty("action")
         def id = System.getProperty("id")
-        resultQueries.each {
+        Sql dataSql = initializeSql('cn_service')
+        Sql SqlTo = Sql.newInstance("jdbc:mysql://localhost:3306/cn_service?useUnicode=yes&amp;characterEncoding=UTF-8", 'root', '12345', "com.mysql.jdbc.Driver")
+
+        resultQueries.entrySet().each { query ->
             switch (action) {
-                case 'DELETE' :
-                case 'SELECT' :  println it.toString() + id + ";" ; break
-                case 'COUNT' : println it.toString() + " where tb_users.userGroup < 10;" ; break
-                default : throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
+                case 'DELETE':
+                case 'SELECT': println query.value.toString() + id + ";"; break
+                case 'COUNT': println query.value.toString() + " where tb_users.userGroup < 10;"; break
+                case 'INSERT':
+
+                    def rows = dataSql.rows(query.value.toString() + id)
+                    rows.each { row ->
+                        def count = SqlTo.execute(generateInsert(query.key.tableName, row.keySet().size()), row.values().asList())
+                        println query.key.tableName + " : " + count
+                    } ; break
+
+
+                default: throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT|INSERT")
             }
         }
     }
@@ -162,10 +178,11 @@ class Boot {
         }
 
         switch (action) {
-            case 'DELETE' : resultQueries << "delete `${list.get(size - 1).tableName}` from $sb where tb_users.i = " ; break
-            case 'SELECT' : resultQueries << "select `${list.get(size - 1).tableName}`.* from $sb where tb_users.i = " ; break
-            case 'COUNT' : resultQueries <<  "select count(*) from $sb" ; break
-            default : throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
+            case 'DELETE': resultQueries[list.get(size - 1)] = "delete `${list.get(size - 1).tableName}` from $sb where tb_users.i = "; break
+            case 'INSERT':
+            case 'SELECT': resultQueries[list.get(size - 1)] = "select `${list.get(size - 1).tableName}`.* from $sb where tb_users.i = "; break
+            case 'COUNT': resultQueries[list.get(size - 1)] = "select count(*) from $sb"; break
+            default: throw new IllegalArgumentException("Action $action is wrong, -Daction=DELETE|SELECT|COUNT")
         }
     }
 
@@ -232,5 +249,11 @@ class Boot {
         public String toString() {
             return "${tableSchema}@${tableName}.${columnName}->${referencedTableSchema}@${referencedTableName}.${referencedColumnName} (${childs.size()})".toString()
         }
+    }
+
+    static def generateInsert(tableName, int paramsCount) {
+        def l = []
+        paramsCount.times { l << '?' }
+        "insert into $tableName values (${l.join(',')})"
     }
 }
